@@ -53,3 +53,5 @@ cd /vagrant/protected
 composer install
 cd /vagrant/protected
 sudo grunt bower
+grunt --force
+
