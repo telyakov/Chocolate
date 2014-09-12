@@ -1,0 +1,106 @@
+<!--
+    package.json
+    https://www.npmjs.org/doc/files/package.json.html
+    Required settings for node.js
+ -->
+<!--
+    Gruntfile.js
+    http://gruntjs.com/sample-gruntfile
+    Settings for Grunt
+-->
+<!--
+    composer.json
+    https://getcomposer.org/doc/04-schema.md
+    Settings for Composer
+-->
+
+<!--
+    bower.json
+    http://bower.io/docs/creating-packages/
+    Settings for Bower
+-->
+<!--vagrant box add centos6.5 file:///C:/Users/tselishchev/Downloads/opscode_centos-6.5_chef-provisionerless.box-->
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        .header {
+            color: orange;
+        }
+
+        .section {
+            color: #566b93;
+        }
+    </style>
+</head>
+<h1 class="header">
+    Развертывание шоколада на win7x64
+</h1>
+<ol>
+    <li>В биосе включить поддержку <b>VT-X</b></li>
+    <li>Установить <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a></li>
+    <li>Установить <a
+            href="https://docs.vagrantup.com/v2/installation/index.html">Vagrant</a></li>
+    <li>Запустить консоль под админом и выполнить <b>fsutil behavior set
+        SymlinkEvaluation L2L:1 R2R:1 L2R:1 R2L:1</b>. И перезапустить комп.
+    </li>
+    <li>
+        c \\sqlsrv\Chocolate скачать box для Vagrant и добавить с помощью комманды <b>vagrant
+        box add centos6.4 file:///path-to-box</b>
+    </li>
+    <li>Установить <a href="https://cygwin.com/install.html">cygwin</a>. При установке
+        выбрать модули rsync
+    </li>
+    <li>После установки добавить в PATH путь до папки bin(<b>C:\cygwin64\bin</b>)</li>
+    <li>Зайти в cygwin и выполнить <b>echo - / cygdrive acl > /etc/fstab</b></li>
+    <li>Установить плагин <a href="https://github.com/smerrill/vagrant-rsync-back">vagrant-rsync-back<</a>
+    </li>
+    <li>Выполнить в папке <b>protected</b> с правами адмнистратора команду <b>vagrant
+        up</b>. Первый раз запускается долго
+    </li>
+    <li>После успешного завершение установки выполнить <b>vagrant rsync-back</b></li>
+    <li>Раскоментировать строку в Vagrantfile(<b>config.vm.synced_folder "../.",
+        "/vagrant"</b>) и закомментировать другую с type="rsync"
+    </li>
+    <li>Выполнить <b>vagrant reload</b></li>
+    <li>После этого к машине можно подключаться с помощью <b>vagrant ssh</b>(необходимо
+        находиться в папке protected). Сам сервер доступен по адресу <a
+                href="http://localhost:8080">localhost:8080</a>
+    </li>
+</ol>
+<section class="section">
+    На выходе получаем установленный centos 6.4 с <b>apache, php, ruby, java, nodejs,
+    composer, grunt, git, vim</b>
+</section>
+
+<h2 class="header">Workflow</h2>
+<h3>Grunt</h3>
+<li>
+    Перейти в папку protected
+</li>
+<li>Запустить задачу с помощью <b>grunt task_name</b>
+    task_name: unitTest| funcTest | sass | build | default | bower
+    <div>
+        unitTest - модульные тесты
+    </div>
+    <div>
+        funcTest - функциональный тесты с помощью Selenium2
+    </div>
+    <div>
+        sass - конвертация sass -> css
+    </div>
+    <div>
+        build - быстрая сброка для тестовой базы без сжатия
+    </div>
+    <div>
+        default - сборка в production со сжатием
+    </div>
+    <div>
+        debug - сборка без сжатия и запуск тестов
+    </div>
+    <div class="header">
+        <b>bower - скачивает js зависимости в проект</b>
+    </div>
+</li>
+<h3>Composer</h3>
+<li>Перейти в protected и выполнить <b>composer update</b></li>
+

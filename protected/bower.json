@@ -1,0 +1,15 @@
+{
+    "name": "Chocolate",
+    "dependencies": {
+        "throttle-debounce": "https://raw.githubusercontent.com/cowboy/jquery-throttle-debounce/master/jquery.ba-throttle-debounce.js",
+        "fileDownload": "https://raw.githubusercontent.com/johnculviner/jquery.fileDownload/master/src/Scripts/jquery.fileDownload.js",
+        "jquery": "1.8.3",
+        "toggle-buttons": "https://raw.githubusercontent.com/nostalgiaz/bootstrap-toggle-buttons/master/static/js/jquery.toggle.buttons.js",
+        "ui-touch-punch": "https://raw.githubusercontent.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.js",
+        "jquery-ui-contextmenu": "https://raw.githubusercontent.com/mar10/jquery-ui-contextmenu/master/jquery.ui-contextmenu.js",
+        "jquery-ui": "1.9.2",
+        "json_parse": "https://raw.githubusercontent.com/douglascrockford/JSON-js/master/json_parse.js",
+        "lodash": "0.10.0",
+        "log4javascript": "https://raw.githubusercontent.com/DECK36/log4javascript/master/js/log4javascript.js"
+    }
+}

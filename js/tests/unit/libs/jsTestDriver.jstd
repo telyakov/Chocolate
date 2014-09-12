@@ -1,0 +1,13 @@
+server: http://127.0.0.1:9876/
+
+load:
+ - qunit-1.14.0.js
+ - sinon-1.10.2.js
+ - sinon-qunit-1.0.0.js
+ - equiv.js
+ - QUnitAdapter.js
+ - ../erp.js
+ - ../main.js
+
+test:
+ - unit/chocolate.js

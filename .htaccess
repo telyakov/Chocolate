@@ -1,0 +1,9 @@
+#comment in production
+php_value error_reporting 0
+php_value display_errors On
+
+RewriteEngine on
+RedirectMatch 403 /\..*$
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index.php

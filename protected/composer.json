@@ -1,0 +1,61 @@
+{
+    "require": {
+        "php": ">=5.5.4",
+        "rmk135/Rmk-Framework": "*",
+        "yiisoft/yii": ">=1.1.15"
+    },
+    "require-dev": {
+        "nusphere/nusoap": "0.9.5",
+        "pdepend/pdepend": "1.1.0"
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "rmk135/Rmk-Framework",
+                "version": "2",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/rmk135/Rmk-Framework",
+                    "reference": "master"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "nusphere/nusoap",
+                "version": "0.9.5",
+                "dist": {
+                    "url": "http://downloads.sourceforge.net/project/nusoap/nusoap/0.9.5/nusoap-0.9.5.zip",
+                    "type": "zip"
+                },
+                "autoload": {
+                    "classmap": [
+                        "lib/class.nusoap_base.php",
+                        "lib/class.soapclient.php",
+                        "lib/class.soap_fault.php",
+                        "lib/class.soap_parser.php",
+                        "lib/class.soap_server.php",
+                        "lib/class.soap_transport_http.php",
+                        "lib/class.soap_val.php",
+                        "lib/class.wsdlcache.php",
+                        "lib/class.wsdl.php",
+                        "lib/class.xmlschema.php",
+                        "lib/nusoapmime.php"
+                        ]
+                }
+            }
+        }
+    ]
+}
+
+
+
+
+
+
+
+
+
+

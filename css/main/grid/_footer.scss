@@ -1,0 +1,30 @@
+$counter-width: 80px;
+$height: 24px;
+
+.footer-title {
+    color: #0274bd;
+}
+
+.grid-footer {
+    font-size: 11px;
+    overflow: hidden;
+    height: 23px;
+    padding: 1px 0;
+    margin-top: 2px;
+    width: 100%;
+    position: relative;
+}
+
+.footer-info {
+    text-align: center;
+    height: $height;
+    line-height: $height;
+    margin-right: $counter-width;
+}
+.footer-counter{
+    width: $counter-width;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: $height;
+}

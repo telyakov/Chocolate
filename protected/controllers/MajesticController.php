@@ -1,0 +1,95 @@
+<?php
+
+class MajesticController extends Controller
+{
+    public function filters()
+    {
+        return [
+            'accessControl',
+            'ajaxOnly -export2Excel, fileGet, test'];
+    }
+
+    public function accessRules()
+    {
+        return [
+            ['allow', 'users' => ['@']],
+            ['deny', 'users' => ['*']]
+        ];
+    }
+
+    public function actionMakeCall($phoneTo){
+        $response = Phone::makeCall($phoneTo);
+        $response->send();
+    }
+
+    public function actionExecute($cache =false, $sql){
+        $response = MajesticModel::execute($cache,$sql);
+        $response->send();
+    }
+
+    public function actionQueueExecute(){
+        $response = MajesticModel::packageExecute();
+        $response->send();
+    }
+
+    public function actionFilterLayout($name, $view, $parentID){
+        $model = Controller::loadForm($view);
+        $collection = $model->getFilterSettingsCollection();
+        $setting = $collection->getByKey($name);
+        $this->renderPartial('//_filters/_fast', [
+            'form' => new ChFilterForm(),
+            'model' => $model,
+            'settings' => $setting,
+            'parentID' =>  $parentID
+        ]);
+
+    }
+
+    public function actionFileGet($fileID){
+        $data = FileModel::getFile($fileID);
+//        header('Content-type: application/octet-stream; charset=windows-1251');
+//        if($name){
+//            //Поддержка браузеров, не понимающих атрибут download
+//            header('Content-Disposition: attachment; filename='. rawurlencode($name) );
+//        }
+        echo $data;
+
+    }
+
+
+    public function actionExport2Excel(){
+
+        $data = json_decode(Yii::app()->request->getParam('data'), true);
+        ExcelModel::export(
+            Controller::loadForm($data['view']),
+            $data['data'],
+            $data['settings']
+        );
+        Yii::app()->end();
+    }
+//    public function actionTest(){
+//        ini_set("soap.wsdl_cache_enabled", 0);
+//        ini_set("soap.wsdl_cache_ttl", 1);
+//            http://93.153.204.246:7001/6543210.asmx?op=FlatsGet
+////        $client = new SoapClient('http://morozova-n/MyApp/ws/WebServiceHOPE?wsdl');
+//        $client = new SoapClient('http://93.153.204.246:7001/6543210.asmx?WSDL',  [
+//            'proxy_host'     => "192.168.0.10",
+//            'proxy_port'     => 3128
+//        ] );
+//        $start = microtime(1);
+//        $data = $client->FileGet([
+//            'securityKey' => 201401,
+//            'id' => 202425,
+//
+//        ]);
+//        $end = microtime(1) - $start;
+////        $data = $client->CompanyDel([
+////            'Kod' => '',
+////            'Name' => 'Поставщик3',
+////            'INN' => '',
+////            'KPP' => ''
+////        ]);
+//        echo 1;
+//    }
+
+}
