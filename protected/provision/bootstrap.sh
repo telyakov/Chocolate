@@ -50,7 +50,7 @@ sudo mv composer.phar /usr/local/bin/composer
 cd /vagrant/protected
 sudo npm install
 cd /vagrant/protected
-composer install
+composer install --no-dev
 cd /vagrant/protected
 sudo grunt bower
 grunt --force
