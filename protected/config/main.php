@@ -29,35 +29,12 @@ return CMap::mergeArray(
         'import' => array(
             'application.models.*',
             'application.components.*',
-            'application.components.FrameWork.DataBase.*',
-            'application.components.ClassModules.*',
             'application.components.Chocolate.Widgets.*',
-            'application.components.Chocolate.Persist.*',
-            'application.vendor.rmk135.Rmk-Framework.library.Collection.*',
-            'application.vendor.richthegeek.phpsass.*',
-            'application.vendor.richthegeek.phpsass.Extensions.Compass.*',
             'editable.*',
         ),
 
         'theme' => 'bootstrap', // requires you to copy the theme under your themes directory
         'components' => array(
-//            'sass' => array(
-//                'class' => 'ext.Sass',
-//
-//                // All parameters below are optional, change them to your needs
-//                'cache' => true,
-//                'debug' => false,
-//
-//                'extensions' => array(
-//                    'Compass' //not included by default
-//                ),
-//                'functions' => array(
-//                    'alias' => 'callable'
-//                ),
-//                'includePaths' => array(//                    dirname(__FILE__) . '/../../css/scss/'
-//                ),
-//                'syntax' => 'scss',
-//            ),
             'user' => array(
                 'class' => 'WebUser',
                 // enable cookie-based authentication

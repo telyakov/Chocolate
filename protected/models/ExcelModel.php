@@ -14,13 +14,11 @@ class ExcelModel
 
     public static function export(GridForm $model, array $data, array $settings)
     {
-        Yii::import('ext.phpexcel.XPHPExcel');
-        $document = XPHPExcel::createPHPExcel();
+        $document = new PHPExcel();
         $document->setActiveSheetIndex(0);
         $title = $model->getDataFormProperties()->getWindowCaption();
         $activeSheet = $document->getActiveSheet();
         $activeSheet->setTitle($title);
-//        $pColumn = 0;
         /**
          * @var $column ColumnProperties
          */
