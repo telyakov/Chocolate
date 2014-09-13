@@ -25,6 +25,16 @@ sudo pecl install SPL_Types
 sudo pecl install Xdebug
 sudo cp /vagrant/protected/provision/php.ini /etc/php.ini
 
+#install memcache
+sudo yum install -y libevent libevent-devel
+cd /usr/local/src
+sudo wget http://memcached.googlecode.com/files/memcached-1.4.15.tar.gz
+sudo tar xvzf memcached-1.4.15.tar.gz
+cd memcached-1.4.15
+sudo ./configure
+sudo make && sudo make install
+sudo yum --enablerepo=remi-php55 install -y php-pecl-memcache
+
 #restart apache
 sudo chkconfig httpd on
 sudo service httpd restart
@@ -54,4 +64,5 @@ composer install --no-dev
 cd /vagrant/protected
 sudo grunt bower
 grunt --force
+
 
