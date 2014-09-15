@@ -255,8 +255,10 @@ var Chocolate = {
             }catch(e){}
 
             try{
-                $panel.find('.editable').each(function(){$(this).editable('destroy')});
-            }catch(e){}
+                $panel.find('.editable').each(function(){$(this).editable('destroy').remove()});
+            }catch(e){
+                console.log(e)
+            }
                 $panel.remove();
             Chocolate.$tabs.tabs("refresh");
             ChObjectStorage.garbageCollection();
