@@ -410,7 +410,7 @@ class ChEditable extends CWidget
             }
         }
         //apply editable
-        $options = json_encode($this->options);
+        $options = CJavaScript::encode($this->options);
         $script .= ".editable($options);";
         $id = $this->htmlOptions['identity'];
         $script = <<<JS
