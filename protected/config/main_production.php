@@ -2,7 +2,7 @@
 return array(
     'params' => array(
 //        'soapService' => 'http://localhost:52282/Directory.asmx?WSDL',
-        'soapSecurityKey' => 'test6543210',
+        'soapSecurityKey' => 'protected_password',
         'soapService' => 'http://93.153.204.246:7001/Directory.asmx?WSDL',
 //        'soapService' => 'http://192.168.0.21:7001/Directory.asmx?WSDL',
 //        'proxy' => [],
