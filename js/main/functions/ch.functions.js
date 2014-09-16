@@ -11,13 +11,6 @@ var chFunctions = {
             })
             .on('keydown', ChocolateEvents.addSignToIframeHandler);
     },
-//    textSaveFunc: function(e, params, name){
-//        var $element = $(e.target);
-//        if($element.attr('data-change')){
-//            var chColumn = new ChGridColumnBody($element);
-//            chColumn.setChangedValue(name, params.newValue);
-//        }
-//    },
     wysiHtmlInit: function ($target, title) {
         $target.editable({
             type: 'wysihtml5',
@@ -127,7 +120,7 @@ var chFunctions = {
         })
     },
     checkBoxInitFunc: function ($context, attribute, allowEdit) {
-        var column = new ChGridColumnBody($context),
+        var column = chApp.getFactory().getChGridColumnBody($context),
             isAllowEdit = chCardFunction._isAllowEdit(column.getDataObj(), allowEdit);
         $context.unbind('click');
         if (isAllowEdit) {
@@ -190,7 +183,7 @@ var chFunctions = {
                                 select_html += node.data.title;
                             }
                         }
-                        var column = new ChGridColumnBody($input);
+                        var column = chApp.getFactory().getChGridColumnBody($input);
                         var name = $input.data().editable.options.name;
                         column.setChangedValue(name, val)
                         $input.attr('data-value', val)
@@ -206,7 +199,7 @@ var chFunctions = {
         return options;
     },
     treeViewInitFunc: function ($context, caption, datakey, allowEdit, isSingle) {
-        var col = new ChGridColumnBody($context);
+        var col = chApp.getFactory().getChGridColumnBody($context);
         if (typeof col.getDataObj() !== 'undefined') {
             $context.html(col.getDataObj()[datakey]);
         }
@@ -226,7 +219,7 @@ var chFunctions = {
 
     },
     selectColumnInitFunc: function ($context, allowEdit) {
-        var column = new ChGridColumnBody($context),
+        var column = chApp.getFactory().getChGridColumnBody($context),
             isAllowEdit = chCardFunction._isAllowEdit(column.getDataObj(), allowEdit);
         if (!isAllowEdit) {
             $context.unbind('click');
@@ -234,11 +227,11 @@ var chFunctions = {
         }
     },
     defaultColumnSaveFunc: function (e, params, name) {
-        var chColumn = new ChGridColumnBody($(e.target));
+        var chColumn = chApp.getFactory().getChGridColumnBody($(e.target));
         chColumn.setChangedValue(name, params.newValue);
     },
     dateColumnInitFunction: function ($context, allowEdit) {
-        var column = new ChGridColumnBody($context),
+        var column = chApp.getFactory().getChGridColumnBody($context),
             isAllowEdit = chCardFunction._isAllowEdit(column.getDataObj(), allowEdit);
         if (!isAllowEdit) {
             $context.unbind('click').unbind('mouseenter');
@@ -246,7 +239,7 @@ var chFunctions = {
         }
     },
     dateColumnSaveFunction: function (e, params, name) {
-        var chColumn = new ChGridColumnBody($(e.target));
+        var chColumn = chApp.getFactory().getChGridColumnBody($(e.target));
         var newVal = params.newValue;
         if (params.newValue) {
             newVal = newVal.format(ChOptions.settings.formatDate);

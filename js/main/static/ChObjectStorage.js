@@ -49,6 +49,14 @@ var ChObjectStorage = {
         return ChObjectStorage.create($elem, 'ChGridForm');
     },
     /**
+     *
+     * @param $el {jQuery}
+     * @returns {ChGridColumnBody}
+     */
+    getChGridColumnBody: function($el){
+        return ChObjectStorage.create($el, 'ChGridColumnBody');
+    },
+    /**
      * @param $elem {jQuery}
      * @returns {ChCardElement}
      */
@@ -91,6 +99,9 @@ var ChObjectStorage = {
     garbageCollection: function () {
         for (var id in this._objectStorage) {
             if (this._objectStorage.hasOwnProperty(id) && !$(Chocolate.idSel(id)).length) {
+                if( typeof this._objectStorage[id].destroy == 'function'){
+                    this._objectStorage[id].destroy();
+                }
                 delete this._objectStorage[id];
                 delete Chocolate.storage.session[id];
             }
