@@ -77,7 +77,7 @@ use \ClassModules\User\User;
     }else{
         $taskUrl = Yii::app()->createUrl('grid/index', ['view' => 'tasks.xml']);
     }
-    if(Yii::app()->controller->action->getId() == 'default'){
+    if(Yii::app()->controller->action->getId() == 'default' && Yii::app()->request->getUserHost() =='localhost'){
 
     Yii::app()->clientScript->registerScript('autoOpen', <<<JS
   $(function(){Chocolate.openForm('$taskUrl');});
