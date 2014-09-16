@@ -41,7 +41,7 @@ chApp.getMessages = function () {
  * @returns {ChObjectStorage}
  */
 chApp.getFactory = function () {
-    return this.options.factory;
+    return this.factory;
 };
 /**
  * @returns {ChResponseStatus}

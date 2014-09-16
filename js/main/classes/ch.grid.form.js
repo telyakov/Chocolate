@@ -26,13 +26,26 @@ function ChGridForm($form) {
     this._parent_pk = null;
     this._is_card_support = null;
     this._$footer = null;
-    this._$th = null;
     this._$thead = null;
     this._type = null;
     this._$save_btn = null;
     this.fmChildGridCollection = new FmChildGridCollection();
     this._chCardsCollection = null;
     this.priorityColorCol = [];
+    this.destroy = function(){
+        delete this.fmChildGridCollection;
+        delete this.ch_form_settings.ch_grid_form;
+        delete this.ch_form_settings;
+        delete this._ch_messages_container;
+        delete this._chCardsCollection;
+        delete this._$fixed_table;
+        delete this._$table;
+        delete this.$form;
+        delete this._$thead;
+        delete this._$save_btn;
+        delete this._$grid_form;
+        delete this._$user_grid;
+    }
 }
 //ChGridForm.TEMPLATE_TD = '<td style class="{class}{class2}"><div class="table-td table-td-3"><a data-value="{value}" data-pk ="{pk}" rel="{rel}" class="editable"></a></div></td>';
 ChGridForm.TEMPLATE_TD = '<td style class="{class}{class2}"><div class="table-td"><a data-value="{value}" data-pk ="{pk}" rel="{rel}" class="editable"></a></div></td>';
@@ -132,10 +145,10 @@ ChGridForm.prototype.getType = function () {
     return this._type;
 };
 ChGridForm.prototype.getTh = function () {
-    if (this._$th == null) {
-        this._$th = this.getThead().children('tr').first().children('th');
-    }
-    return this._$th;
+//    if (this._$th == null) {
+       return this.getThead().children('tr').first().children('th');
+//    }
+//    return this._$th;
 };
 ChGridForm.prototype.hasSettings = function () {
     if ($.isEmptyObject(this.getSettingsObj())) {
@@ -851,7 +864,7 @@ ChGridForm.prototype.initData = function (data, preview, order) {
         $table.bind('sortEnd filterEnd', function(){
           _this.clearSelectedArea();
             $.publish(subscribeName, true);
-        })
+        });
         $.publish(subscribeName, true);
     }
     var recordsMsg = chApp.getMessages().records, conts = Object.keys(data).length;
@@ -862,6 +875,9 @@ ChGridForm.prototype.initData = function (data, preview, order) {
 ChGridForm.prototype.updateData = function (data, preview, order) {
     this.updateStorage(data, preview, order);
     this.initData(data, preview, order);
+    delete data;
+    delete preview;
+    delete order;
 
 };
 ChGridForm.prototype.clearChange = function () {
@@ -896,12 +912,12 @@ ChGridForm.prototype.refresh = function () {
         url: url + '&ParentView=' + parent_view,
         type: "POST",
         data: search_data,
-        success: function (response) {
+        success: function (response, st, xhr) {
+
             var ch_response = new ChSearchResponse(response);
             var type = _this.getType();
             if (ch_response.isSuccess()) {
                 if (type == 'map') {
-
                     var $map = _this.$form.children('section').children('.map');
                     /**
                      * @type {ChMap}
@@ -922,7 +938,7 @@ ChGridForm.prototype.refresh = function () {
                     ch_canvas.refreshData(data, options);
                 }
                 else {
-
+//
                     _this.updateData(ch_response.getData(), ch_response.getPreview(), ch_response.getOrder());
                     _this._clearDeletedObj();
                     _this._clearChangedObj();
@@ -955,6 +971,12 @@ ChGridForm.prototype.refresh = function () {
 
                 }
             }
+            ch_response.destroy();
+            delete ch_response;
+            delete response;
+            delete xhr.responseText;
+            delete xhr;
+            chApp.getFactory().garbageCollection();
         },
         error: function (xhr, status, error) {
             ch_messages_container.sendMessage(xhr.responseText, ChResponseStatus.ERROR)

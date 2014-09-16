@@ -30,5 +30,12 @@ ChResponse.prototype = {
      */
     sendMessage: function (ch_message_container) {
         ch_message_container.sendMessage(this.getStatusMsg(), this.getStatusCode());
+    },
+    destroy: function(){
+        delete this.data['data'];
+        delete this.data['status_code'];
+        delete this.data['status_msg']
+        delete this.data;
+
     }
 }

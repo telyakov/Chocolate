@@ -259,6 +259,18 @@ var Chocolate = {
             }catch(e){
                 console.log(e)
             }
+            try{
+//                $panel.find('.toggle-button').each(function(){$(this).remove()});
+                $panel.find('.menu-button, .tree-button, .tablesorter-filter, .tablesorter-header a, .tablesorter-header div, .form-vertical input').each(function(){$(this).remove()});
+                $panel.find(' .tablesorter-header,.form-vertical ').each(function(){$(this).remove()});
+                $panel.find('.tablesorter').trigger('destroy');
+                $panel.find('.grid-view>table').floatThead('destroy');
+                $panel.find(' .table-bordered').each(function(){$(this).remove()});
+                $panel.find(' .grid-view').each(function(){$(this).remove()});
+            }catch(e){
+                console.log(e)
+            }
+
                 $panel.remove();
             Chocolate.$tabs.tabs("refresh");
             ChObjectStorage.garbageCollection();

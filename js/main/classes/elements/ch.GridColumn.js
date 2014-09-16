@@ -7,7 +7,7 @@ ChGridColumn.createChildGridTabID= function (parent_id, view, parent_view) {
 ChGridColumn.prototype.init = function(e, view, caption, url, editable ){
     editable.disable();
     var factory = chApp.namespace('factory'),
-        column = new ChGridColumnBody(this.$elem),
+        column =ChObjectStorage.create(this.$elem,'ChGridColumnBody'),
         parentID = column.getID(),
         isNew = !$.isNumeric(parentID),
         form = factory.getChGridForm(this.$elem.closest('form')),

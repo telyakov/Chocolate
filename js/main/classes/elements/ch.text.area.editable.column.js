@@ -24,7 +24,7 @@ ChTextColumn.SaveHandler = function (e, params) {
 };
 ChTextColumn.prototype = Object.create(ChEditable.prototype);
 ChTextColumn.prototype.create = function (context, e, allowEdit, name, caption, isMarkupSupport) {
-    var column = new ChGridColumnBody(this.$elem),
+    var column =ChObjectStorage.create(this.$elem,'ChGridColumnBody'),
         isEdit = chCardFunction._isAllowEdit(column.getDataObj(), allowEdit);
     if (!isEdit) {
         $(context).unbind('click');

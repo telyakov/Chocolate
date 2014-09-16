@@ -1108,6 +1108,12 @@
                 if (typeof callback === 'function') {
                     callback(table);
                 }
+                clearInterval(c.widgetOptions.resize_timer);
+                c.headerList = [];
+                c.$headers = [];
+                c.$table = null;
+                c.$tbodies = null;
+                c.headerList = [];
             };
 
             // *** sort functions ***

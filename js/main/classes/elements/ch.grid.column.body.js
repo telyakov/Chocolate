@@ -4,6 +4,10 @@ function ChGridColumnBody($cell) {
     this._$row = null;
     this._id = null;
     this._ch_form = null;
+    this.destroy = function(){
+        delete this._$row;
+        delete this.$cell;
+    }
 }
 ChGridColumnBody.prototype = {
     getID: function () {

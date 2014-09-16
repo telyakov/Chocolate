@@ -58,7 +58,7 @@ var ChocolateEvents = {
             isMarkupSupport = parseInt($this.attr('data-markup'), 10),
             $elem = $(this).prevAll('a'),
             $cell = $elem.parent(),
-            column = new ChGridColumnBody($elem),
+            column = chApp.getFactory().getChGridColumnBody($elem),
             $popupControl = $('<a class="grid-textarea"></a>');
         Chocolate.leaveFocus();
         $popupControl.appendTo($cell.closest('section'));
@@ -150,7 +150,7 @@ var ChocolateEvents = {
             $editable = $(this).find('.editable'),
             options = $editable.data().editable.options,
             view = options.view,
-            column = new ChGridColumnBody($editable),
+            column = chApp.getFactory().getChGridColumnBody($editable),
             form = column.getChForm(),
             parentID = column.getID(),
             isNew = !$.isNumeric(parentID),
@@ -354,7 +354,7 @@ var ChocolateEvents = {
         var factory = chApp.namespace('factory'),
             $cell = $(this),
             form = factory.getChGridForm($cell.closest('form')),
-            column = new ChGridColumnBody($cell);
+            column = chApp.getFactory().getChGridColumnBody($cell);
         form.openCard(column.getID());
     },
     keyActionsFormEvent: function ($context) {
