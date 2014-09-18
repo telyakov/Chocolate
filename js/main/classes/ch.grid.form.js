@@ -803,7 +803,7 @@ ChGridForm.prototype.initData = function (data, preview, order) {
         $html = this.generateRows(data, order);
         var $tbody = $table.find('tbody'), $tr, cacheVisible =[],
             $userGrid = this._getUserGrid(), subscribeName = this.getLayoutSubscribeName();
-
+        $.unsubscribe(subscribeName);
         $.subscribe(subscribeName, function(e, refreshCache){
             var scrollTop =$userGrid.scrollTop();
             if(refreshCache || !$tr){
@@ -850,18 +850,19 @@ ChGridForm.prototype.initData = function (data, preview, order) {
         });
 
         var prevScrollTop =0;
-        $userGrid.on('scroll.chocolate', $.debounce(150, false, function(){
+        $userGrid.unbind('scroll.chocolate').on('scroll.chocolate', $.debounce(150, false, function(){
             var curScrollTop =$(this).scrollTop();
             if(curScrollTop !== prevScrollTop){
                 $.publish(subscribeName, false);
             }
             prevScrollTop = curScrollTop;
         }));
+
         $tbody.html($html);
         ChEditableCallback.fire($table, this.getCallbackID());
         $table.trigger("update");
         var _this = this;
-        $table.bind('sortEnd filterEnd', function(){
+        $table.unbind('sortEnd').unbind('filterEnd').bind('sortEnd filterEnd', function(){
           _this.clearSelectedArea();
             $.publish(subscribeName, true);
         });
@@ -874,7 +875,9 @@ ChGridForm.prototype.initData = function (data, preview, order) {
 };
 ChGridForm.prototype.updateData = function (data, preview, order) {
     this.updateStorage(data, preview, order);
+
     this.initData(data, preview, order);
+
     delete data;
     delete preview;
     delete order;
@@ -913,7 +916,6 @@ ChGridForm.prototype.refresh = function () {
         type: "POST",
         data: search_data,
         success: function (response, st, xhr) {
-
             var ch_response = new ChSearchResponse(response);
             var type = _this.getType();
             if (ch_response.isSuccess()) {
@@ -939,9 +941,11 @@ ChGridForm.prototype.refresh = function () {
                 }
                 else {
 //
+
                     _this.updateData(ch_response.getData(), ch_response.getPreview(), ch_response.getOrder());
                     _this._clearDeletedObj();
                     _this._clearChangedObj();
+
                 }
                 var filterForm = _this.getFilterForm();
                 if (typeof filterForm != 'undefined' && filterForm.$form.length) {
@@ -954,15 +958,17 @@ ChGridForm.prototype.refresh = function () {
                              * @param chFilter {ChFilter}
                              */
                                 function (chFilter) {
-                                $.get('/majestic/filterLayout', {'name': chFilter.getKey(), view: _this.getView(), 'parentID': _this.getParentPK()}).done(function (response) {
+                                $.get('/majestic/filterLayout', {'name': chFilter.getKey(), view: _this.getView(), 'parentID': _this.getParentPK()}).done(function (response,st ,xhr) {
                                     var $filter = $('<li>' + response + '</li>');
                                     var selValues = chFilter.getNamesSelectedValues();
                                     chFilter.$elem.html($filter.html());
                                     selValues.forEach(function (value) {
-//                                    console.log($filter.find('[value="'+value+'"]'))
                                         chFilter.$elem.find('[value="' + value + '"]').prop("checked", true);
                                     })
-//                              chFilter.$elem.replaceWith($filter)
+                                    delete xhr.responseText;
+                                    delete xhr;
+                                    delete response;
+
                                 }).fail(function () {
                                         console.log('error')
                                     })
@@ -977,6 +983,7 @@ ChGridForm.prototype.refresh = function () {
             delete xhr.responseText;
             delete xhr;
             chApp.getFactory().garbageCollection();
+
         },
         error: function (xhr, status, error) {
             ch_messages_container.sendMessage(xhr.responseText, ChResponseStatus.ERROR)
