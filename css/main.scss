@@ -1,6 +1,7 @@
 @import "main/cardGrid";
 @import "main/filtersForm";
 @import "main/grid/footer";
+@import "main/card";
 @font-face {
     font-family: 'prod-icon';
     src: url("../css/fonts/icon.eot");
@@ -504,16 +505,7 @@ Card controls
     overflow-y: auto;
 }
 
-.card-input {
-    overflow: hidden;
-    border: 1px dashed #aaccf6;
-    border-radius: 0;
-    margin-right: 7px;
-    height: auto;
-    position: relative;
-    /*font-family: 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif !important;*/
-    font-size: 12px;
-}
+
 
 .card-input-text {
     height: 70%;
@@ -1402,9 +1394,6 @@ input:focus, textarea:focus, keygen:focus, select:focus {
 
 /* Grid controls */
 
-.not-changed, .card-input-no-edit:not(.card-grid) {
-    background: #f9f9f9;
-}
 
 .editable-inline, .control-group, .editable-inline .editable-input, .chocolate-select, .chocolate-textarea, .input-append {
     width: 100%;

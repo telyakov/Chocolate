@@ -1,0 +1,14 @@
+.card-input {
+    overflow: hidden;
+    border: 1px solid #b5d5fb;
+    border-radius: 0;
+    margin-right: 7px;
+    height: auto;
+    position: relative;
+    background: #FDFDFD;
+    /*font-family: 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif !important;*/
+    font-size: 12px;
+}
+.not-changed, .card-input-no-edit:not(.card-grid) {
+    background: #F6F6F6;
+}
