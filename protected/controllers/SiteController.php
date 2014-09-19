@@ -95,7 +95,7 @@ class SiteController extends Controller
     }
     public function actionLogin($autoLogin = true)
     {
-
+        $autoLogin=false;
         if (Yii::app()->user->isGuest == false) {
             $this->redirect($this->defaultUrl);
         }
@@ -118,6 +118,7 @@ class SiteController extends Controller
 
     protected function domainLogin()
     {
+        return false;
         $headers = apache_request_headers();
 
         if ($headers['Authorization'] == NULL) {
