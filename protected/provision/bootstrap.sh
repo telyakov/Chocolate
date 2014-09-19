@@ -122,6 +122,7 @@ sudo yum install -y nodejs npm
 #Install composer
 curl -sS https://getcomposer.org/installer | /opt/php-5.6.0/bin/php
 sudo mv composer.phar /usr/local/bin/composer
+sudo npm install -g forever
 
 install npm & composer dependencies
 cd /vagrant/protected
@@ -134,7 +135,7 @@ sudo yum install -y ruby
 sudo gem install sass
 #Install dependencies nodejs for grunt
 sudo yum install-y freetype fontconfig
-sudo npm install -g grunt-cli bower phantomjs forever
+sudo npm install -g grunt-cli bower phantomjs
 sudo yum install -y java-1.6.0*
 
 #Initialize project

@@ -1,5 +1,5 @@
 @import "main/cardGrid";
-@import "main/filtersForm";
+@import "main/filters";
 @import "main/grid/footer";
 @import "main/card";
 @font-face {
@@ -1062,29 +1062,7 @@ span.checkbox {
     padding: 4px 4px;
 }
 
-.tree-button {
-    display: inline;
-    border: 1px solid #99bce8;
-    outline: none;
-    /*border-radius: 2px;*/
-    height: 22px;
-    padding: 1px 6px;
-    width: 6px !important;
-    margin-left: 1px;
-    box-sizing: content-box;
-    /*outline: none !important;*/
-    background-image: -webkit-linear-gradient(white 80%, transparent 50%);
-    background-image: -moz-linear-gradient(white 80%, transparent 50%);
-    background-image: -o-linear-gradient(white 80%, transparent 50%);
-    background-image: linear-gradient(white 80%, transparent 50%);
-    background-size: 5px 5px;
-    background-color: #99bce8;
-    &:hover {
-        border: 1px solid #FF8800 !important;
-        background-color: #FF8800;
-        cursor: pointer;
-    }
-}
+
 
 /*select{*/
 /*-moz-appearance: none;*/

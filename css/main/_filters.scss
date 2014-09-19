@@ -1,0 +1,31 @@
+.filter-mock-no-edit {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    top: 0px;
+    z-index: 2;
+}
+
+.filter-item {
+    position: relative;
+    padding-right: 8px;
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.tree-button {
+    display: inline;
+    border: 1px solid #99bce8;
+    outline: none;
+    height: 22px;
+    padding: 1px 6px;
+    width: 6px !important;
+    margin-left: 1px;
+    box-sizing: content-box;
+    background-color: white;
+    &:hover {
+        background-color: orange;
+        cursor: pointer;
+    }
+}
