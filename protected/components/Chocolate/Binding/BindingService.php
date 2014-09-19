@@ -46,8 +46,11 @@ class BindingService extends \CApplicationComponent
     /**
      * Используется I тип, 4) пункт биндинга
      */
-    public function bindProcedureFromData(DataBaseRoutine $procedure, DataBaseParameters $params, $fullRecord = true, DataFormModel $model = null)
+    public function bindProcedureFromData(DataBaseRoutine $procedure, DataBaseParameters $params = null, $fullRecord = true, DataFormModel $model = null)
     {
+        if(!$params){
+            $params = new DataBaseParameters([]);
+        }
         $params->add(new DataBaseParameter(self::USER_ID,\Yii::app()->user->id));
         $sqlParams =  \Yii::app()->erp->getProcedureParameters($procedure);
         $allParams = $this->prepareProcParameters($sqlParams, $params, $fullRecord, $model);

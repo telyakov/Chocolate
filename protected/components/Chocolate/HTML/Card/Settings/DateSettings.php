@@ -1,12 +1,5 @@
-<?php
+<?
 namespace Chocolate\HTML\Card\Settings;
-/**
- * Created by PhpStorm.
- * User: tselishchev
- * Date: 12.11.13
- * Time: 12:44
- */
-
 
 use Chocolate\HTML\Card\Traits\DateInitFunction;
 use Chocolate\HTML\Card\Traits\DefaultHidden;

@@ -1,10 +1,4 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: tselishchev
- * Date: 05.12.13
- * Time: 12:22
- */
+<?
 
 namespace Chocolate\HTML\Card\Settings;
 
@@ -26,13 +20,8 @@ class CheckBoxSettings extends EditableCardElementSettings
             'type' => 'checklist',
             'name' => $name,
             'mode' => 'inline',
-            'options' => [
-                'onblur' => 'submit',
-//                 'toggle' => 'mouseenter',
-            ],
-            'htmlOptions' => [
-                'tabIndex' => $tabIndex
-            ],
+            'options' => ['onblur' => 'submit',],
+            'htmlOptions' => ['tabIndex' => $tabIndex],
             'showbuttons' => false,
             'pk' => ChHtml::ID_KEY,
             'onHidden' => $this->createHiddenFunction(),

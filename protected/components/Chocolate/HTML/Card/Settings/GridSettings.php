@@ -1,11 +1,4 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: tselishchev
- * Date: 12.11.13
- * Time: 12:46
- */
-
+<?
 namespace Chocolate\HTML\Card\Settings;
 
 use Chocolate\HTML\ChHtml;
@@ -22,18 +15,16 @@ class GridSettings extends EditableCardElementSettings
 
     public function getSql(\GridForm $model){
         if(($routine = $this->columnProperties->getReadProc())){
-            $routine  = \Yii::app()->bind->bindProcedureFromModel($routine,$model->getDataFormModel());
+            $routine  = \Yii::app()->bind->bindProcedureFromModel($routine, $model->getDataFormModel());
         }else{
-            $routine = \Yii::app()->bind->bindProcedureFromData($model->getDataFormProperties()->getReadProc(),New \FrameWork\DataBase\DataBaseParameters([]),false, $model->getDataFormModel());
+            $routine = \Yii::app()->bind->bindProcedureFromData($model->getDataFormProperties()->getReadProc(), false, $model->getDataFormModel());
         }
         return addslashes($routine);
     }
 
     public function render($pk, $view, $formID, $tabIndex)
     {
-//        return '';
         $currentView = $this->columnProperties->getViewName();
-
         if (!\GridForm::isAttachment($currentView)) {
         $model = \Controller::loadForm($currentView, $view, ChHtml::ID_KEY);
             if ($this->columnProperties->getEditBehavior() == 'showjournal') {
