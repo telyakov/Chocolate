@@ -25,7 +25,7 @@
     box-sizing: content-box;
     background-color: white;
     &:hover {
-        background-color: orange;
+        border-color: orange;
         cursor: pointer;
     }
 }
