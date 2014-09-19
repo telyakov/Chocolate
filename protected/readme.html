@@ -38,8 +38,7 @@
 <ol>
     <li>В биосе включить поддержку <b>VT-X</b></li>
     <li>Установить виртуал box и vagrant</li>
-    <li>Скачать <a href="http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20131103.box">box</a>
-        и выполнить <b>http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20131103.box</b>
+    <li>Скачать <a href="https://f0fff3908f081cb6461b407be80daf97f07ac418.googledrive.com/host/0BwtuV7VyVTSkUG1PM3pCeDJ4dVE/centos7.box">box</a>
     </li>
     <li>Выполнить в папке <b>protected</b> с правами адмнистратора команду <b>vagrant
         up</b>. Первый раз запускается долго
@@ -61,12 +60,13 @@
     <li>Установить <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a></li>
     <li>Установить <a
             href="https://docs.vagrantup.com/v2/installation/index.html">Vagrant</a></li>
+    <li><b>vagrant plugin install vagrant-vbguest</b></li>
     <li>Запустить консоль под админом и выполнить <b>fsutil behavior set
         SymlinkEvaluation L2L:1 R2R:1 L2R:1 R2L:1</b>. И перезапустить комп.
     </li>
     <li>
         c \\sqlsrv\Chocolate скачать box для Vagrant и добавить с помощью комманды <b>vagrant
-        box add centos6.4 file:///path-to-box</b>
+        box add centos7 file:///path-to-box</b>
     </li>
     <li>Установить <a href="https://cygwin.com/install.html">cygwin</a>. При установке
         выбрать модули rsync
@@ -89,7 +89,7 @@
     </li>
 </ol>
 <section class="section">
-    На выходе получаем установленный centos 6.4 с <b>apache, php, ruby, java, nodejs,
+    На выходе получаем установленный centos 7 с <b>apache, php, ruby, java, nodejs,
     composer, grunt, git, vim</b>
 </section>
 

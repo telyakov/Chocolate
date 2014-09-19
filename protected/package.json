@@ -3,6 +3,11 @@
     "author": "tselishev.semen",
     "name": "Chocolate",
     "version": "0.0.2",
+    "dependencies": {
+        "express": "latest",
+        "socket.io": "1.1.0",
+        "soap": "latest"
+    },
     "devDependencies": {
         "grunt": "^0.4.5",
         "grunt-cli": ">= 0.1.6",

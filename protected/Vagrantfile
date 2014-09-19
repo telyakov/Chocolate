@@ -1,9 +1,10 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  #http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20131103.box
-  config.vm.box = "centos6.4"
-  config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.box = "centos7"
+  config.vm.network "forwarded_port", guest: 80, host: 8000
+  config.vm.network "forwarded_port", guest: 3000, host: 3000
+  #config.vm.network "private_network", ip: "192.168.50.4"
   config.vm.provision "shell", :path => "provision/bootstrap.sh"
   #config.vm.synced_folder "../.", "/vagrant", type: "rsync"
   config.vm.synced_folder "../.", "/vagrant"
