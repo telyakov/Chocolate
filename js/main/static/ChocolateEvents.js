@@ -96,8 +96,13 @@ var ChocolateEvents = {
             $textArea.attr('readonly', true);
         } else if (isMarkupSupport) {
             var editor = new wysihtml5.Editor($textArea.get(0)), eventData = {};
-            if (name == 'commentforreport' && Chocolate.user.getName() == 'Игнатьев Дмитрий Иванович') {
-                eventData = {editor: $textArea.data("wysihtml5").editor};
+            if (name == 'commentforreport') {
+                if (Chocolate.user.getName() == 'Игнатьев Дмитрий Иванович'){
+                    eventData = {editor: $textArea.data("wysihtml5").editor, red:true};
+                }else{
+                    eventData = {editor: $textArea.data("wysihtml5").editor, red:false};
+
+                }
             }
             editor.on('load', function () {
                 $textArea.siblings('iframe').eq(1).contents().find('body')
@@ -576,11 +581,19 @@ var ChocolateEvents = {
      * @returns {boolean}
      */
     addSignToIframeHandler: function (e) {
+        console.log(e)
         if (e.data && e.data.editor) {
             var editor = e.data.editor;
-            if (editor.toolbar.commandMapping['foreColor:red'].state === false) {
-                editor.composer.commands.exec("foreColor", 'red');
+            if(e.data.red){
+                if (editor.toolbar.commandMapping['foreColor:red'].state === false) {
+                    editor.composer.commands.exec("foreColor", 'red');
+                }
+            }else{
+                if (editor.toolbar.commandMapping['foreColor:red'].state && editor.toolbar.commandMapping['foreColor:silver'].state === false) {
+                    editor.composer.commands.exec("foreColor", 'silver');
+                }
             }
+
         }
         var moduleKey = chApp.namespace('events.KEY'),
             moduleMain = chApp.namespace('main');
