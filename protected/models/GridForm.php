@@ -377,8 +377,7 @@ class GridForm extends CFormModel
                         ], true, true)
                 );
             } else {
-                //TODO: скорее всего не работает
-                $response->setData(Yii::app()->controller->renderPartial('//grid/index',
+                $response->setData(Yii::app()->controller->renderPartial('//grid/grid',
                         [
                             'model' => $this,
                             'parentViewID' => $parentViewID,

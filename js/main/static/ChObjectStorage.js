@@ -43,6 +43,13 @@ var ChObjectStorage = {
     },
     /**
      * @param $elem {jQuery}
+     * @returns {ChFilterForm}
+     */
+    getChFilterForm: function ($elem) {
+        return ChObjectStorage.create($elem, 'ChFilterForm');
+    },
+    /**
+     * @param $elem {jQuery}
      * @returns {ChGridForm}
      */
     getChGridForm: function ($elem) {

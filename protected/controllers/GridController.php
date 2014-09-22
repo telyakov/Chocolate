@@ -56,7 +56,7 @@ class GridController extends Controller
     {
         $ParentID = json_decode($jsonFilters, true)['filters']['ParentID'];
         $model = Controller::loadForm($this->view,$ParentView, $ParentID);
-        $model->attributes = array('filters' => array('parentid' => $ParentID));
+        $model->attributes = ['filters' => ['parentid' => $ParentID]];
         $response = $model->getGridResponse($parentViewID);
         $response->send();
     }

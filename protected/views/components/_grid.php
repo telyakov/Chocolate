@@ -12,13 +12,13 @@ $recordet = $model->loadData();
 $this->widget('Chocolate.Widgets.ChGridView', [
     'itemsCssClass' => 'table-bordered items',
     'summaryText' => '',
-    'id' => uniqid('c'),
+    'id' => $model->getParentView()? \Chocolate\HTML\ChHtml::generateUniqueID('c'): uniqid('c'),
     'selectableRows' => 0,
     'dataProvider' => new CArrayDataProvider([]),
     'columns' => $model->getColumns(),
     'htmlOptions' => [
         'data-id' => 'user-grid',
-        'id' => uniqid('g'),
+        'id' => $model->getParentView() ? \Chocolate\HTML\ChHtml::generateUniqueID('g') : uniqid('g'),
     ]
 ]);
 //$end = microtime(1) - $start;

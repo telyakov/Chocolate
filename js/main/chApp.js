@@ -61,3 +61,10 @@ chApp.getBindService = function(){
 chApp.getOptions = function(){
    return this.options;
 };
+
+/**
+ * @returns {ChocolateDraw}
+ */
+chApp.getDraw = function(){
+    return ChocolateDraw;
+}

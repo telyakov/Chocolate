@@ -17,7 +17,7 @@ class GridSettings extends EditableCardElementSettings
         if(($routine = $this->columnProperties->getReadProc())){
             $routine  = \Yii::app()->bind->bindProcedureFromModel($routine, $model->getDataFormModel());
         }else{
-            $routine = \Yii::app()->bind->bindProcedureFromData($model->getDataFormProperties()->getReadProc(), false, $model->getDataFormModel());
+            $routine = \Yii::app()->bind->bindProcedureFromData($model->getDataFormProperties()->getReadProc(), null,false, $model->getDataFormModel());
         }
         return addslashes($routine);
     }

@@ -13,7 +13,7 @@
         'model' => $model,
         'htmlOptions' => [
             'data-id' => 'filter-form',
-            'id' => uniqid(),
+            'id' => $model->getParentView()?\Chocolate\HTML\ChHtml::generateUniqueID('filter') : uniqid('filter'),
         ]
     ]); ?>
 

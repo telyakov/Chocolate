@@ -736,7 +736,10 @@ ChGridForm.prototype.validate = function (data) {
  */
 ChGridForm.prototype.getFilterForm = function () {
     if (this._ch_filter_form == null) {
-        this._ch_filter_form = ChObjectStorage.create(this.getGridForm().closest('div').find('section[data-id=filters]').find('form'), 'ChFilterForm');
+        var $form = this.getGridForm().closest('div').find('section[data-id=filters]').find('form');
+        if($form.length){
+            this._ch_filter_form = chApp.getFactory().getChFilterForm($form);
+        }
     }
     return this._ch_filter_form;
 };
@@ -948,7 +951,7 @@ ChGridForm.prototype.refresh = function () {
 
                 }
                 var filterForm = _this.getFilterForm();
-                if (typeof filterForm != 'undefined' && filterForm.$form.length) {
+                if (filterForm && typeof filterForm != 'undefined' && filterForm.$form.length) {
 
                     var filters = filterForm.getAutoRefreshFiltersCol();
                     if (filters.length) {

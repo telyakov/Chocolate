@@ -2,7 +2,7 @@ function ChGridColumn($elem ){
     this.$elem = $elem;
 }
 ChGridColumn.createChildGridTabID= function (parent_id, view, parent_view) {
-    return parent_id + "_" + parent_view.replace('.', '_').replace('/', '_') + '_' + view.replace('.', '_').replace('/', '_');
+    return parent_id + "_" + parent_view.replace('.', '_').replace('/', '_') + '_' + view.replace('.', '_').replace('/', '_').replace('\\', '_');
 };
 ChGridColumn.prototype.init = function(e, view, caption, url, editable ){
     editable.disable();
@@ -16,7 +16,6 @@ ChGridColumn.prototype.init = function(e, view, caption, url, editable ){
         parent_view = form.getView(),
         tab_id = this.createChildGridTabID(parentID, view, parent_view),
         jTabs = Chocolate.$tabs;
-    console.log(view, caption, url, editable)
     this.$elem.parents("td").on("click", function(){
         console.log('click')
         var template = form.getFmChildGridCollection().getCardTemplate(view, parent_view, isNew);

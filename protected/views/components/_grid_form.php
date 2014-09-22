@@ -5,7 +5,7 @@
  * @var $this Controller
  */
 
-$formID = uniqid('f');
+$formID = $model->getParentView() ?\Chocolate\HTML\ChHtml::generateUniqueID('ff'): uniqid('ff');
 
 $view = $model->getView();
 $form = $this->beginWidget('CActiveForm', [
@@ -14,9 +14,7 @@ $form = $this->beginWidget('CActiveForm', [
         'data-id' => $view,
         'id' => $formID,
         'data-parent-id' => isset($parentViewID) ? $parentViewID : null,
-//        'data-refresh-url' => Yii::app()->createUrl('grid/search', ['view' => $view]),
         'data-ajax-add' => $model->isSupportCreateEmpty(),
-//        'data-save' => Yii::app()->createUrl('grid/save', ['view' => $view]),
         'data-tab-caption' => $model->getCardCollection()->getCaption(),
         'data-parent-pk' => $model->getParentID(),
         'data-card-support' => $model->isCardAllow()
