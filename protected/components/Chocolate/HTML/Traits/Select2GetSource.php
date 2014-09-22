@@ -27,7 +27,7 @@ trait Select2GetSource {
                         $result[] = [
                             'text' => $nameList[$i],
                             'id' => $idList[$i],
-                            'desc' => isset($descList[$i])? $descList[$i]: ''
+                            'description' => isset($descList[$i])? $descList[$i]: ''
                         ];
                         ++$i;
                     }
