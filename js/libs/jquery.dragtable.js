@@ -79,21 +79,21 @@
          *
          */
         _mousemoveHandler: function (e, elementOffsetTop,$handle) {
-            if($(e.target).attr('data-id') == ChOptions.keys.controlColumn){
-                return false;
-            }
             if(!e.pageX &&  e.originalEvent.touches){
                 e.pageX = e.originalEvent.touches[0].pageX;
             }
-
+            if($(e.target).attr('data-id') ==ChOptions.keys.controlColumn){
+                return false
+            }
             //call this first, catch any drag display issues
             this._start(e);
+            var offsetLeft = $(e.target).closest('form').offset().left;
             var self = this,
                 o = self.options,
                 prevMouseX = e.pageX,
-                offsetParent = $(e.target).parent().offset().left,
                 dragDisplayWidth = self.dragDisplay.outerWidth(),
                 halfDragDisplayWidth = dragDisplayWidth / 2,
+                appendTargetOP = o.appendTarget.offsetParent()[0],
                 scroll = o.scroll,
             //get the col count, used to contain col swap
                 colCount = self.element[ 0 ]
@@ -103,6 +103,9 @@
                     .length - 1;
 
             $(document).bind('mousemove.' + self.widgetEventPrefix +' touchmove', function (e) {
+                if(!e.pageX &&  e.originalEvent.touches){
+                    e.pageX = e.originalEvent.touches[0].pageX;
+                }
                 if(self.is_drag_enabled == false){
                     self.getCol($handle.index())
                         .attr('tabindex', -1)
@@ -110,34 +113,33 @@
                         .disableSelection()
                         .css({
                             top: elementOffsetTop,
-                            left: ( self.currentColumnCollectionOffset.left + o.appendTarget[0].scrollLeft )
+
+                            left: e.pageX
                         })
                         .appendTo(o.appendTarget)
                     self.is_drag_enabled = true;
                 }
-                if(!e.pageX &&  e.originalEvent.touches){
-                    e.pageX = e.originalEvent.touches[0].pageX;
-                }
+
                 var columnPos = self._setCurrentColumnCollectionOffset(),
                     mouseXDiff = e.pageX - prevMouseX,
                     appendTarget = o.appendTarget[0],
-                    left = ( parseInt(self.dragDisplay[0].style.left) + mouseXDiff  - offsetParent);
-                   self.dragDisplay.css('left', e.pageX);
+                    left = ( parseInt(self.dragDisplay[0].style.left) + mouseXDiff  );
+
+                self.dragDisplay.css('left', left)
 
                 /*
                  * when moving left and e.pageX and prevMouseX are the same it will trigger right when moving left
                  *
                  * it should only swap cols when the col dragging is half over the prev/next col
                  */
-                var threshold, scrollLeft;
+                left = left - offsetLeft;
                 if (e.pageX < prevMouseX) {
                     //move left
-                    threshold = columnPos.left - halfDragDisplayWidth;
-
+                    var threshold = columnPos.left - halfDragDisplayWidth;
 
                     //scroll left
                     if (left < ( appendTarget.clientWidth - dragDisplayWidth ) && scroll == true) {
-                        scrollLeft = appendTarget.scrollLeft + mouseXDiff;
+                        var scrollLeft = appendTarget.scrollLeft + mouseXDiff
                         /*
                          * firefox does scroll the body with target being body but chome does
                          */
@@ -146,7 +148,10 @@
                         } else {
                             appendTarget.scrollLeft = scrollLeft;
                         }
+
                     }
+
+
                     if (left < threshold) {
                         if(self.start_index == null){
                             self.start_index = self.startIndex;
@@ -159,11 +164,11 @@
                 } else {
                     //move right
 
-                    threshold = columnPos.left + halfDragDisplayWidth;
+                    var threshold = columnPos.left + halfDragDisplayWidth;
 
                     //scroll right
                     if (left > (appendTarget.clientWidth - dragDisplayWidth ) && scroll == true) {
-                        scrollLeft = appendTarget.scrollLeft + mouseXDiff;
+                        var scrollLeft = appendTarget.scrollLeft + mouseXDiff
                         /*
                          * firefox does scroll the body with target being body but chome does
                          */
