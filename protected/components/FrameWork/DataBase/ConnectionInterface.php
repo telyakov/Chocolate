@@ -72,5 +72,5 @@ interface ConnectionInterface {
      */
     function attachmentIns(DataBaseRoutine $sql, $fileData, $userID = null);
 
-    function execMultiply(\DataBaseRoutines $routines);
+    function execMultiply(DataBaseRoutines $routines);
 } 

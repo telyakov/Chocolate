@@ -6,6 +6,7 @@ namespace Chocolate\WebService;
 use Chocolate\Exceptions\ConnException;
 use FrameWork\DataBase\ConnectionInterface;
 use FrameWork\DataBase\DataBaseRoutine;
+use FrameWork\DataBase\DataBaseRoutines;
 use FrameWork\DataBase\Recordset;
 use FrameWork\DataBase\RecordsetRow;
 
@@ -155,7 +156,7 @@ class WebService extends \SoapClient implements ConnectionInterface
         return $fileData;
     }
 
-    function execMultiply(\DataBaseRoutines $routines)
+    function execMultiply(DataBaseRoutines $routines)
     {
         try {
 

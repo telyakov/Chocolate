@@ -36,7 +36,7 @@ use FrameWork\DataForm\DataFormModel\DataFormModel;
             <div class="fileupload-buttonbar">
                 <menu class="menu" type="toolbar">
                     <span class="fileinput-button menu-button active">
-                        <span class="fa-plus-circle"></span>
+                       <span class="menu-border-green"></span>
                          <span> Вложить</span>
                         <?
                         echo CHtml::fileField($name, $this->value, ['id' => ChHtml::generateUniqueID('ff')]);

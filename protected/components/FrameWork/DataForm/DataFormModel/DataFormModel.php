@@ -14,6 +14,7 @@ use FrameWork\DataBase\DataBaseParameters;
 use FrameWork\DataBase\DataBaseRoutine;
 use FrameWork\DataBase\RecordsetRow;
 use GridForm;
+use FrameWork\DataBase\DataBaseRoutines;
 
 class DataFormModel
 {
@@ -89,7 +90,7 @@ class DataFormModel
             $loginRoutine = new DataBaseRoutine('dbo.uspHostUserLogin',
                 new DataBaseParameters(['userid' =>\Yii::app()->getUser()->id])
             );
-            $routines = new \DataBaseRoutines();
+            $routines = new DataBaseRoutines();
 
             $routines->enqueue($loginRoutine);
             $routines = $this->setRemovedRoutines($removedRows, $routines);
@@ -103,7 +104,7 @@ class DataFormModel
         }
     }
 
-    private function setRemovedRoutines(\CStack $removedRows, \DataBaseRoutines $routines)
+    private function setRemovedRoutines(\CStack $removedRows, DataBaseRoutines $routines)
     {
         if ($removedRows->getCount()) {
             if ($this->_dataFormProperties->getDeleteProc()) {
@@ -123,7 +124,7 @@ class DataFormModel
         return $routines;
     }
 
-    private function setChangedRoutines(array $changedData = null, \DataBaseRoutines $routines)
+    private function setChangedRoutines(array $changedData = null, DataBaseRoutines $routines)
     {
         if (!empty($changedData)) {
             foreach ($changedData as $row) {

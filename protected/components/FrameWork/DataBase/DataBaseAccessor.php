@@ -6,6 +6,7 @@ namespace FrameWork\DataBase;
 
 use Chocolate\Exceptions\ConnException;
 use Chocolate\Exceptions\DataBaseException;
+use FrameWork\DataBase\DataBaseRoutines;
 use Chocolate\WebService\WebService;
 
 class DataBaseAccessor extends \CApplicationComponent
@@ -106,7 +107,7 @@ class DataBaseAccessor extends \CApplicationComponent
         }
     }
 
-    public function execMultiple(\DataBaseRoutines $routines)
+    public function execMultiple(DataBaseRoutines $routines)
     {
         try {
             $result = $this->conn->execMultiply($routines);

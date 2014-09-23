@@ -1,4 +1,6 @@
 <?php
+namespace FrameWork\DataBase;
+
 /**
  * Created by JetBrains PhpStorm.
  * User: tselishchev
@@ -6,9 +8,9 @@
  * Time: 15:34
  * To change this template use File | Settings | File Templates.
  */
-use \FrameWork\DataBase\DataBaseRoutine;
+//use \FrameWork\DataBase\DataBaseRoutine;
 
-class DataBaseRoutines extends SplQueue{
+class DataBaseRoutines extends \SplQueue{
     public function enqueue(DataBaseRoutine $routine)
     {
         parent::enqueue($routine);
