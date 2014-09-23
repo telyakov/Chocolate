@@ -150,7 +150,7 @@ JS
     <tr class="template-upload fade" >
          <td class="attachment-grid-menu"><?php ChControlsColumn::renderCardButton() ?></td>
         <td>
-            <div class="table-td">
+            <div class="table-td attachment-new-file">
                 <span>{%=file.name%}</span>
             </div>
         </td>
