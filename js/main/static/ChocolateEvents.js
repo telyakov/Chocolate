@@ -420,6 +420,7 @@ var ChocolateEvents = {
                         $nextRow = $activeRow.prev('tr');
                     }
                     if ($nextRow.length) {
+                        form.setCorrectScroll($nextRow);
                         form.selectRow($nextRow, true, false);
                     }
                 } else if (~[keys.UP, keys.DOWN].indexOf(keyCode)) {
@@ -430,14 +431,7 @@ var ChocolateEvents = {
                         $nextRow = $activeRow.next('tr');
                     }
                     if ($nextRow.length) {
-                        var $userGrid = form._getUserGrid(),
-                            leftBound = $userGrid.find('thead').height(),
-                            rightBound = $userGrid.height() - leftBound,
-                            rowTopOffset = $nextRow.offset().top - $userGrid.offset().top;
-                        if (rowTopOffset < leftBound || rowTopOffset > rightBound) {
-                            $userGrid.scrollTop($userGrid.scrollTop() + rowTopOffset - rightBound);
-                        }
-                        $.publish(form.getLayoutSubscribeName(), false);
+                        form.setCorrectScroll($nextRow);
                         form.selectRow($nextRow, false, false);
                     }
                 }

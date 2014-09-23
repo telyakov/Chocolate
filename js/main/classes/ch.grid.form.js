@@ -603,6 +603,16 @@ ChGridForm.prototype.getDefaultObj = function () {
 ChGridForm.prototype._resetErrors = function () {
     this.$form.find('td.grid-error').removeClass('grid-error');
 };
+ChGridForm.prototype.setCorrectScroll = function($row){
+    var $userGrid = this._getUserGrid(),
+        leftBound = $userGrid.find('thead').height(),
+        rightBound = $userGrid.height() - leftBound,
+        rowTopOffset = $row.offset().top - $userGrid.offset().top;
+    if (rowTopOffset < leftBound || rowTopOffset > rightBound) {
+        $userGrid.scrollTop($userGrid.scrollTop() + rowTopOffset - rightBound);
+    }
+    $.publish(this.getLayoutSubscribeName(), false);
+};
 ChGridForm.prototype.save = function (refresh) {
     this._resetErrors();
     var user_grid_id = this.getUserGridID(),
@@ -672,7 +682,7 @@ ChGridForm.prototype.save = function (refresh) {
                     })
                     .fail(function (response) {
                         ch_messages_container.sendMessage('Возникла непредвиденная ошибка при сохраненнии сетки.', ChResponseStatus.ERROR);
-                    })
+                    });
                 return [];
             } else {
                 for (var pk_key in errors) {
