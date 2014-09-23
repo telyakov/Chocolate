@@ -17,7 +17,7 @@ return CMap::mergeArray(
     array(
         'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
 
-        'name' => 'Erp',
+        'name' => 'Шоколад',
         'sourceLanguage' => 'ru',
         // preloading 'log' component
         'preload' => array(
