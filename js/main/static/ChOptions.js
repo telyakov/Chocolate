@@ -35,7 +35,8 @@ var ChOptions = {
         tabMenuClass: 'ui-tabs-nav',
         staticCardElement: 'card-static',
         ipLink: 'fm-iplink',
-        notChanged: 'not-changed'
+        notChanged: 'not-changed',
+        menuButtonSelected: 'menu-button-selected'
     },
     urls:{
         addRow: '/grid/insertRow',

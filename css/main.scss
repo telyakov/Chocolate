@@ -3,6 +3,7 @@
 @import "main/grid/footer";
 @import "main/card";
 @import "main/attachment";
+@import "main/menu";
 @font-face {
     font-family: 'prod-icon';
     src: url("../css/fonts/icon.eot");
@@ -1261,48 +1262,7 @@ input:focus, textarea:focus, keygen:focus, select:focus {
 /*margin-left: 95px;*/
 /*}*/
 
-.menu-button {
-    text-align: center;
-    display: inline-block;
-    padding: 0;
-    border: 1px solid #D0DBE3;
-    font-size: 12px !important;
-    height: 19px;
-    width: 95px;
-    background: transparent;
-    line-height: 18px;
-    top: 50% !important;
-    margin-top: -23px;
-    position: relative;
-    box-sizing: content-box;
-    float: none !important;
-    vertical-align: middle;
-    cursor: default;
-    color: #8c8c8c;
-    opacity: 0.5;
-    outline: none;
-    &:focus {
-        text-align: center;
-        display: inline-block;
-        padding: 0;
-        border: 1px solid #D0DBE3;
-        font-size: 12px !important;
-        height: 19px;
-        width: 95px;
-        background: transparent;
-        line-height: 18px;
-        top: 50% !important;
-        margin-top: -23px;
-        position: relative;
-        box-sizing: content-box;
-        float: none !important;
-        vertical-align: middle;
-        cursor: default;
-        color: #8c8c8c;
-        opacity: 0.5;
-        outline: none;
-    }
-}
+
 
 /*.menu-button-add{*/
 /*color:rgb(29, 151, 83)!important;*/
@@ -1312,14 +1272,7 @@ input:focus, textarea:focus, keygen:focus, select:focus {
     width: 25px !important;
 }
 
-.menu-button.active {
-    color: #0274bd;
-    opacity: 1;
-    &:hover {
-        border-color: #81a4d0;
-        background-color: #dbeeff;
-    }
-}
+
 
 .messages-container {
     overflow: hidden;

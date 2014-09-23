@@ -1,4 +1,11 @@
 var chFunctions = {
+    systemColsInit: function(sysColsID){
+        var $btn = $('#' + sysColsID),
+            form = chApp.getFactory().getChGridForm($btn.closest('form'));
+        if(!form.ch_form_settings.isSystemVisibleMode()){
+            $btn.addClass(chApp.getOptions().classes.menuButtonSelected);
+        }
+    },
     textInitFunc: function ($context, e, allowEdit, columnName, caption, isMarkupSupport, $element) {
         (new ChTextColumn($element)).create($context, e, allowEdit, columnName, caption, isMarkupSupport);
     },

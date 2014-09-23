@@ -9,7 +9,6 @@ use Chocolate\HTML\ChHtml;
     <?
     if ($model->isAllowCreate()):
         echo CHtml::htmlButton(
-//            '<span class="fa-plus-circle"></span><span>Создать</span>',
             '<span class="menu-border-green"></span><span>Создать</span>',
             [
                 'class' => 'active menu-button menu-button-add',
@@ -21,7 +20,6 @@ use Chocolate\HTML\ChHtml;
     if ($model->isAllowSave()):
         echo CHtml::htmlButton(
             '<span>Сохранить</span>',
-//            '<span class="fa-save"></span><span>Сохранить</span>',
             [
                 'class' => 'menu-button menu-button-save',
                 'title' => 'Сохранить',
@@ -32,7 +30,6 @@ use Chocolate\HTML\ChHtml;
     if ($model->isAllowRefresh()) :
         echo CHtml::htmlButton(
             '<span>Обновить</span>',
-//            '<span class="fa-refresh"></span><span>Обновить</span>',
             [
                 'class' => 'active menu-button menu-button-refresh',
                 'title' => 'Обновить',
@@ -73,14 +70,19 @@ JS
     );
 
     if ($model->isAllowAudit()) {
-
+        $sysColsID = ChHtml::generateUniqueID('us');
         echo CHtml::htmlButton(
             '<span class="fa-user"></span>',
             [
                 'class' => 'active menu-button menu-button-toggle small-button',
                 'title' => 'Показать системные поля',
+                'id' => $sysColsID
             ]
         );
+        Yii::app()->clientScript->registerScript($sysColsID, <<<JS
+    chFunctions.systemColsInit('$sysColsID');
+JS
+            , CClientScript::POS_LOAD);
     }
 
     $actionID = ChHtml::generateUniqueID('actions');

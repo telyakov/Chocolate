@@ -1,0 +1,53 @@
+.menu-button-selected{
+    border-color: #81a4d0!important;
+    background-color: #dbeeff!important;
+}
+.menu-button.active {
+    color: #0274bd;
+    opacity: 1;
+    &:hover {
+        @extend .menu-button-selected
+    }
+}
+.menu-button {
+    text-align: center;
+    display: inline-block;
+    padding: 0;
+    border: 1px solid #D0DBE3;
+    font-size: 12px !important;
+    height: 19px;
+    width: 95px;
+    background: transparent;
+    line-height: 18px;
+    top: 50% !important;
+    margin-top: -23px;
+    position: relative;
+    box-sizing: content-box;
+    float: none !important;
+    vertical-align: middle;
+    cursor: default;
+    color: #8c8c8c;
+    opacity: 0.5;
+    outline: none;
+    &:focus {
+        text-align: center;
+        display: inline-block;
+        padding: 0;
+//        border: 1px solid #D0DBE3;
+        font-size: 12px !important;
+        height: 19px;
+        width: 95px;
+        background: transparent;
+        line-height: 18px;
+        top: 50% !important;
+        margin-top: -23px;
+        position: relative;
+        box-sizing: content-box;
+        float: none !important;
+        vertical-align: middle;
+        cursor: default;
+//        color: #8c8c8c;
+//        opacity: 0.5;
+        outline: none;
+    }
+}

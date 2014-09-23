@@ -1316,6 +1316,7 @@ ChGridForm.prototype.toggleSystemCols = function () {
             return $.inArray($(this).attr('data-id'), ChOptions.settings.systemCols) !== -1;
         });
     this.toggleColls(isHidden, $th);
+    this.$form.find('.menu-button-toggle').toggleClass(chApp.getOptions().classes.menuButtonSelected)
     this.ch_form_settings.setSystemVisibleMode(!isHidden);
     return this;
 };
