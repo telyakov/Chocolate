@@ -1729,7 +1729,7 @@ noindex:-o-prefocus, .grid-menu {
 }
 
 .tablesorter {
-    .attachment-grid-menu, .tablesorter-filter-row td:first-of-type {
+    .attachment-grid-menu td:first-of-type, .tablesorter-filter-row td:first-of-type {
         border: 1px solid #eeeeee !important;
     }
 }

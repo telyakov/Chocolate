@@ -937,17 +937,15 @@ ChGridForm.prototype.refresh = function () {
                      */
                     var ch_canvas = ChObjectStorage.create($canvas, 'ChCanvas');
                     var data = ch_response.getData();
-//                            console.log(data)
                     _this.updateStorage(data, ch_response.getPreview());
                     var options = new ChCanvasOptions();
                     ch_canvas.refreshData(data, options);
                 }
                 else {
-//
-
                     _this.updateData(ch_response.getData(), ch_response.getPreview(), ch_response.getOrder());
                     _this._clearDeletedObj();
                     _this._clearChangedObj();
+                    _this.clearSelectedArea();
 
                 }
                 var filterForm = _this.getFilterForm();
