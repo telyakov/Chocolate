@@ -150,7 +150,7 @@ class ChCard extends CWidget
             'data-view-id' => $this->viewID
         ]) ;
         echo CHtml::button('Сохранить', ['class' => 'card-save', 'data-id' => 'card-save',]);
-        echo CHtml::button('Отмена', ['class' => 'card-cancel', 'data-id' => 'card-cancel',]);
+        echo CHtml::button('Отменить', ['class' => 'card-cancel', 'data-id' => 'card-cancel',]);
         echo '</div>';
     }
 

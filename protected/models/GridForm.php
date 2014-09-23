@@ -77,7 +77,8 @@ class GridForm extends CFormModel
         return $this->getDataFormProperties()->getCreateEmptyProc() ? true : false;
     }
 
-    public function isAllowAudit(){
+    public function isAllowAudit()
+    {
         return $this->dataFormProperties->isAllowAudit();
     }
 
@@ -249,7 +250,7 @@ class GridForm extends CFormModel
             $response->setData($row->data);
         } catch (Exception $e) {
             $response->setStatus('Не удалось добавить новую строку.', Response::ERROR);
-        }finally{
+        } finally {
             return $response;
         }
     }
@@ -265,17 +266,21 @@ class GridForm extends CFormModel
         return $this->cardCollection;
     }
 
-    public function cardCollectionToJs(){
+    public function cardCollectionToJs()
+    {
         return json_encode($this->cardCollection->toJs());
     }
+
     public function getDataFormModel()
     {
         return $this->dataFormModel;
     }
 
-    public static function isAttachment($view){
-        return stripos($view,Attachments::VIEW)!==false;
+    public static function isAttachment($view)
+    {
+        return stripos($view, Attachments::VIEW) !== false;
     }
+
     public function getSearchResponse()
     {
         $response = new SearchResponse();
@@ -314,7 +319,8 @@ class GridForm extends CFormModel
         return $this->columnPropertiesCollection;
     }
 
-    public function getPreviewData(Recordset $recordset){
+    public function getPreviewData(Recordset $recordset)
+    {
         $data = [];
         $previewList = $this->columnPropertiesCollection->getPreviewList();
         /**
@@ -329,10 +335,10 @@ class GridForm extends CFormModel
                 if ($row->offsetExists($key)) {
                     $value = $row[$key];
                     if ($recordset->getKeyTypes($key) == \FrameWork\DataBase\ColumnTypes::Date) {
-                        if($value){
+                        if ($value) {
 
-                        $date = DateTime::createFromFormat('m.d.Y H:i:s', $value);
-                        $value = $date->format('d.m.Y H:i:s');
+                            $date = DateTime::createFromFormat('m.d.Y H:i:s', $value);
+                            $value = $date->format('d.m.Y H:i:s');
                         }
                     }
                     $data[$row->id][$columnProperties->getCaption()] = rawurlencode($value);
@@ -341,6 +347,7 @@ class GridForm extends CFormModel
         }
         return $data;
     }
+
     public function previewDataToJS(Recordset $recordset)
     {
         return $data = json_encode($this->getPreviewData($recordset));
@@ -365,7 +372,7 @@ class GridForm extends CFormModel
 
     }
 
-    public function getGridResponse($parentViewID)
+    public function getGridResponse($parentViewID, $isSelect)
     {
         $response = new GridResponse();
         try {
@@ -377,12 +384,21 @@ class GridForm extends CFormModel
                         ], true, true)
                 );
             } else {
-                $response->setData(Yii::app()->controller->renderPartial('//grid/grid',
-                        [
-                            'model' => $this,
-                            'parentViewID' => $parentViewID,
-                        ], true, true)
-                );
+                if ($isSelect) {
+                    $response->setData(Yii::app()->controller->renderPartial('//grid/selected_grid',
+                            [
+                                'model' => $this,
+                                'parentViewID' => $parentViewID,
+                            ], true, true)
+                    );
+                } else {
+                    $response->setData(Yii::app()->controller->renderPartial('//grid/grid',
+                            [
+                                'model' => $this,
+                                'parentViewID' => $parentViewID,
+                            ], true, true)
+                    );
+                }
             }
         } catch (Exception $e) {
             $response->setStatus('Возникла ошибка при построении сетки.');

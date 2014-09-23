@@ -155,7 +155,8 @@ var ChocolateEvents = {
             $editable = $(this).find('.editable'),
             options = $editable.data().editable.options,
             view = options.view,
-            column = chApp.getFactory().getChGridColumnBody($editable),
+            factory =  chApp.getFactory(),
+            column = factory.getChGridColumnBody($editable),
             form = column.getChForm(),
             parentID = column.getID(),
             isNew = !$.isNumeric(parentID),
@@ -163,19 +164,28 @@ var ChocolateEvents = {
             tabID = ChGridColumn.createChildGridTabID(parentID, view, parentView),
             $tabs = main.$tabs,
             template = form.getFmChildGridCollection().getCardTemplate(view, parentView, isNew),
-            $currentTab = $tabs.find("[aria-controls='" + tabID + "']");
+            $currentTab = $tabs.find("[aria-controls='" + tabID + "']"),
+            toID = options.toID,
+            toName =options.toName,
+            fromID = options.fromID,
+            fromName = options.fromName,
+            isSelect = '';
+            if(toID && toName && fromName && fromID){
+                isSelect = 1;
+            }
         if ($currentTab.length) {
             $tabs.tabs("select", tabID)
         } else {
             var caption = [options.title, ' [', parentID, ']'].join('');
             main.tab.addAndSetActive(tabID, caption);
             if (template === null) {
-                var urls = chApp.namespace('options').urls;
+                var urls = chApp.getOptions().urls;
                 $.get(urls.childGrid, {
                     view: view,
                     jsonFilters: JSON.stringify({filters: {ParentID: parentID}}),
                     ParentView: parentView,
-                    parentViewID: form.getID()
+                    parentViewID: form.getID(),
+                    isSelect: isSelect
                 })
                     .done(function (res) {
                         var response = new ChGridResponse(res);
@@ -187,6 +197,26 @@ var ChocolateEvents = {
                                     .attr('id', tabID)
                                     .appendTo($tabs)
                                     .html($html);
+                                    $('#'+ tabID).find('.grid-select').on('click', function(){
+                                            var form = factory.getChGridForm($(this).closest('.grid-footer').prev('form'));
+                                            if(form.isHasChange()){
+                                                form.getMessagesContainer().sendMessage('Сохраните сетку, перед выбором!', ChResponseStatus.ERROR);
+                                            }else{
+                                                var selectedRows = form.getSelectedRows();
+                                                if(selectedRows.length !=1){
+                                                    form.getMessagesContainer().sendMessage('Выберите одну строчку', ChResponseStatus.ERROR);
+                                                }else{
+                                                    //todo: реализовать алгоритм биндинга
+//                                                    var rowID = factory.getSelectedRows[0].attr('data-id');
+//                                                    var data =  form.getDataObj()[rowID];
+//                                                    var $tr = $editable.closest('tr');
+//                                                    factory.getChGridColumnBody()
+//                                                    column.setChangedValue(toID, data[fromID]);
+//                                                    editable.html(data[fromName])
+                                                }
+                                            }
+                                        }
+                                    );
                                 $tabs.tabs("refresh");
                                 form.getFmChildGridCollection().setCardTemplate(view, parentView, template, isNew);
                             } catch (er) {
@@ -581,7 +611,6 @@ var ChocolateEvents = {
      * @returns {boolean}
      */
     addSignToIframeHandler: function (e) {
-        console.log(e)
         if (e.data && e.data.editor) {
             var editor = e.data.editor;
             if(e.data.red){

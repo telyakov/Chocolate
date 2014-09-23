@@ -52,12 +52,12 @@ class GridController extends Controller
         $this->render('index', ['model' => $model]);
     }
 
-    public function actionGetChildGrid($jsonFilters, $ParentView, $parentViewID)
+    public function actionGetChildGrid($jsonFilters, $ParentView, $parentViewID, $isSelect = false)
     {
         $ParentID = json_decode($jsonFilters, true)['filters']['ParentID'];
         $model = Controller::loadForm($this->view,$ParentView, $ParentID);
         $model->attributes = ['filters' => ['parentid' => $ParentID]];
-        $response = $model->getGridResponse($parentViewID);
+        $response = $model->getGridResponse($parentViewID, $isSelect);
         $response->send();
     }
 

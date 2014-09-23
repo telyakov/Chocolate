@@ -9,7 +9,6 @@ namespace FrameWork\DataForm\DataFormModel;
 
 use Chocolate\HTML\Grid\Interfaces\IGridColumnWidget;
 use FrameWork\DataBase\DataBaseRoutine;
-use FrameWork\DataBase\Recordset;
 use FrameWork\DataForm\Card\CardElementType;
 use FrameWork\DataForm\Traits\Component;
 use FrameWork\XML\XML;
@@ -24,6 +23,7 @@ class ColumnProperties
     protected $fromdatasource;
     protected $allowedit;
     protected $toname;
+    protected $viewbind;
     protected $fromname;
     protected $fromid;
     protected $key;
@@ -44,10 +44,10 @@ class ColumnProperties
     protected $cardwidth;
     protected $cardheight;
     protected $cardmultiline;
-//    protected $cardlocked;
     protected $viewname;
     protected $editbehavior;
     protected $properties;
+//    protected $cardlocked;
     protected $headerimage;
     protected $_prepareKey;
     protected $_visibleCaption;
@@ -59,42 +59,50 @@ class ColumnProperties
     protected $_isSingleMode;
     protected $_customProperties;
 
-    public function getHeaderClass(){
-        return $this->headerimage;
-    }
-    /**
-     * @return ColumnCustomProperties
-     */
-    public function getCustomProperties(){
-        if($this->_customProperties){
-            return $this->_customProperties;
-        }
-        $this->_customProperties = new ColumnCustomProperties($this->properties);
-        return $this->_customProperties ;
-    }
-
-    public function isMarkupSupport(){
-        return $this->getCustomProperties()->isMarkupSupport();
-    }
-    public function isSingleMode(){
-        if($this->_isSingleMode !==null){
-            return $this->_isSingleMode;
-        }
-        $this->_isSingleMode = $this->boolExpressionEval($this->singlevaluemode, false);
-        return $this->_isSingleMode;
-    }
-
     public function __construct(\SimpleXMLElement $xmlFile)
     {
         $this->init($xmlFile, __CLASS__);
     }
 
-    public function isVisibleInAllField(){
-        if($this->_isVisibleInAllField!==null){
-            return $this->_isVisibleInAllField;
+    public function getToName()
+    {
+        return mb_strtolower($this->toname, 'UTF-8');
+    }
+
+    public function getFromID()
+    {
+        return mb_strtolower($this->fromid, 'UTF-8');
+    }
+
+    public function getFromName()
+    {
+        return mb_strtolower($this->fromname, 'UTF-8');
+    }
+
+    public function isMarkupSupport()
+    {
+        return $this->getCustomProperties()->isMarkupSupport();
+    }
+
+    /**
+     * @return ColumnCustomProperties
+     */
+    public function getCustomProperties()
+    {
+        if ($this->_customProperties) {
+            return $this->_customProperties;
         }
-        $this->_isVisibleInAllField = self::boolExpressionEval($this->allfields);
-        return $this->_isVisibleInAllField;
+        $this->_customProperties = new ColumnCustomProperties($this->properties);
+        return $this->_customProperties;
+    }
+
+    public function isSingleMode()
+    {
+        if ($this->_isSingleMode !== null) {
+            return $this->_isSingleMode;
+        }
+        $this->_isSingleMode = $this->boolExpressionEval($this->singlevaluemode, false);
+        return $this->_isSingleMode;
     }
 
     public function isNeedFormat()
@@ -181,7 +189,7 @@ class ColumnProperties
 
     }
 
-    protected function getToID()
+    public  function getToID()
     {
         return mb_strtolower($this->toid, 'UTF-8');
     }
@@ -210,6 +218,11 @@ class ColumnProperties
         return $this->caption;
     }
 
+    public function getHeaderClass()
+    {
+        return $this->headerimage;
+    }
+
     public function getCardKey()
     {
         return $this->cardkey;
@@ -231,9 +244,12 @@ class ColumnProperties
     {
         return XML::prepareViewName($this->viewname);
     }
-    public function hasView(){
+
+    public function hasView()
+    {
         return strlen($this->viewname) > 0;
     }
+
     public function getAllowEditInCard()
     {
 //        if (self::boolExpressionEval($this->cardlocked)) {
@@ -242,8 +258,14 @@ class ColumnProperties
         return $this->getAllowEdit();
     }
 
-    public function getAllowEdit(){
+    public function getAllowEdit()
+    {
         return self::allowEditEval($this->allowedit);
+    }
+
+    public function isVisible()
+    {
+        return $this->isVisibleInAllField() || self::boolExpressionEval($this->visible);
     }
 
 //    public function isAllowEdit()
@@ -251,9 +273,13 @@ class ColumnProperties
 //        return self::allowEditEval($this->allowedit);
 //    }
 
-    public function isVisible()
+    public function isVisibleInAllField()
     {
-        return $this->isVisibleInAllField() || self::boolExpressionEval($this->visible);
+        if ($this->_isVisibleInAllField !== null) {
+            return $this->_isVisibleInAllField;
+        }
+        $this->_isVisibleInAllField = self::boolExpressionEval($this->allfields);
+        return $this->_isVisibleInAllField;
     }
 
     public function isVisibleInCard()
@@ -264,24 +290,24 @@ class ColumnProperties
     /**
      * @return \FrameWork\DataBase\Recordset|null
      */
-    public function executeReadProc(DataFormModel $model =null)
+    public function executeReadProc(DataFormModel $model = null)
     {
-     if(($routine = $this->getReadProc())){
-         return \Yii::app()->erp->execFromCache(\Yii::app()->bind->bindProcedureFromModel($routine, $model));
-     }
-     return null;
+        if (($routine = $this->getReadProc())) {
+            return \Yii::app()->erp->execFromCache(\Yii::app()->bind->bindProcedureFromModel($routine, $model));
+        }
+        return null;
     }
 
     public function getReadProc()
     {
-        if($this->_readRoutine){
+        if ($this->_readRoutine) {
             return $this->_readRoutine;
         }
 
         if ($this->fromdatasource) {
-            $this->_readRoutine =  new DataBaseRoutine($this->fromdatasource);
-        }elseif($this->datasource){
-            $this->_readRoutine= new DataBaseRoutine($this->datasource);
+            $this->_readRoutine = new DataBaseRoutine($this->fromdatasource);
+        } elseif ($this->datasource) {
+            $this->_readRoutine = new DataBaseRoutine($this->datasource);
         }
         return $this->_readRoutine;
     }
