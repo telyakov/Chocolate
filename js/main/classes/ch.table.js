@@ -190,17 +190,20 @@ ChTable.prototype.initScript = function () {
     this._initFloatThead();
     this._initContextMenu();
     this._initDragtable();
-    this._initData();
-    if(this.ch_form.ch_form_settings.isShortVisibleMode()){
+    var _this = this;
+    setTimeout(function(){
+    _this._initData();
+    if(_this.ch_form.ch_form_settings.isShortVisibleMode()){
         var $th = this.ch_form.getFixedTable().find('[' + ChOptions.classes.allowHideColumn + ']');
-        this.ch_form.toggleColls(false, $th);
+        _this.ch_form.toggleColls(false, $th);
     }
-    if(this.ch_form.ch_form_settings.isSystemVisibleMode()){
-        var $th2 = this.ch_form.getFixedTable().find('th').filter(function (index) {
+    if(_this.ch_form.ch_form_settings.isSystemVisibleMode()){
+        var $th2 = _this.ch_form.getFixedTable().find('th').filter(function (index) {
             return $.inArray($(this).attr('data-id'), ChOptions.settings.systemCols) !== -1;
         });
-        this.ch_form.toggleColls(false, $th2);
+        _this.ch_form.toggleColls(false, $th2);
     }
+    }, 5);
 };
 ChTable.prototype.initAttachmentScript = function () {
     this._initSettings();
