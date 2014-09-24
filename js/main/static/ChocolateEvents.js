@@ -35,7 +35,7 @@ var ChocolateEvents = {
         this.signInTextEvents($content);
         this.disableFiltersEvent($content);
         this.searchInFilterEvent($content);
-        this.openFormEvent($footer, $header);
+        this.openFormEvent($footer, $body);
         this.downloadAttachmentEvent($content);
         this.toggleSystemColsEvent($tabs);
         this.warningMessageEvent($window);
@@ -313,9 +313,25 @@ var ChocolateEvents = {
         $.fileDownload($(this).attr('href'));
         return false;
     },
-    openFormEvent: function ($footer, $header) {
+    openFormEvent: function ($footer, $content) {
+
         $footer.on('click', '.link-form > a, .link-profile', this.openFormHandler);
-        $header.on('click', '.link-form > a', this.openFormHandler);
+        $content.on('click', '.menu-root', function(){
+            var $this = $(this), $submenu = $this.siblings('.gn-submenu');
+            if($submenu.length){
+                $submenu.toggle();
+            }else{
+                var main = chApp.namespace('main');
+                main.openForm($(this).attr('href'));
+                $this
+                    .closest('.gn-menu-wrapper')
+                    .removeClass('gn-open-all')
+                    .prev('.gn-icon-menu')
+                    .removeClass('gn-selected');
+            }
+            return false;
+
+        });
     },
     /**
      * #tips 2

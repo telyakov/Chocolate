@@ -12,14 +12,11 @@ module.exports = function (grunt) {
                 src: [
                     '../js/libs/jquery/jquery.js',
                     '../js/libs/jquery-ui/jquery-ui.js',
-//                    '../js/libs/jquery.cookie.js',
                     '../js/libs/jquery.dragtable.js',
                     '../js/libs/jquery-ui-contextmenu/index.js',
-//                    '../js/libs/lodash.min.js',
                     '../js/libs/lodash/lodash.js',
                     '../js/libs/jquery.floatThead.js',
                     '../js/libs/bootstrap.js',
-//                    '../js/libs/jquery.ba-bbq/index.js',
                     '../js/libs/jquery.dynatree.min.js',
                     '../js/libs/bootstrap-datetimepicker.js',
                     '../js/libs/toggle-buttons/index.js',
@@ -33,13 +30,14 @@ module.exports = function (grunt) {
                     '../js/libs/json_parse/index.js',
                     '../js/libs/jquery.ui.widget.js',
                     '../js/libs/tmpl.min.js',
-//                    '../js/libs/iframe-transport/index.js',
                     '../js/libs/jquery.fileupload.js',
                     '../js/libs/jquery.fileupload-ui.js',
                     '../js/libs/jquery.fileupload-locale.js',
                     '../js/libs/fileDownload/index.js',
                     '../js/libs/jquery.fancybox.js',
                     '../js/libs/throttle-debounce/index.js',
+                    '../js/libs/classie/index.js',
+                    '../js/libs/gnmenu.js',
                     '../js/libs/ui-touch-punch/index.js', // for ipad, resize support,
                     '../js/libs/log4javascript/index.js'
                 ],
@@ -132,7 +130,8 @@ module.exports = function (grunt) {
                         '../css/libs/datetimepicker.css',
                         '../css/libs/jquery-ui-bootstrap.css',
                         '../css/libs/bootstrap-wysihtml5-0.0.2.css',
-                        '../css/libs/wysiwyg-color.css'
+                        '../css/libs/wysiwyg-color.css',
+                        '../css/libs/component.css'
                     ]
                 },
                 minify: {

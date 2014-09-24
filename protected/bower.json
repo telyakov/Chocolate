@@ -10,6 +10,8 @@
         "jquery-ui": "1.9.2",
         "json_parse": "https://raw.githubusercontent.com/douglascrockford/JSON-js/master/json_parse.js",
         "lodash": "0.10.0",
-        "log4javascript": "https://raw.githubusercontent.com/DECK36/log4javascript/master/js/log4javascript.js"
+        "log4javascript": "https://raw.githubusercontent.com/DECK36/log4javascript/master/js/log4javascript.js",
+        "classie": "https://raw.githubusercontent.com/codrops/GoogleNexusWebsiteMenu/master/js/classie.js"
+
     }
 }

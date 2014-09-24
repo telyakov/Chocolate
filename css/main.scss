@@ -4,6 +4,7 @@
 @import "main/card";
 @import "main/attachment";
 @import "main/menu";
+@import "main/navbar";
 @font-face {
     font-family: 'prod-icon';
     src: url("../css/fonts/icon.eot");
@@ -70,7 +71,7 @@ html, body {
 }
 
 #pagewrap {
-    overflow-x: hidden;
+//    overflow-x: hidden;
     margin: 0 auto;
 }
 
@@ -699,15 +700,7 @@ span.required {
 Индикатор загрузки
 */
 
-#fadingBarsG {
-    position: fixed;
-    display: none;
-    width: 100px;
-    top: 28px;
-    left: 60px;
-    z-index: 1031;
-    height: 12px;
-}
+
 
 .fadingBarsG {
     position: absolute;
@@ -873,22 +866,22 @@ span.required {
 Меню навигации
 */
 
-#header {
-    height: 40px;
-    min-height: 40px;
-    padding: 0;
-    width: 100%;
-    box-shadow: none;
-    background: white;
-    .navbar-fixed-top, .navbar-inner {
-        height: 40px;
-        min-height: 40px;
-        padding: 0;
-        width: 100%;
-        box-shadow: none;
-        background: white;
-    }
-}
+//#header {
+//    height: 40px;
+//    min-height: 40px;
+//    padding: 0;
+//    width: 100%;
+//    box-shadow: none;
+//    background: white;
+//    .navbar-fixed-top, .navbar-inner {
+//        height: 40px;
+//        min-height: 40px;
+//        padding: 0;
+//        width: 100%;
+//        box-shadow: none;
+//        background: white;
+//    }
+//}
 
 .nav > li > a {
     padding: 5px 15px 5px;
@@ -1228,7 +1221,7 @@ input:focus, textarea:focus, keygen:focus, select:focus {
     border-radius: 0 !important;
 }
 
-.select2-highlighted, .ui-state-focus, .dropdown-menu a:hover {
+.select2-highlighted, .ui-state-focus, .dropdown-menu a:hover, .menu-root:hover, .gn-trigger:hover, .gn-selected {
     background: #dbeeff !important;
     outline: 1px solid #81a4d0 !important;
     text-shadow: none !important;
@@ -1975,17 +1968,6 @@ menu .fileinput-button {
     }
 }
 
-/*@-webkit-keyframes pulse {*/
-/*0% { color: #3D70C8 }*/
-/*50% { box-shadow: 0 0 14px rgba(255,255,255,0.9); }*/
-/*100% { color: orange; }*/
-/*}*/
-/*@keyframes pulse {*/
-/*0% { color: #3D70C8 }*/
-/*50% { box-shadow: 0 0 14px rgba(255,255,255,0.9); }*/
-/*100% { color: orange; }*/
-/*}*/
-
 @-webkit-keyframes pulse {
     0% {
         -webkit-transform: scale(1);
@@ -2043,38 +2025,17 @@ menu .fileinput-button {
     }
 }
 
-/*[data-id=grid-tabs]{*/
-/*min-height: 490px;*/
-/*}*/
 
 [data-id=grid-tabs] .ui-tabs-panel {
     padding: 0 5px 15px 10px !important;
     border-radius: 0 !important;
     position: relative;
 }
-
-#header div {
-    &.navbar-fixed-top div.container-fluid {
-        display: flex;
-    }
-    &.nav-collapse {
-        min-width: 1000px !important;
-        overflow-y: visible !important;
-    }
-}
-
 #content {
     width: auto;
 }
 
-#tabs {
-    width: auto;
-    > div {
-        padding: 5px 10px !important;
-        height: 100%;
-        /*overflow: hidden;*/
-    }
-}
+
 
 #footer {
     position: fixed;
@@ -2099,12 +2060,6 @@ menu .fileinput-button {
         }
     }
 }
-
-#header .nav {
-    margin: 0 10px 0 170px;
-    min-width: 1030px;
-}
-
 ul.ui-tabs-nav {
     padding: 0 !important;
     border-radius: 0 !important;
@@ -2155,11 +2110,6 @@ ul.ui-tabs-nav {
     }
 }
 
-/*ul.ui-tabs-nav > li span{*/
-/*color: #6e7e91 !important;*/
-
-/*}*/
-
 .ui-tabs-nav li {
     a {
         margin: 0 15px !important;
@@ -2186,7 +2136,7 @@ ul.ui-tabs-nav {
 }
 
 @media print {
-    #header, .section-filters, .menu, #footer, .ui-tabs-nav, .ui-helper-hidden, .card-action-button {
+    .section-filters, .menu, #footer, .ui-tabs-nav, .ui-helper-hidden, .card-action-button {
         display: none !important;
     }
     .card-input {

@@ -21,6 +21,7 @@ js/libs/log4javascript
 js/libs/throttle-debounce
 js/libs/toggle-buttons
 js/libs/ui-touch-punch
+js/libs/classie
 protected/config/main_production.php
 
 

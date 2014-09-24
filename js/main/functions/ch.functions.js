@@ -66,39 +66,50 @@ var chFunctions = {
                 })
         }
     },
-    /**
-     * @param data {JSON}
-     */
-    menuAutocomplete: function (data) {
-        var autoCompleteData = json_parse(data, Chocolate.parse), isLastItem = false, lastUrl;
-        $('#nav-search').autocomplete({
-            delay: 100,
-            select: function (event, ui) {
-                Chocolate.openForm(ui.item.url);
-            },
-            source: function (request, response) {
-                var search = Chocolate.eng2rus(request.term.toLowerCase()),
-                    data = autoCompleteData.filter(chFunctions.filterSearchData(search, 'value'));
+    _createSubMenu: function(items){
+        var menuItemTemplate = '<li><a href="{*url*}">{*name*}</a>{*submenu*}</li>';
 
-                isLastItem = data.length == 1;
-                if (isLastItem) {
-                    lastUrl = data[0].url;
-                }
-                response(data);
-            },
-            close: function () {
-                isLastItem = false;
+        var result = ['<ul class="gn-submenu">'];
+        for(var i in items){
+            if(items.hasOwnProperty(i)){
+                result.push(this._createMenuItem(items[i]));
             }
-        })
-            .on('keydown', function (e) {
-                if (isLastItem && e.keyCode == jQuery.ui.keyCode.ENTER) {
-                    Chocolate.openForm(lastUrl);
-                    $(this).autocomplete('close');
-                }
-            })
-            .on('click', function(e){
-                $(this).autocomplete('search');
-            });
+        }
+        result.push('</ul>');
+        return result.join('');
+
+    },
+    _createMenuItem: function(item){
+        var menuItemTemplate = '<li><a class="menu-root" href="{*url*}">{*name*}</a>{*submenu*}</li>';
+        var subMenuItemTemplate = '<ul><a class="menu-root" href="{*url*}">{*name*}</a>{*submenu*}</ul>';
+        var name = item.label, url = item.url;
+        if(Array.isArray(item.items)){
+            return menuItemTemplate.replace('{*url*}', url).replace('{*name*}', name).replace('{*submenu*}', '');
+        }else{
+            return subMenuItemTemplate.replace('{*url*}', url).replace('{*name*}', name).replace('{*submenu*}', this._createSubMenu(item.items));
+        }
+
+    },
+    createMenu: function(items){
+        var $menu = $('#gn-menu'), content = [];
+        content.push('<li class="gn-trigger">');
+        content.push('<a class="gn-icon gn-icon-menu"></a>');
+        content.push('<nav class="gn-menu-wrapper">');
+        content.push('<div class="gn-scroller">');
+        content.push('<ul class="gn-menu">');
+        var item;
+
+        for(var i in items){
+            if(items.hasOwnProperty(i)){
+             content.push(this._createMenuItem(items[i]));
+            }
+        }
+        content.push('</ul>');
+        content.push('</div>');
+        content.push('</nav>');
+        content.push('</li>');
+        $menu.html(content.join(''));
+        new gnMenu($menu.get(0));
     },
     filterSearchData: function (seacrh, key) {
         return function filter(item, i, arr) {

@@ -19,22 +19,6 @@ use \ClassModules\User\User;
 </head>
 <body>
 <header id="header">
-    <?
-    $navigations = User::getForms();
-        $this->widget('Chocolate.Widgets.ChNavbar', [
-            'brand' => '',
-            'brandUrl' => '#',
-            'fluid' => true,
-            'collapse' => false, // requires bootstrap-responsive.css
-            'items' => [
-                '<input type="text" id="nav-search" placeholder="Быстрый поиск" tabindex="-1">',
-                [
-                    'class' => 'Chocolate.Widgets.ChMenu',
-                    'items' => User::convertToTree($navigations)
-                ],
-            ],
-        ]);
-    ?>
     <div id="fadingBarsG">
         <div id="fadingBarsG_1" class="fadingBarsG">
         </div>
@@ -56,8 +40,7 @@ use \ClassModules\User\User;
 </header>
 
 <div id="pagewrap">
-    <!--    <aside id="sidebar">-->
-    <!--    </aside>-->
+    <ul id="gn-menu" class="gn-menu-main"></ul>
     <div id="content">
         <? echo $content; ?>
     </div>
@@ -104,11 +87,11 @@ JS
             ],
         ],
     ]);
-    $data = json_encode(User::convertToAutocomplete($navigations));
+    $data =CJavaScript::encode( User::convertToTree(User::getForms()));
     $roles = json_encode(User::getRoles());
     Yii::app()->clientScript->registerScript('authorization', <<<JS
         Chocolate.user.setIdentity('$userName', '$roles');
-        chFunctions.menuAutocomplete('$data');
+        chFunctions.createMenu($data);
 
 JS
         , CClientScript::POS_READY

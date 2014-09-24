@@ -1,0 +1,117 @@
+$gn-menu-height: 50px;
+$ul-height:  24px;
+$ul-top-padding: 8px;
+#tabs > ul{
+    height: $ul-height;
+    background: white;
+    padding: $ul-top-padding 0 0 0!important;
+    margin: 0 0 0 $gn-menu-height;
+}
+#tabs {
+    width: auto;
+    border-color: #ddd;
+    border-style: solid;
+    border-width: 0 0 1px;
+    > div {
+        padding: 5px 10px !important;
+        height: 100%;
+        /*overflow: hidden;*/
+    }
+}
+#fadingBarsG {
+    position: fixed;
+    display: none;
+    width: 100px;
+    top: 5px;
+    right: 10px;
+    z-index: 1031;
+    height: 12px;
+}
+.gn-menu-main {
+    z-index: 1032;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: $gn-menu-height;
+    height: $ul-top-padding + $ul-height;
+    font-size: 13px;
+}
+.gn-submenu{
+    display: none;
+}
+.gn-menu-main > li > a {
+//    padding: 0 30px;
+    padding-left: 22px;
+    height: 33px !important;
+    padding-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+
+}
+$sub-menu-height: 40px;
+.gn-submenu li{
+    height: $sub-menu-height;
+}
+.gn-submenu li a {
+    line-height: $sub-menu-height;
+    padding-left: 5px;
+    font-size: 12px;
+}
+
+.gn-scroller {
+    position: absolute;
+    overflow-y: scroll;
+    width: 370px;
+    height: 100%;
+}
+
+.menu-root {
+    box-shadow: inset 0 1px #c6d0da;
+    padding-left: 10px;
+}
+.gn-submenu .menu-root{
+    padding-left: 10px;
+}
+.gn-submenu .gn-submenu .menu-root{
+    padding-left: 25px;
+}
+.gn-menu-wrapper {
+    position: fixed;
+    top: 32px;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    width: 60px;
+    background: white;
+    -webkit-transform: translateX(-60px);
+    -moz-transform: translateX(-60px);
+    transform: translateX(-60px);
+    -webkit-transition: -webkit-transform 0.3s, width 0.3s;
+    -moz-transition: -moz-transform 0.3s, width 0.3s;
+    transition: transform 0.3s, width 0.3s;
+    border-right: 1px solid #ddd;
+}
+
+@mixin background-icon-menu($color1, $color2){
+    background:$color2;
+    box-shadow: 0 3px $color1, 0 -6px $color2, 0 -9px $color1, 0 -12px $color2;
+}
+$icon-menu-def-color: #5f6f81;
+.gn-icon-menu::before {
+    margin-left: -15px;
+    vertical-align: -2px;
+    width: 30px;
+    height: 3px;
+    @include background-icon-menu(white, $icon-menu-def-color);
+    content: '';
+}
+$icon-menu-active-color: #0274bd;
+.gn-icon-menu:hover::before{
+    @include background-icon-menu(#dbeeff, $icon-menu-active-color);
+
+}
+.gn-icon-menu.gn-selected::before {
+    @include background-icon-menu(#dbeeff,$icon-menu-active-color);
+}
