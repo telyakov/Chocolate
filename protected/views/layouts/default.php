@@ -55,15 +55,14 @@ use \ClassModules\User\User;
     if(stripos(Yii::app()->request->getHostInfo(), 'bp')!== false){
 
         $taskUrl = Yii::app()->createUrl('grid/index', ['view' => 'tasks\tasksfortops.xml']);
-
-
     }else{
         $taskUrl = Yii::app()->createUrl('grid/index', ['view' => 'tasks.xml']);
     }
-    if(Yii::app()->controller->action->getId() == 'default' && Yii::app()->request->getUserHost() =='localhost'){
+    if(Yii::app()->controller->action->getId() == 'default' &&  $_SERVER['HTTP_HOST'] !='localhost:8000'){
 
     Yii::app()->clientScript->registerScript('autoOpen', <<<JS
-  $(function(){Chocolate.openForm('$taskUrl');});
+  $(function(){
+  Chocolate.openForm('$taskUrl');});
 JS
         , CClientScript::POS_LOAD
     );

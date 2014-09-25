@@ -244,7 +244,7 @@ var Chocolate = {
             }
             var $tab = activeTab.getLi();
             if ($tab.hasClass(ChOptions.classes.activeTab)) {
-                var nextIndex = $tab.index() - 1;
+                var nextIndex = ChTabHistory.pop();
                 Chocolate.$tabs.tabs({ active: nextIndex });
                 ChocolateDraw.reflowActiveTab();
             }
@@ -285,6 +285,7 @@ var Chocolate = {
             Chocolate.$tabs.children('ul').append($tabItem);
             Chocolate.$tabs.tabs();
             Chocolate.$tabs.tabs('refresh');
+            ChTabHistory.push($tabItem);
             return $tabItem;
         },
         /**

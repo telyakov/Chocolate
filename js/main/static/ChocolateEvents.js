@@ -30,6 +30,7 @@ var ChocolateEvents = {
         this.refreshFormEvent($tabs);
         this.cardSaveEvent($tabs);
         this.reflowTabEvent($tabs);
+        this.tabHistoryLogEvent($content);
         this.reflowWindowEvent($window);
         this.openTaskWizardEvent($content);
         this.signInTextEvents($content);
@@ -46,6 +47,12 @@ var ChocolateEvents = {
         this.keyActionsCardEvent($tabs);
         this.deselectTreeElementEvent($body);
         this.modalFormElementEvent($content);
+    },
+    tabHistoryLogEvent: function($context){
+        $context.on('click', '#tabs>ul>li', this.tabHistoryLogHandler);
+    },
+    tabHistoryLogHandler: function(){
+        ChTabHistory.push($(this));
     },
     modalFormElementEvent: function ($context) {
         $context.on('click', '.form-modal-button', this.modalFormElementHandler);
@@ -390,6 +397,7 @@ var ChocolateEvents = {
     closeTabHandler: function () {
         var tab = chApp.namespace('main.tab');
         tab.close($(this));
+        return false;
     },
     menuContextEvent: function ($context) {
         $context.on('click ', '.menu-button-print, .menu-button-action', this.menuContextHandler)

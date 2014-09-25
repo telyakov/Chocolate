@@ -54,6 +54,7 @@ module.exports = function (grunt) {
                     '../js/main/static/chAttachments.js',
                     '../js/main/static/ChResponseStatus.js',
                     '../js/main/static/chAjaxQueue.js',
+                    '../js/main/static/ChTabHistory.js',
                     '../js/main/classes/ch.dynatree.js',
                     '../js/main/classes/ch.map.js',
                     '../js/main/classes/ch.tab.js',
