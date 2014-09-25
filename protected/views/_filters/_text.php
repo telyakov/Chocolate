@@ -11,7 +11,7 @@ use Chocolate\HTML\Filter\Settings\Text;
     <?
 
     echo CHtml::activeLabel($model, $settings->getAttribute(),[
-        'for' => $settings->getInputName()
+        'for' => $settings->getID()
     ]);
     echo $form->searchField(
         $model,

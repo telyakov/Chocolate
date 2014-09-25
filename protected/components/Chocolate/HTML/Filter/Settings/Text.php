@@ -11,8 +11,12 @@ namespace Chocolate\HTML\Filter\Settings;
 
 class Text extends EditableFilterSettings
 {
-    public function getInputName(){
-        return 'GridForm[filters][' . $this->getName() . ']';
+    protected $inputID;
+    public function getID(){
+        if(!$this->inputID){
+           $this->inputID =uniqid();
+        }
+        return $this->inputID;
     }
     public function toArray()
     {
@@ -21,8 +25,8 @@ class Text extends EditableFilterSettings
             [
                 'placeholder' => parent::getToolTip(),
                 'class' => 'filter',
-                'id' => uniqid(),
-                'name' => $this->getInputName()
+                'id' => $this->getID(),
+                'name' => 'GridForm[filters][' . $this->getName() . ']'
             ]
         );
     }
