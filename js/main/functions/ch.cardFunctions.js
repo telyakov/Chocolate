@@ -550,12 +550,14 @@ var chCardFunction = {
             .done(function (response) {
                 var chResponse = new ChResponse(response);
                 var data = chResponse.getData();
-                if (data.length) {
+                if (Object.keys(data).length) {
                     var $context = $('#' + id), imagesHtml = '';
+                    var isFirst = true;
                     for (var i in data) {
                         var imageUrl = url + '?fileID=' + data[i].id;
-                        if (i == 0) {
+                        if (isFirst) {
                             imagesHtml += '<a class="fancybox multimedia-main-image" rel="gallery"><img src="' + imageUrl + '"></img></a>';
+                            isFirst = false;
                         } else {
                             imagesHtml += '<a class="fancybox multimedia-image" rel="gallery" style="display:none"><img src="' + imageUrl + '"></img></a>';
                         }
