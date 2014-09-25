@@ -326,10 +326,6 @@ ChGridForm.prototype.openCard = function (pk) {
             $tabs = Chocolate.$tabs,
             uniqueID = this.generateCardID(pk),
             $a = $tabs.find('li[data-tab-id=\'' + uniqueID + '\']').children('a');
-//    console.log(this.getFmCardsCollection().generateTabs(view,pk, viewID))
-        /**
-         * Если существует уже открытая закладка, переключаемся на нее, а не добавляем дубликат
-         */
         if ($a.length == 0) {
             var viewID = this.getID(),
                 caption;
@@ -342,7 +338,7 @@ ChGridForm.prototype.openCard = function (pk) {
                     Chocolate.tab.createTabLink('', caption) + "</li>",
                 $li = $(tabTemplate);
 
-
+            ChTabHistory.push($li);
             $tabs.children('ul').append($li);
             $tabs.tabs("refresh");
             var _this = this;

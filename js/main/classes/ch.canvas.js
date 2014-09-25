@@ -42,8 +42,6 @@ ChCanvas.prototype.prepareData = function (data) {
 ChCanvas.prototype.refreshData = function (data, options) {
     data = this.prepareData(data);
     var
-//        columns = options.colls,
-//        rows = options.rows,
         cell_height = options.cell_height,
         cell_width = options.cell_width;
 
@@ -97,8 +95,6 @@ ChCanvas.prototype.refreshData = function (data, options) {
             var y = (i+1) * cell_height + 10;
             for (var j = 0; j <= colls; j++) {
                 var x = j * cell_width + floor_width;
-//                ctx.strokeRect(x, y, x + cell_width, y + cell_height);
-//                console.log( data[i][j], i, j);
                 if(j<colls && typeof(data[i][j]) !='undefined' ){
 //                    Рисуем ячейку
                     var cell_data = data[i][j];
@@ -194,35 +190,11 @@ ChCanvas.prototype.refreshData = function (data, options) {
                     ctx.lineTo(x -5, y-3);
                     ctx.lineTo(x -5, y-cell_height);
                     ctx.lineTo(x + cell_width-10 , y-cell_height);
-//                    ctx.lineTo(x + cell_width-5, y-cell_height +20);
-//                    ctx.lineTo(x + cell_width -20 -5, y-cell_height +20);
-//                    ctx.lineTo(x + cell_width - 20-5, y-cell_height);
-//                    ctx.lineTo(x + cell_width-5 , y-cell_height);
                     ctx.fill()
                     ctx.globalAlpha = 1;
-
-//                    ctx.beginPath()
-//                    ctx.strokeStyle  =cell_data['color'];
-//                    if(cell_data['color']=='White'){
-//                        ctx.strokeStyle = '#06629C'
-//                    }
-////                    ctx.lineWidth =1;
-//                    console.log(ctx.strokeStyle)
-//                    ctx.moveTo(x -5, y-cell_height);
-//                    ctx.lineTo(x + cell_width-5, y-cell_height);
-////                    ctx.lineTo(x + cell_width-5, y -10);
-//                    ctx.lineTo(x + cell_width-5, y-3);
-////                    ctx.lineTo(x -5, y -10);
-//                    ctx.lineTo(x -5, y -3);
-//                    ctx.stroke();
-////                    ctx.fill()
-
                 }
             }
-
-
             //рисуем этаж
-//            console.log(data[i][0])
             var floor = data[i][0][_this.y_key];
             ctx.textAlign = "left";
             ctx.fillStyle ='#06629C';
@@ -231,11 +203,7 @@ ChCanvas.prototype.refreshData = function (data, options) {
             ctx.fillText(floor, 0, y - cell_height/2-20, 30)
 
 //            ctx.strokeStyle = '#99bce8'; // меняем цвет рамки
-
-            //рисуем этаж
         }
-
-
         ctx.stroke();
     }
 
@@ -258,10 +226,7 @@ ChCanvas.prototype.refreshData = function (data, options) {
             var x = ( xpos - floor_width) / cell_width, y =ypos/ cell_height;
             x = x - (x % 1);
             y = y - (y % 1);
-//        console.log(x)
-//        console.log(y)
             if(typeof( data[y][x])!='undefined'){
-
             var pk = data[y][x]['id'];
             ch_form.openCard(pk)
             }
