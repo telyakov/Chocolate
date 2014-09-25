@@ -7,9 +7,13 @@ use Chocolate\HTML\Filter\Settings\Text;
  * @var $settings Text
  */
 ?>
-<div class="text-filter" title="<? echo $settings->getToolTip() ?>">
+<div class="text-filter" title="<? echo $settings->getName() ?>">
     <?
-    echo $form->textFieldRow(
+
+    echo CHtml::activeLabel($model, $settings->getAttribute(),[
+        'for' => $settings->getInputName()
+    ]);
+    echo $form->searchField(
         $model,
         $settings->getAttribute(),
         $settings->toArray()

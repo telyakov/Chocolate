@@ -350,7 +350,7 @@ var ChocolateEvents = {
         e.preventDefault();
     },
     searchInFilterEvent: function ($context) {
-        $context.on('keydown', 'input[type=text].filter', this.searchInFilterHandler);
+        $context.on('keydown', 'input[type=search].filter', this.searchInFilterHandler);
     },
     /**
      * #tips 2

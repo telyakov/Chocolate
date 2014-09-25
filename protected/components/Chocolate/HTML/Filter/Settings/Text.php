@@ -11,6 +11,9 @@ namespace Chocolate\HTML\Filter\Settings;
 
 class Text extends EditableFilterSettings
 {
+    public function getInputName(){
+        return 'GridForm[filters][' . $this->getName() . ']';
+    }
     public function toArray()
     {
         return array_merge(
@@ -19,7 +22,7 @@ class Text extends EditableFilterSettings
                 'placeholder' => parent::getToolTip(),
                 'class' => 'filter',
                 'id' => uniqid(),
-                'name' => 'GridForm[filters][' . $this->getName() . ']'
+                'name' => $this->getInputName()
             ]
         );
     }
