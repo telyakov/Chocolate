@@ -11,9 +11,9 @@ namespace Chocolate\Http;
 
 class SearchResponse extends Response {
 
-    public function setPreviewData($data){
-        $this->_data['preview'] = $data;
-    }
+//    public function setPreviewData($data){
+//        $this->_data['preview'] = $data;
+//    }
 
     public function setOrder($data){
         $this->_data['order'] = $data;

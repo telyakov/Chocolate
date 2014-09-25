@@ -494,14 +494,23 @@ ChGridForm.prototype.layoutSelectedArea = function ($row, isMouse, $activeRow) {
         }
         var _this = this;
         this.previewTimerID = setTimeout(function () {
-            var preview_data = _this.getPreviewObj()
-            if (typeof(preview_data[id]) != 'undefined') {
-                var info = preview_data[id], html = '';
-                for (var key in info) {
-                    html += '<span class="footer-title">';
-                    html += key + '</span>: <span>';
-                    html += info[key];
-                    html += ' </span><span class="footer-separator"></span>';
+            var preview_data = _this.getPreviewObj(),
+                data = Chocolate.mergeObj(_this.getDataObj()[id], _this.getChangedObj()[id]);
+
+
+            if (typeof(preview_data) != 'undefined') {
+                var html = '';
+                for(var key in preview_data){
+                    if(data.hasOwnProperty(key)){
+                        html += '<span class="footer-title">';
+                        html += preview_data[key]['caption'] + '</span>: <span>';
+                        if(preview_data[key]['type'] == 'dt'){
+                            html += dateFormat(data[key], 'dd.mm.yyyy HH:MM:ss');
+                        }else{
+                            html += data[key];
+                        }
+                        html += ' </span><span class="footer-separator"></span>';
+                    }
                 }
                 _this.getGridForm().find('footer div[data-id=info]').html(html);
             }
@@ -788,7 +797,7 @@ ChGridForm.prototype.getSearchData = function () {
     return filter_data;
 };
 ChGridForm.prototype.restoreData = function () {
-    this.initData(this.getDataObj(), this.getPreviewObj(), this.getOrderData());
+    this.initData(this.getDataObj(), this.getOrderData());
 };
 ChGridForm.prototype.getOrderData = function () {
     var storage = this.getStorage();
@@ -802,7 +811,7 @@ ChGridForm.prototype.clearSelectedArea = function(){
 ChGridForm.prototype.getLayoutSubscribeName = function(){
   return ['layout', this.getUserGridID()].join('/');
 };
-ChGridForm.prototype.initData = function (data, preview, order) {
+ChGridForm.prototype.initData = function (data, order) {
     var $table = this.getTable(), $html;
     if (this._isAttachmentsModel()) {
         var tmpl_data = {'files': data},
@@ -886,13 +895,13 @@ ChGridForm.prototype.initData = function (data, preview, order) {
         $table.closest('form').siblings('.grid-footer').children('.footer-counter').text( recordsMsg + ': ' +conts)
     }
 };
-ChGridForm.prototype.updateData = function (data, preview, order) {
-    this.updateStorage(data, preview, order);
+ChGridForm.prototype.updateData = function (data, order) {
+    this.updateStorage(data, order);
 
-    this.initData(data, preview, order);
+    this.initData(data, order);
 
     delete data;
-    delete preview;
+//    delete preview;
     delete order;
 
 };
@@ -947,12 +956,12 @@ ChGridForm.prototype.refresh = function () {
                      */
                     var ch_canvas = ChObjectStorage.create($canvas, 'ChCanvas');
                     var data = ch_response.getData();
-                    _this.updateStorage(data, ch_response.getPreview());
+                    _this.updateStorage(data, {});
                     var options = new ChCanvasOptions();
                     ch_canvas.refreshData(data, options);
                 }
                 else {
-                    _this.updateData(ch_response.getData(), ch_response.getPreview(), ch_response.getOrder());
+                    _this.updateData(ch_response.getData(), ch_response.getOrder());
                     _this._clearDeletedObj();
                     _this._clearChangedObj();
                     _this.clearSelectedArea();
@@ -1265,11 +1274,11 @@ ChGridForm.prototype.saveInStorage = function (data, preview, default_values, re
     var storage = this.getStorage();
     storage[this.getID()] = {data: data, preview: preview, change: {}, deleted: {}, defaultValues: default_values, required: required_fields, gridProperties: grid_properties, order: order};
 };
-ChGridForm.prototype.updateStorage = function (data, preview, order) {
+ChGridForm.prototype.updateStorage = function (data, order) {
     var storage = this.getStorage();
     storage[this.getID()].order = order;
     storage[this.getID()].data = data;
-    storage[this.getID()].preview = preview;
+//    storage[this.getID()].preview = preview;
     storage[this.getID()].change = {};
     storage[this.getID()].deleted = {};
 };

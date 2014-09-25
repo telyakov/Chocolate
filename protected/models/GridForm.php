@@ -1,6 +1,7 @@
 <?php
 
 use Chocolate\HTML\Grid\EditableGridColumnWidget;
+use \FrameWork\DataBase\ColumnTypes;
 use Chocolate\Http\GridResponse;
 use Chocolate\Http\Response;
 use Chocolate\Http\SearchResponse;
@@ -16,6 +17,7 @@ use FrameWork\DataForm\DataFormModel\DataFormModel as DataFormModel;
 use FrameWork\DataForm\DataFormModel\DataFormProperties as DataFormProperties;
 use FrameWork\DataForm\DataFormModel\GridProperties as GridProperties;
 use FrameWork\XML\XML as XML;
+use  \FrameWork\DataForm\DataFormModel\GridColumnType;
 
 class GridForm extends CFormModel
 {
@@ -288,12 +290,12 @@ class GridForm extends CFormModel
             $recordset = $this->loadData();
             if (!GridForm::isAttachment($this->getView())) {
                 $response->setData($recordset->rawUrlEncode());
-                $response->setPreviewData($this->getPreviewData($recordset));
+//                $response->setPreviewData($this->getPreviewData($recordset));
                 $response->setOrder($recordset->getOrder());
             } else {
                 $response->setData(FileModel::recordset2arr($recordset));
                 //TODO: для вложений тоже добавить превью
-                $response->setPreviewData([]);
+//                $response->setPreviewData([]);
                 $response->setOrder($recordset->getOrder());
             }
             $response->setStatus('Операция успешно завершена', Response::SUCCESS);
@@ -318,41 +320,53 @@ class GridForm extends CFormModel
     {
         return $this->columnPropertiesCollection;
     }
+//
+//    public function getPreviewData(Recordset $recordset)
+//    {
+//        $data = [];
+//        $previewList = $this->columnPropertiesCollection->getPreviewList();
+//        /**
+//         * @var $row RecordsetRow
+//         */
+//        foreach ($recordset as $row) {
+//            /**
+//             * @var $columnProperties ColumnProperties
+//             */
+//            foreach ($previewList as $columnProperties) {
+//                $key = $columnProperties->getKey();
+//                if ($row->offsetExists($key)) {
+//                    $value = $row[$key];
+//                    if ($recordset->getKeyTypes($key) == \FrameWork\DataBase\ColumnTypes::Date) {
+//                        if ($value) {
+//
+//                            $date = DateTime::createFromFormat('m.d.Y H:i:s', $value);
+//                            $value = $date->format('d.m.Y H:i:s');
+//                        }
+//                    }
+//                    $data[$row->id][$columnProperties->getCaption()] = rawurlencode($value);
+//                }
+//            }
+//        }
+//        return $data;
+//    }
 
-    public function getPreviewData(Recordset $recordset)
-    {
-        $data = [];
-        $previewList = $this->columnPropertiesCollection->getPreviewList();
+
+    function getPreview(){
+        $result =[];
         /**
-         * @var $row RecordsetRow
+         * @var $columnProperties ColumnProperties
          */
-        foreach ($recordset as $row) {
-            /**
-             * @var $columnProperties ColumnProperties
-             */
-            foreach ($previewList as $columnProperties) {
-                $key = $columnProperties->getKey();
-                if ($row->offsetExists($key)) {
-                    $value = $row[$key];
-                    if ($recordset->getKeyTypes($key) == \FrameWork\DataBase\ColumnTypes::Date) {
-                        if ($value) {
-
-                            $date = DateTime::createFromFormat('m.d.Y H:i:s', $value);
-                            $value = $date->format('d.m.Y H:i:s');
-                        }
-                    }
-                    $data[$row->id][$columnProperties->getCaption()] = rawurlencode($value);
-                }
+        foreach($this->columnPropertiesCollection->getPreviewList() as $columnProperties){
+            $type = $columnProperties->getGridEditType();
+            if($type  == GridColumnType::Date || $type == GridColumnType::DateTime){
+                $result[$columnProperties->getKey()] =  ['type'=> ColumnTypes::Date, 'caption' => $columnProperties->getVisibleCaption()];
+            }else{
+                $result[$columnProperties->getKey()] = ['type'=> ColumnTypes::String, 'caption' => $columnProperties->getVisibleCaption()];
             }
         }
-        return $data;
-    }
+        return $result;
 
-    public function previewDataToJS(Recordset $recordset)
-    {
-        return $data = json_encode($this->getPreviewData($recordset));
     }
-
     public function gridPropertiesToJS()
     {
         return json_encode([

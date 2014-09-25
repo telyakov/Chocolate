@@ -34,6 +34,7 @@ $this->widget('Chocolate.Widgets.ChGridView', [
         '<? echo $model->getView()?>',
         '<? echo $model->getParentView()?>',
         '<? echo ChHtml::ID_KEY ?>',
-        '<? echo $sql?>'
+        '<? echo $sql?>',
+        '<? echo json_encode($model->getPreview())?>'
     );
 </script>

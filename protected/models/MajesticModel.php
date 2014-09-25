@@ -7,7 +7,6 @@
  */
 use Chocolate\Http\PackageResponse;
 use Chocolate\Http\Response;
-use Chocolate\Http\SearchResponse;
 use FrameWork\DataBase\DataBaseRoutine;
 
 class MajesticModel
@@ -35,7 +34,8 @@ class MajesticModel
                     'id' => $id,
                     'type' => $type,
                     'data' => $data,
-                    'preview' => $model->getPreviewData($recordset),
+//                    'preview' => $model->getPreviewData($recordset),
+//                    'preview' => $model->getPreview(),
                     'order' => $recordset->getOrder()
                 ];
             } catch (Exception $e) {

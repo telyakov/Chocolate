@@ -334,7 +334,7 @@ var chFunctions = {
         var chForm = ChObjectStorage.create($('#' + formID), 'ChGridForm');
         chForm.saveInStorage(
             json_parse(jsonData, Chocolate.parse),
-            json_parse(jsonPreview, Chocolate.parse),
+            json_parse(jsonPreview),
             json_parse(jsonDefault),
             json_parse(jsonRequired),
             json_parse(jsonGridProperties),
@@ -344,14 +344,14 @@ var chFunctions = {
             new FmCardsCollection(header, headerImg, json_parse(jsonCardCollection, Chocolate.parse))
         );
     },
-    initCardGrid: function (jsonDefault, jsonRequired, jsonGridProperties, formID, header, headerImg, jsonCardCollection, view, parentView, parentID, sql) {
+    initCardGrid: function (jsonDefault, jsonRequired, jsonGridProperties, formID, header, headerImg, jsonCardCollection, view, parentView, parentID, sql, jsonPreview) {
         /**
          * @type {ChGridForm}
          */
         var chForm = ChObjectStorage.create($('#' + formID), 'ChGridForm');
         chForm.saveInStorage(
             {},
-            {},
+            json_parse(jsonPreview),
             json_parse(jsonDefault),
             json_parse(jsonRequired),
             json_parse(jsonGridProperties),

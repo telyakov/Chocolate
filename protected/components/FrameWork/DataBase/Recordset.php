@@ -107,10 +107,6 @@ class Recordset extends ObjectMap
             }, $row->data);
             $this->_order[] = $row->id;
         }
-//        $ar = [2=> 'aaaaa', 1=>"bbbbb"];
-//        $php = json_encode($ar);
-//        $php2 = json_encode($encodedData);
-//        $r = 1;
         return $encodedData;
     }
 

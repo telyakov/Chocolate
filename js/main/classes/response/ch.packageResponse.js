@@ -11,7 +11,7 @@ ChPackageResponse.prototype.applyResponse = function(){
         var id = item['id'];
         var type = item['type'];
         var data = item['data'];
-        var preview = item['preview'];
+//        var preview = item['preview'];
         var order = item['order'];
         if(type == 'ChGridForm'){
             /**
@@ -19,7 +19,7 @@ ChPackageResponse.prototype.applyResponse = function(){
              * @type {ChGridForm}
              */
             var chForm =ChObjectStorage.create($('#' + id), type);
-            chForm.updateData(data, preview, order);
+            chForm.updateData(data, order);
         }
     })
 }

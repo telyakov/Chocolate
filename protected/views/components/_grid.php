@@ -21,15 +21,12 @@ $this->widget('Chocolate.Widgets.ChGridView', [
         'id' => $model->getParentView() ? \Chocolate\HTML\ChHtml::generateUniqueID('g') : uniqid('g'),
     ]
 ]);
-//$end = microtime(1) - $start;
-//$tt = '';
-//$start = microtime(1);
 ?>
 <script>
     $(function () {
         chFunctions.initGrid(
             '<? echo json_encode($recordet->rawUrlEncode())?>',
-            '<? echo $model->previewDataToJS($recordet)?>',
+            '<? echo json_encode($model->getPreview());?>',
             '<? echo $model->defaultValuesToJS()?>',
             '<? echo $model->requiredFieldsToJS()?>',
             '<? echo $model->gridPropertiesToJS()?>',
