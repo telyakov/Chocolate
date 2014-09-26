@@ -1280,11 +1280,10 @@ ChGridForm.prototype.updateStorage = function (data, order) {
 };
 
 ChGridForm.prototype.toggleColls = function (isHidden, $thList) {
-
     var positions = [],
         $fixedTable = this.getFixedTable(),
-        $table = this.getTable();
-    var tables = [$table.eq(0)[0], $fixedTable.eq(0)[0]];
+        $table = this.getTable(),
+        tables = [$table.eq(0)[0], $fixedTable.eq(0)[0]];
     var sum = 0;
     var curWidth = $table.width();
     var newWidth;

@@ -36,7 +36,8 @@ var ChOptions = {
         staticCardElement: 'card-static',
         ipLink: 'fm-iplink',
         notChanged: 'not-changed',
-        menuButtonSelected: 'menu-button-selected'
+        menuButtonSelected: 'menu-button-selected',
+        searchedColumn: 'grid-column-searched'
     },
     urls:{
         addRow: '/grid/insertRow',

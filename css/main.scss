@@ -866,22 +866,6 @@ span.required {
 Меню навигации
 */
 
-//#header {
-//    height: 40px;
-//    min-height: 40px;
-//    padding: 0;
-//    width: 100%;
-//    box-shadow: none;
-//    background: white;
-//    .navbar-fixed-top, .navbar-inner {
-//        height: 40px;
-//        min-height: 40px;
-//        padding: 0;
-//        width: 100%;
-//        box-shadow: none;
-//        background: white;
-//    }
-//}
 
 .nav > li > a {
     padding: 5px 15px 5px;
@@ -1383,7 +1367,7 @@ input:focus, textarea:focus, keygen:focus, select:focus {
     box-sizing: border-box;
     line-height: 22px;
     height: inherit;
-    /*white-space: nowrap;*/
+    white-space: nowrap;
 }
 
 .attachment-file {
@@ -1819,11 +1803,9 @@ Navigations
     }
 }
 
-.filter:focus, .filter-date:focus, .tree-container select:focus {
-    /*border: 1px solid #aaccf6;*/
+.filter:focus, .filter-date:focus, .tree-container select:focus, .grid-column-search:focus {
     border-color: #0072c6!important;
     background-color: #dfedfa!important;
-    /*outline: 0;*/
 }
 
 .ui-autocomplete-input {

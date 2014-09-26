@@ -1,3 +1,21 @@
+
+.grid-column-searched-red{
+    background: #FFB8B6 !important;
+}
+
+.grid-column-searched-green{
+    background: #B3E8A5  !important;
+}
+.grid-column-searched-yellow{
+    background: #FDFD6E!important;
+}
+.grid-column-search{
+   border: 1px solid #D0DBE3 !important;
+    &:focus{
+        outline: none;
+    }
+}
+
 .menu-button-selected{
     border-color: #81a4d0!important;
     background-color: #dbeeff!important;

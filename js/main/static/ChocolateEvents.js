@@ -15,7 +15,6 @@ var ChocolateEvents = {
             $window = main.$window,
             $tabs = main.$tabs,
             $footer = main.$footer,
-            $header = main.$header,
             $body = $('body');
         this.ajaxIndicatorEvent();
         this.closeTabEvent($content);
@@ -47,11 +46,111 @@ var ChocolateEvents = {
         this.keyActionsCardEvent($tabs);
         this.deselectTreeElementEvent($body);
         this.modalFormElementEvent($content);
+        this.searchColumnsEvent($tabs)
     },
-    tabHistoryLogEvent: function($context){
+    searchColumnsEvent: function ($context) {
+        $context.on('keydown', '.grid-column-search', $.debounce(200, false, this.searchColumnsHandler));
+    },
+    searchColumnsHandler: function (e) {
+        var keys = chApp.events.KEY,
+            $this = $(this),
+            form = chApp.getFactory().getChGridForm($this.closest('form')),
+            $th = form.getTh(),
+            searchedClass = chApp.getOptions().classes.searchedColumn,
+            $fixedTable = form.getFixedTable(),
+            $table = form.getTable(),
+            tables = [$table.eq(0)[0], $fixedTable.eq(0)[0]],
+            search = $this.val();
+        if (!~[keys.ENTER, keys.ESCAPE].indexOf(e.keyCode)) {
+
+            var oldHiddenPositions = [],
+                hiddenPositions = [];
+            $th.each(function (i) {
+                var $this = $(this),
+                    index = $this.get(0).cellIndex;
+                if ($this.hasClass(searchedClass)) {
+                    oldHiddenPositions.push(index);
+                }
+                if ($this.css('display') != 'none' || $this.hasClass(searchedClass)) {
+                    var caption = $(this).text().toLowerCase();
+                    $this.removeClass(searchedClass);
+
+                    if (i != 0 && caption != 'ключ' && caption.indexOf(search) == -1) {
+                        hiddenPositions.push(index);
+                        $this.addClass(searchedClass);
+                    }
+                }
+            });
+            var visiblePositions = [];
+            var sum = 0,
+                curWidth = $table.width(),
+                newWidth;
+            oldHiddenPositions.forEach(function (item) {
+                if (hiddenPositions.indexOf(item) == -1) {
+                    visiblePositions.push(item);
+                    sum += parseInt(form.getColumnWidth(item, 10));
+                }
+            });
+
+            var newHiddenPositions = [];
+            hiddenPositions.forEach(function (item) {
+                if (oldHiddenPositions.indexOf(item) == -1) {
+                    newHiddenPositions.push(item);
+                    sum -= parseInt(form.getColumnWidth(item, 10));
+                }
+            });
+            ChTableHelper.hideColsManyTables(tables, newHiddenPositions);
+            ChTableHelper.showColsManyTables(tables, visiblePositions);
+            newWidth = curWidth + sum;
+            $table.width(newWidth);
+            $fixedTable.width(newWidth);
+            $table.floatThead('reflow');
+        } else {
+            $(this).val('');
+            var positions = [];
+            $th.each(function (i) {
+                if($(this).hasClass(searchedClass)){
+                    positions.push(i);
+                    $(this).removeClass(searchedClass)
+                }
+            });
+            ChTableHelper.showColsManyTables(tables, positions);
+            if (e.keyCode == keys.ESCAPE) {
+
+                $th
+                    .filter('.grid-column-searched-red, .grid-column-searched-yellow, .grid-column-searched-green')
+                    .removeClass('grid-column-searched-red grid-column-searched-yellow grid-column-searched-green') ;
+            }else{
+                var $parent = $th.parent(),
+                    color = $parent.attr('data-color');
+                if(!color || color == 'green'){
+                    $parent.attr('data-color', 'yellow');
+                }
+                if(color == 'yellow'){
+                    $parent.attr('data-color', 'red');
+                }
+                if(color == 'red'){
+                    $parent.attr('data-color', 'green');
+                }
+                $th.each(function (i) {
+                    var caption = $(this).text().toLowerCase();
+                    if (caption.indexOf(search) != -1) {
+                        $(this)
+                            .removeClass('grid-column-searched-red grid-column-searched-yellow grid-column-searched-green')
+                            .addClass('grid-column-searched-' +$parent.attr('data-color'));
+                    }else{
+                        $(this).removeClass('grid-column-searched-' +$parent.attr('data-color'))
+
+                    }
+                });
+
+            }
+        }
+    },
+    tabHistoryLogEvent: function ($context) {
         $context.on('click', '#tabs>ul>li', this.tabHistoryLogHandler);
     },
-    tabHistoryLogHandler: function(){
+    tabHistoryLogHandler: function () {
         ChTabHistory.push($(this));
     },
     modalFormElementEvent: function ($context) {
@@ -104,10 +203,10 @@ var ChocolateEvents = {
         } else if (isMarkupSupport) {
             var editor = new wysihtml5.Editor($textArea.get(0)), eventData = {};
             if (name == 'commentforreport') {
-                if (Chocolate.user.getName() == 'Игнатьев Дмитрий Иванович'){
-                    eventData = {editor: $textArea.data("wysihtml5").editor, red:true};
-                }else{
-                    eventData = {editor: $textArea.data("wysihtml5").editor, red:false};
+                if (Chocolate.user.getName() == 'Игнатьев Дмитрий Иванович') {
+                    eventData = {editor: $textArea.data("wysihtml5").editor, red: true};
+                } else {
+                    eventData = {editor: $textArea.data("wysihtml5").editor, red: false};
 
                 }
             }
@@ -162,7 +261,7 @@ var ChocolateEvents = {
             $editable = $(this).find('.editable'),
             options = $editable.data().editable.options,
             view = options.view,
-            factory =  chApp.getFactory(),
+            factory = chApp.getFactory(),
             column = factory.getChGridColumnBody($editable),
             form = column.getChForm(),
             parentID = column.getID(),
@@ -173,13 +272,13 @@ var ChocolateEvents = {
             template = form.getFmChildGridCollection().getCardTemplate(view, parentView, isNew),
             $currentTab = $tabs.find("[aria-controls='" + tabID + "']"),
             toID = options.toID,
-            toName =options.toName,
+            toName = options.toName,
             fromID = options.fromID,
             fromName = options.fromName,
             isSelect = '';
-            if(toID && toName && fromName && fromID){
-                isSelect = 1;
-            }
+        if (toID && toName && fromName && fromID) {
+            isSelect = 1;
+        }
         if ($currentTab.length) {
             $tabs.tabs("select", tabID)
         } else {
@@ -204,26 +303,26 @@ var ChocolateEvents = {
                                     .attr('id', tabID)
                                     .appendTo($tabs)
                                     .html($html);
-                                    $('#'+ tabID).find('.grid-select').on('click', function(){
-                                            var form = factory.getChGridForm($(this).closest('.grid-footer').prev('form'));
-                                            if(form.isHasChange()){
-                                                form.getMessagesContainer().sendMessage('Сохраните сетку, перед выбором!', ChResponseStatus.ERROR);
-                                            }else{
-                                                var selectedRows = form.getSelectedRows();
-                                                if(selectedRows.length !=1){
-                                                    form.getMessagesContainer().sendMessage('Выберите одну строчку', ChResponseStatus.ERROR);
-                                                }else{
-                                                    //todo: реализовать алгоритм биндинга
+                                $('#' + tabID).find('.grid-select').on('click', function () {
+                                        var form = factory.getChGridForm($(this).closest('.grid-footer').prev('form'));
+                                        if (form.isHasChange()) {
+                                            form.getMessagesContainer().sendMessage('Сохраните сетку, перед выбором!', ChResponseStatus.ERROR);
+                                        } else {
+                                            var selectedRows = form.getSelectedRows();
+                                            if (selectedRows.length != 1) {
+                                                form.getMessagesContainer().sendMessage('Выберите одну строчку', ChResponseStatus.ERROR);
+                                            } else {
+                                                //todo: реализовать алгоритм биндинга
 //                                                    var rowID = factory.getSelectedRows[0].attr('data-id');
 //                                                    var data =  form.getDataObj()[rowID];
 //                                                    var $tr = $editable.closest('tr');
 //                                                    factory.getChGridColumnBody()
 //                                                    column.setChangedValue(toID, data[fromID]);
 //                                                    editable.html(data[fromName])
-                                                }
                                             }
                                         }
-                                    );
+                                    }
+                                );
                                 $tabs.tabs("refresh");
                                 form.getFmChildGridCollection().setCardTemplate(view, parentView, template, isNew);
                             } catch (er) {
@@ -323,11 +422,11 @@ var ChocolateEvents = {
     openFormEvent: function ($footer, $content) {
 
         $footer.on('click', '.link-form > a, .link-profile', this.openFormHandler);
-        $content.on('click', '.menu-root', function(){
+        $content.on('click', '.menu-root', function () {
             var $this = $(this), $submenu = $this.siblings('.gn-submenu');
-            if($submenu.length){
+            if ($submenu.length) {
                 $submenu.toggle();
-            }else{
+            } else {
                 var main = chApp.namespace('main');
                 main.openForm($(this).attr('href'));
                 $this
@@ -631,11 +730,11 @@ var ChocolateEvents = {
     addSignToIframeHandler: function (e) {
         if (e.data && e.data.editor) {
             var editor = e.data.editor;
-            if(e.data.red){
+            if (e.data.red) {
                 if (editor.toolbar.commandMapping['foreColor:red'].state === false) {
                     editor.composer.commands.exec("foreColor", 'red');
                 }
-            }else{
+            } else {
                 if (editor.toolbar.commandMapping['foreColor:red'].state && editor.toolbar.commandMapping['foreColor:silver'].state === false) {
                     editor.composer.commands.exec("foreColor", 'silver');
                 }

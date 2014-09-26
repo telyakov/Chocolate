@@ -99,9 +99,16 @@ JS
     chFunctions.initActions('$actionID', '$actions');
 JS
         , CClientScript::POS_LOAD);
-
-
     ?>
 
+    <?
+    if(count($model->getColumns())>10){
+     echo CHtml::tag('input',[
+        'type' => 'search',
+        'class' => 'grid-column-search',
+        'placeholder' => 'Поиск колонки'
+     ]);
+    }
+    ?>
     <div class="messages-container"></div>
 </menu>

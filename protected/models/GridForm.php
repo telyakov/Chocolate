@@ -64,6 +64,7 @@ class GridForm extends CFormModel
      */
     protected $gridProperties;
     protected $parentID;
+    private $_columns;
 
     public function __construct($view, $folder = null, $scenario = '', GridForm $parentModel = null, $parentID = null)
     {
@@ -186,6 +187,8 @@ class GridForm extends CFormModel
 
     public function getColumns()
     {
+        if(!$this->_columns){
+
         $columns = [ChControlsColumn::getOptions()];
         $gridColumnSettingsWidget = new EditableGridColumnWidget($this->dataFormModel);
         /**
@@ -200,7 +203,9 @@ class GridForm extends CFormModel
                 $columns[] = $data;
             }
         }
-        return $columns;
+            $this->_columns = $columns;
+        }
+        return $this->_columns;
     }
 
     public function hasFilters()
@@ -320,36 +325,6 @@ class GridForm extends CFormModel
     {
         return $this->columnPropertiesCollection;
     }
-//
-//    public function getPreviewData(Recordset $recordset)
-//    {
-//        $data = [];
-//        $previewList = $this->columnPropertiesCollection->getPreviewList();
-//        /**
-//         * @var $row RecordsetRow
-//         */
-//        foreach ($recordset as $row) {
-//            /**
-//             * @var $columnProperties ColumnProperties
-//             */
-//            foreach ($previewList as $columnProperties) {
-//                $key = $columnProperties->getKey();
-//                if ($row->offsetExists($key)) {
-//                    $value = $row[$key];
-//                    if ($recordset->getKeyTypes($key) == \FrameWork\DataBase\ColumnTypes::Date) {
-//                        if ($value) {
-//
-//                            $date = DateTime::createFromFormat('m.d.Y H:i:s', $value);
-//                            $value = $date->format('d.m.Y H:i:s');
-//                        }
-//                    }
-//                    $data[$row->id][$columnProperties->getCaption()] = rawurlencode($value);
-//                }
-//            }
-//        }
-//        return $data;
-//    }
-
 
     function getPreview(){
         $result =[];
