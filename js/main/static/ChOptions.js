@@ -6,6 +6,9 @@ var ChOptions = {
     attributes:{
       filterAutoRefresh: 'data-auto-ref'
     },
+    constants: {
+      multiTaskService: 81
+    },
     settings: {
         taskWizardSelector: '[href$=TasksWizard]',
         defaultColumnsWidth: '150',

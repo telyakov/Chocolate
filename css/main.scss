@@ -266,7 +266,12 @@ MODAL CONTROLS.popover-title
 //    line-height: 12px;
     text-indent: 0;
 }
-
+.widget-editable-input{
+    padding: 2px;
+}
+.wizard-text{
+    line-height: 20px;
+}
 .widget-tree, .widget-panel {
     height: 440px;
 }

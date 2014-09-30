@@ -19,6 +19,10 @@ SelectExecutorsTaskStep.prototype.done =  function (mjWizard, $content) {
 };
 SelectExecutorsTaskStep.prototype.run = function (mjWizard) {
     var _this = this;
+    if(chApp.getOptions().constants.multiTaskService == mjWizard.serviceid){
+        mjWizard.next();
+    }else{
+
     jQuery.get(
         MajesticVars.EXECUTE_URL,
         {cache: true, sql: 'tasks.uspGetUsersListForTasksUsers'},
@@ -42,11 +46,12 @@ SelectExecutorsTaskStep.prototype.run = function (mjWizard) {
             options.checkbox = true;
             var $newCont = dynatreeElem.load(options);
             openWizardDialog($newCont, mjWizard, _this, true, 'Выберните исполнителей '+mjWizard.getStepCaption());
-//            $content.append($select)
             var $checkbox = $('<span class="tree-checkbox"><input type="checkbox"><span class="tree-checkbox-caption">Выделить все</span></span>');
             $newCont.next().prepend($checkbox);
             ChDynatree.prototype.checkboxClickEvent($checkbox, $newCont.find('.widget-tree'))
         }
 
     )
+
+    }
 };
