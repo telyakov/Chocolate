@@ -18,10 +18,6 @@ SelectServiceTaskStep.prototype.run = function (mjWizard) {
                     node.title = node.name;
                     node.key = i;
                     node.icon = false;
-//                    node.parentid = node.parentid;
-//                    node.description = node.description;
-//                    node.usersidlist = node.usersidlist;
-//                    delete node.data;
                     node.children = [];
                     map[node.id] = i; // use map to look-up the parents
                     if (node.parentid !== null) {
@@ -54,6 +50,7 @@ SelectServiceTaskStep.prototype.run = function (mjWizard) {
                     onActivate: function (node) {
                         var desc = node.data.description,
                             useridlist = node.data.usersidlist;
+                        mjWizard.serviceid = node.data.id;
                         mjWizard.description = desc;
                         mjWizard.usersidlist = useridlist;
                         var $span = $(node.span),
@@ -85,7 +82,8 @@ SelectServiceTaskStep.prototype.run = function (mjWizard) {
 
                     },
                     select: function (event, ui) {
-                        var id = ui.item.id
+
+                        var id = ui.item.id;
                         var $elem = $content.find('[data-id=' + id + ']')
                         $content.find('.node-searched').removeClass('node-searched')
                         $tree.dynatree("getTree").activateKey(id)

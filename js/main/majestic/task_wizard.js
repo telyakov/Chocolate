@@ -6,6 +6,7 @@
 function TaskWizard(ch_form) {
     MajesticWizard.apply(this, arguments);
     this.ch_form = ch_form;
+    this.serviceid = null;
     this.usersidlist = null;
     this.description = null;
     this.usersTitle = null;
@@ -18,6 +19,7 @@ TaskWizard.prototype.done = function () {
     data.usersidlist = this.usersidlist;
     data.description = this.description;
     data.users = this.usersTitle;
+    data.serviceid = this.serviceid;
     this.ch_form.addRow(data);
 
 };
