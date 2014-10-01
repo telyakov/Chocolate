@@ -309,6 +309,7 @@ class ColumnProperties
         } elseif ($this->datasource) {
             $this->_readRoutine = new DataBaseRoutine($this->datasource);
         }
+        //todo: учесть отсутствие данных
         return $this->_readRoutine;
     }
 

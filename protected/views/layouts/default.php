@@ -58,7 +58,7 @@ use \ClassModules\User\User;
     }else{
         $taskUrl = Yii::app()->createUrl('grid/index', ['view' => 'tasks.xml']);
     }
-    if(Yii::app()->controller->action->getId() == 'default' &&  $_SERVER['HTTP_HOST'] !='localhost:8000'){
+    if(Yii::app()->controller->action->getId() == 'default' &&  $_SERVER['HTTP_HOST'] !='10.0.5.2'){
 
     Yii::app()->clientScript->registerScript('autoOpen', <<<JS
   $(function(){

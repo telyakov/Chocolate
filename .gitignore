@@ -22,6 +22,7 @@ js/libs/throttle-debounce
 js/libs/toggle-buttons
 js/libs/ui-touch-punch
 js/libs/classie
+js/libs/socket.io
 protected/config/main_production.php
 
 

@@ -76,7 +76,6 @@ class WebService extends \SoapClient implements ConnectionInterface
             array_shift($soapResponse);
             $metaCount = array_shift($soapResponse);
             $metaLength = $columnsCount * $metaCount;
-            $row = [];
             $i = 0;
             $columnIndex = 0;
             while ($i < $metaLength) {
@@ -89,6 +88,7 @@ class WebService extends \SoapClient implements ConnectionInterface
                 ++$i;
             }
 
+            $row = [];
             foreach ($soapResponse as $key => $value) {
                 $index = $key % $columnsCount;
                 if ($index == 0 && !empty($row)) {
