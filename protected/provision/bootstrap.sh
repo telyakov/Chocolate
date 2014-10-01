@@ -159,4 +159,10 @@ sudo rm $DOWNLOAD_TO
 sudo mv $TEMPORARY_DIRECTORY/apache-maven-* /usr/local/maven
 source /etc/profile.d/maven.sh
 sudo rm -r "$TEMPORARY_DIRECTORY"
+
 ## MilkyWay install
+cd /websocket
+mvn clean install
+mvn install
+mvn compile
+mvn exec:exec
