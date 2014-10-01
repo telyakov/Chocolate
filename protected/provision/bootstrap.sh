@@ -133,6 +133,7 @@ forever start app.js
 #comment in production
 sudo yum install -y ruby
 sudo gem install sass
+
 #Install dependencies nodejs for grunt
 sudo yum install-y freetype fontconfig
 sudo npm install -g grunt-cli bower phantomjs
@@ -146,3 +147,16 @@ sudo grunt bower
 grunt --force
 
 
+
+#maven install
+sudo yum install -y java-1.7.0-openjdk-devel
+cd
+TEMPORARY_DIRECTORY="$(mktemp -d)"
+DOWNLOAD_TO="$TEMPORARY_DIRECTORY/maven.tgz"
+wget -O "$DOWNLOAD_TO" http://www.eng.lsu.edu/mirrors/apache/maven/maven-3/3.1.1/binaries/apache-maven-3.1.1-bin.tar.gz
+sudo tar xzf $DOWNLOAD_TO -C $TEMPORARY_DIRECTORY
+sudo rm $DOWNLOAD_TO
+sudo mv $TEMPORARY_DIRECTORY/apache-maven-* /usr/local/maven
+source /etc/profile.d/maven.sh
+sudo rm -r "$TEMPORARY_DIRECTORY"
+## MilkyWay install

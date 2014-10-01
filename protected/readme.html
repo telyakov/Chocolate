@@ -13,7 +13,7 @@
     https://getcomposer.org/doc/04-schema.md
     Settings for Composer
 -->
-
+<!--vagrant plugin install vagrant-centos7_fix-->
 <!--
     bower.json
     http://bower.io/docs/creating-packages/
@@ -48,7 +48,6 @@
         sudo chmod -R 777 runtime/
         sudo chmod -R 777 ../assets/
         chmod -R 777  ../assets/*
-
     </li>
 </ol>
 
@@ -86,6 +85,9 @@
     <li>После этого к машине можно подключаться с помощью <b>vagrant ssh</b>(необходимо
         находиться в папке protected). Сам сервер доступен по адресу <a
                 href="http://localhost:8080">localhost:8080</a>
+    </li>
+    <li>
+        Если существует проблема в device(при vagrant up), выполнить <b>vagrant plugin install vagrant-centos7_fix</b>
     </li>
 </ol>
 <section class="section">
