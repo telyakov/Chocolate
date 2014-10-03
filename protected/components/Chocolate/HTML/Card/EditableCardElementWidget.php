@@ -1,25 +1,15 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: tselishchev
- * Date: 12.11.13
- * Time: 14:32
- */
+<?
 namespace Chocolate\HTML\Card;
 use Chocolate\HTML\Card\Interfaces\ICardElementSettings;
 use Chocolate\HTML\Card\Interfaces\ICardElementWidget;
 use Chocolate\HTML\Card\Settings\CheckBoxSettings;
-//use Chocolate\HTML\Card\Settings\DateSettings;
-
 use Chocolate\HTML\Card\Settings\DateSettings;
 use Chocolate\HTML\Card\Settings\DateTimeSettings;
-
 use Chocolate\HTML\Card\Settings\GridSettings;
 use Chocolate\HTML\Card\Settings\LineSettings;
 use Chocolate\HTML\Card\Settings\MultimediaSettings;
 use Chocolate\HTML\Card\Settings\TreeView;
 use Chocolate\HTML\Card\Settings\SelectSettings;
-
 use Chocolate\HTML\Card\Settings\TextSettings;
 use FrameWork\DataForm\Card\CardElementType;
 use FrameWork\DataForm\DataFormModel\ColumnProperties;
@@ -28,6 +18,7 @@ use FrameWork\DataForm\DataFormModel\ColumnPropertiesCollection;
 class EditableCardElementWidget implements ICardElementWidget{
     /**
      * @param ColumnProperties $columnProperties
+     * @param ColumnPropertiesCollection $columnPropertiesCollection
      * @return ICardElementSettings
      */
     public function create(ColumnProperties $columnProperties, ColumnPropertiesCollection $columnPropertiesCollection)
@@ -51,6 +42,8 @@ class EditableCardElementWidget implements ICardElementWidget{
                 return new CheckBoxSettings($columnProperties, $columnPropertiesCollection);
             case CardElementType::Multimedia:
                 return new MultimediaSettings($columnProperties, $columnPropertiesCollection);
+            case CardElementType::Chat:
+                return;
             case CardElementType::Line:
                 return new LineSettings($columnProperties, $columnPropertiesCollection);
         }

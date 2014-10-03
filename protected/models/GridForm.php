@@ -171,11 +171,11 @@ class GridForm extends CFormModel
     {
         try {
             if ($routine = $this->dataFormProperties->getStateProc()) {
-                return \Yii::app()->erp->execScalar($routine);
+                return \Yii::app()->erp->execScalar(Yii::app()->bind->bindProcedureFromData($routine));
             }
             return null;
         } catch (Exception $e) {
-            Yii::log('Возникла ошибка при выполнении stateProc в виде: ' . $this->getView(), CLogger::LEVEL_ERROR);
+            Yii::log($e->getMessage(), CLogger::LEVEL_ERROR);
             return null;
         }
     }

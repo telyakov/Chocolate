@@ -24,6 +24,12 @@ var Chocolate = {
         this.log.removeAllAppenders();
         this.log.addAppender(new log4javascript.BrowserConsoleAppender());
     },
+    stripHtml: function strip(html)
+    {
+        var tmp = document.createElement("DIV");
+        tmp.innerHTML = html;
+        return tmp.textContent||tmp.innerText;
+    },
     init: function () {
         this.$window = $(window);
         this.$tabs = $('#tabs');

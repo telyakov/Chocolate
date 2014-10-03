@@ -18,7 +18,7 @@ $dataFormProperties = $model->getDataFormProperties();
         'div',
         ['class' => 'right-header'],
         empty($dataFormProperties->getHeaderText()) ?
-            $dataFormProperties->getWindowCaption() :
+            '' :
             $dataFormProperties->getHeaderText()
     );
     ?>

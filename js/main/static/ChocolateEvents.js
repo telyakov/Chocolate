@@ -46,7 +46,26 @@ var ChocolateEvents = {
         this.keyActionsCardEvent($tabs);
         this.deselectTreeElementEvent($body);
         this.modalFormElementEvent($content);
-        this.searchColumnsEvent($tabs)
+        this.searchColumnsEvent($tabs);
+        this.sendEmailEvent($tabs);
+    },
+    sendEmailEvent: function($context){
+      $context.on('click', '.fm-email-send',  this.sendEmailHandler);
+    },
+    sendEmailHandler: function(){
+        var form = chApp.getFactory().getChGridForm($(this).closest('.section-header').siblings('.section-grid').children('form'));
+        var id = form.getActiveRowID();
+        if(id){
+            var dataObj = form.getDataObj()[id],
+                emailCol = chApp.getOptions().settings.emailCol,
+                emails = dataObj[emailCol],
+                url =encodeURIComponent(chApp.getOptions().urls.bpOneTask + id),
+                task = chApp.getMain().stripHtml(dataObj.task),
+                subject = 'База:'+ task.substr(0, 50);
+
+            window.open('mailto:'+emails+'?subject='+subject+'&body='+url, '_self')
+
+        }
     },
     searchColumnsEvent: function ($context) {
         $context.on('keydown', '.grid-column-search', $.debounce(200, false, this.searchColumnsHandler));

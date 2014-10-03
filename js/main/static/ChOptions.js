@@ -15,6 +15,7 @@ var ChOptions = {
         defaultAutoUpdateMS: 100000,
         formatDate: 'yyyy.mm.dd HH:MM:ss',
         signatureFormat: 'dd.mm.yyyy HH:MM',
+        emailCol: 'emails',
         systemCols: ['lastmodifier', 'lastmodifydate', 'insdate', 'username' , 'userid']
     },
     keys: {
@@ -52,7 +53,8 @@ var ChOptions = {
         queueExecute: '/majestic/queueExecute',
         filterLayouts: '/majestic/filterLayout',
         formSearch: '/grid/search',
-        formSave: '/grid/save'
+        formSave: '/grid/save',
+        bpOneTask: 'http://bp.78stroy.ru/grid/searchByID?view=tasks%5Ctasksfortops.xml&id='
     },
     labels:{
         attention: 'attention',

@@ -22,6 +22,7 @@ class CardElementType extends \SplEnum {
     const Grid = 'grid';
     const Multimedia = 'multimedia';
     const Line = 'line';
+    const Chat = 'discussionform';
 
     public function __construct($initial_value = self::__default, $strict = true)
     {
