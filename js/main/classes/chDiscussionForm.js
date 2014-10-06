@@ -59,10 +59,7 @@ ChDiscussionForm.prototype.sendMessage = function (msg) {
             }
         })
     }).done(function () {
-        var data = {};
-        data[_this.insDate] = new Date();
-        data[_this.textmessage] = msg;
-        _this.$form.find('.discussion-content').append(_this.renderMessage(data, true))
+        _this.refresh()
         _this.$form.next('.discussion-footer').children('.discussion-input').val('');
     }).fail(function(e){
         alert('возникла ошибка при отправке сообщения')
