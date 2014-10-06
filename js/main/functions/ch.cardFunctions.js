@@ -277,7 +277,7 @@ var chCardFunction = {
          *
          * @type {ChCardElement}
          */
-        var dtValue = params.newValue.format(ChOptions.settings.formatDate);
+        var dtValue = moment(params.newValue).format(ChOptions.settings.formatDate);
         ChObjectStorage.create($target, 'ChCardElement')
             .setChangedValue(name, dtValue)
             .setChangedValueInGrid(name, params.newValue);
@@ -373,18 +373,13 @@ var chCardFunction = {
 
         if (value && typeof(value) == 'string') {
             value = value.replace(/\./g, '/')
-//            var ss = new Date(value);
-//             dtValue = new Date(ss.format('yyyy.mm.dd'));
             dtValue = new Date(value);
-//            console.log(value, dtValue, ss)
         } else {
             dtValue = value;
         }
         if(!isAllowEdit){
             chCardElement.markAsNoChanged();
-
         }
-//        console.log(dtValue, attribute)
         ChCardInitCallback.add(function () {
             chCard.setElementValue($context, dtValue, isAllowEdit);
         })

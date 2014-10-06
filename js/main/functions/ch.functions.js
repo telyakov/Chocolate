@@ -257,10 +257,10 @@ var chFunctions = {
         }
     },
     dateColumnSaveFunction: function (e, params, name) {
-        var chColumn = chApp.getFactory().getChGridColumnBody($(e.target));
-        var newVal = params.newValue;
-        if (params.newValue) {
-            newVal = newVal.format(ChOptions.settings.formatDate);
+        var chColumn = chApp.getFactory().getChGridColumnBody($(e.target)),
+            newVal = params.newValue;
+        if (newVal) {
+            newVal = moment(newVal).format(ChOptions.settings.formatDate);
         }
         chColumn.setChangedValue(name, newVal);
     },

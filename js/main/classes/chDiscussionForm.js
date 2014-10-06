@@ -40,9 +40,9 @@ ChDiscussionForm.prototype.renderMessage = function (data, isMyMsg) {
         user = '';
     }
     var template = '<div class="' + msgClass + '"><ul>{*User*}<li class="bubble-date">{*Date*}</li><li class="bubble-msg">{*Message*}</li></ul></div>';
-    var date = new Date(data[this.insDate]);
+//    var date  =moment(data[this.insDate], "MM.DD.YYYY HH:mm:ss").toDate();
     return template
-        .replace('{*Date*}', date.format(chApp.getOptions().settings.signatureFormat))
+        .replace('{*Date*}', moment(data[this.insDate], "MM.DD.YYYY HH:mm:ss").format(chApp.getOptions().settings.signatureFormat))
         .replace('{*User*}', user)
         .replace('{*Message*}', data[this.textmessage]);
 };

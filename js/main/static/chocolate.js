@@ -204,7 +204,7 @@ var Chocolate = {
             return [
                 '',
                 Chocolate.user.getName(),
-                (new Date()).format(ChOptions.settings.signatureFormat),
+                moment(new Date()).format(ChOptions.settings.signatureFormat),
                 ''
             ].join(' ')
         },

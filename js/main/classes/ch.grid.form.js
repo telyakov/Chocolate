@@ -501,7 +501,7 @@ ChGridForm.prototype.layoutSelectedArea = function ($row, isMouse, $activeRow) {
                         html += '<span class="footer-title">';
                         html += preview_data[key]['caption'] + '</span>: <span>';
                         if(preview_data[key]['type'] == 'dt'){
-                            html += dateFormat(data[key], 'dd.mm.yyyy HH:MM:ss');
+                            html += moment(data[key], 'MM.DD.YYYY HH:mm:ss').format(chApp.getOptions().settings.signatureFormat);
                         }else{
                             html += data[key];
                         }

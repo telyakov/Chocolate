@@ -13,8 +13,8 @@ var ChOptions = {
         taskWizardSelector: '[href$=TasksWizard]',
         defaultColumnsWidth: '150',
         defaultAutoUpdateMS: 100000,
-        formatDate: 'yyyy.mm.dd HH:MM:ss',
-        signatureFormat: 'dd.mm.yyyy HH:MM',
+        formatDate: 'YYYY.MM.DD HH:mm:ss',
+        signatureFormat: 'DD.MM.YYYY HH:mm',
         emailCol: 'emails',
         systemCols: ['lastmodifier', 'lastmodifydate', 'insdate', 'username' , 'userid']
     },
