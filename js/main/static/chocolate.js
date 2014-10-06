@@ -330,8 +330,12 @@ var Chocolate = {
             _initScripts: function (ui, content, $context) {
                 ui.panel.html(content);
                 ChCardInitCallback.fireOnce();
+//                var tab =chApp.getFactory().getChTab(ui.tab);
+//                ChocolateDraw.clearReflowedTab(tab)
                 ChocolateDraw.drawCardPanel(ui.panel, $context);
-                ChocolateDraw.reflowActiveTab();
+                setTimeout(function(){
+                    ChocolateDraw.reflowActiveTab();
+                }, 0);
                 ui.tab.data('loaded', 1);
             },
             /**
@@ -373,6 +377,7 @@ var Chocolate = {
                             })
                     } else {
                         Chocolate.tab.card._initScripts(ui, Chocolate.layoutTemplate(template, pk), $tabPanel);
+
                     }
                 }
                 return false;

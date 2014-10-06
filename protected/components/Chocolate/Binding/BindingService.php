@@ -52,6 +52,11 @@ class BindingService extends \CApplicationComponent
             $params = new DataBaseParameters([]);
         }
         $params->add(new DataBaseParameter(self::USER_ID,\Yii::app()->user->id));
+        if($model){
+
+          $params->add(new DataBaseParameter('EntityID', $model->getParentID()));
+         $params->add(new DataBaseParameter('EntityTypeID',$model->getParentAttachmentsEntityTypeID()));
+        }
         $sqlParams =  \Yii::app()->erp->getProcedureParameters($procedure);
         $allParams = $this->prepareProcParameters($sqlParams, $params, $fullRecord, $model);
         $procedure->setParams($allParams);

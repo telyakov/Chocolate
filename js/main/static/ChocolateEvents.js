@@ -48,6 +48,16 @@ var ChocolateEvents = {
         this.modalFormElementEvent($content);
         this.searchColumnsEvent($tabs);
         this.sendEmailEvent($tabs);
+        this.sendMessageEvent($tabs);
+
+    },
+    sendMessageEvent: function($context){
+        $context.on('click','.discussion-submit', this.sendMessageHandler);
+    },
+    sendMessageHandler: function(){
+        var msg = $(this).prev('.discussion-input').val();
+      var form = chApp.getFactory().create($(this).closest('section').prev('form'), 'ChDiscussionForm');
+        form.sendMessage(msg)
     },
     sendEmailEvent: function($context){
       $context.on('click', '.fm-email-send',  this.sendEmailHandler);
@@ -493,7 +503,7 @@ var ChocolateEvents = {
         draw.reflowActiveTab();
     },
     reflowTabEvent: function ($context) {
-        $context.on('click', '.ui-tabs-anchor', chApp.namespace('draw.reflowActiveTab'));
+        $context.on('mouseup', '.ui-tabs-anchor', chApp.namespace('draw.reflowActiveTab'));
     },
     ajaxIndicatorEvent: function () {
         var $spinner = $('#fadingBarsG');

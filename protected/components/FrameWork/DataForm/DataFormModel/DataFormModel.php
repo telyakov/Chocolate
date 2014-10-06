@@ -130,7 +130,7 @@ class DataFormModel
             foreach ($changedData as $row) {
                 if (self::isNewRow($row['id'])) {
                     if ($createRoutine = $this->_dataFormProperties->getCreateProc()) {
-                        $createRoutine = \Yii::app()->bind->bindProcedureFromData($createRoutine, new DataBaseParameters($row), true);
+                        $createRoutine = \Yii::app()->bind->bindProcedureFromData($createRoutine, new DataBaseParameters($row), true, $this);
                         $routines->push($createRoutine);
                     } else {
                         throw new DataFormException('Не задана процедура добавление.');

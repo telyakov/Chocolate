@@ -37,7 +37,6 @@ var ChocolateDraw = {
             }
             var ch_card_tab = ChObjectStorage.create($context.find(Chocolate.clsSel(ChOptions.classes.activeTab)).children('a'), 'ChTab');
             if (this._isNeedReflow(ch_card_tab)) {
-//                console.log('CARRR')
                 var $panel = ch_card_tab.getPanel(),
                     _this = this;
                 this.drawCardPanel($panel, $context);
@@ -79,32 +78,40 @@ var ChocolateDraw = {
         return page_content_height;
     },
     _drawGridForm: function ($context) {
+        if ($context.children('form').hasClass('discussion-form')) {
+            var $discussionForm = $context.children('form');
+            var $discussionInputSection = $discussionForm.next('.discussion-footer');
+            $discussionForm.height($context.height() - $discussionInputSection.outerHeight(true));
+
+        } else {
         var $content_header = $context.find('section[data-id=header]'),
             $content_filters = $context.find('section[data-id=filters]'),
             $content_grid_form = $context.find('section[data-id=grid-form]'),
             content_grid_form_height = $context.height() - $content_header.outerHeight(true) - $content_filters.outerHeight(true);
-        $content_grid_form.height(content_grid_form_height)
+        $content_grid_form.height(content_grid_form_height);
 
         var $form = $content_grid_form.children('form'),
             $footer = $content_grid_form.children('footer'),
             form_height = content_grid_form_height - $footer.outerHeight(true);
-        $form.height(form_height);
-
-        var $menu = $form.find('menu'),
-            $grid_section = $form.children('section'),
-            grid_section_height = form_height - $menu.outerHeight(true);
-        $grid_section.height(grid_section_height)
-        if ($grid_section.attr('data-id') == 'map') {
-            var ch_map = ChObjectStorage.create($grid_section.children('.map'), 'ChMap');
-            ch_map.map.container.fitToViewport();
-
-        } else {
 
 
-            var $user_grid = $grid_section.find('div[data-id=user-grid]');
-            $user_grid.height(grid_section_height);
+            $form.height(form_height);
+
+            var $menu = $form.find('menu'),
+                $grid_section = $form.children('section'),
+                grid_section_height = form_height - $menu.outerHeight(true);
+            $grid_section.height(grid_section_height);
+            if ($grid_section.attr('data-id') == 'map') {
+                var ch_map = ChObjectStorage.create($grid_section.children('.map'), 'ChMap');
+                ch_map.map.container.fitToViewport();
+
+            } else {
+
+
+                var $user_grid = $grid_section.find('div[data-id=user-grid]');
+                $user_grid.height(grid_section_height);
+            }
         }
-//        $user_grid.children('table').width($user_grid.width())
     },
     /**
      * Полностью рисует сетку, расположенную не в карточке. Можно использовать при ресайзинге.
@@ -187,7 +194,7 @@ var ChocolateDraw = {
                     if (typeof rowHeight[curRowIndex] == 'undefined') {
                         rowHeight[curRowIndex] = dynamicRowHeight;
                         minRowsHeight[curRowIndex] = minHeight / colRowCount;
-                    }else{
+                    } else {
                         minRowsHeight[curRowIndex] = Math.max(minHeight / colRowCount, minRowsHeight[curRowIndex]);
                     }
                 }
@@ -200,10 +207,10 @@ var ChocolateDraw = {
         while (i <= rowsCount) {
             var minH = parseInt(minRowsHeight[i], 10),
                 realH = parseInt(rowHeight[i], 10);
-            if(isNaN(minH)){
+            if (isNaN(minH)) {
                 minH = 0;
             }
-            if(isNaN(realH)){
+            if (isNaN(realH)) {
                 realH = 0;
             }
             cardMinHeight += minH;
@@ -236,20 +243,20 @@ var ChocolateDraw = {
                 sum = 0;
             }
             var $input = $col.children('.card-input');
-            if($input.hasClass('card-grid')){
+            if ($input.hasClass('card-grid')) {
                 $input.height(height);
-            }else{
-                if($col.hasClass('card-static')){
+            } else {
+                if ($col.hasClass('card-static')) {
                     $input.height(21);
 
-                }else{
+                } else {
                     $input.height(height - 26);
 
                 }
             }
             $col.css({top: sum});
         });
-        $card.parent().css({'min-height': cardMinHeight + $card.siblings('header').height()}+ $card.find('.action-button-panel').height());
+        $card.parent().css({'min-height': cardMinHeight + $card.siblings('header').height()} + $card.find('.action-button-panel').height());
     },
     /**
      * Рисуем сетку в карточке

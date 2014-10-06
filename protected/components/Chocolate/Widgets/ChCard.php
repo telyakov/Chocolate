@@ -20,6 +20,7 @@ class ChCard extends CWidget
     public $CardElementSettingsCollection;
     private $cellWidth;
     private $cardID;
+    private $isRenderButtons = true;
 
     public function init()
     {
@@ -65,6 +66,9 @@ class ChCard extends CWidget
         $cardElementPQ = new CardElementPQ();
         /** @var $cardSettings ICardElementSettings */
         foreach ($this->CardElementSettingsCollection as $cardSettings) {
+            if($cardSettings instanceof \Chocolate\HTML\Card\Settings\Chat){
+                $this->isRenderButtons = false;
+            }
             $cardElementPQ->insert(
                 $cardSettings->render($this->pk, $this->view, $this->viewID, ++self::$tabIndex),
                 $cardSettings
@@ -144,6 +148,8 @@ class ChCard extends CWidget
 
     protected function renderCardButtons()
     {
+        if($this->isRenderButtons){
+
         echo CHtml::openTag('div', [
             'class' => 'card-action-button',
             'data-id' => 'action-button-panel',
@@ -152,6 +158,7 @@ class ChCard extends CWidget
         echo CHtml::button('Сохранить', ['class' => 'card-save', 'data-id' => 'card-save',]);
         echo CHtml::button('Отменить', ['class' => 'card-cancel', 'data-id' => 'card-cancel',]);
         echo '</div>';
+        }
     }
 
     protected function registerScripts()

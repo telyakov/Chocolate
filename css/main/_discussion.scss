@@ -1,0 +1,152 @@
+$box-shadow: #B2B2B2;
+.bubble-left,
+.bubble-right {
+    width: 60%;
+    padding: 7px 15px;
+    box-shadow: 0 0 6px $box-shadow;
+    position: relative;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    ul {
+        padding: 0;
+
+    }
+}
+.bubble-left ul {
+    margin: 14px 0 0 0;
+}
+.bubble-right ul {
+    margin: 0;
+    position: relative;
+}
+$left-color: #F2F2F2;
+$right-color: #DFEECF;
+
+.bubble-left {
+    float: left;
+    background:$left-color;
+    margin-left: 18px;
+}
+
+.bubble-right {
+    float: right;
+    background: $right-color;
+    margin-right: 15px;
+}
+
+.bubble-msg {
+    list-style: none;
+    font-size: 14px;
+    word-wrap: break-word;
+    display: flex;
+    padding-top: 5px;
+    padding-left: 5px;
+}
+
+@mixin transform($left, $right){
+    -moz-transform: $left $right;
+    -ms-transform: $left $right;
+    -o-transform: $left $right;
+    -webkit-transform: $left $right;
+    transform: $left $right;
+}
+
+.bubble-left::before,
+.bubble-right::before{
+    content: "\00a0";
+    display: block;
+    width: 20px;
+    box-shadow: -2px 2px 2px 0 rgba(178, 178, 178, .4);
+}
+
+
+.bubble-left::before {
+    background-color: $left-color;
+    height: 16px;
+    position: absolute;
+    left: -9px;
+    top: 11px;
+
+    @include transform(rotate(29deg), skew(-35deg));
+}
+
+.bubble-right::before {
+    float: right;
+    background-color: #dfeecf;
+    height: 19px;
+    position: relative;
+    left: 24px;
+    top: 5px;
+
+    @include transform(rotate(205deg), skew(-35deg));
+}
+
+.bubble-date{
+    position: absolute;
+    list-style: none;
+    font-size: 12px;
+    padding: 2px;
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px;
+    box-shadow: 0 0 2px $box-shadow ;
+    background: #ffffff;
+}
+.bubble-left .bubble-date {
+    bottom: 0;
+    right: -80px;
+}
+
+.bubble-right .bubble-date {
+    bottom: -7px;
+    left: -100px;
+}
+
+$name-color: #5586e5;
+.bubble-name {
+    list-style: none;
+    left: 16px;
+    top: 3px;
+    position: absolute;
+    color: $name-color;
+    font-size: 14px;
+    border-bottom: 1px solid $name-color;
+}
+
+$form-height: 50px;
+.discussion-input{
+    width: 100%;
+    resize: none;
+    font-size: 12px;
+    height: $form-height;
+    background: #fff;
+    border: 1px solid #d1d1d1;
+    margin-right: 100px;
+}
+
+.discussion-footer{
+    margin-right: 100px;
+    position: relative;
+}
+.discussion-submit{
+    bottom: 0;
+    background: #fff;
+    right: -100px;
+    height: $form-height +2px;
+    color: #0274bd;
+    position: absolute;
+    border: 1px solid #81a4d0;
+    cursor: pointer;
+    box-sizing: content-box;
+}
+.discussion-submit:hover{
+    border-color: #81a4d0;
+    background-color: #dbeeff;
+    text-decoration: none;
+
+}
+
+.discussion-form{
+    overflow-y: scroll;
+    overflow-x: hidden;
+}

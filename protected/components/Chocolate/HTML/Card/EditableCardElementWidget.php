@@ -2,6 +2,7 @@
 namespace Chocolate\HTML\Card;
 use Chocolate\HTML\Card\Interfaces\ICardElementSettings;
 use Chocolate\HTML\Card\Interfaces\ICardElementWidget;
+use Chocolate\HTML\Card\Settings\Chat;
 use Chocolate\HTML\Card\Settings\CheckBoxSettings;
 use Chocolate\HTML\Card\Settings\DateSettings;
 use Chocolate\HTML\Card\Settings\DateTimeSettings;
@@ -43,7 +44,7 @@ class EditableCardElementWidget implements ICardElementWidget{
             case CardElementType::Multimedia:
                 return new MultimediaSettings($columnProperties, $columnPropertiesCollection);
             case CardElementType::Chat:
-                return;
+                return new Chat($columnProperties, $columnPropertiesCollection);
             case CardElementType::Line:
                 return new LineSettings($columnProperties, $columnPropertiesCollection);
         }
