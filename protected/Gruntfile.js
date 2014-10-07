@@ -39,7 +39,7 @@ module.exports = function (grunt) {
                     '../js/libs/classie/index.js',
                     '../js/libs/gnmenu.js',
                     '../js/libs/ui-touch-punch/index.js', // for ipad, resize support,
-//                    '../js/libs/socket.io/index.js',
+                    '../js/libs/socket.io/index.js',
                     '../js/libs/log4javascript/index.js',
                     '../js/libs/moment/moment.js'
                 ],

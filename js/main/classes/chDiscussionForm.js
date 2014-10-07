@@ -31,6 +31,7 @@ ChDiscussionForm.prototype.render = function (data) {
         }
     }
     this.$form.find('.discussion-content').html(html.join(''));
+    chApp.getDraw().reflowActiveTab();
 };
 ChDiscussionForm.prototype.renderMessage = function (data, isMyMsg) {
     var msgClass = 'bubble-left';
@@ -40,16 +41,20 @@ ChDiscussionForm.prototype.renderMessage = function (data, isMyMsg) {
         user = '';
     }
     var template = '<div class="' + msgClass + '"><ul>{*User*}<li class="bubble-date">{*Date*}</li><li class="bubble-msg">{*Message*}</li></ul></div>';
-//    var date  =moment(data[this.insDate], "MM.DD.YYYY HH:mm:ss").toDate();
     return template
         .replace('{*Date*}', moment(data[this.insDate], "MM.DD.YYYY HH:mm:ss").format(chApp.getOptions().settings.signatureFormat))
         .replace('{*User*}', user)
         .replace('{*Message*}', data[this.textmessage]);
 };
+ChDiscussionForm.prototype.getParentView = function(){
+    return this.$form.attr('data-parent-view');
+};
+ChDiscussionForm.prototype.getParentID = function(){
+    return this.$form.attr('data-parent-id');
+};
 ChDiscussionForm.prototype.sendMessage = function (msg) {
-    var card = chApp.getFactory().getChCard(this.$form.closest('[data-id=grid-tabs]'));
     var _this = this;
-    var url = chApp.getOptions().urls.formSave + '?view=' + encodeURI('discussions.xml') + '&parentView=' + card.getView() + '&parentID=' +card.getKey()
+    var url = chApp.getOptions().urls.formSave + '?view=' + encodeURI('discussions.xml') + '&parentView=' + this.getParentView() + '&parentID=' +this.getParentID()
     $.post(url, {
         jsonChangedData: JSON.stringify({
             a: {

@@ -16,6 +16,7 @@ class GridSettings extends XEditableSettings
                 'showbuttons' => false,
                 'disabled' => true,
                 'options'=>[
+                    'title' => $this->columnProperties->getVisibleCaption(),
                     'view' => $this->columnProperties->getViewName(),
                     'fromID' => $this->columnProperties->getFromID(),
                     'fromName' => $this->columnProperties->getFromName(),

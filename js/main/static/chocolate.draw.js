@@ -58,6 +58,12 @@ var ChocolateDraw = {
                 $context.find('div[data-id=user-grid]').find('table').each(function () {
                     $(this).floatThead('reflow');
                 })
+                var $discussionForm = $context.children('section').children('form');
+                if ($discussionForm.hasClass('discussion-form')) {
+                    var $discussionInputSection = $discussionForm.next('.discussion-footer');
+                    $discussionForm.height($context.height() - $discussionInputSection.outerHeight(true));
+
+                }
                 this.reflowedTabs.push(ch_tab.getID());
 
             }

@@ -9,8 +9,8 @@ class Chat extends EditableCardElementSettings {
     public function isStatic(){
         return false;
     }
-    public function getSql(\GridForm $model){
-       return  addslashes(\Yii::app()->bind->bindProcedureFromData($this->columnProperties->getReadProc(), null, true,$model->getDataFormModel())->__toString());
+    public static function getSql(\GridForm $model){
+       return  addslashes(\Yii::app()->bind->bindProcedureFromData($model->getDataFormProperties()->getReadProc(), null, true,$model->getDataFormModel())->__toString());
     }
     public function render($pk, $view, $formID, $tabIndex)
     {
@@ -18,7 +18,7 @@ class Chat extends EditableCardElementSettings {
         $data = \Yii::app()->controller->renderPartial('//discussions/index', [
             'model' => $model,
             'parentViewID' => $formID,
-            'settings' => $this
+            'sql' => $this->getSql($model)
         ], true);
         return $data;
     }

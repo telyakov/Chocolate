@@ -361,6 +361,9 @@ class GridForm extends CFormModel
 
     }
 
+    public  static function isChat($view){
+        return stripos($view, 'discussions.xml') !== false;
+    }
     public function getGridResponse($parentViewID, $isSelect)
     {
         $response = new GridResponse();
@@ -372,7 +375,16 @@ class GridForm extends CFormModel
                             'parentViewID' => $parentViewID
                         ], true, true)
                 );
-            } else {
+            } elseif(GridForm::isChat($this->getView())){
+                $response->setData(Yii::app()->controller->renderPartial('//discussions/index',
+                        [
+                            'model' => $this,
+                            'parentViewID' => $parentViewID,
+                            'sql' => \Chocolate\HTML\Card\Settings\Chat::getSql($this)
+                        ], true, true)
+                );
+            }
+            else {
                 if ($isSelect) {
                     $response->setData(Yii::app()->controller->renderPartial('//grid/selected_grid',
                             [

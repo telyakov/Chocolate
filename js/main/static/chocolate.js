@@ -244,7 +244,7 @@ var Chocolate = {
                 card._undoChange();
             } else {
                 var form = ChObjectStorage.getChGridForm(activeTab.getPanel().find('.section-grid>form'));
-                if (form.isHasChange() && !confirm(form.getExitMessage())) {
+                if (typeof form.isHasChange != 'undefined' && form.$form.length && form.isHasChange() && !confirm(form.getExitMessage())) {
                     return;
                 }
             }

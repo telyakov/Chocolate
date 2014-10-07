@@ -4,9 +4,9 @@ use \Chocolate\HTML\Card\Settings\Chat;
  * @var $this Controller
  * @var $model GridForm@
  * @var $parentViewID String
- * @var $settings Chat
+ * @var $sql String
  */
-$sql = $settings->getSql($model);
+
 $id=\Chocolate\HTML\ChHtml::generateUniqueID();
 ?>
 <section>
@@ -14,7 +14,9 @@ $id=\Chocolate\HTML\ChHtml::generateUniqueID();
     <?
 echo CHtml::openTag('form',[
     'id' =>$id,
-    'class' => 'discussion-form'
+    'class' => 'discussion-form',
+    'data-parent-view' => $model->getParentView(),
+    'data-parent-id' => $model->getParentID()
 ]);
 ?>
     <section data-id="grid-section">
