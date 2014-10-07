@@ -56,6 +56,10 @@ class DataFormModel
     {
         return $this->_parentID;
     }
+    public function setParentID($parentID)
+    {
+        $this->_parentID = $parentID;
+    }
 
     public function getDataFormProperties()
     {

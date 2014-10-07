@@ -10,6 +10,7 @@ class Chat extends EditableCardElementSettings {
         return false;
     }
     public static function getSql(\GridForm $model){
+        $model->getDataFormModel()->setParentID(ChHtml::ID_KEY);
        return  addslashes(\Yii::app()->bind->bindProcedureFromData($model->getDataFormProperties()->getReadProc(), null, true,$model->getDataFormModel())->__toString());
     }
     public function render($pk, $view, $formID, $tabIndex)

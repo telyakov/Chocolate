@@ -16,7 +16,7 @@ echo CHtml::openTag('form',[
     'id' =>$id,
     'class' => 'discussion-form',
     'data-parent-view' => $model->getParentView(),
-    'data-parent-id' => $model->getParentID()
+    'data-parent-id' => \Chocolate\HTML\ChHtml::ID_KEY
 ]);
 ?>
     <section data-id="grid-section">
@@ -36,6 +36,7 @@ echo CHtml::closeTag('form');
 <?
 Yii::app()->clientScript->registerScript(uniqid(),
     <<<JS
+
     var form = ChObjectStorage.create($('#'+'$id'), 'ChDiscussionForm');
     form.init('$sql');
     form.refresh();
