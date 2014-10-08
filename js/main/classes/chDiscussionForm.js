@@ -17,6 +17,8 @@ ChDiscussionForm.prototype.refresh = function () {
         var resObj = new ChResponse(res);
         _this.render(resObj.getData());
         resObj.destroy();
+        _this.$form.scrollTop(_this.$form.height());
+
     })
         .fail(function (er) {
             console.log(er)
@@ -64,7 +66,7 @@ ChDiscussionForm.prototype.sendMessage = function (msg) {
             }
         })
     }).done(function () {
-        _this.refresh()
+        _this.refresh();
         _this.$form.next('.discussion-footer').children('.discussion-input').val('');
     }).fail(function(e){
         alert('возникла ошибка при отправке сообщения')
