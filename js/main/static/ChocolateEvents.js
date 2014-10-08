@@ -308,6 +308,7 @@ var ChocolateEvents = {
         if (toID && toName && fromName && fromID) {
             isSelect = 1;
         }
+        Chocolate.leaveFocus()
         if ($currentTab.length) {
             $tabs.tabs("select", tabID)
         } else {
