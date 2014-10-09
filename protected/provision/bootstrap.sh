@@ -153,16 +153,21 @@ sudo yum install -y java-1.7.0-openjdk-devel
 cd
 TEMPORARY_DIRECTORY="$(mktemp -d)"
 DOWNLOAD_TO="$TEMPORARY_DIRECTORY/maven.tgz"
-wget -O "$DOWNLOAD_TO" http://www.eng.lsu.edu/mirrors/apache/maven/maven-3/3.1.1/binaries/apache-maven-3.1.1-bin.tar.gz
+sudo wget -O "$DOWNLOAD_TO" http://www.eng.lsu.edu/mirrors/apache/maven/maven-3/3.1.1/binaries/apache-maven-3.1.1-bin.tar.gz
 sudo tar xzf $DOWNLOAD_TO -C $TEMPORARY_DIRECTORY
 sudo rm $DOWNLOAD_TO
 sudo mv $TEMPORARY_DIRECTORY/apache-maven-* /usr/local/maven
+sudo cp  /vagrant/protected/provision/maven.sh  /etc/profile.d/maven.sh
 source /etc/profile.d/maven.sh
 sudo rm -r "$TEMPORARY_DIRECTORY"
+
+##
+# cd /
+# mkdir websoket
+
 
 ## MilkyWay install
 cd /websocket
 mvn clean install
-mvn install
 mvn compile
 mvn exec:exec

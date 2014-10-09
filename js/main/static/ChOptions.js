@@ -55,7 +55,7 @@ var ChOptions = {
         searchedColumn: 'grid-column-searched'
     },
     urls:{
-        webSocketServer: 'http://10.0.5.2:3000',
+        webSocketServer: 'http://192.168.0.34:3000',
         addRow: '/grid/insertRow',
         export2excel: '/majestic/export2excel',
         cardGet: '/grid/cardDataGet',
