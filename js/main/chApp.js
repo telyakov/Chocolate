@@ -59,7 +59,7 @@ chApp.getBindService = function(){
  * @returns {ChOptions}
  */
 chApp.getOptions = function(){
-   return this.options;
+    return this.options;
 };
 
 /**
@@ -67,4 +67,16 @@ chApp.getOptions = function(){
  */
 chApp.getDraw = function(){
     return ChocolateDraw;
-}
+};
+/**
+ * @returns {socket}
+ */
+chApp.getSocket = function(){
+    return socket;
+};
+/**
+ * @returns {chFunctions}
+ */
+chApp.getFunctions = function(){
+    return chFunctions;
+};

@@ -144,71 +144,6 @@ var ch ={
     }
 };
 var chCardFunction = {
-//    select2AjaxInitSelection: function (element, callback, sql) {
-//        //TODO: не сделана подствека анимации в случаи долгой загрузки
-//        var $elem = element.data().select2.opts.element.closest('.table-td').children('a'),
-//            elem = $elem.get(0),
-//            data = jQuery.data(elem, 'data-loaded'),
-//            cardElement = new ChCardElement($elem),
-//            bindSql = bindingService.fromData(sql, cardElement.getCard().getDataObj());
-//
-//        if (typeof(data) == 'undefined') {
-//            data = [];
-//            $.ajax(
-//                MajesticVars.EXECUTE_URL,
-//                {
-//                    async: false,
-//                    data: {sql: bindSql},
-//                    success: function (reponse) {
-//                        var chResponse = new ChGridResponse(reponse),
-//                            resData = chResponse.getData();
-//                        for (var i in resData) {
-//                            data.push({
-//                                id: resData[i].id,
-//                                text: resData[i].data.name,
-//                                desc: resData[i].data.description
-//
-//                            });
-//                        }
-//                        jQuery.data(elem, 'data-loaded', data)
-//                    },
-//                    error: function () {
-//                        jQuery.data(elem, 'data-loaded', data)
-//                    }
-//                }
-//            );
-//        }
-//        var result = [];
-//        $(element.val().split(",")).each(function () {
-//            var id = this;
-//            if (id.length) {
-//                var text = "", desc = '';
-//                $(data).each(function () {
-//                    if (this.id == id) {
-//                        text = this.text;
-//                        desc = this.desc;
-//                        result.push({id: id, text: text, desc: desc});
-//                        return false;
-//                    }
-//                });
-//
-//            }
-//        });
-//        callback(result);
-//
-//
-//    },
-//    select2AjaxDataFunc: function (query, $context) {
-//        var elem = $context[0].element.closest('.table-td').children('a').get(0),
-//            data = {results: []};
-//
-//        $.each(jQuery.data(elem, 'data-loaded'), function () {
-//            if (query.term.length == 0 || this.text.toUpperCase().indexOf(query.term.toUpperCase()) >= 0) {
-//                data.results.push({id: this.id, text: this.text, desc: this.desc });
-//            }
-//        });
-//        query.callback(data);
-//    },
     defaultValidateFunc: function ($context, value) {
         var $error = $context.closest(".card-col").children("label");
         if ($.trim(value) == "") {
@@ -220,7 +155,6 @@ var chCardFunction = {
     select2ColumnSaveFunction: function (e, params, name) {
         var jCell = $(e.target),
             chColumn = new ChGridColumnBody(jCell);
-//            new_value = "";
         if (params.newValue.length > 0 && params.newValue[0].indexOf(",") != -1) {
             //отсекаем первый элемент, тк это какой- то левак
             delete params.newValue[0];

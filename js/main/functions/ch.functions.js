@@ -1,8 +1,8 @@
 var chFunctions = {
-    systemColsInit: function(sysColsID){
+    systemColsInit: function (sysColsID) {
         var $btn = $('#' + sysColsID),
             form = chApp.getFactory().getChGridForm($btn.closest('form'));
-        if(!form.ch_form_settings.isSystemVisibleMode()){
+        if (!form.ch_form_settings.isSystemVisibleMode()) {
             $btn.addClass(chApp.getOptions().classes.menuButtonSelected);
         }
     },
@@ -53,55 +53,109 @@ var chFunctions = {
                 data: data,
                 async: false
             }).done(function (resp) {
-                    var chResp = new ChResponse(resp);
-                    if (chResp.isSuccess()) {
-                        chForm
-                            .clearChange()
-                            .refresh();
-                    }
-                    chResp.sendMessage(chMsgContainer);
-                })
+                var chResp = new ChResponse(resp);
+                if (chResp.isSuccess()) {
+                    chForm
+                        .clearChange()
+                        .refresh();
+                }
+                chResp.sendMessage(chMsgContainer);
+            })
                 .fail(function (resp) {
                     chMsgContainer.sendMessage('Возникла непредвиденная ошибка при сохранении вложений.', ChResponseStatus.ERROR);
                 })
         }
     },
-    _createSubMenu: function(items){
-        var menuItemTemplate = '<li><a href="{*url*}">{*name*}</a>{*submenu*}</li>';
-
-        var result = ['<ul class="gn-submenu">'];
-        for(var i in items){
-            if(items.hasOwnProperty(i)){
-                result.push(this._createMenuItem(items[i]));
+    _createSubMenu: function (items) {
+        var result = ['<ul class="gn-submenu">'], i, sort = [];
+        for (i in items) {
+            if (items.hasOwnProperty(i)) {
+                sort.push({id: i, val: items[i].label})
             }
         }
+        sort = sort.sort(function (a, b){
+                if(a.val < b.val)
+                return -1;
+                if(a.val > b.val)
+                return 1;
+                return 0;
+            }
+        );
+        var _this = this;
+        sort.forEach(function(item){
+            result.push(_this._createMenuItem(items[item.id]));
+        });
         result.push('</ul>');
         return result.join('');
 
     },
-    _createMenuItem: function(item){
+    _createMenuItem: function (item) {
         var menuItemTemplate = '<li><a class="menu-root" href="{*url*}">{*name*}</a>{*submenu*}</li>';
         var subMenuItemTemplate = '<ul><a class="menu-root" href="{*url*}">{*name*}</a>{*submenu*}</ul>';
         var name = item.label, url = item.url;
-        if(Array.isArray(item.items)){
+        if (!Object.keys(item.items).length) {
             return menuItemTemplate.replace('{*url*}', url).replace('{*name*}', name).replace('{*submenu*}', '');
-        }else{
+        } else {
             return subMenuItemTemplate.replace('{*url*}', url).replace('{*name*}', name).replace('{*submenu*}', this._createSubMenu(item.items));
         }
 
     },
-    createMenu: function(items){
+    prepareViewName: function(view){
+      return view.toLowerCase()  + '.xml';
+    },
+    createMenu: function (items) {
+        var i
+            ,tree = {}
+            ,subTree = { 0: tree };
+        for (i in items) {
+            if (items.hasOwnProperty(i)) {
+                var row = items[i]
+                    ,id = row.id
+                    ,label = row.name
+                    ,parent = row.parentid
+                    ,view = row.viewname
+                    ,url;
+                if (view) {
+                    view = this.prepareViewName(view);
+                    if (~view.indexOf('map.xml')) {
+                        url = '/map/index?view='+encodeURI(view);
+                    }
+                    else if ( ~view.indexOf('flatsgramm.xml')){
+                        url = '/canvas/index?view='+encodeURI(view);
+                    } else {
+                        url = '/grid/index?view='+encodeURI(view);
+                    }
+                } else {
+                    url = '#';
+                }
+                if(!subTree[parent]){
+                    subTree[parent] = {};
+                }
+                var branch = subTree[parent];
+                if (parent == 0) {
+                    branch[id] = {'label': label, url: '#', items : {}};
+                    subTree[id] = branch[id];
+                } else {
+                    if(!branch.items){
+                        branch.items = {};
+                    }
+                    branch.items[id] = {'label': label, url: url, items: {}};
+                    if(url != '#'){
+                        branch.items[id].itemOptions = {'class': 'link-form'};
+                    }
+                    subTree[id] = branch.items[id];
+                }
+            }
+        }
         var $menu = $('#gn-menu'), content = [];
         content.push('<li class="gn-trigger">');
         content.push('<a class="gn-icon gn-icon-menu"></a>');
         content.push('<nav class="gn-menu-wrapper">');
         content.push('<div class="gn-scroller">');
         content.push('<ul class="gn-menu">');
-        var item;
-
-        for(var i in items){
-            if(items.hasOwnProperty(i)){
-             content.push(this._createMenuItem(items[i]));
+        for (i in tree) {
+            if (tree.hasOwnProperty(i)) {
+                content.push(this._createMenuItem(tree[i]));
             }
         }
         content.push('</ul>');
@@ -152,7 +206,7 @@ var chFunctions = {
                 $context.editable('setValue', val);
                 column.setChangedValue(attribute, val);
             })
-        }else{
+        } else {
             column.markAsNoChanged();
         }
     },
@@ -231,7 +285,7 @@ var chFunctions = {
                 options.title = chEditable.getTitle($context.attr('data-pk'), caption);
                 dynatreeElem.load(options);
             })
-        }else{
+        } else {
             col.markAsNoChanged();
         }
 

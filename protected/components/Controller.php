@@ -38,7 +38,6 @@ class Controller extends CController
             $parentModel = null;
         }
 
-        $model = new GridForm($view, null, null, $parentModel, $parentID);
-        return $model;
+        return new GridForm($view, null, null, $parentModel, $parentID);
     }
 }

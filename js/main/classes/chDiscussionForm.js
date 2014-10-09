@@ -12,6 +12,8 @@ ChDiscussionForm.prototype.init = function (readSql) {
 };
 ChDiscussionForm.prototype.refresh = function () {
     var url = chApp.getOptions().urls.execute + '?sql=' + this.readSql;
+//    console.log(this.readSql);
+//    socket.emit('request', {query: this.readSql})
     var _this = this;
     $.get(url).done(function (res) {
         var resObj = new ChResponse(res);

@@ -27,5 +27,13 @@ var bindingService ={
             }
             return param;
         });
+    },
+    bindSql: function(sql){
+        var mainModule = chApp.getMain(),
+            optionsModule = chApp.getOptions();
+
+        var userID = mainModule.user.getID();
+        return sql
+            .replace(optionsModule.sql.params.userID, userID);
     }
 };

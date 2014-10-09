@@ -15,7 +15,7 @@ use \ClassModules\User\User;
         <script src="/js/erp.min.js"></script>
     <? endif; ?>
     <script src="/js/main.js"></script>
-    <title>Шоколад</title>
+    <? echo CHtml::tag('title',[], Yii::app()->name)?>
 </head>
 <body>
 <header id="header">
@@ -46,12 +46,8 @@ use \ClassModules\User\User;
     </div>
 </div>
 <footer id="footer">
-    <?php
-    if(isset( Yii::app()->user->fullName)){
-        $userName = Yii::app()->user->fullName;
-    }else{
-        $userName = 'Нажмите выйти и войдите снова';
-    }
+    <?
+    $userName = Yii::app()->user->fullName;
     if(stripos(Yii::app()->request->getHostInfo(), 'bp')!== false){
 
         $taskUrl = Yii::app()->createUrl('grid/index', ['view' => 'tasks\tasksfortops.xml']);
@@ -86,12 +82,10 @@ JS
             ],
         ],
     ]);
-    $data =CJavaScript::encode( User::convertToTree(User::getForms()));
-    $roles = json_encode(User::getRoles());
-    Yii::app()->clientScript->registerScript('authorization', <<<JS
-        Chocolate.user.setIdentity('$userName', '$roles');
-        chFunctions.createMenu($data);
 
+    $userID = Yii::app()->user->id;
+    Yii::app()->clientScript->registerScript('authorization', <<<JS
+        Chocolate.user.setIdentity('$userName', '$userID');
 JS
         , CClientScript::POS_READY
     )
@@ -125,7 +119,6 @@ JS
         </td>
     </tr>
     {% } %}
-
 </script>
 <script id="template-upload" type="text/x-tmpl">
 {% for (var i=0, file; file=o.files[i]; i++) { %}

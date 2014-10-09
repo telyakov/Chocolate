@@ -41,7 +41,6 @@ class SiteController extends Controller
 
     public function actionDefault()
     {
-//        $this->navigation = \ClassModules\User\User::getForms();
         $this->layout = '//layouts/simpleGrid';
         $this->render('default');
     }

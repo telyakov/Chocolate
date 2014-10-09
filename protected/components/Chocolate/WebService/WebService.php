@@ -187,13 +187,6 @@ class WebService extends \SoapClient implements ConnectionInterface
         return $recordset;
     }
 
-    function getForms($userID)
-    {
-        $routine = new DataBaseRoutine("dbo.uspGetFormsForUser @UserID = $userID");
-        $recordset = $this->exec($routine);
-        return $recordset;
-    }
-
     function execScalar(DataBaseRoutine $sql, $userID = null)
     {
         try {

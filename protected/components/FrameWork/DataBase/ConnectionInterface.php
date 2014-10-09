@@ -38,12 +38,6 @@ interface ConnectionInterface {
     function fileGet($id);
 
     /**
-     * @param $userID Int
-     * @return Recordset
-     */
-    function getForms($userID);
-
-    /**
      * @param $sql string
      * @param string|int $fields
      * @return Recordset

@@ -46,14 +46,7 @@ class MajesticController extends Controller
     }
 
     public function actionFileGet($fileID){
-        $data = FileModel::getFile($fileID);
-//        header('Content-type: application/octet-stream; charset=windows-1251');
-//        if($name){
-//            //Поддержка браузеров, не понимающих атрибут download
-//            header('Content-Disposition: attachment; filename='. rawurlencode($name) );
-//        }
-        echo $data;
-
+        echo FileModel::getFile($fileID);
     }
 
 

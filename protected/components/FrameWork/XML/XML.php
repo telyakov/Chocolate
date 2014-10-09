@@ -2,7 +2,6 @@
 namespace FrameWork\XML;
 
 use Chocolate\Exceptions\XmlException;
-use foo\bar\Exception;
 use FrameWork\DataForm\Card\Card;
 use FrameWork\DataForm\Card\CardCollection;
 use FrameWork\DataForm\DataFormModel\ActionProperties;

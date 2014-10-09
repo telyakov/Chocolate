@@ -26,7 +26,6 @@ module.exports = function (grunt) {
                     '../js/libs/wysihtml5.js',
                     '../js/libs/jquery.tablesorter.js',
                     '../js/libs/jquery.tablesorter.widgets.js',
-//                    '../js/libs/date.format.js',
                     '../js/libs/json_parse/index.js',
                     '../js/libs/jquery.ui.widget.js',
                     '../js/libs/tmpl.min.js',
@@ -41,6 +40,7 @@ module.exports = function (grunt) {
                     '../js/libs/ui-touch-punch/index.js', // for ipad, resize support,
                     '../js/libs/socket.io/index.js',
                     '../js/libs/log4javascript/index.js',
+//                    '../js/libs/backbone/backbone.js',
                     '../js/libs/moment/moment.js'
                 ],
                 dest: '../js/erp.js'

@@ -43,27 +43,6 @@ class DataBaseAccessor extends \CApplicationComponent
         $this->exec($procedure);
     }
 
-    public function getUserRoles(){
-        try{
-            $parameters = new DataBaseParameters();
-            $parameters->add(new DataBaseParameter('userid', $this->userID));
-            $routine = new DataBaseRoutine('dbo.uspGetUserRoles', $parameters);
-            return $this->exec($routine);
-        }catch (\Exception $e){
-            self::handleException('Не удалось получить список ролей пользователя.', 500, $e);
-
-        }
-    }
-    public function getFormsForUser()
-    {
-        try {
-            $recordset = $this->conn->getForms($this->userID);
-            return $recordset;
-        } catch (\Exception $e) {
-            self::handleException($e->getMessage(), 500, $e);
-        }
-    }
-
     protected static function handleException($msg, $code = 0, \Exception $e = null)
     {
         throw new DataBaseException($msg, $code, $e);

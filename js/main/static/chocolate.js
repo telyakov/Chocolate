@@ -210,13 +210,48 @@ var Chocolate = {
         },
         /**
          * @param name {string}
-         * @param roles {JSON}
+         * @param id {string}
          */
-        setIdentity: function (name, roles) {
+        setIdentity: function (name, id) {
+
             Chocolate.storage.session.user = {
-                name: name,
-                roles: roles ? json_parse(roles) : []
+                id: id,
+                name: name
             };
+
+            var bindModule = chApp.getBindService(),
+                optionsModule = chApp.getOptions(),
+                socketModule = chApp.getSocket();
+
+            var rolesSql = bindModule.bindSql(optionsModule.sql.getRoles),
+                formsSql = bindModule.bindSql(optionsModule.sql.getForms);
+            socketModule.emit('request', {
+                query: rolesSql,
+                type: optionsModule.sql.types.roles
+            });
+            socketModule.emit('request', {
+                query: formsSql,
+                type: optionsModule.sql.types.forms
+            });
+        },
+        setRoles: function(roles){
+            var result = [];
+            var i,
+                hasOwn = Object.prototype.hasOwnProperty,
+                role;
+            for (i in roles) {
+                if (hasOwn.call(roles, i)) {
+                    role = roles[i].name.toLowerCase();
+                    result.push(role);
+                }
+            }
+            Chocolate.storage.session.user.roles = result;
+        },
+        /**
+         * @returns {string}
+         */
+        getID: function () {
+            return Chocolate.storage.session.user.id;
         },
         /**
          * @returns {string}

@@ -99,4 +99,29 @@ $(function () {
         }
     });
    chApp.namespace('events').createEventsHandlers();
+
+
+});
+var socket =  io.connect(chApp.getOptions().urls.webSocketServer);
+socket.on('response', function(data) {
+    var optionsModule = chApp.getOptions(),
+        mainModule = chApp.getMain();
+    var type = data.type, error = data.error, resData;
+
+    if(error){
+        resData = {};
+    }else{
+        resData = json_parse(data.data);
+    }
+
+    switch(type){
+        case optionsModule.sql.types.roles:
+            mainModule.user.setRoles(resData);
+            break;
+        case optionsModule.sql.types.forms:
+            chApp.getFunctions().createMenu(resData);
+            break;
+        default:
+        console.log(data)
+    }
 });

@@ -21,6 +21,17 @@ var ChOptions = {
     keys: {
       controlColumn: 'chocolate-control-column'
     },
+    sql:{
+      getForms: 'core.UserFormsGet :userid',
+      getRoles: 'core.UserRolesGet :userid',
+      types:{
+          forms: 'forms',
+          roles: 'roles'
+      },
+      params:{
+          userID: ':userid'
+      }
+    },
     classes: {
         allowHideColumn :'data-col-hide',
         hiddenAllColsTable: 'ch-hide',
@@ -44,6 +55,7 @@ var ChOptions = {
         searchedColumn: 'grid-column-searched'
     },
     urls:{
+        webSocketServer: 'http://10.0.5.2:3000',
         addRow: '/grid/insertRow',
         export2excel: '/majestic/export2excel',
         cardGet: '/grid/cardDataGet',
