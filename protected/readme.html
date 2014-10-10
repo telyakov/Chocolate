@@ -38,7 +38,8 @@
 <ol>
     <li>В биосе включить поддержку <b>VT-X</b></li>
     <li>Установить виртуал box и vagrant</li>
-    <li>Скачать <a href="https://f0fff3908f081cb6461b407be80daf97f07ac418.googledrive.com/host/0BwtuV7VyVTSkUG1PM3pCeDJ4dVE/centos7.box">box</a>
+    <li>Скачать <a
+            href="https://f0fff3908f081cb6461b407be80daf97f07ac418.googledrive.com/host/0BwtuV7VyVTSkUG1PM3pCeDJ4dVE/centos7.box">box</a>
     </li>
     <li>Выполнить в папке <b>protected</b> с правами адмнистратора команду <b>vagrant
         up</b>. Первый раз запускается долго
@@ -47,7 +48,7 @@
         Выставить права на запись в папки <b>runtime</b> и <b>assets</b>
         sudo chmod -R 777 runtime/
         sudo chmod -R 777 ../assets/
-        chmod -R 777  ../assets/*
+        chmod -R 777 ../assets/*
     </li>
 </ol>
 
@@ -87,7 +88,8 @@
                 href="http://localhost:8080">localhost:8080</a>
     </li>
     <li>
-        Если существует проблема в device(при vagrant up), выполнить <b>vagrant plugin install vagrant-centos7_fix</b>
+        Если существует проблема в device(при vagrant up), выполнить <b>vagrant plugin
+        install vagrant-centos7_fix</b>
     </li>
 </ol>
 <section class="section">
@@ -127,3 +129,10 @@
 <h3>Composer</h3>
 <li>Перейти в protected и выполнить <b>composer update</b></li>
 
+<h2 class="header">WebSocket Server</h2>
+<h3>MilkyWay</h3>
+Для запуска в отдельном потоке необходимо:
+<li>mvn exec:exec в папке /websocket</li>
+<li>ctrl+z</li>
+<li>disown -h %1</li>
+<li>bg 1</li>
