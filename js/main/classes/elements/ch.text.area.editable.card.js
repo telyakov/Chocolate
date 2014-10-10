@@ -59,19 +59,14 @@ ChTextAreaEditableCard.prototype.create = function (context, e, allow_edit, name
                     var editor = new wysihtml5.Editor($textArea.get(0));
                     editor.on("load", function (e) {
                         var $tbody = $textArea.siblings('iframe').eq(1).contents().find('body');
-                        if (name == 'commentforreport') {
-                            if( Chocolate.user.getName() == 'Игнатьев Дмитрий Иванович'){
-                                $tbody.on('keydown', {editor: $textArea.data("wysihtml5").editor, red: true}, ChocolateEvents.addSignToIframeHandler);
-                            }else{
-                                $tbody.on('keydown', {editor: $textArea.data("wysihtml5").editor, red: false}, ChocolateEvents.addSignToIframeHandler);
-                            }
-                        }
-                        $tbody.on('keydown', function(e){
-                            var keys = chApp.namespace('events.KEY');
-                            if(e.keyCode == keys.ESCAPE){
-                               $text_modal.editable('hide');
-                            }
-                        })
+                        $tbody
+                            .on('keydown', ChocolateEvents.addSignToIframeHandler)
+                            .on('keydown', function(e){
+                                var keys = chApp.namespace('events.KEY');
+                                if(e.keyCode == keys.ESCAPE){
+                                   $text_modal.editable('hide');
+                                }
+                            })
                     });
                 }
                 e.preventDefault()

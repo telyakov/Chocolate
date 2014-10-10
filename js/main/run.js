@@ -102,7 +102,7 @@ $(function () {
 
 
 });
-var socket =  io.connect(chApp.getOptions().urls.webSocketServer);
+var socket =  io.connect('http://crm.78stroy.ru:3000');
 socket.on('response', function(data) {
     var optionsModule = chApp.getOptions(),
         mainModule = chApp.getMain();
