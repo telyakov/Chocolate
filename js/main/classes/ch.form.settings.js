@@ -1,18 +1,17 @@
 
 /**
  * Обертка над локальным хранилищем данных
- * @param ch_grid_form {ChGridForm}
+ * @param form {ChGridForm}
  * @constructor
  */
-function ChFormSettings(ch_grid_form) {
-    this.ch_grid_form = ch_grid_form;
+function ChFormSettings(form) {
+    this.ch_grid_form = form;
     this.auto_update_inerval_id = null;
     this.startAutoUpdate = function () {
         if (this.auto_update_inerval_id == null) {
             var _this = this;
             this.auto_update_inerval_id = setInterval(function () {
-                if (!ch_grid_form.isHasChange()) {
-                    console.log('allowupdate')
+                if (form.$form.is(':visible') && !form.isHasChange()) {
                     _this.ch_grid_form.refresh();
                 }
             }, ChOptions.settings.defaultAutoUpdateMS)
@@ -24,8 +23,8 @@ function ChFormSettings(ch_grid_form) {
         }
     };
     this._getStorage = function () {
-        if (typeof(Chocolate.storage.local.grid_settings[ch_grid_form.getView()]) == 'undefined') {
-            Chocolate.storage.local.grid_settings[ch_grid_form.getView()] = {}
+        if (typeof(Chocolate.storage.local.grid_settings[form.getView()]) == 'undefined') {
+            Chocolate.storage.local.grid_settings[form.getView()] = {}
         }
         return Chocolate.storage;
     };
