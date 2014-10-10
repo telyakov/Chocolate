@@ -145,14 +145,6 @@ class DataBaseAccessor extends \CApplicationComponent
 
     }
 
-    public function getDomainIdentity($windowDomain, $windowLogin){
-    try{
-        $routine = new DataBaseRoutine("core.DomainIdentityGet $windowDomain, $windowLogin");
-        return $this->exec($routine);
-    }catch (\Exception $e){
-            self::handleException('Не удалось получить доменные данные пользователя.', 0, $e);
-    }
-    }
 
     public function getUserIdentity($username, $password)
     {
@@ -162,7 +154,7 @@ class DataBaseAccessor extends \CApplicationComponent
             self::handleException($e->getMessage(), $e->getCode(), $e);
         }
         catch (\Exception $e) {
-            self::handleException('Не удалось получить идентификационные данные пользователя.', 0, $e);
+            throw new DataBaseException('Не удалось получить идентификационные данные пользователя.', 500, $e);
         }
     }
 

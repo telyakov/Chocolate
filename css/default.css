@@ -251,9 +251,9 @@ header > div {
     font-family: proxima-nova-condensed, "Helvetica Neue", Arial, sans-serif;
     padding-top: 18px;
     padding-left: 15px;
-    color: #596573;
+    color: #1f8dd6;
     text-transform: uppercase;
-    text-shadow: 0 1px white;
+    text-shadow: 2px 2px white;
 }
 
 .separator {
@@ -336,4 +336,3 @@ header > div {
     margin-left: 20px;
     margin-top: 10px
 }
-

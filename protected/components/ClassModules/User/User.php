@@ -16,15 +16,6 @@ class User extends \CFormModel
     public $patronymic;
     public $email;
 
-    public static function domainIdentityGet($windowDomain, $windowLogin)
-    {
-        try {
-            return \Yii::app()->erp->getDomainIdentity($windowDomain, $windowLogin);
-        } catch (\Exception $e) {
-            return null;
-        }
-    }
-
     public function rules()
     {
         return [
@@ -50,8 +41,12 @@ class User extends \CFormModel
                 return true;
             }
             return false;
-        } catch (\Exception $e) {
-            return false;
+        }
+        catch(\SoapFault $e){
+            throw new \Exception('Веб-сервисы недоступны', 500, $e);
+        }
+        catch (\Exception $e) {
+            throw new \Exception($e->getMessage(), 500, $e);
         }
     }
 
