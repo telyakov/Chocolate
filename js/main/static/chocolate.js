@@ -54,6 +54,10 @@ var Chocolate = {
     idSel: function (id) {
         return ['#', id].join('');
     },
+    createRequest: function(data){
+        data.key = chApp.getOptions().settings.key;
+      chApp.getSocket().emit('request', data);
+    },
     /**
      * @returns {ChTab}
      */
@@ -221,15 +225,15 @@ var Chocolate = {
 
             var bindModule = chApp.getBindService(),
                 optionsModule = chApp.getOptions(),
-                socketModule = chApp.getSocket();
+                mainModule = chApp.getMain();
 
             var rolesSql = bindModule.bindSql(optionsModule.sql.getRoles),
                 formsSql = bindModule.bindSql(optionsModule.sql.getForms);
-            socketModule.emit('request', {
+            mainModule.createRequest({
                 query: rolesSql,
                 type: optionsModule.sql.types.roles
             });
-            socketModule.emit('request', {
+            mainModule.createRequest({
                 query: formsSql,
                 type: optionsModule.sql.types.forms
             });
