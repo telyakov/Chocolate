@@ -102,7 +102,21 @@ $(function () {
 
 
 });
-var socket =  io.connect('http://crm.78stroy.ru:3000');
+var socket =  io.connect('http://crm.78stroy.ru:3000', {reconnectionDelay: 3000});
+function connectError(){
+    chApp.getMain().$page.append('<div id="no-internet">Нет подключения к интернету. Некоторые функции могут быть недоступны</div>');
+    this.off('connect_error');
+    this.on('connect', connectSuccess);
+
+}
+function connectSuccess(){
+    $('#no-internet').remove();
+    this.off('connect');
+    this.on('connect_error', connectError);
+}
+socket.io
+    .on('connect_error',connectError)
+    .on('connect', connectSuccess);
 socket.on('response', function(data) {
     var optionsModule = chApp.getOptions(),
         mainModule = chApp.getMain();
