@@ -44,7 +44,7 @@ class SiteController extends Controller
         if (Yii::app()->user->isGuest == false) {
             $this->redirect($this->defaultUrl);
         } else {
-            $this->redirect('site/login');
+            $this->redirect($this->createUrl('/site/login'));
         }
     }
 
@@ -92,7 +92,7 @@ class SiteController extends Controller
         if (isset($_POST['LoginForm'])) {
             $model->attributes = $_POST['LoginForm'];
             if ($model->validate() && $model->login()) {
-                $this->redirect(Yii::app()->controller->createAbsoluteUrl('site/index'));
+                $this->redirect(Yii::app()->user->returnUrl);
             }
         }
         $this->render('login', ['model' => $model]);
