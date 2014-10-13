@@ -2052,6 +2052,10 @@ ul.ui-tabs-nav {
 }
 
 .ui-tabs-panel ul.ui-tabs-nav {
+    display: -webkit-inline-box;
+    display: -webkit-inline-flex;
+    display: -moz-inline-box;
+    display: -ms-inline-flexbox;
     display: inline-flex;
 }
 

@@ -36,6 +36,7 @@ ChDiscussionForm.prototype.render = function (data) {
     }
     this.$form.find('.discussion-content').html(html.join(''));
     chApp.getDraw().reflowActiveTab();
+    this.$form.next('.discussion-footer').children('.discussion-input').focus()
 };
 ChDiscussionForm.prototype.renderMessage = function (data, isMyMsg) {
     var msgClass = 'bubble-left';
@@ -58,7 +59,13 @@ ChDiscussionForm.prototype.getParentID = function(){
 };
 ChDiscussionForm.prototype.sendMessage = function (msg) {
     var _this = this;
-    var url = chApp.getOptions().urls.formSave + '?view=' + encodeURI('discussions.xml') + '&parentView=' + this.getParentView() + '&parentID=' +this.getParentID()
+    var url = chApp.getOptions().urls.formSave + '?view=' + encodeURI('discussions.xml') + '&parentView=' + this.getParentView() + '&parentID=' +this.getParentID();
+    var data ={};
+    data[this.insDate] = moment();
+    data[this.textmessage] = msg;
+    data[this.username] = '';
+    var htmlMsg = _this.renderMessage(data, true);
+    this.$form.find('.discussion-content').append(htmlMsg);
     $.post(url, {
         jsonChangedData: JSON.stringify({
             a: {
