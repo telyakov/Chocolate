@@ -49,7 +49,35 @@ var ChocolateEvents = {
         this.searchColumnsEvent($tabs);
         this.sendEmailEvent($tabs);
         this.sendMessageEvent($tabs);
+        this.openCardTabMenuEvent($tabs);
 
+    },
+    openCardTabMenuEvent: function ($context) {
+        $context.on('click', '.tab-menu-link', this.openCardTabMenuHandler)
+    },
+    openCardTabMenuHandler: function () {
+        var $this = $(this),
+            $tabs = $this.closest('.tab-menu').prevAll('.ui-tabs-nav').find('a'),
+             menu = [],
+            activeClass = chApp.getOptions().classes.activeTab;
+        $tabs.each(function () {
+            var item = {
+                title: $(this).text(),
+                cmd: $(this).attr('id')
+            };
+            if($(this).parent().hasClass(activeClass)){
+                item.uiIcon = 'ui-icon-check';
+            }
+            menu.push(item);
+        });
+        $(this).contextmenu({
+            show: { effect: "blind", duration: 0 },
+            menu: menu,
+            select: function (event, ui) {
+                $('#' + ui.cmd).trigger('click');
+            }
+        });
+        $(this).contextmenu('open', $(this));
     },
     sendMessageEvent: function ($context) {
         $context.on('click', '.discussion-submit', this.sendMessageHandler);
@@ -787,11 +815,11 @@ var ChocolateEvents = {
                 if (e.keyCode === keys.BACKSPACE) {
                     e.preventDefault();
                 }
-                if(e.keyCode === keys.ESCAPE && e.target.tagName === 'BODY'){
-                    var tab =chApp.getMain().getActiveChTab();
-                    if(tab.isCardTypePanel()){
-                        var card =chApp.getFactory().getChCard(tab.getPanel().children('[data-id=grid-tabs]'));
-                        if(!card._isChanged()){
+                if (e.keyCode === keys.ESCAPE && e.target.tagName === 'BODY') {
+                    var tab = chApp.getMain().getActiveChTab();
+                    if (tab.isCardTypePanel()) {
+                        var card = chApp.getFactory().getChCard(tab.getPanel().children('[data-id=grid-tabs]'));
+                        if (!card._isChanged()) {
                             chApp.getMain().tab.closeActiveTab();
                         }
                     }

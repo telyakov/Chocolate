@@ -42,13 +42,16 @@
 			var self = this;
 
 			if( !mobilecheck() ) {
-				this.trigger.addEventListener( 'mouseover', function(ev) { self._openIconMenu(); } );
-				this.trigger.addEventListener( 'mouseout', function(ev) { self._closeIconMenu(); } );
+				this.trigger.addEventListener( 'mouseover', function(ev) {
+                    self._openMenu();
+                    document.addEventListener( self.eventtype, self.bodyClickFn );
+                } );
+//				this.menu.addEventListener( 'mouseout', function(ev) { self._closeMenu() } );
 			
-				this.menu.addEventListener( 'mouseover', function(ev) {
-					self._openMenu(); 
-					document.addEventListener( self.eventtype, self.bodyClickFn ); 
-				} );
+//				this.menu.addEventListener( 'mouseover', function(ev) {
+//					self._openMenu();
+//					document.addEventListener( self.eventtype, self.bodyClickFn );
+//				} );
 			}
 			this.trigger.addEventListener( this.eventtype, function( ev ) {
 				ev.stopPropagation();

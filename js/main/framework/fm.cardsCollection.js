@@ -70,12 +70,13 @@ FmCardsCollection.prototype._generateList = function (view, pk, viewID) {
     } else {
         html += '<ul class="hidden">';
     }
+    var tabs =[];
     for( var key in this.cards){
         html += ' <li class="card-tab" data-id="' +key+'"';
         var id = Chocolate.uniqueID();
         html +=' aria-controls="' + id + '">';
         html +='<a href="1" title="'+ key +'">'+this.cards[key]['caption']+'</a>';
     }
-    html += '</ul></div>';
+    html += '</ul>'+ '<span class="tab-menu"><a class="tab-menu-link"></a></span>' +'</div>';
     return html;
 };

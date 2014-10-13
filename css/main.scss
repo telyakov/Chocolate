@@ -1208,7 +1208,8 @@ input:focus, textarea:focus, keygen:focus, select:focus {
     border-radius: 0 !important;
 }
 
-.select2-highlighted, .ui-state-focus, .dropdown-menu a:hover, .menu-root:hover, .gn-trigger:hover, .gn-selected {
+.select2-highlighted, .ui-state-focus, .dropdown-menu a:hover, .menu-root:hover, .gn-trigger:hover, .gn-selected,
+.tab-menu-link:hover{
     background: #dbeeff !important;
     outline: 1px solid #81a4d0 !important;
     text-shadow: none !important;
