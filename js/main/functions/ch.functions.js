@@ -133,8 +133,16 @@ var chFunctions = {
                 }
                 var branch = subTree[parent];
                 if (parent == 0) {
-                    branch[id] = {'label': label, url: '#', items : {}};
-                    subTree[id] = branch[id];
+                        branch[id] = {'label': label, url: '#', items : {}};
+                    if(!subTree[id]){
+                        subTree[id] = branch[id];
+                    }else{
+                        //fix for safari
+                        subTree[id].label = branch[id].label;
+                        subTree[id].url = branch[id].url;
+                        branch[id] =subTree[id];
+
+                    }
                 } else {
                     if(!branch.items){
                         branch.items = {};
@@ -147,6 +155,7 @@ var chFunctions = {
                 }
             }
         }
+//        console.log(tree, subTree)
         var $menu = $('#gn-menu'), content = [];
         content.push('<li class="gn-trigger">');
         content.push('<a class="gn-icon gn-icon-menu"></a>');
