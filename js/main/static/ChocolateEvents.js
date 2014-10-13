@@ -51,29 +51,29 @@ var ChocolateEvents = {
         this.sendMessageEvent($tabs);
 
     },
-    sendMessageEvent: function($context){
-        $context.on('click','.discussion-submit', this.sendMessageHandler);
+    sendMessageEvent: function ($context) {
+        $context.on('click', '.discussion-submit', this.sendMessageHandler);
     },
-    sendMessageHandler: function(){
+    sendMessageHandler: function () {
         var msg = $(this).prev('.discussion-input').val();
-      var form = chApp.getFactory().create($(this).closest('section').prev('form'), 'ChDiscussionForm');
+        var form = chApp.getFactory().create($(this).closest('section').prev('form'), 'ChDiscussionForm');
         form.sendMessage(msg)
     },
-    sendEmailEvent: function($context){
-      $context.on('click', '.fm-email-send',  this.sendEmailHandler);
+    sendEmailEvent: function ($context) {
+        $context.on('click', '.fm-email-send', this.sendEmailHandler);
     },
-    sendEmailHandler: function(){
+    sendEmailHandler: function () {
         var form = chApp.getFactory().getChGridForm($(this).closest('.section-header').siblings('.section-grid').children('form'));
         var id = form.getActiveRowID();
-        if(id){
+        if (id) {
             var dataObj = form.getDataObj()[id],
                 emailCol = chApp.getOptions().settings.emailCol,
                 emails = dataObj[emailCol],
-                url =encodeURIComponent(chApp.getOptions().urls.bpOneTask + id),
+                url = encodeURIComponent(chApp.getOptions().urls.bpOneTask + id),
                 task = chApp.getMain().stripHtml(dataObj.task),
-                subject = 'База:'+ task.substr(0, 50);
+                subject = 'База:' + task.substr(0, 50);
 
-            window.open('mailto:'+emails+'?subject='+subject+'&body='+url, '_self')
+            window.open('mailto:' + emails + '?subject=' + subject + '&body=' + url, '_self')
 
         }
     },
@@ -138,7 +138,7 @@ var ChocolateEvents = {
             $(this).val('');
             var positions = [];
             $th.each(function (i) {
-                if($(this).hasClass(searchedClass)){
+                if ($(this).hasClass(searchedClass)) {
                     positions.push(i);
                     $(this).removeClass(searchedClass)
                 }
@@ -148,17 +148,17 @@ var ChocolateEvents = {
 
                 $th
                     .filter('.grid-column-searched-red, .grid-column-searched-yellow, .grid-column-searched-green')
-                    .removeClass('grid-column-searched-red grid-column-searched-yellow grid-column-searched-green') ;
-            }else{
+                    .removeClass('grid-column-searched-red grid-column-searched-yellow grid-column-searched-green');
+            } else {
                 var $parent = $th.parent(),
                     color = $parent.attr('data-color');
-                if(!color || color == 'green'){
+                if (!color || color == 'green') {
                     $parent.attr('data-color', 'yellow');
                 }
-                if(color == 'yellow'){
+                if (color == 'yellow') {
                     $parent.attr('data-color', 'red');
                 }
-                if(color == 'red'){
+                if (color == 'red') {
                     $parent.attr('data-color', 'green');
                 }
                 $th.each(function (i) {
@@ -166,9 +166,9 @@ var ChocolateEvents = {
                     if (caption.indexOf(search) != -1) {
                         $(this)
                             .removeClass('grid-column-searched-red grid-column-searched-yellow grid-column-searched-green')
-                            .addClass('grid-column-searched-' +$parent.attr('data-color'));
-                    }else{
-                        $(this).removeClass('grid-column-searched-' +$parent.attr('data-color'))
+                            .addClass('grid-column-searched-' + $parent.attr('data-color'));
+                    } else {
+                        $(this).removeClass('grid-column-searched-' + $parent.attr('data-color'))
 
                     }
                 });
@@ -779,13 +779,22 @@ var ChocolateEvents = {
             /**
              * #tip 1
              */
-            var keys = chApp.namespace('events.KEY'),
-                isTextEditMode = ~['INPUT', 'TEXTAREA'].indexOf(e.target.tagName);
-            if (e.keyCode == keys.BACKSPACE && !isTextEditMode) {
-                e.preventDefault();
-            }
-            if (e.keyCode == keys.F5 && isTextEditMode) {
-                e.preventDefault();
+            var isTextEditMode = ~['INPUT', 'TEXTAREA'].indexOf(e.target.tagName);
+            if (!isTextEditMode) {
+                var keys = chApp.namespace('events.KEY');
+
+                if (e.keyCode === keys.BACKSPACE) {
+                    e.preventDefault();
+                }
+                if(e.keyCode === keys.ESCAPE && e.target.tagName === 'BODY'){
+                    var tab =chApp.getMain().getActiveChTab();
+                    if(tab.isCardTypePanel()){
+                        var card =chApp.getFactory().getChCard(tab.getPanel().children('[data-id=grid-tabs]'));
+                        if(!card._isChanged()){
+                            chApp.getMain().tab.closeActiveTab();
+                        }
+                    }
+                }
             }
         })
     },

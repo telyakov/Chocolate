@@ -24,11 +24,10 @@ var Chocolate = {
         this.log.removeAllAppenders();
         this.log.addAppender(new log4javascript.BrowserConsoleAppender());
     },
-    stripHtml: function strip(html)
-    {
+    stripHtml: function strip(html) {
         var tmp = document.createElement("DIV");
         tmp.innerHTML = html;
-        return tmp.textContent||tmp.innerText;
+        return tmp.textContent || tmp.innerText;
     },
     init: function () {
         this.$window = $(window);
@@ -54,9 +53,9 @@ var Chocolate = {
     idSel: function (id) {
         return ['#', id].join('');
     },
-    createRequest: function(data){
+    createRequest: function (data) {
         data.key = chApp.getOptions().settings.key;
-      chApp.getSocket().emit('request', data);
+        chApp.getSocket().emit('request', data);
     },
     /**
      * @returns {ChTab}
@@ -183,8 +182,8 @@ var Chocolate = {
                             'Ошибка при вставке js + html формы в дерево',
                             e
                         );
-                    } finally{
-                        delete jqXHR.responseText ;
+                    } finally {
+                        delete jqXHR.responseText;
                     }
                 })
                 .fail(function (e) {
@@ -204,7 +203,7 @@ var Chocolate = {
         return template.replace(Chocolate.ID_REG_EXP, id);
     },
     user: {
-        getSign: function(){
+        getSign: function () {
             return [
                 '',
                 Chocolate.user.getName(),
@@ -238,7 +237,7 @@ var Chocolate = {
                 type: optionsModule.sql.types.forms
             });
         },
-        setRoles: function(roles){
+        setRoles: function (roles) {
             var result = [];
             var i,
                 hasOwn = Object.prototype.hasOwnProperty,
@@ -273,6 +272,10 @@ var Chocolate = {
         }
     },
     tab: {
+        closeActiveTab: function () {
+            var $a = Chocolate.getActiveChTab().$a;
+            Chocolate.tab.close($a);
+        },
         /**
          * @param $a {jQuery}
          */
@@ -295,28 +298,41 @@ var Chocolate = {
             }
             var tabSelector = Chocolate.idSel($tab.remove().attr("aria-controls"));
             var $panel = $(tabSelector);
-            try{
-                $panel.find('.ui-resizable').each(function(){$(this).resizable('destroy')});
-            }catch(e){}
+            try {
+                $panel.find('.ui-resizable').each(function () {
+                    $(this).resizable('destroy')
+                });
+            } catch (e) {
+            }
 
-            try{
-                $panel.find('.editable').each(function(){$(this).editable('destroy').remove()});
-            }catch(e){
+            try {
+                $panel.find('.editable').each(function () {
+                    $(this).editable('destroy').remove()
+                });
+            } catch (e) {
                 console.log(e)
             }
-            try{
+            try {
 //                $panel.find('.toggle-button').each(function(){$(this).remove()});
-                $panel.find('.menu-button, .tree-button, .tablesorter-filter, .tablesorter-header a, .tablesorter-header div, .form-vertical input').each(function(){$(this).remove()});
-                $panel.find(' .tablesorter-header,.form-vertical ').each(function(){$(this).remove()});
+                $panel.find('.menu-button, .tree-button, .tablesorter-filter, .tablesorter-header a, .tablesorter-header div, .form-vertical input').each(function () {
+                    $(this).remove()
+                });
+                $panel.find(' .tablesorter-header,.form-vertical ').each(function () {
+                    $(this).remove()
+                });
                 $panel.find('.tablesorter').trigger('destroy');
                 $panel.find('.grid-view>table').floatThead('destroy');
-                $panel.find(' .table-bordered').each(function(){$(this).remove()});
-                $panel.find(' .grid-view').each(function(){$(this).remove()});
-            }catch(e){
+                $panel.find(' .table-bordered').each(function () {
+                    $(this).remove()
+                });
+                $panel.find(' .grid-view').each(function () {
+                    $(this).remove()
+                });
+            } catch (e) {
                 console.log(e)
             }
 
-                $panel.remove();
+            $panel.remove();
             Chocolate.$tabs.tabs("refresh");
             ChObjectStorage.garbageCollection();
         },
@@ -372,7 +388,7 @@ var Chocolate = {
 //                var tab =chApp.getFactory().getChTab(ui.tab);
 //                ChocolateDraw.clearReflowedTab(tab)
                 ChocolateDraw.drawCardPanel(ui.panel, $context);
-                setTimeout(function(){
+                setTimeout(function () {
                     ChocolateDraw.reflowActiveTab();
                 }, 0);
                 ui.tab.data('loaded', 1);
@@ -396,7 +412,7 @@ var Chocolate = {
                     if (template == null) {
                         $.get(chCard.getTabDataUrl(tabID))
                             .done(function (template) {
-                                    var $content = $(Chocolate.layoutTemplate(template, pk));
+                                var $content = $(Chocolate.layoutTemplate(template, pk));
                                 try {
                                     Chocolate.tab.card._initScripts(ui, $content, $tabPanel);
                                     fmCardCollection.setCardTemplate(tabID, template, isNumeric);

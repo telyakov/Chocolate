@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <link rel="stylesheet" type="text/css"
-          href="<?php echo Yii::app()->request->baseUrl; ?>/css/default.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/default.css"/>
     <link
         href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css"
         rel="stylesheet">
@@ -15,17 +14,15 @@
     <script
         src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
     <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <?php
-    $cs = Yii::app()->clientScript;
-        $cs->scriptMap =[
-            'jquery.ba-bbq.min.js' =>true
-        ];
+    Yii::app()->clientScript->scriptMap = [
+        'jquery.ba-bbq.min.js' => true
+    ];
     ?>
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 </head>
-
 <body>
 <div id='login-container'>
     <section class="center">
