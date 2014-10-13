@@ -175,6 +175,7 @@ var ChocolateEvents = {
 
             }
         }
+        form.clearSelectedArea();
     },
     tabHistoryLogEvent: function ($context) {
         $context.on('click', '#tabs>ul>li', this.tabHistoryLogHandler);

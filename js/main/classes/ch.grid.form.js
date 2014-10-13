@@ -800,9 +800,7 @@ ChGridForm.prototype.getOrderData = function () {
     return storage[this.getID()].order;
 };
 ChGridForm.prototype.clearSelectedArea = function(){
-//    this.getTable().find('tbody').children('.sel-area').remove();
     this.getTable().parent().children('.sel-area').remove();
-
 };
 ChGridForm.prototype.getLayoutSubscribeName = function(){
   return ['layout', this.getUserGridID()].join('/');
