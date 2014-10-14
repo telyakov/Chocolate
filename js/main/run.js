@@ -102,7 +102,7 @@ $(function () {
 
 
 });
-var socket =  io.connect('http://crm.78stroy.ru:3000', {reconnectionDelay: 3000});
+var socket =  io.connect('http://crm.78stroy.ru', {reconnectionDelay: 3000});
 function connectError(){
     chApp.getMain().$page.append('<div id="no-internet">Нет подключения к интернету. Некоторые функции могут быть недоступны</div>');
     this.off('connect_error');
