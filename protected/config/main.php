@@ -50,14 +50,14 @@ return CMap::mergeArray(
             ),
             'cache' => array(
 //            'class'=>'system.caching.CFileCache',
-            'class'=>'\Chocolate\Cache\Cache',
+                'class' => '\Chocolate\Cache\Cache',
 //                'class' => 'system.caching.CDummyCache',
             ),
             'bootstrap' => array(
                 'class' => 'ext.bootstrap.components.ChBootstrap',
                 'responsiveCss' => false,
                 'enableBootboxJS' => false,
-        		'enableNotifierJS' => false,
+                'enableNotifierJS' => false,
             ),
             'erp' => array(
                 'class' => '\FrameWork\DataBase\DataBaseAccessor',
@@ -80,7 +80,7 @@ return CMap::mergeArray(
                     'jquery-ui.min.js' => false,
                     'select2.js' => false,
                     'select2.min.js' => false,
-                    'bootstrap.min.js' =>false,
+                    'bootstrap.min.js' => false,
                     'jquery.ba-bbq.min.js' => false,
                     'bootstrap-datetimepicker.js' => false,
                     'bootstrap-datetimepicker.min.js' => false, //??
@@ -95,7 +95,7 @@ return CMap::mergeArray(
 //                    'jquery-ui-bootstrap.css' => false, //Пока не удаляется
                     'bootstrap-toggle-buttons.css' => false,
                     'jquery.fileupload-ui.css' => false,
-                    'datetimepicker.css'=> false,
+                    'datetimepicker.css' => false,
                     'jquery-ui.css' => false
 
                 ),
@@ -128,10 +128,10 @@ return CMap::mergeArray(
                         'emails' => 'web_sem@mail.ru',
                     ),
                     array(
-                        'class'=>'CFileLogRoute',
-                        'categories'=>'webservice',
+                        'class' => 'CFileLogRoute',
+                        'categories' => 'webservice',
                         'levels' => 'error, warning, trace, info,profile',
-                        'logFile'=>'db.log',
+                        'logFile' => 'db.log',
                     ),
                     // uncomment the following to show log messages on web pages
 
@@ -156,9 +156,9 @@ return CMap::mergeArray(
             'soapSecurityKey' => 'test6543210',
             'dateFormat' => 'Y-m-d',
             'dateTimeFormat' => 'Y-m-d H:i:s',
-            'soap_date_format' =>'mm-dd-yyyy hh:ii:ss',
-            'editable_date_time_format' =>'dd.mm.yyyy hh:ii',
-            'editable_date_format' =>'dd.mm.yyyy',
+            'soap_date_format' => 'mm-dd-yyyy hh:ii:ss',
+            'editable_date_time_format' => 'dd.mm.yyyy hh:ii',
+            'editable_date_format' => 'dd.mm.yyyy',
 
         ),
     ),

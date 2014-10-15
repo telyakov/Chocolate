@@ -38,12 +38,12 @@
 #
 ##install php dependencies
 #sudo yum install -y \   http://dl.fedoraproject.org/pub/epel/beta/7/x86_64/epel-release-7-1.noarch.rpm
-#sudo yum install -y libxml2 libxml2-devel curl-devel libXpm-devel libc-client-devel bzip2 bzip2-devel bison re2c freetype-devel libmcrypt libmcrypt-devel
+#sudo yum install -y libxml2 libxml2-devel curl-devel libXpm-devel libc-client-devel bzip2 bzip2-devel bison re2c freetype-devel libmcrypt libmcrypt-devel postgresql-devel
 #
 ##for empty centos7
 ##mkdir /home/vagrant
-#
-php install from source
+##
+#php install from source
 wget -O /home/vagrant/php-5.6.0.tar.gz http://ru2.php.net/get/php-5.6.0.tar.gz/from/this/mirror
 sudo tar zxvf /home/vagrant/php-5.6.0.tar.gz
 cd /home/vagrant/php-5.6.0
@@ -56,7 +56,7 @@ sudo ./configure --prefix=/opt/php-5.6.0 --with-openssl --with-zlib-dir \
 --with-fpm-group=www-data --with-libdir=/lib/x86_64-linux-gnu \
 --enable-opcache --enable-fpm --enable-maintainer-zts
 cd /home/vagrant/php-5.6.0
-sudo make clean
+#sudo make clean
 sudo make && sudo make install
 #
 ##php settings
@@ -64,8 +64,8 @@ sudo make && sudo make install
 sudo cp /vagrant/protected/provision/php.ini /opt/php-5.6.0/lib/php.ini
 sudo cp  /home/vagrant/php-5.6.0/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 sudo chmod +x /etc/init.d/php-fpm
-#sudo chkconfig  php-fpm  on
-#sudo cp /vagrant/protected/provision/php-fpm.conf /opt/php-5.6.0/etc/php-fpm.conf
+sudo chkconfig  php-fpm  on
+sudo cp /vagrant/protected/provision/php-fpm.conf /opt/php-5.6.0/etc/php-fpm.conf
 #sudo groupadd www-data
 #sudo systemctl stop firewalld
 #sudo systemctl disable firewalld
@@ -165,10 +165,20 @@ sudo chmod +x /etc/init.d/php-fpm
 
 ##postgresSql install
 #rpm -iUvh http://yum.postgresql.org/9.3/redhat/rhel-7-x86_64/pgdg-centos93-9.3-1.noarch.rpm
-#yum -y install postgresql93 postgresql93-server postgresql93-contrib postgresql93-libs --enablerepo=pgdg93
+#sudo yum -y install postgresql93 postgresql93-server postgresql93-contrib postgresql93-libs --enablerepo=pgdg93
 #systemctl enable postgresql-9.3
 #/usr/pgsql-9.3/bin/postgresql93-setup initdb
 #systemctl start postgresql-9.3
+#sudo service postgresql-9.3 restart
+ ## sudo passwd postgres
+## chocolate
+## chocolate
+#Настроить пароль
+# ALTER USER postgres WITH PASSWORD 'chocolate'
+#Скопировать конфиги
+#Ребут
+
+
 
 ###
 ## cd /
