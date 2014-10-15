@@ -6,7 +6,7 @@ class MajesticController extends Controller
     {
         return [
             'accessControl',
-            'ajaxOnly -export2Excel, fileGet, test'];
+            'ajaxOnly -export2Excel, images, test'];
     }
 
     public function accessRules()
@@ -44,10 +44,15 @@ class MajesticController extends Controller
         ]);
 
     }
+    public function actionImages($sql){
 
-    public function actionFileGet($fileID){
-        echo FileModel::getFile($fileID);
+        $resp = MajesticModel::images($sql);
+        $resp->send();
     }
+
+//    public function actionFileGet($fileID){
+//        echo FileModel::getFile($fileID);
+//    }
 
 
     public function actionExport2Excel(){

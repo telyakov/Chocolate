@@ -8,9 +8,36 @@
 use Chocolate\Http\PackageResponse;
 use Chocolate\Http\Response;
 use FrameWork\DataBase\DataBaseRoutine;
+use \FrameWork\DataBase\RecordsetRow;
 
 class MajesticModel
 {
+
+    public static function images($sql)
+    {
+        $response = new Response();
+        try {
+            $routine = new DataBaseRoutine($sql);
+            if (!$routine->isSuccessBinding()) {
+
+                $routine = Yii::app()->bind->bindProcedureFromData($routine, new \FrameWork\DataBase\DataBaseParameters());
+            }
+            $recordset = Yii::app()->erp->exec($routine);
+            $data = [];
+            /**
+             * @var $row RecordsetRow
+             */
+            foreach ($recordset as $row) {
+                $data[] = FileModel::getFileSrc($row->id);
+            }
+            $response->setData($data);
+            $response->setStatus('Успешно выполнено.', Response::SUCCESS);
+            return $response;
+        } catch (Exception $e) {
+            $response->setStatus($e->getMessage(), Response::ERROR);
+            return $response;
+        }
+    }
 
     public static function packageExecute()
     {
@@ -22,11 +49,6 @@ class MajesticModel
             $type = $item['type'];
             $params = $item['params'];
             $sql = $params['sql'];
-            $view = $params['view'];
-            $parentView = $params['parentView'];
-            $parentID = $params['parentID'];
-            $model =Controller::loadForm($view,$parentView, $parentID);
-
             try {
                 $recordset = Yii::app()->erp->exec(new DataBaseRoutine($sql));
                 $data = $recordset->rawUrlEncode();
@@ -34,8 +56,6 @@ class MajesticModel
                     'id' => $id,
                     'type' => $type,
                     'data' => $data,
-//                    'preview' => $model->getPreviewData($recordset),
-//                    'preview' => $model->getPreview(),
                     'order' => $recordset->getOrder()
                 ];
             } catch (Exception $e) {
@@ -52,7 +72,7 @@ class MajesticModel
         $response = new Response();
         try {
             $routine = new DataBaseRoutine($sql);
-            if(!$routine->isSuccessBinding()){
+            if (!$routine->isSuccessBinding()) {
 
                 $routine = Yii::app()->bind->bindProcedureFromData($routine, new \FrameWork\DataBase\DataBaseParameters());
             }

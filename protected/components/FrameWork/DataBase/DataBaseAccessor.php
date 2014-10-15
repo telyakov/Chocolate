@@ -158,6 +158,14 @@ class DataBaseAccessor extends \CApplicationComponent
         }
     }
 
+    public function fileMetaDataGet($fileID){
+        try{
+            $dependencyRoutine = new DataBaseRoutine('Attachments.MetaDataGet', new DataBaseParameters(['FileID' => $fileID]));
+            return $this->exec($dependencyRoutine);
+        }catch (\Exception $e){
+            throw new DataBaseException($e->getMessage(), 500, $e);
+        }
+    }
     public function fileGet($id)
     {
         try {

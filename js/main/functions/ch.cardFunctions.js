@@ -468,30 +468,25 @@ var chCardFunction = {
             chCard.setElementValue($context, value, isAllowEdit);
         });
     },
-    multimediaInitFunction: function (pk, sql, formID, url, id) {
-        /**
-         *
-         * @type {ChGridForm}
-         */
-        var chGridForm = ChObjectStorage.create($('#' + formID), 'ChGridForm'),
-            sql = bindingService.fromParentData(sql, chGridForm.getDataObj()[pk]);
-        $.get(MajesticVars.EXECUTE_URL, {sql: sql})
+    multimediaInitFunction: function (pk, sql, formID, id) {
+        var form = chApp.getFactory().getChGridForm($('#' + formID));
+        sql = chApp.getBindService().fromParentData(sql, form.getDataObj()[pk]);
+        $.get(chApp.getOptions().urls.imagesUrls, {sql: sql})
             .done(function (response) {
-                var chResponse = new ChResponse(response);
-                var data = chResponse.getData();
-                if (Object.keys(data).length) {
-                    var $context = $('#' + id), imagesHtml = '';
-                    var isFirst = true;
-                    for (var i in data) {
-                        var imageUrl = url + '?fileID=' + data[i].id;
+                var res = new ChResponse(response),
+                 data = res.getData();
+                if(data.length){
+                    var $context = $('#' + id), imagesHtml = '',
+                        isFirst = true;
+                    data.forEach(function(url){
                         if (isFirst) {
-                            imagesHtml += '<a class="fancybox multimedia-main-image" rel="gallery"><img src="' + imageUrl + '"></img></a>';
+                            imagesHtml += '<a class="fancybox multimedia-main-image" rel="gallery"><img src="' + url + '"></img></a>';
                             isFirst = false;
                         } else {
-                            imagesHtml += '<a class="fancybox multimedia-image" rel="gallery" style="display:none"><img src="' + imageUrl + '"></img></a>';
+                            imagesHtml += '<a class="fancybox multimedia-image" rel="gallery" style="display:none"><img src="' + url + '"></img></a>';
                         }
-                    }
-                    $context.append(imagesHtml)
+                    });
+                    $context.append(imagesHtml);
                     $context.find('.fancybox').fancybox({
                         live: false,
                         maxWidth: 800,

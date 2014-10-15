@@ -1,4 +1,5 @@
-assets/*
+/assets/*
+/files/*
 protected/runtime/*
 .idea
 protected/.vagrant

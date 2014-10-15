@@ -146,17 +146,11 @@ return CMap::mergeArray(
         // application-level parameters that can be accessed
         // using Yii::app()->params['paramName']
         'params' => array(
-            // this is used in contact page
             'adminEmail' => 'tselishchev@78stroy.ru',
-            'PHPSESSID' => 'PHPSESSID',
-            'GridID' => 'user-grid',
-//            'soapService' => 'http://vwin2k8-1:7001/directory.asmx?WSDL',
-//            'soapService' => 'http://localhost:52282/Directory.asmx?WSDL',
-//            'soapService' => 'http://vwin2k8-1:7001/directory.asmx?WSDL',
-            'soapSecurityKey' => 'test6543210',
             'dateFormat' => 'Y-m-d',
             'dateTimeFormat' => 'Y-m-d H:i:s',
             'soap_date_format' => 'mm-dd-yyyy hh:ii:ss',
+            'date_form_soap_format' => 'd.m.Y H:i:s',
             'editable_date_time_format' => 'dd.mm.yyyy hh:ii',
             'editable_date_format' => 'dd.mm.yyyy',
 

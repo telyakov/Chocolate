@@ -18,10 +18,9 @@ class MultimediaSettings extends EditableCardElementSettings
     {
         $pk = ChHtml::ID_KEY;
         $sql = addslashes($this->columnProperties->getReadProc());
-        $url = \Yii::app()->controller->createUrl('Majestic/fileGet');
         $id = ChHtml::generateUniqueID('mm');
         \Yii::app()->clientScript->registerScript($id, <<<JS
-    chCardFunction.multimediaInitFunction('$pk', '$sql', '$formID', '$url', '$id');
+    chCardFunction.multimediaInitFunction('$pk', '$sql', '$formID', '$id');
 JS
             , \CClientScript::POS_END);
         return '<div class="card-multimedia" id=' . $id . '></div>';

@@ -139,6 +139,10 @@ sudo cp /vagrant/protected/provision/php-fpm.conf /opt/php-5.6.0/etc/php-fpm.con
 #sudo npm install -g grunt-cli bower phantomjs
 #sudo yum install -y java-1.6.0*
 #
+#sudo chmod -R 777 /vagrant/files
+#sudo chmod -R 777 /vagrant/assets
+#sudo chmod -R 777 /vagrant/protected/runtime
+#sudo chmod -R 777 /vagrant/protected/migrations
 ##Initialize project
 #cd /vagrant/protected
 #sudo npm install
