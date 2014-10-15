@@ -25,7 +25,7 @@ trait Select2GetSource {
 
                     while ($i < $count) {
                         $result[] = [
-                            'text' => $nameList[$i],
+                            'text' => isset($nameList[$i])?$nameList[$i]: '' ,
                             'id' => $idList[$i],
                             'description' => isset($descList[$i])? $descList[$i]: ''
                         ];
