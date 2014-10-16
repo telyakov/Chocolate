@@ -15,7 +15,8 @@
         "socket.io": "https://cdn.socket.io/socket.io-1.0.3.js",
         "moment": "latest",
         "fancyBox": "https://raw.githubusercontent.com/fancyapps/fancyBox/v2.1.5/source/jquery.fancybox.js",
-        "dynatree": "latest"
+        "dynatree": "latest",
+        "jquery-file-upload": "7.2.1"
 
     }
 }
