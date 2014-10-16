@@ -98,9 +98,6 @@ $sub-menu-height: 40px;
     -webkit-transform: translateX(-60px);
     -moz-transform: translateX(-60px);
     transform: translateX(-60px);
-//    -webkit-transition: -webkit-transform 0.3s, width 0.3s;
-//    -moz-transition: -moz-transform 0.3s, width 0.3s;
-//    transition: transform 0.3s, width 0.3s;
     border-right: 1px solid #ddd;
 }
 
@@ -110,8 +107,7 @@ $sub-menu-height: 40px;
 }
 
 $icon-menu-def-color: #5f6f81;
-.gn-icon-menu::before,
-.tab-menu-link::before {
+.gn-icon-menu::before{
     margin-left: -15px;
     vertical-align: -2px;
     width: 30px;
@@ -137,14 +133,20 @@ $icon-menu-def-color: #5f6f81;
 }
 .tab-menu-link::before{
     display: inline-block;
-    margin-left: 0;
-    margin-top: 15px;
+    margin-left: 12px;
 }
-.tab-menu-link:hover::before{
-    box-shadow:0 3px #dbeeff, 0 -6px #0274bd, 0 -9px #dbeeff, 0 -12px #0274bd
+.tab-menu-link::before{
+    content: "\f142";
+    font-family: 'FontAwesome';
+    font-size: 20px;
+
 }
 
 $icon-menu-active-color: #0274bd;
+.tab-menu-link:hover::before{
+    color:$icon-menu-active-color;
+}
+
 .gn-icon-menu:hover::before {
     @include background-icon-menu(#dbeeff, $icon-menu-active-color);
 

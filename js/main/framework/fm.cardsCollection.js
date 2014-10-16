@@ -50,7 +50,7 @@ FmCardsCollection.prototype._generateHeader = function () {
         html += this.header;
         html += '</div></div>';
     }
-        html +='<menu class="menu"><button class="active menu-button card-menu-save"><span class="fa-save"></span><span>Сохранить</span></button></menu>';
+//        html +='<menu class="menu"><button class="active menu-button card-menu-save"><span class="fa-save"></span><span>Сохранить</span></button></menu>';
     html += '</header>';
     return html;
 
@@ -77,6 +77,10 @@ FmCardsCollection.prototype._generateList = function (view, pk, viewID) {
         html +=' aria-controls="' + id + '">';
         html +='<a href="1" title="'+ key +'">'+this.cards[key]['caption']+'</a>';
     }
-    html += '</ul>'+ '<span class="tab-menu"><a class="tab-menu-link"></a></span>' +'</div>';
+    html += '</ul>';
+    if(Object.keys(this.cards).length >1){
+        html +='<span class="tab-menu"><a class="tab-menu-link"></a></span>';
+    }
+    html +='</div>';
     return html;
 };
