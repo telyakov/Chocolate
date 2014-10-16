@@ -67,9 +67,9 @@
 			} );
 //			this.menu.addEventListener( this.eventtype, function(ev) { ev.stopPropagation(); } );
 		},
-		_openIconMenu : function() {
-			classie.add( this.menu, 'gn-open-part' );
-		},
+//		_openIconMenu : function() {
+//			classie.add( this.menu, 'gn-open-part' );
+//		},
 		_closeIconMenu : function() {
 			classie.remove( this.menu, 'gn-open-part' );
 		},
