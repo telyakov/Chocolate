@@ -14,6 +14,7 @@ js/erp.min.js
 js/main.js
 js/libs/fileDownload
 js/libs/jquery
+js/libs/fancyBox
 js/libs/jquery-ui
 js/libs/jquery-ui-contextmenu
 js/libs/json_parse

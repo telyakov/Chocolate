@@ -33,7 +33,7 @@ module.exports = function (grunt) {
                     '../js/libs/jquery.fileupload-ui.js',
                     '../js/libs/jquery.fileupload-locale.js',
                     '../js/libs/fileDownload/index.js',
-                    '../js/libs/jquery.fancybox.js',
+                    '../js/libs/fancyBox/index.js',
                     '../js/libs/throttle-debounce/index.js',
                     '../js/libs/classie/index.js',
                     '../js/libs/gnmenu.js',

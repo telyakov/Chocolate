@@ -13,7 +13,8 @@
         "log4javascript": "https://raw.githubusercontent.com/DECK36/log4javascript/master/js/log4javascript.js",
         "classie": "https://raw.githubusercontent.com/codrops/GoogleNexusWebsiteMenu/master/js/classie.js",
         "socket.io": "https://cdn.socket.io/socket.io-1.0.3.js",
-        "moment": "latest"
+        "moment": "latest",
+        "fancyBox": "https://raw.githubusercontent.com/fancyapps/fancyBox/v2.1.5/source/jquery.fancybox.js"
 
     }
 }
