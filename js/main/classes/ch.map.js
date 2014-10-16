@@ -12,11 +12,7 @@ ChMap.prototype = {
         var points = json_parse(encoded_data, Chocolate.parse)
         this.map.controls
             // Кнопка изменения масштаба.
-            .add('zoomControl', { left: 5, top: 5 })
-            // Список типов карты
-            .add('typeSelector')
-            // Стандартный набор кнопок
-            .add('mapTools', { left: 35, top: 5 });
+            .add('zoomControl', { left: 5, top: 5 });
         this.setPoints(points);
 
     },
