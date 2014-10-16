@@ -3,7 +3,7 @@ use Chocolate\HTML\Filter\Settings\DateRange;
 
 /**
  * @var $form ChActiveForm
- * @var $model CModel
+ * @var $model GridForm
  * @var $settings DateRange
  */
 ?>
@@ -16,6 +16,8 @@ use Chocolate\HTML\Filter\Settings\DateRange;
         'attribute' => $attribute,
 //    'language' => 'ru',
         'options' => [
+//            'value'=>date('d/m/Y'),
+
 //        'showAnim' => 'slide', //'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
             'format' => 'yyyy.mm.dd',
 //        'showSecond'=>true,

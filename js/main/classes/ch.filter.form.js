@@ -33,27 +33,19 @@ ChFilterForm.prototype.getData = function () {
     $.each(data, function (i, element) {
         var value = element.value,
             name = element.name;
-
-        if (name.slice(-2) == '[]') {
-            name = name.slice(0, name.length - 2)
-            if (typeof(result[name]) == 'undefined') {
-                result[name] = '';
-            }
-            result[name] += value + '|'
-        } else {
-            if (value != '') {
-                if (_this.$form.find('[name="' + name + '"]').closest('li').attr('data-format') == 'idlist') {
-                    // Convert "18 19     22" to "18|20|"
-                    var numericArray = value.split(' ');
-                    numericArray = numericArray.filter(function (val) {
-                        return val !== '';
-                    });
-                    result[name] = numericArray.join('|') + '|';
-                } else {
-                    result[name] = value
-                }
+        if (value != '') {
+            if (_this.$form.find('[name="' + name + '"]').closest('li').attr('data-format') == 'idlist') {
+                // Convert "18 19     22" to "18|20|"
+                var numericArray = value.split(' ');
+                numericArray = numericArray.filter(function (val) {
+                    return val !== '';
+                });
+                result[name] = numericArray.join('|') + '|';
+            } else {
+                result[name] = value
             }
         }
+
     });
     return result;
 };

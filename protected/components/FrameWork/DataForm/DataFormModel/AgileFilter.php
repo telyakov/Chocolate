@@ -27,6 +27,7 @@ class AgileFilter
     protected $properties;
     protected $event_change;
     protected $valueformat;
+    protected $defaultvalue;
     protected $_filterProperties;
     protected $_prepareName;
     protected $_isVisible;
@@ -34,6 +35,15 @@ class AgileFilter
     protected $_filterType;
     protected $_nameInModel;
     protected $_isMultiselect;
+
+    /**
+     * @return mixed
+     */
+    public function getDefaultValue()
+    {
+        return strtolower($this->defaultvalue);
+    }
+
 
     public function getValueFormat()
     {

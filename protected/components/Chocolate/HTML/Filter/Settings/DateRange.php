@@ -10,6 +10,7 @@ namespace Chocolate\HTML\Filter\Settings;
 
 class DateRange extends EditableFilterSettings{
 
+    const CURRENT_MONTH = 'currentmonth';
     public function getAttributeFrom(){
         return $this->getAttribute();
     }
@@ -20,6 +21,22 @@ class DateRange extends EditableFilterSettings{
 
     public function render(\CModel $model, \ChFilterForm $form)
     {
+        if($default= $this->filter->getDefaultValue()){
+                    $nameFrom =$this->filter->getName();
+                    $nameTo =self::getAttributeTo($nameFrom);
+            switch($default){
+                case self::CURRENT_MONTH:
+                    $from = date('Y.m.01');
+                    $to = date('Y.m.t');
+                    $model->filters[$nameFrom] = $from;
+                    $model->filters[$nameTo] =$to;
+                    break;
+                default:
+                    break;
+
+            }
+        }
+//        $model->filters[$]
         $id = uniqid();
         echo \CHtml::openTag('li', [
             'class' => 'filter-item',
