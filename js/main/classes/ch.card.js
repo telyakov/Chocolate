@@ -186,12 +186,13 @@ ChCard.prototype.save = function () {
                             chResponse.sendMessage(gridForm.getMessagesContainer());
                             gridForm.refresh();
                         } else {
-                            var chMessagesContainer = ChObjectStorage.create(_this.getErrorContainer(), 'ChMessagesContainer');
-                            chResponse.sendMessage(chMessagesContainer);
+                            var msgContainer = chApp.getFactory().getChMessagesContainer(_this.getErrorContainer());
+                            chResponse.sendMessage(msgContainer);
                         }
                     })
-                    .fail(function (response) {
-                        alert("error");
+                    .fail(function (res) {
+                        var msgContainer = chApp.getFactory().getChMessagesContainer(_this.getErrorContainer());
+                        msgContainer._sendErrorMessage('Возникла непредвиденная ошибка при сохранении');
                     })
             }
         } else {
