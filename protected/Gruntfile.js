@@ -17,7 +17,7 @@ module.exports = function (grunt) {
                     '../js/libs/lodash/lodash.js',
                     '../js/libs/jquery.floatThead.js',
                     '../js/libs/bootstrap.js',
-                    '../js/libs/jquery.dynatree.min.js',
+                    '../js/libs/dynatree/dist/jquery.dynatree.js',
                     '../js/libs/bootstrap-datetimepicker.js',
                     '../js/libs/toggle-buttons/index.js',
                     '../js/libs/bootstrap-editable.js',
