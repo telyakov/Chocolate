@@ -12,8 +12,6 @@ ChDiscussionForm.prototype.init = function (readSql) {
 };
 ChDiscussionForm.prototype.refresh = function () {
     var url = chApp.getOptions().urls.execute + '?sql=' + this.readSql;
-//    console.log(this.readSql);
-//    socket.emit('request', {query: this.readSql})
     var _this = this;
     $.get(url).done(function (res) {
         var resObj = new ChResponse(res);
@@ -43,7 +41,7 @@ ChDiscussionForm.prototype.renderMessage = function (data, isMyMsg) {
     var user = '<li class="bubble-name">' + data[this.username] + '</li>';
     if (isMyMsg) {
         msgClass = 'bubble-right';
-        user = '';
+        user =  '<li class="bubble-name">Я</li>';
     }
     var template = '<div class="' + msgClass + '"><ul>{*User*}<li class="bubble-date">{*Date*}</li><li class="bubble-msg">{*Message*}</li></ul></div>';
     return template

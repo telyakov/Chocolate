@@ -12,12 +12,12 @@ $box-shadow: #B2B2B2;
 
     }
 }
-.bubble-left ul {
+.bubble-left ul,
+.bubble-right ul{
     margin: 14px 0 0 0;
 }
 .bubble-right ul {
-    margin: 0;
-    position: relative;
+//    position: relative;
 }
 $left-color: #F2F2F2;
 $right-color: #DFEECF;
@@ -98,8 +98,8 @@ $right-color: #DFEECF;
 }
 
 .bubble-right .bubble-date {
-    bottom: -7px;
-    left: -100px;
+    bottom: 0;
+    left: -87px;
 }
 
 $name-color: #5586e5;
@@ -131,7 +131,7 @@ $form-height: 50px;
 .discussion-submit{
     bottom: 0;
     background: #fff;
-    right: -100px;
+    right: -85px;
     height: $form-height +2px;
     color: #0274bd;
     position: absolute;
