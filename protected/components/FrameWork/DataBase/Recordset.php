@@ -16,7 +16,7 @@ class Recordset extends ObjectMap
     CONST KEY_FIELD = 'id';
     protected $_keys;
     protected $_data;
-    protected $_types;
+//    protected $_types;
     protected $_order;
 
     /**
@@ -51,30 +51,24 @@ class Recordset extends ObjectMap
         parent::__construct('\FrameWork\DataBase\RecordsetRow', $from);
     }
 
-    public function setTypes(array $types)
-    {
-        $this->_types = $types;
-    }
+//    public function setTypes(array $types)
+//    {
+//        $this->_types = $types;
+//    }
 
     /**
      * @param $key
      * @return ColumnTypes
      */
-    public function getKeyTypes($key)
-    {
-        if ($this->_types[$key] instanceof ColumnTypes) {
-            return $this->_types[$key];
-        }
-        $this->_types[$key] = new ColumnTypes($this->_types[$key]);
-        return $this->_types[$key];
-    }
-
-
-//    public function jsonSerialize()
+//    public function getKeyTypes($key)
 //    {
-//        return ['a'=>1];
-//        // TODO: Implement jsonSerialize() method.
+//        if ($this->_types[$key] instanceof ColumnTypes) {
+//            return $this->_types[$key];
+//        }
+//        $this->_types[$key] = new ColumnTypes($this->_types[$key]);
+//        return $this->_types[$key];
 //    }
+
 
     public function getData($refresh = false)
     {

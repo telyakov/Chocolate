@@ -72,7 +72,7 @@ class WebService extends \SoapClient implements ConnectionInterface
         if (!empty($soapResponse)) {
             $columnsCount = array_shift($soapResponse);
             $columns = new \SplFixedArray($columnsCount);
-            $types = [];
+//            $types = [];
             array_shift($soapResponse);
             $metaCount = array_shift($soapResponse);
             $metaLength = $columnsCount * $metaCount;
@@ -81,7 +81,7 @@ class WebService extends \SoapClient implements ConnectionInterface
             while ($i < $metaLength) {
                 if ($i % $metaCount == 0) {
                     $columns[$columnIndex] = $soapResponse[$i];
-                    $types[$soapResponse[$i]] = $soapResponse[$i+1];
+//                    $types[$soapResponse[$i]] = $soapResponse[$i+1];
                     ++$columnIndex;
                 }
                 unset($soapResponse[$i]);
@@ -109,7 +109,7 @@ class WebService extends \SoapClient implements ConnectionInterface
             if (!empty($row)) {
                 $recordset->add(new RecordsetRow($row));
             }
-            $recordset->setTypes($types);
+//            $recordset->setTypes($types);
         }
 
         return $recordset;
