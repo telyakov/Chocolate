@@ -540,6 +540,7 @@ ChGridForm.prototype.selectRow = function ($row, group, isMouse) {
         $row.toggleClass(selctClass);
     }
     this.layoutSelectedArea($row, isMouse, $activeRow);
+    this.setRowCount(this.getSelectedRows().length);
 };
 
 /**
@@ -884,20 +885,18 @@ ChGridForm.prototype.initData = function (data, order) {
         });
         $.publish(subscribeName, true);
     }
-    var recordsMsg = chApp.getMessages().records, conts = Object.keys(data).length;
-    if(conts){
-        $table.closest('form').siblings('.grid-footer').children('.footer-counter').text( recordsMsg + ': ' +conts)
+    this.setRowCount(Object.keys(data).length);
+};
+ChGridForm.prototype.setRowCount = function(count){
+    if(count){
+        this.getFooter().children('.footer-counter').text(count)
     }
 };
 ChGridForm.prototype.updateData = function (data, order) {
     this.updateStorage(data, order);
-
     this.initData(data, order);
-
     delete data;
-//    delete preview;
     delete order;
-
 };
 ChGridForm.prototype.clearChange = function () {
     this._clearChangedObj();

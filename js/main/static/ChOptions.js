@@ -83,8 +83,7 @@ var ChOptions = {
             No: 'Нет',
             Cancel: 'Отмена',
             Delete: 'Удалить',
-            NotFilledRequiredFields: 'Заполнены не все обязательные поля',
-            records: 'записей'
+            NotFilledRequiredFields: 'Заполнены не все обязательные поля'
         }
     }
 };
