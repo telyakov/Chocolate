@@ -164,7 +164,6 @@ class ChCard extends CWidget
     {
         Yii::app()->clientScript->registerScript($this->cardID, <<<JS
             chAjaxQueue.send();
-            ChocolateDraw.drawCardControls($('#' +'$this->cardID'));
 JS
             ,
             CClientScript::POS_END);

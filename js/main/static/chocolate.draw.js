@@ -4,20 +4,17 @@ var ChocolateDraw = {
         ChocolateDraw.reflowTab(Chocolate.getActiveChTab());
     },
     /**
-     * @param ch_tab {ChTab}
+     * @param tab {ChTab}
      */
-    _isNeedReflow: function (ch_tab) {
-        if (jQuery.inArray(ch_tab.getID(), this.reflowedTabs) != -1) {
-            return false;
-        }
-        return true;
+    _isNeedReflow: function (tab) {
+        return ChocolateDraw.reflowedTabs.indexOf(tab.getID()) === -1;
     },
     /**
      * @param ch_tab {ChTab}
      */
     clearReflowedTab: function (ch_tab) {
-        var index = jQuery.inArray(ch_tab.getID(), this.reflowedTabs)
-        if (jQuery.inArray(ch_tab.getID(), this.reflowedTabs) != -1) {
+        var index = this.reflowedTabs.indexOf(ch_tab.getID());
+        if (index !== -1) {
             delete this.reflowedTabs[index];
         }
 
@@ -26,14 +23,15 @@ var ChocolateDraw = {
         this.reflowedTabs = [];
     },
     /**
-     * @param ch_tab {ChTab}
+     * @param tab {ChTab}
      */
-    reflowTab: function (ch_tab) {
-        if (ch_tab.isCardTypePanel()) {
-            var $context = ch_tab.getPanel();
-            if (this._isNeedReflow(ch_tab)) {
+    reflowTab: function (tab) {
+        var $context;
+        if (tab.isCardTypePanel()) {
+            $context = tab.getPanel();
+            if (this._isNeedReflow(tab)) {
                 this.drawCard($context)
-                this.reflowedTabs.push(ch_tab.getID());
+                this.reflowedTabs.push(tab.getID());
             }
             var ch_card_tab = ChObjectStorage.create($context.find(Chocolate.clsSel(ChOptions.classes.activeTab)).children('a'), 'ChTab');
             if (this._isNeedReflow(ch_card_tab)) {
@@ -51,9 +49,9 @@ var ChocolateDraw = {
                 this.reflowedTabs.push(ch_card_tab.getID());
             }
         } else {
-            if (this._isNeedReflow(ch_tab)) {
+            if (this._isNeedReflow(tab)) {
                 //Для сеток
-                var $context = ch_tab.getPanel();
+                $context = tab.getPanel();
                 this.drawGrid($context)
                 $context.find('div[data-id=user-grid]').find('table').each(function () {
                     $(this).floatThead('reflow');
@@ -64,10 +62,11 @@ var ChocolateDraw = {
                     $discussionForm.height($context.height() - $discussionInputSection.outerHeight(true));
 
                 }
-                this.reflowedTabs.push(ch_tab.getID());
+                this.reflowedTabs.push(tab.getID());
 
             }
         }
+
     },
     _drawContent: function ($context) {
         var windows_height = Chocolate.$window.height(),
@@ -179,13 +178,14 @@ var ChocolateDraw = {
             dynamicRowHeight = parseInt(cardHeight / rowsCount, 10),
             rowHeight = [],
             minRowsHeight = [],
-            $cols = $card.find('.card-col');
+            $cols = $card.find('.card-col'),
+            staticClass = chApp.getOptions().classes.staticCardElement;
 
         $cols.each(function (index, col) {
             var $col = $(col),
                 startRow = parseInt($col.attr('data-y'), 10),
                 colRowCount = parseInt($col.attr('data-rows'), 10),
-                isStatic = $col.hasClass(ChOptions.classes.staticCardElement),
+                isStatic = $col.hasClass(staticClass),
                 minHeight = parseInt($col.attr('data-min-height'), 10),
                 i = 0;
             while (i < colRowCount) {

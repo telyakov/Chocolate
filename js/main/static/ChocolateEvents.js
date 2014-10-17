@@ -525,7 +525,8 @@ var ChocolateEvents = {
         draw.reflowActiveTab();
     },
     reflowTabEvent: function ($context) {
-        $context.on('mouseup', '.ui-tabs-anchor', chApp.namespace('draw.reflowActiveTab'));
+        $context.on('mouseup', '.ui-tabs-anchor[href=1]', chApp.namespace('draw.reflowActiveTab'));
+        $context.on('click', '.ui-tabs-anchor[href^=#]', chApp.namespace('draw.reflowActiveTab'));
     },
     ajaxIndicatorEvent: function () {
         var $spinner = $('#fadingBarsG');
