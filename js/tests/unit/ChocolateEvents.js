@@ -71,7 +71,7 @@ test('ChocolateEvents.openFormEvent',function(){
     var $content = $('<div id="footer"></div><div id="header"></div>');
     var profileID = 'dfdf112', linkID ='cfsddss1', footerLinkID ='footerdsf';
     var $profileLink = $('<li class="link-profile"></li>').attr('id', profileID);
-    var $headerMenuItem = $('<li class="link-form" ><a id="' + linkID + '"></a></li>');
+    var $headerMenuItem = $('<li class="link-form" ><a class="menu-root" id="' + linkID + '"></a></li>');
     var $footerMenuItem = $('<li class="link-form" ><a id="' + footerLinkID + '"></a></li>');
     $content.filter('#footer').append($profileLink);
     $content.filter('#footer').append($footerMenuItem);
@@ -79,21 +79,24 @@ test('ChocolateEvents.openFormEvent',function(){
     $('body').append($content);
 
     var stubOnOpenForm = this.stub(ChocolateEvents, 'openFormHandler');
+    var stubOnOpen = this.stub(Chocolate, 'openForm');
     Chocolate.init();
-    ChocolateEvents.openFormEvent($content.filter('#footer'), $content.filter('#header'));
+    ChocolateEvents.openFormEvent($content.filter('#footer'), $content);
     $profileLink.trigger('click');
     ok(stubOnOpenForm.calledOnce, 'Клик по профилю пользователя вызывает загрузку специальной формы');
     stubOnOpenForm.reset();
 
     $headerMenuItem.children('a').trigger('click');
-    ok(stubOnOpenForm.calledOnce, 'Клик по закладке верхнего меню инициирует открытие формы');
-    stubOnOpenForm.reset();
+    ok(stubOnOpen.calledOnce, 'Клик по закладке выпадающуего меню инициирует открытие формы');
+    stubOnOpen.reset();
 
     $footerMenuItem.children('a').trigger('click');
     ok(stubOnOpenForm.calledOnce, 'Клик по закладке нижнего меню инициирует открытие формы');
     stubOnOpenForm.reset();
     ChocolateEvents.openFormHandler.restore();
+    Chocolate.openForm.restore();
     stubOnOpenForm.reset();
+    stubOnOpen.reset();
     $content.remove();
 });
 
@@ -118,12 +121,11 @@ test('ChocolateEvents.searchInFilterHandler',function(){
     Event.prototype.preventDefault.restore()
 });
 test('ChocolateEvents.searchInFilterEvent',function(){
-    expect(2);
+    expect(1);
     var onSearchInFilterStub = this.stub(ChocolateEvents, 'searchInFilterHandler');
     var $content = $('<div id ="content"></div>');
     var $textFilter = $('<input type="text" class="filter">');
-    var $dateFilter = $('<input type="date" class="filter">');
-    $content.append($textFilter).append($dateFilter);
+    $content.append($textFilter);
     $('body').append($content);
     Chocolate.init();
     ChocolateEvents.searchInFilterEvent(Chocolate.$content);
@@ -132,22 +134,19 @@ test('ChocolateEvents.searchInFilterEvent',function(){
     ok(onSearchInFilterStub.calledOnce, 'При keydown по текстовому фильтру вызывается обработчик события');
     onSearchInFilterStub.reset();
 
-    $dateFilter.trigger('keydown');
-    ok(onSearchInFilterStub.notCalled, 'При keydown по любому другому фильтры НЕ вызывается обработчик');
-    onSearchInFilterStub.reset();
     ChocolateEvents.searchInFilterHandler.restore();
     $content.remove();
 });
 test('ChocolateEvents.reflowWindowHandler',function(){
     expect(2);
-    var clearSpy = this.spy(ChocolateDraw, 'clearReflowedTabs'),
+    var clearSpy = this.spy(ChocolateDraw, 'clearTabsCache'),
         reflowStub = this.stub(ChocolateDraw, 'reflowActiveTab');
     ChocolateEvents.reflowWindowHandler();
     ok(clearSpy.calledOnce && reflowStub.calledOnce, 'Вызывается один раз очистка нарисованных вкладок и один раз перерисовка текущего активного таба');
     ok(reflowStub.calledAfter(clearSpy), 'Перерисовка вызывается после очистки');
     clearSpy.reset();
     reflowStub.reset();
-    ChocolateDraw.clearReflowedTabs.restore();
+    ChocolateDraw.clearTabsCache.restore();
     ChocolateDraw.reflowActiveTab.restore();
 
 });
@@ -169,7 +168,7 @@ test('ChocolateEvents.reflowWindowEvent',function(){
 test('ChocolateEvents.reflowTabEvent',function(){
     expect(1);
     var $content = $('<div id="tabs"></div>');
-    var $link = $('<a class="ui-tabs-anchor"></a>');
+    var $link = $('<a class="ui-tabs-anchor" href="#s"></a>');
     $content.append($link);
     $('body').append($content);
     var reflowStub = this.stub(ChocolateDraw, 'reflowActiveTab');
@@ -181,22 +180,4 @@ test('ChocolateEvents.reflowTabEvent',function(){
     $content.remove();
     ChocolateDraw.reflowActiveTab.restore();
 });
-//test('ChocolateEvents.',function(){
-////    expect(1);
-//});
-//test('ChocolateEvents.',function(){
-////    expect(1);
-//});
-//test('ChocolateEvents.',function(){
-////    expect(1);
-//});
-//test('ChocolateEvents.',function(){
-////    expect(1);
-//});
-//test('ChocolateEvents.',function(){
-////    expect(1);
-//});
-//test('ChocolateEvents.',function(){
-////    expect(1);
-//});
-//
+

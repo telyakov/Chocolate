@@ -248,6 +248,9 @@ var Chocolate = {
                     result.push(role);
                 }
             }
+            if(typeof Chocolate.storage.session.user === 'undefined'){
+                Chocolate.storage.session.user = {};
+            }
             Chocolate.storage.session.user.roles = result;
         },
         /**
@@ -385,8 +388,6 @@ var Chocolate = {
             _initScripts: function (ui, content, $context) {
                 ui.panel.html(content);
                 ChCardInitCallback.fireOnce();
-//                var tab =chApp.getFactory().getChTab(ui.tab);
-//                ChocolateDraw.clearReflowedTab(tab)
                 ChocolateDraw.drawCardPanel(ui.panel, $context);
                 setTimeout(function () {
                     ChocolateDraw.reflowActiveTab();

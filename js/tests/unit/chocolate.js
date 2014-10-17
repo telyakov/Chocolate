@@ -219,15 +219,11 @@ test('Chocolate.hasChange', function(){
 
 });
 test('Chocolate.user.setIdentity', function(){
-    expect(3);
-    var name = 'Крокодил Гена', emptyRoles = [];
-    Chocolate.user.setIdentity(name, null);
+    expect(2);
+    var name = 'Крокодил Гена', id =0;
+    Chocolate.user.setIdentity(name, 0);
     equal(Chocolate.storage.session.user.name, name, 'Имя сохраняется в локальном хранилище ');
-    deepEqual(Chocolate.storage.session.user.roles,  emptyRoles, 'Даже пустой объект ролей пользователя сохраняется');
-
-    var userRoles = ['Администратор проверок'];
-    Chocolate.user.setIdentity(name, JSON.stringify(userRoles));
-    deepEqual(Chocolate.storage.session.user.roles,  userRoles, 'Роли в формате json успешно сохраняются в js - объект');
+    equal(Chocolate.storage.session.user.id, id, 'ID пользователя сохраняется в локальном хранилище ');
 
 });
 test('Chocolate.user.getName', function(){
@@ -289,13 +285,9 @@ test('Chocolate.tab.close', function(){
         return $('<li aria-controls="' + panelID + '" class="'+ChOptions.classes.activeTab+'">');
     });
     Chocolate.tab.close($('<a>'));
-    ok(stubReflow.calledOnce && stubTabs.calledWithExactly({active: stubGetLi().index()-1}), 'Если закрывается активная вкладка, открывается предыдушая вкладки и выполняется ее перерисовка');
-//    ChGridForm.prototype.isHasChange.restore();
+    ok(stubReflow.calledOnce && stubTabs.calledWithExactly({active: null}), 'Если закрывается активная вкладка, открывается предыдушая вкладки и выполняется ее перерисовка');
     stubIsHasChange.reset();
     stubIsHasChange.returns(true);
-//    stubIsHasChange = this.stub(ChGridForm.prototype, 'isHasChange' , function(){
-//        return true;
-//    });
 
     Chocolate.tab.close($('<a>'));
 
@@ -490,7 +482,7 @@ test('Chocolate.tab.addAndSetActive', function(){
     equal($tabItem.get(0).nodeName, 'LI', 'Возвращается добавленныый в DOM элемент');
 });
 test('Chocolate.tab.card._initScripts', function(){
-    expect(5);
+    expect(4);
     var fakeUi = {
             panel: $('<div></div>'),
             tab: $('<div></div>')
@@ -500,17 +492,14 @@ test('Chocolate.tab.card._initScripts', function(){
     var stubHtml = this.stub($.fn, 'html'),
         stubData = this.stub($.fn, 'data'),
         stubFireOnce = this.stub(ChCardInitCallback, 'fireOnce'),
-        stubReflowActiveTab = this.stub(ChocolateDraw, 'reflowActiveTab'),
         stubDrawCardPanel = this.stub(ChocolateDraw, 'drawCardPanel');
     Chocolate.tab.card._initScripts(fakeUi, fakeContent, $fakeContext);
     ok(stubFireOnce.calledAfter(stubHtml), 'Сначала вставляются данные, потом инициализируются скрипты.');
     ok(stubDrawCardPanel.calledAfter(stubFireOnce), 'После инициализации скриптов рисуется карточка');
-    ok(stubReflowActiveTab.calledAfter(stubDrawCardPanel), 'Закладка перерисовывается после инициализации скриптов');
     ok(stubData.calledWithExactly('loaded', 1), 'Для предтовращения повторного ajax запроса, ставится метка об успешной загрузке');
     stubHtml.reset();
     stubData.reset();
     stubFireOnce.reset();
-    stubReflowActiveTab.reset();
     $.fn.html.restore();
 
 
@@ -521,7 +510,6 @@ test('Chocolate.tab.card._initScripts', function(){
     spyInitScripts.reset();
     $.fn.data.restore();
     ChCardInitCallback.fireOnce.restore();
-    ChocolateDraw.reflowActiveTab.restore();
 });
 test('Chocolate.tab.card.init', function(){
     expect(3);
@@ -536,7 +524,7 @@ test('Chocolate.tab.card.init', function(){
     ok(spyTabs.calledOnce, 'Инициализация закладок в карточке вызывается один раз');
     var $paramsFirstCall = spyTabs.args[0];
     ok($paramsFirstCall[0].hasOwnProperty('beforeLoad'), 'Параметр beforeLoad инициализируется');
-    $(Chocolate.idSel(linkID)).trigger('click')
+    $(Chocolate.idSel(linkID)).trigger('click');
     ok(beforeLoadStub.calledOnce, 'При клике на закладку инициализируется содержимое закладки');
     Chocolate.tab.card._onBeforeLoad.restore();
     spyTabs.reset();

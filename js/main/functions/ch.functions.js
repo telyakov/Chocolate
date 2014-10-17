@@ -172,7 +172,9 @@ var chFunctions = {
         content.push('</nav>');
         content.push('</li>');
         $menu.html(content.join(''));
-        new gnMenu($menu.get(0));
+        if($menu.length){
+            new gnMenu($menu.get(0));
+        }
     },
     filterSearchData: function (seacrh, key) {
         return function filter(item, i, arr) {

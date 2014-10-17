@@ -500,7 +500,7 @@ var ChocolateEvents = {
         e.preventDefault();
     },
     searchInFilterEvent: function ($context) {
-        $context.on('keydown', 'input[type=search].filter', this.searchInFilterHandler);
+        $context.on('keydown', 'input.filter', this.searchInFilterHandler);
     },
     /**
      * #tips 2
@@ -521,8 +521,9 @@ var ChocolateEvents = {
     },
     reflowWindowHandler: function () {
         var draw = chApp.namespace('draw');
-        draw.clearReflowedTabs();
-        draw.reflowActiveTab();
+        draw
+            .clearTabsCache()
+            .reflowActiveTab();
     },
     reflowTabEvent: function ($context) {
         $context.on('mouseup', '.ui-tabs-anchor[href=1]', chApp.namespace('draw.reflowActiveTab'));
