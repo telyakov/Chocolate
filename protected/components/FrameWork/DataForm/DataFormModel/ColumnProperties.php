@@ -240,9 +240,14 @@ class ColumnProperties
         return $this->_cardEditType;
     }
 
+    private $_prepareView;
     public function getViewName()
     {
-        return XML::prepareViewName($this->viewname);
+        if($this->_prepareView){
+            return $this->_prepareView;
+        }
+        $this->_prepareView = XML::prepareViewName($this->viewname);
+        return $this->_prepareView;
     }
 
     public function hasView()

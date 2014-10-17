@@ -13,15 +13,23 @@ trait SelectGetSource
     public function getSource(ColumnProperties $columnProperties, DataFormModel $model = null)
     {
         $result = [];
-        if (($recordset = $columnProperties->executeReadProc($model)) && $recordset->isNotEmpty()) {
+        try {
+            $recordset = $columnProperties->executeReadProc($model);
+        } catch (\Exception $e) {
+            return [];
+        }
+        if ($recordset && $count = $recordset->count()) {
+            $data = $recordset->toRawArray();
+            $idList = (new \SplFixedArray())->fromArray(array_column($data, 'id'));
+            $nameList = (new \SplFixedArray())->fromArray(array_column($data, 'name'));
+            $i = 0;
 
-            $count = $recordset->count();
-            $data = $recordset->toArray();
-            for($i = 0; $i < $count; ++$i){
-                $result[$i] = [
-                    'text' => $data[$i]->data['name'],
-                    'value' => $data[$i]->id
+            while ($i < $count) {
+                $result[] = [
+                    'text' => isset($nameList[$i]) ? $nameList[$i] : '',
+                    'value' => $idList[$i],
                 ];
+                ++$i;
             }
         }
         return $result;

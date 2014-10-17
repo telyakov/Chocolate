@@ -44,7 +44,7 @@ class ChCard extends CWidget
         foreach ($this->createQueue() as $element) {
             $this->createCell($element['data'], $element['priority']);
         }
-        echo '</div>';
+        echo CHtml::closeTag('div');
         $this->renderCardButtons();
         ob_end_flush();
         $this->registerScripts();
@@ -86,7 +86,7 @@ class ChCard extends CWidget
         $elementSettings->renderBeginData();
         echo $data;
         $elementSettings->renderEndData();
-        echo '</div>';
+        echo CHtml::closeTag('div');
     }
 
     protected function renderTopCell($id, ICardElementSettings $elementSettings)
@@ -124,13 +124,12 @@ class ChCard extends CWidget
 
     protected function getCellClass(ICardElementSettings $elementSettings)
     {
-        $class = 'card-col';
+        $class = 'card-col %s';
         if ($elementSettings->isStatic()) {
-            $class .= ' card-static';
+            return sprintf($class, 'card-static');
         } else {
-            $class .= ' card-dynamic';
+            return sprintf($class, 'card-dynamic');
         }
-        return $class;
     }
 
     /**
@@ -157,7 +156,7 @@ class ChCard extends CWidget
         ]) ;
         echo CHtml::button('Сохранить', ['class' => 'card-save', 'data-id' => 'card-save',]);
         echo CHtml::button('Отменить', ['class' => 'card-cancel', 'data-id' => 'card-cancel',]);
-        echo '</div>';
+        echo CHtml::closeTag('div');
         }
     }
 

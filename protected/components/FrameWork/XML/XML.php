@@ -27,8 +27,7 @@ class XML
     }
 
     public static function prepareViewName($view){
-        $prepareName = strtolower($view);
-        return $prepareName . '.xml';
+        return strtolower($view) . '.xml';
     }
 
     public function getData()
