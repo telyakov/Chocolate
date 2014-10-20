@@ -106,34 +106,29 @@ function ChocolateDraw() {
                     .drawCard($cont)
                     ._addTabToCache(tab);
             }
-            var cardTab = chApp.getFactory().getChTab($cont.find(Chocolate.clsSel(ChOptions.classes.activeTab)).children('a'));
+            var activeTabClass = chApp.getOptions().classes.activeTab,
+                cardTab = chApp.getFactory().getChTab($cont.find('.' +activeTabClass).children('a'));
             if (context._isNeedReflow(cardTab)) {
-                var $panel = cardTab.getPanel(),
-                    _this = context;
-                context.drawCardPanel($panel, $cont);
-                context.drawCardControls(cardTab.getCardContent());
-                $panel.find('div.card-grid').each(function () {
+                var $panel = cardTab.getPanel();
+                context
+                    .drawCardPanel($panel, $cont)
+                    .drawCardControls(cardTab.getCardContent());
+                $panel.find('.card-grid').each(function () {
                     var $cardCol = $(this).parent();
-                    _this.drawCardGrid($cardCol);
-                    $cardCol.find('div[data-id=user-grid]').find('table').each(function () {
-                        $(this).floatThead('reflow');
-                    });
+                    context.drawCardGrid($cardCol);
+                    $cardCol.find('.grid-view').find('table').floatThead('reflow');
                 });
                 context._addTabToCache(cardTab);
             }
         } else {
             if (context._isNeedReflow(tab)) {
-                //Для сеток
                 $cont = tab.getPanel();
                 context.drawGrid($cont);
-                $cont.find('div[data-id=user-grid]').find('table').each(function () {
-                    $(this).floatThead('reflow');
-                });
-                var $discussionForm = $cont.children('section').children('form');
-                if ($discussionForm.hasClass('discussion-form')) {
-                    var $discussionInputSection = $discussionForm.next('.discussion-footer');
-                    $discussionForm.height($cont.height() - $discussionInputSection.outerHeight(true));
-
+                $cont.find('.grid-view').find('table').floatThead('reflow');
+                var $form = $cont.children('section').children('form');
+                if (context._isDiscussionForm($form)) {
+                    var $footer = $form.next('.discussion-footer');
+                    $form.height($cont.height() - $footer.outerHeight(true));
                 }
                 context._addTabToCache(tab);
             }
@@ -177,6 +172,7 @@ function ChocolateDraw() {
     /**
      * @param $panel {jQuery}
      * @param $context {jQuery}
+     * @returns {ChocolateDraw}
      */
     this.drawCardPanel = function ($panel, $context) {
         var $gridTabs = $context.children('[data-id=grid-tabs]'),
@@ -185,6 +181,7 @@ function ChocolateDraw() {
             panelHeight = $gridTabs.height() - $tabList.outerHeight(true) - MarginAndPaddingHgh - 1;
 
         $panel.height(panelHeight);
+        return context;
     };
     /**
      * Рисует контролы в карточке. Точнее отрисовывает контейнер в котором они лежат.
