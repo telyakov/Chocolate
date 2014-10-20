@@ -1,6 +1,6 @@
-var ObjectStorage = function ObjectStorage(name, duration) {
+var ObjectStorage = function ObjectStorage(duration) {
     var self,
-        name = name || '_objectStorage',
+        name ='_objectStorage',
         defaultDuration = 15000;
     if (ObjectStorage.instances[ name ]) {
         self = ObjectStorage.instances[ name ];

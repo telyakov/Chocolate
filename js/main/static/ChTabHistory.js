@@ -3,7 +3,7 @@ var ChTabHistory ={
     size: 15,
     push: function($tab){
         var last =this.last();
-        if(last &&(last[0] == $tab[0])){
+        if(last &&(last[0] === $tab[0])){
             return;
         }
         if(this.tabs.length  > this.size){
@@ -18,7 +18,7 @@ var ChTabHistory ={
        var $popTab = this.tabs.pop(),
            _this = this;
         this.tabs.forEach(function($elem,index){
-            if ($popTab[0] == $elem[0]){
+            if ($popTab[0] === $elem[0]){
                 _this.tabs.splice(index, 1);
             }
         });

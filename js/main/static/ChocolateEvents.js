@@ -53,7 +53,7 @@ var ChocolateEvents = {
 
     },
     openCardTabMenuEvent: function ($context) {
-        $context.on('click', '.tab-menu-link', this.openCardTabMenuHandler)
+        $context.on('click', '.tab-menu-link', this.openCardTabMenuHandler);
     },
     openCardTabMenuHandler: function () {
         var $this = $(this),
@@ -85,7 +85,7 @@ var ChocolateEvents = {
     sendMessageHandler: function () {
         var msg = $(this).prev('.discussion-input').val();
         var form = chApp.getFactory().create($(this).closest('section').prev('form'), 'ChDiscussionForm');
-        form.sendMessage(msg)
+        form.sendMessage(msg);
     },
     sendEmailEvent: function ($context) {
         $context.on('click', '.fm-email-send', this.sendEmailHandler);
@@ -101,7 +101,7 @@ var ChocolateEvents = {
                 task = chApp.getMain().stripHtml(dataObj.task),
                 subject = 'База:' + task.substr(0, 50);
 
-            window.open('mailto:' + emails + '?subject=' + subject + '&body=' + url, '_self')
+            window.open('mailto:' + emails + '?subject=' + subject + '&body=' + url, '_self');
 
         }
     },
@@ -118,7 +118,7 @@ var ChocolateEvents = {
             $table = form.getTable(),
             tables = [$table.eq(0)[0], $fixedTable.eq(0)[0]],
             search = $this.val();
-        if (!~[keys.ENTER, keys.ESCAPE].indexOf(e.keyCode)) {
+        if ([keys.ENTER, keys.ESCAPE].indexOf(e.keyCode) === -1) {
 
             var oldHiddenPositions = [],
                 hiddenPositions = [];
@@ -128,36 +128,37 @@ var ChocolateEvents = {
                 if ($this.hasClass(searchedClass)) {
                     oldHiddenPositions.push(index);
                 }
-                if ($this.css('display') != 'none' || $this.hasClass(searchedClass)) {
+                if ($this.css('display') !== 'none' || $this.hasClass(searchedClass)) {
                     var caption = $(this).text().toLowerCase();
                     $this.removeClass(searchedClass);
 
-                    if (i != 0 && caption != 'ключ' && caption.indexOf(search) == -1) {
+                    if (i !== 0 && caption !== chApp.getOptions().settings.keyCaption && caption.indexOf(search) === -1) {
                         hiddenPositions.push(index);
                         $this.addClass(searchedClass);
                     }
                 }
             });
-            var visiblePositions = [];
-            var sum = 0,
+            var visiblePositions = [],
+                sum = 0,
                 curWidth = $table.width(),
                 newWidth;
             oldHiddenPositions.forEach(function (item) {
-                if (hiddenPositions.indexOf(item) == -1) {
+                if (hiddenPositions.indexOf(item) === -1) {
                     visiblePositions.push(item);
-                    sum += parseInt(form.getColumnWidth(item, 10));
+                    sum += parseInt(form.getColumnWidth(item), 10);
                 }
             });
 
             var newHiddenPositions = [];
             hiddenPositions.forEach(function (item) {
-                if (oldHiddenPositions.indexOf(item) == -1) {
+                if (oldHiddenPositions.indexOf(item) === -1) {
                     newHiddenPositions.push(item);
-                    sum -= parseInt(form.getColumnWidth(item, 10));
+                    sum -= parseInt(form.getColumnWidth(item), 10);
                 }
             });
-            ChTableHelper.hideColsManyTables(tables, newHiddenPositions);
-            ChTableHelper.showColsManyTables(tables, visiblePositions);
+            var tableHelperModule = chApp.getTableHelper();
+            tableHelperModule.hideColsManyTables(tables, newHiddenPositions);
+            tableHelperModule.showColsManyTables(tables, visiblePositions);
             newWidth = curWidth + sum;
             $table.width(newWidth);
             $fixedTable.width(newWidth);
@@ -168,35 +169,34 @@ var ChocolateEvents = {
             $th.each(function (i) {
                 if ($(this).hasClass(searchedClass)) {
                     positions.push(i);
-                    $(this).removeClass(searchedClass)
+                    $(this).removeClass(searchedClass);
                 }
             });
-            ChTableHelper.showColsManyTables(tables, positions);
-            if (e.keyCode == keys.ESCAPE) {
-
+            chApp.getTableHelper().showColsManyTables(tables, positions);
+            if (e.keyCode === keys.ESCAPE) {
                 $th
                     .filter('.grid-column-searched-red, .grid-column-searched-yellow, .grid-column-searched-green')
                     .removeClass('grid-column-searched-red grid-column-searched-yellow grid-column-searched-green');
             } else {
                 var $parent = $th.parent(),
                     color = $parent.attr('data-color');
-                if (!color || color == 'green') {
+                if (!color || color === 'green') {
                     $parent.attr('data-color', 'yellow');
                 }
-                if (color == 'yellow') {
+                if (color === 'yellow') {
                     $parent.attr('data-color', 'red');
                 }
-                if (color == 'red') {
+                if (color === 'red') {
                     $parent.attr('data-color', 'green');
                 }
-                $th.each(function (i) {
+                $th.each(function () {
                     var caption = $(this).text().toLowerCase();
-                    if (caption.indexOf(search) != -1) {
+                    if (caption.indexOf(search) !== -1) {
                         $(this)
                             .removeClass('grid-column-searched-red grid-column-searched-yellow grid-column-searched-green')
                             .addClass('grid-column-searched-' + $parent.attr('data-color'));
                     } else {
-                        $(this).removeClass('grid-column-searched-' + $parent.attr('data-color'))
+                        $(this).removeClass('grid-column-searched-' + $parent.attr('data-color'));
 
                     }
                 });
@@ -265,10 +265,10 @@ var ChocolateEvents = {
                     .on('keydown', eventData, ChocolateEvents.addSignToIframeHandler)
                     .on('keydown', function (e) {
                         var keys = chApp.namespace('events.KEY');
-                        if (e.keyCode == keys.ESCAPE) {
+                        if (e.keyCode === keys.ESCAPE) {
                             $popupControl.editable('hide');
                         }
-                    })
+                    });
             });
         }
         return false;
@@ -284,7 +284,7 @@ var ChocolateEvents = {
         $panelElem.remove();
     },
     keyActionsCardEvent: function ($context) {
-        $context.on('keydown', '.card-input a', this.keyActionsCardHandler)
+        $context.on('keydown', '.card-input a', this.keyActionsCardHandler);
     },
     /**
      *
@@ -329,9 +329,9 @@ var ChocolateEvents = {
         if (toID && toName && fromName && fromID) {
             isSelect = 1;
         }
-        Chocolate.leaveFocus()
+        Chocolate.leaveFocus();
         if ($currentTab.length) {
-            $tabs.tabs("select", tabID)
+            $tabs.tabs("select", tabID);
         } else {
             var caption = [options.title, ' [', parentID, ']'].join('');
             main.tab.addAndSetActive(tabID, caption);
@@ -360,9 +360,9 @@ var ChocolateEvents = {
                                             form.getMessagesContainer().sendMessage('Сохраните сетку, перед выбором!', ChResponseStatus.ERROR);
                                         } else {
                                             var selectedRows = form.getSelectedRows();
-                                            if (selectedRows.length != 1) {
+                                            if (selectedRows.length !== 1) {
                                                 form.getMessagesContainer().sendMessage('Выберите одну строчку', ChResponseStatus.ERROR);
-                                            } else {
+                                            }
                                                 //todo: реализовать алгоритм биндинга
 //                                                    var rowID = factory.getSelectedRows[0].attr('data-id');
 //                                                    var data =  form.getDataObj()[rowID];
@@ -370,7 +370,6 @@ var ChocolateEvents = {
 //                                                    factory.getChGridColumnBody()
 //                                                    column.setChangedValue(toID, data[fromID]);
 //                                                    editable.html(data[fromName])
-                                            }
                                         }
                                     }
                                 );
@@ -385,7 +384,7 @@ var ChocolateEvents = {
                         }
                     })
                     .fail(function (er) {
-                        main.log.error('Возникла ошибка при открытии дочерней карточки', er)
+                        main.log.error('Возникла ошибка при открытии дочерней карточки', er);
                     });
             } else {
                 $('<div></div>')
@@ -407,12 +406,12 @@ var ChocolateEvents = {
             .done(function (res) {
                 var response = new ChResponse(res);
                 if (response.hasError()) {
-                    main.log.error(response.getStatusMsg())
+                    main.log.error(response.getStatusMsg());
                 }
             })
             .fail(function (er) {
-                main.log.error(er)
-            })
+                main.log.error(er);
+            });
 
     },
     formMenuButtonEvent: function ($context) {
@@ -509,7 +508,7 @@ var ChocolateEvents = {
      */
     searchInFilterHandler: function (e) {
         var keys = chApp.namespace('events.KEY');
-        if (e.keyCode == keys.ENTER) {
+        if (e.keyCode === keys.ENTER) {
             var factory = chApp.namespace('factory'),
                 form = factory.getChGridForm($(this).closest('.section-filters').next('.section-grid').children('form'));
             form.refresh();
@@ -552,7 +551,7 @@ var ChocolateEvents = {
         return false;
     },
     menuContextEvent: function ($context) {
-        $context.on('click ', '.menu-button-print, .menu-button-action', this.menuContextHandler)
+        $context.on('click ', '.menu-button-print, .menu-button-action', this.menuContextHandler);
     },
     menuContextHandler: function () {
         var $this = $(this);
@@ -572,7 +571,7 @@ var ChocolateEvents = {
         $context.on('keydown', '.tablesorter', this.keyActionsFormHandler);
     },
     keyActionsFormHandler: function (e) {
-        if (~['TABLE', 'SPAN'].indexOf(e.target.tagName)) {
+        if (['TABLE', 'SPAN'].indexOf(e.target.tagName) !== -1) {
             //span for ie fix
             var keys = chApp.namespace('events.KEY'),
                 keyCode = e.keyCode,
@@ -580,17 +579,17 @@ var ChocolateEvents = {
             /**
              * #tips 1
              */
-            if (~catchKeys.indexOf(keyCode)) {
+            if (catchKeys.indexOf(keyCode)!== -1) {
                 var factory = chApp.namespace('factory'),
                     form = factory.getChGridForm($(this).closest('form')),
                     $activeRow,
                     $nextRow;
 
-                if (keyCode == keys.DEL) {
+                if (keyCode === keys.DEL) {
                     form.removeRows(form.getSelectedRows());
-                } else if ((e.ctrlKey || e.shiftKey) && ~[keys.UP, keys.DOWN].indexOf(keyCode)) {
+                } else if ((e.ctrlKey || e.shiftKey) && [keys.UP, keys.DOWN].indexOf(keyCode) !== -1) {
                     $activeRow = form.getActiveRow();
-                    if (keyCode == keys.DOWN) {
+                    if (keyCode === keys.DOWN) {
                         $nextRow = $activeRow.next('tr');
                     } else {
                         $nextRow = $activeRow.prev('tr');
@@ -599,9 +598,9 @@ var ChocolateEvents = {
                         form.setCorrectScroll($nextRow);
                         form.selectRow($nextRow, true, false);
                     }
-                } else if (~[keys.UP, keys.DOWN].indexOf(keyCode)) {
+                } else if ([keys.UP, keys.DOWN].indexOf(keyCode) !== -1) {
                     $activeRow = form.getActiveRow();
-                    if (keyCode == keys.UP) {
+                    if (keyCode === keys.UP) {
                         $nextRow = $activeRow.prev('tr');
                     } else {
                         $nextRow = $activeRow.next('tr');
@@ -651,7 +650,7 @@ var ChocolateEvents = {
         });
     },
     cardCancelEvent: function ($context) {
-        $context.on('click', '.card-cancel', this.cardCancelHandler)
+        $context.on('click', '.card-cancel', this.cardCancelHandler);
     },
     cardCancelHandler: function () {
         var factory = chApp.namespace('factory'),
@@ -783,7 +782,7 @@ var ChocolateEvents = {
     addSignToIframeHandler: function (e) {
         var moduleKey = chApp.namespace('events.KEY'),
             moduleMain = chApp.namespace('main');
-        if (e.keyCode == moduleKey.F4) {
+        if (e.keyCode === moduleKey.F4) {
             $(this).insertAtCaretIframe(moduleMain.user.getSign());
             return false;
         }
@@ -799,7 +798,7 @@ var ChocolateEvents = {
     addSignToTextHandler: function (e) {
         var keys = chApp.namespace('events.KEY'),
             user = chApp.namespace('main.user');
-        if (e.keyCode == keys.F4) {
+        if (e.keyCode === keys.F4) {
             $(e.target).insertAtCaret(user.getSign());
             return false;
         }
@@ -810,8 +809,8 @@ var ChocolateEvents = {
             /**
              * #tip 1
              */
-            var isTextEditMode = ~['INPUT', 'TEXTAREA'].indexOf(e.target.tagName);
-            if (!isTextEditMode) {
+            var isNotTextEditMode = (['INPUT', 'TEXTAREA'].indexOf(e.target.tagName) ===-1);
+            if (isNotTextEditMode) {
                 var keys = chApp.namespace('events.KEY');
 
                 if (e.keyCode === keys.BACKSPACE) {
@@ -827,7 +826,7 @@ var ChocolateEvents = {
                     }
                 }
             }
-        })
+        });
     },
     disableFiltersEvent: function ($context) {
         $context.on('click', '.section-filters div > label', this.disableFilterHandler);

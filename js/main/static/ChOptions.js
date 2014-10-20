@@ -17,7 +17,8 @@ var ChOptions = {
         formatDate: 'YYYY.MM.DD HH:mm:ss',
         signatureFormat: 'DD.MM.YYYY HH:mm',
         emailCol: 'emails',
-        systemCols: ['lastmodifier', 'lastmodifydate', 'insdate', 'username' , 'userid']
+        systemCols: ['lastmodifier', 'lastmodifydate', 'insdate', 'username' , 'userid'],
+        keyCaption: 'ключ'
     },
     keys: {
       controlColumn: 'chocolate-control-column'
@@ -73,7 +74,7 @@ var ChOptions = {
     },
     labels:{
         attention: 'attention',
-        not_view: 'not-view'
+        notView: 'not-view'
     },
     messages:{
         ru: {

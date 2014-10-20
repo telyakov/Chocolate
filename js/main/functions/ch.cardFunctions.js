@@ -254,7 +254,7 @@ var chCardFunction = {
                }
             if(label == ChOptions.labels.attention){
                 $context.html('<span class="fa-exclamation"></span>');
-            }else if(label == ChOptions.labels.not_view){
+            }else if(label == ChOptions.labels.notView){
                 $context.html('<span class="fa-question"></span>');
             }
             else{

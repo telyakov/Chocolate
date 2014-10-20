@@ -80,3 +80,6 @@ chApp.getSocket = function(){
 chApp.getFunctions = function(){
     return chFunctions;
 };
+chApp.getTableHelper = function(){
+    return this.tableHelper;
+};
