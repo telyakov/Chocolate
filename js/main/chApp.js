@@ -4,7 +4,7 @@ var chApp = chApp || {
     options: ChOptions,
     factory: ChObjectStorage,
     responseStatuses: ChResponseStatus,
-    draw: new ChocolateDrawClass(),
+    draw: new ChocolateDraw(),
     tableHelper: ChTableHelper,
     attachments: ch.attachments
 };
@@ -63,7 +63,7 @@ chApp.getOptions = function(){
 };
 
 /**
- * @returns {ChocolateDrawClass}
+ * @returns {ChocolateDraw}
  */
 chApp.getDraw = function(){
     return this.draw;

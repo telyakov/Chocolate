@@ -1,7 +1,71 @@
-function ChocolateDrawClass() {
+function ChocolateDraw() {
     var context = this, tabsCache = [];
     /**
-     * @returns {ChocolateDrawClass}
+     * @param $context {jQuery}
+     * @returns {int}
+     * @private
+     */
+    this._setTabHeight = function ($context) {
+        var mainModule = chApp.getMain(),
+            windowsHgh = mainModule.$window.height(),
+            headerHgh = mainModule.$header.height(),
+            footerHgh = mainModule.$footer.height(),
+            pageHgh = windowsHgh - headerHgh - footerHgh;
+        $(mainModule.$page, mainModule.$content, mainModule.$tabs).height(pageHgh);
+        var $tabItems = mainModule.$tabs.children('ul').eq(0),
+            pagePaddingHgh = $context.outerHeight() - $context.height(),
+            correctPageHgh = pageHgh - $tabItems.outerHeight(true) - pagePaddingHgh;
+        $context.height(correctPageHgh);
+        return correctPageHgh;
+    };
+    /**
+     *
+     * @param $form {jQuery}
+     * @returns {boolean}
+     * @private
+     */
+    this._isDiscussionForm = function ($form) {
+        var discussionClass = chApp.getOptions().classes.discussionForm;
+        return $form.hasClass(discussionClass);
+    };
+    /**
+     *
+     * @param $context {jQuery}
+     * @private
+     */
+    this._layoutForm = function ($context) {
+        if (this._isDiscussionForm($context.children('form'))) {
+            var $discussionForm = $context.children('form'),
+                $discussionInput = $discussionForm.next('.discussion-footer');
+            $discussionForm.height($context.height() - $discussionInput.outerHeight(true));
+        } else {
+            var classes = chApp.getOptions().classes,
+                $header = $context.find('.' + classes.headerSection),
+                $filters = $context.find('.' + classes.filterSection),
+                $container = $context.find('.' + classes.gridSection),
+                formSectionHeight = $context.height() - $header.outerHeight(true) - $filters.outerHeight(true);
+            $container.height(formSectionHeight);
+
+            var $form = $container.children('form'),
+                $footer = $container.children('footer'),
+                formHeight = formSectionHeight - $footer.outerHeight(true);
+            $form.height(formHeight);
+
+            var $menu = $form.find('.menu'),
+                $formSection = $form.children('section'),
+                formSectionHgt = formHeight - $menu.outerHeight(true);
+            $formSection.height(formSectionHgt);
+            if ($formSection.attr('data-id') === 'map') {
+                var map = chApp.getFactory().getChMap($formSection.children('.map'));
+                map.map.container.fitToViewport();
+            } else {
+                var $userGrid = $formSection.find('.grid-view');
+                $userGrid.height(formSectionHgt);
+            }
+        }
+    };
+    /**
+     * @returns {ChocolateDraw}
      */
     this.reflowActiveTab = function () {
         return context.reflowTab(chApp.getMain().getActiveChTab());
@@ -15,7 +79,7 @@ function ChocolateDrawClass() {
         return tabsCache.indexOf(tab.getID()) === -1;
     };
     /**
-     * @returns {ChocolateDrawClass}
+     * @returns {ChocolateDraw}
      */
     this.clearTabsCache = function () {
         tabsCache = [];
@@ -31,7 +95,7 @@ function ChocolateDrawClass() {
     };
     /**
      * @param tab {ChTab}
-     * @returns {ChocolateDrawClass}
+     * @returns {ChocolateDraw}
      */
     this.reflowTab = function (tab) {
         var $cont;
@@ -76,75 +140,34 @@ function ChocolateDrawClass() {
         }
         return context;
     };
-    this._drawContent = function ($context) {
-        var windowsHeight = Chocolate.$window.height(),
-            headerHeight = Chocolate.$header.height(),
-            footerHeight = Chocolate.$footer.height(),
-            pagewrapHeight = windowsHeight - headerHeight - footerHeight;
-
-        $(Chocolate.$page, Chocolate.$content, Chocolate.$tabs).height(pagewrapHeight);
-        var $tabList = Chocolate.$tabs.children('ul').eq(0),
-            pageContentDelta = $context.outerHeight() - $context.height(),
-            pageContentHeight = pagewrapHeight - $tabList.outerHeight(true) - pageContentDelta;
-
-        $context.height(pageContentHeight);
-        return pageContentHeight;
+    /**
+     * @param $cardCol {jQuery}
+     */
+    this.drawCardGrid = function ($cardCol) {
+        var $cardGrid = $cardCol.find('.card-grid'),
+            cardGridHeight = $cardGrid.height(),
+            $section = $cardGrid.children('section');
+        $section.height(cardGridHeight);
+        context._layoutForm($section);
     };
-    this._drawGridForm = function ($context) {
-        if ($context.children('form').hasClass('discussion-form')) {
-            var $discussionForm = $context.children('form');
-            var $discussionInputSection = $discussionForm.next('.discussion-footer');
-            $discussionForm.height($context.height() - $discussionInputSection.outerHeight(true));
 
-        } else {
-            var $contentHeader = $context.find('section[data-id=header]'),
-                $contentFilters = $context.find('section[data-id=filters]'),
-                $contentGridForm = $context.find('section[data-id=grid-form]'),
-                contentGridFormHeight = $context.height() - $contentHeader.outerHeight(true) - $contentFilters.outerHeight(true);
-            $contentGridForm.height(contentGridFormHeight);
-
-            var $form = $contentGridForm.children('form'),
-                $footer = $contentGridForm.children('footer'),
-                formHeight = contentGridFormHeight - $footer.outerHeight(true);
-            $form.height(formHeight);
-
-            var $menu = $form.find('menu'),
-                $gridSection = $form.children('section'),
-                gridSectionHeight = formHeight - $menu.outerHeight(true);
-            $gridSection.height(gridSectionHeight);
-            if ($gridSection.attr('data-id') === 'map') {
-                var chMap = ChObjectStorage.create($gridSection.children('.map'), 'ChMap');
-                chMap.map.container.fitToViewport();
-
-            } else {
-                var $userGrid = $gridSection.find('div[data-id=user-grid]');
-                $userGrid.height(gridSectionHeight);
-            }
-        }
-    };
     /**
      * Полностью рисует сетку, расположенную не в карточке. Можно использовать при ресайзинге.
-     * @param $context
+     * @param $context {jQuery}
      */
     this.drawGrid = function ($context) {
         var $cardTabs = $context.parent();
         if ($cardTabs.attr('data-id') !== 'grid-tabs') {
-            /**
-             * Перерисовываем внешние контейнеры
-             */
-            context._drawContent($context);
-            /**
-             *  Перерисовываем саму сетку.
-             */
-            context._drawGridForm($context);
+            context._setTabHeight($context);
+            context._layoutForm($context);
         }
     };
     /**
-     * Рисует когнтейнер карточки.
-     * @param $context
+     * @param $context {jQuery}
+     * @returns {ChocolateDraw}
      */
     this.drawCard = function ($context) {
-        context._drawContent($context);
+        context._setTabHeight($context);
         var $header = $context.children('header'),
             $content = $context.children('div[data-id=grid-tabs]'),
             contentHeight = $context.height() - $header.outerHeight(true);
@@ -152,31 +175,37 @@ function ChocolateDrawClass() {
         return context;
     };
     /**
-     * Рисует одну из панелей в карточке.
+     * @param $panel {jQuery}
+     * @param $context {jQuery}
      */
     this.drawCardPanel = function ($panel, $context) {
-        var $gridTabs = $context.children('div[data-id=grid-tabs]'),
+        var $gridTabs = $context.children('[data-id=grid-tabs]'),
             $tabList = $gridTabs.children('ul'),
-            deltaHeight = $panel.outerHeight(true) - $panel.height(),
-            panelHeight = $gridTabs.height() - $tabList.outerHeight(true) - deltaHeight - 1;
+            MarginAndPaddingHgh = $panel.outerHeight(true) - $panel.height(),
+            panelHeight = $gridTabs.height() - $tabList.outerHeight(true) - MarginAndPaddingHgh - 1;
 
         $panel.height(panelHeight);
     };
     /**
      * Рисует контролы в карточке. Точнее отрисовывает контейнер в котором они лежат.
-     * @param $cardContent
+     * @param $card {jQuery}
      */
-    this.drawCardControls = function ($cardContent) {
-        var $container = $cardContent.parent(),
+    this.drawCardControls = function ($card) {
+        context._setDefaultControlsHeight($card);
+        context._setCardControlsHeight($card);
+    };
+    this._setDefaultControlsHeight = function ($card) {
+        var $container = $card.parent(),
             buttonHeight = 25,
             cardHeight = $container.height() - buttonHeight - 10;
-
-        $cardContent.height(cardHeight);
-        var $cardActionButtons = $container.children('.card-action-button');
-        $cardActionButtons.height(buttonHeight);
-        context.drawCardElements($cardContent);
+        $card.height(cardHeight);
+        var $buttons = $container.children('.card-action-button');
+        $buttons.height(buttonHeight);
     };
-    this.drawCardElements = function ($card) {
+    /**
+     * @param $card {jQuery}
+     */
+    this._setCardControlsHeight = function ($card) {
         var staticRows = [],
             rowsCount = parseInt($card.attr('data-rows'), 10),
             cardHeight = $card.height(),
@@ -199,7 +228,7 @@ function ChocolateDrawClass() {
                     if (jQuery.inArray(curRowIndex, staticRows) === -1) {
                         staticRows.push(curRowIndex);
                         rowHeight[curRowIndex] = minHeight + 5;
-                        minRowsHeight[curRowIndex] = minHeight + 5;
+                        minRowsHeight[curRowIndex] = rowHeight[curRowIndex];
                     }
                 } else {
                     if (typeof rowHeight[curRowIndex] === 'undefined') {
@@ -269,15 +298,5 @@ function ChocolateDrawClass() {
         });
         $card.parent().css({'min-height': cardMinHeight + $card.siblings('header').height()} + $card.find('.action-button-panel').height());
     };
-    /**
-     * Рисуем сетку в карточке
-     * @param $cardCol {jQuery}
-     */
-    this.drawCardGrid = function ($cardCol) {
-        var $cardGrid = $cardCol.find('.card-grid'),
-            cardGridHeight = $cardGrid.height(),
-            $section = $cardGrid.children('section');
-        $section.height(cardGridHeight);
-        context._drawGridForm($section);
-    };
+
 }

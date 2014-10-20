@@ -29,6 +29,13 @@ var ChObjectStorage = {
     },
     /**
      * @param $elem {jQuery}
+     * @returns {ChMap}
+     */
+    getChMap: function ($elem) {
+        return ChObjectStorage.create($elem, 'ChMap');
+    },
+    /**
+     * @param $elem {jQuery}
      * @returns {ChCard}
      */
     getChCard: function ($elem) {

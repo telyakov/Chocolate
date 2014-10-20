@@ -5,7 +5,7 @@ module("Chocolate", {
     },
     teardown: function(){
         Chocolate.$tabs.remove();
-        Chocolate.storage.session = {}
+        Chocolate.storage.session = {};
     }
 });
 test('Chocolate.clsSel', function(){
@@ -49,15 +49,15 @@ test('Chocolate.getActiveChTab', function(){
     $content.append($secondMenu);
     Chocolate.$tabs
         .prepend($content)
-        .append($mainMenu)
-    equal(Chocolate.getActiveChTab().$a.attr('id'), activeID, 'Активная закладка определяется правильно')
+        .append($mainMenu);
+    equal(Chocolate.getActiveChTab().$a.attr('id'), activeID, 'Активная закладка определяется правильно');
 });
 test('Chocolate.uniqueID', function(){
     expect(1);
 var firstID = Chocolate.uniqueID(),
     secondID = Chocolate.uniqueID(),
     thirdID = Chocolate.uniqueID();
-    ok(firstID != secondID && firstID != thirdID && secondID != thirdID, 'Каждый раз генерируется уникальный идентификатор');
+    ok(firstID !== secondID && firstID !== thirdID && secondID !== thirdID, 'Каждый раз генерируется уникальный идентификатор');
 });
 test('Chocolate.formatNumber', function(){
     expect(5);
@@ -81,10 +81,10 @@ test('Chocolate.formatNumber', function(){
 
 });
 test('Chocolate.eng2rus', function(){
-    expect(1)
+    expect(1);
     var engStr = 'IjrJkfl тест', ruStr ='ШокОлад тест';
     equal(Chocolate.eng2rus(engStr), ruStr, 'En - строка в смешанном регистре конвертируется в Ru - строку в таком же регистре');
-})
+});
 test('Chocolate.mergeObj', function () {
     expect(5);
     var name = 'Анди Горсия', list = [1, 2, 3], object = { lake: 'Мичиган' };
@@ -104,8 +104,8 @@ test('Chocolate.mergeObj', function () {
        // не копирует массивы
         var obj = {};
         for(var i in o){
-            if(typeof  o[i] =='object' &&  !(o[i]  instanceof Array) ){
-                obj[i] = clone(o[i])
+            if(typeof  o[i] ==='object' &&  !(o[i]  instanceof Array) ){
+                obj[i] = clone(o[i]);
             }else{
             obj[i] = o[i];
 
@@ -125,14 +125,14 @@ test('Chocolate.mergeObj', function () {
 
     equal(result.list, list, 'Если свойства нет в addition, но есть в source, оно должно сохраниться.');
 
-    deepEqual(result.object, object, 'Объекты, как и примитивные свойства, должны перетираться полностью.')
+    deepEqual(result.object, object, 'Объекты, как и примитивные свойства, должны перетираться полностью.');
 });
 test('Chocolate.parse', function () {
     expect(2);
     var key = 'key', name = 'Вннни Пухt?*:;"\'',
         obj ={ id: encodeURIComponent('хеш11')};
     equal(Chocolate.parse(key, encodeURIComponent(name)), name, 'Строка должна деколироваться в первоначальное состояние');
-    deepEqual(Chocolate.parse(key, obj), obj, 'Объект не должен декодироваться.')
+    deepEqual(Chocolate.parse(key, obj), obj, 'Объект не должен декодироваться.');
 });
 test('Chocolate.openForm', function(){
     expect(4);
@@ -155,7 +155,7 @@ test('Chocolate.openForm', function(){
     fakeServer.respond();
     ok(Chocolate.$tabs.children('#'+formID).length, 'В случае успешного ajax - запроса, данные добавляются на страницу');
 
-    var errorStub = this.stub(Chocolate.log, 'error')
+    var errorStub = this.stub(Chocolate.log, 'error');
     var spyToAppend = sinon.spy($.prototype, "append"), badContentID = 'bad-content';
     fakeServer.respondWith(
         'POST',
@@ -244,12 +244,12 @@ test('Chocolate.user.hasRole', function(){
 });
 test('Chocolate.tab.close', function(){
     expect(5);
-    var panelID = 'fdds11'
+    var panelID = 'fdds11';
     var stubIsHasChange = this.stub(ChGridForm.prototype, 'isHasChange');
-    stubIsHasChange.returns(false)
+    stubIsHasChange.returns(false);
     this.stub(ChObjectStorage, 'getChGridForm', function(){
-        return new ChGridForm('<form></form>')
-    })
+        return new ChGridForm('<form></form>');
+    });
     var $panelContent = $('<div id="'+panelID+'"><span>ssssss</span>выфвыф</div>');
     Chocolate.$tabs.append($panelContent);
     var stubIsCardPanel = this.stub(ChTab.prototype, 'isCardTypePanel' , function(){
@@ -273,7 +273,7 @@ test('Chocolate.tab.close', function(){
     var spyGarbageCollection = this.spy(ChObjectStorage, 'garbageCollection');
 
     Chocolate.tab.close($('<a>'));
-    ok(Chocolate.$tabs.find(Chocolate.idSel(panelID)).length == 0, 'Закрытая закладка должна удаляться из DOM');
+    ok(Chocolate.$tabs.find(Chocolate.idSel(panelID)).length === 0, 'Закрытая закладка должна удаляться из DOM');
     ok(spyGarbageCollection.calledOnce, 'После закрытия закладки вызывается garbageCollection');
     spyGarbageCollection.reset();
     stubReflow.reset();
@@ -332,11 +332,11 @@ test('Chocolate.tab.card._onBeforeLoad', function(){
     spyGet.reset();
 
     var tabID = 11, fakeUrl ='param.param.pam';
-    var stubAttr = this.stub(jQuery, 'attr', function(){return tabID}),
-        stubGetKey = this.stub(ChCard.prototype, 'getKey', function(){return '11'}),
-        stubGetFmCardCollection = this.stub(ChCard.prototype, 'getFmCardCollection', function(){return new FmCardsCollection()}),
-        stubGetCardTemplate =  this.stub(FmCardsCollection.prototype, 'getCardTemplate', function(){return 'template'}),
-        stubGetTabDataUrl = this.stub(ChCard.prototype, 'getTabDataUrl', function(){return fakeUrl});
+    var stubAttr = this.stub(jQuery, 'attr', function(){return tabID;}),
+        stubGetKey = this.stub(ChCard.prototype, 'getKey', function(){return '11';}),
+        stubGetFmCardCollection = this.stub(ChCard.prototype, 'getFmCardCollection', function(){return new FmCardsCollection();}),
+        stubGetCardTemplate =  this.stub(FmCardsCollection.prototype, 'getCardTemplate', function(){return 'template';}),
+        stubGetTabDataUrl = this.stub(ChCard.prototype, 'getTabDataUrl', function(){return fakeUrl;});
 
     var stubInitScripts = this.stub(Chocolate.tab.card, '_initScripts');
     var chCardStub =this.spy(window, "ChCard");
@@ -354,7 +354,7 @@ test('Chocolate.tab.card._onBeforeLoad', function(){
     var stubSetCardTemplate = this.stub(FmCardsCollection.prototype, 'setCardTemplate');
     FmCardsCollection.prototype.getCardTemplate.restore();
 
-    stubGetCardTemplate =  this.stub(FmCardsCollection.prototype, 'getCardTemplate', function(){return null});
+    stubGetCardTemplate =  this.stub(FmCardsCollection.prototype, 'getCardTemplate', function(){return null;});
     var rightTemplate = '<b>sdfsa</b>template 11';
     var fakeServer= this.sandbox.useFakeServer();
     fakeServer.respondWith(
@@ -459,10 +459,10 @@ test('Chocolate.tab.add', function(){
     var $tabItem = Chocolate.tab.add(tabID, tabName);
     equal($tabItem.get(0).nodeName, 'LI', 'Возвращается добавленныый в DOM элемент');
     ok(jqueryTabsStub.calledTwice, 'tabs() вызывается два раза');
-    ok(jqueryTabsStub.calledWithExactly('refresh'), 'Вызываетмя метод refresh просле добавления таба.')
+    ok(jqueryTabsStub.calledWithExactly('refresh'), 'Вызываетмя метод refresh просле добавления таба.');
     equal(Chocolate.$tabs.find('li').length, 1, 'Добавляется 1 вкладка в DOM');
     jqueryTabsStub.reset();
-    $.fn.tabs.restore()
+    $.fn.tabs.restore();
 
 });
 test('Chocolate.tab.createTabLink', function(){
@@ -506,7 +506,7 @@ test('Chocolate.tab.card._initScripts', function(){
     var spyInitScripts = this.spy( Chocolate.tab.card, '_initScripts');
     var $fakeContent = $(fakeContent);
     Chocolate.tab.card._initScripts(fakeUi, $fakeContent, $fakeContext);
-    ok(!spyInitScripts.threw(), 'Должна поддерживаться передача jQuery в качестве параметра content')
+    ok(!spyInitScripts.threw(), 'Должна поддерживаться передача jQuery в качестве параметра content');
     spyInitScripts.reset();
     $.fn.data.restore();
     ChCardInitCallback.fireOnce.restore();

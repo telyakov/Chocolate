@@ -53,7 +53,8 @@ var ChOptions = {
         ipLink: 'fm-iplink',
         notChanged: 'not-changed',
         menuButtonSelected: 'menu-button-selected',
-        searchedColumn: 'grid-column-searched'
+        searchedColumn: 'grid-column-searched',
+        discussionForm: 'discussion-form'
     },
     urls:{
         webSocketServer: 'http://192.168.0.34:3000',

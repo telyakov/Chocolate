@@ -13,7 +13,10 @@ describe('Chocolate', function () {
         client = webdriverio.remote(options);
 
         client.init(done);
-
+        client.setViewportSize({
+            width: 1300,
+            height: 900
+        });
             });
         it('Login page', function (done) {
             client
@@ -54,7 +57,7 @@ describe('Chocolate', function () {
             .call(done);    });
     it('Task form', function (done) {
         client
-            .waitFor('.link-form a[href="/grid/index?view=tasks.xml"]', 5000, function (err) {
+            .waitFor('.link-form a[href="/grid/index?view=tasks.xml"]', 10000, function (err) {
                 var success = (err === undefined);
                 if(!success){
                     console.log('Нижнее меню не загрузилось: '+ err);
@@ -68,6 +71,7 @@ describe('Chocolate', function () {
                 }
                 assert(success);
             })
+
             .waitForVisible('.card-button', 10000, function (err) {
                 var success = (err === undefined);
                 if(!success){
@@ -83,28 +87,35 @@ describe('Chocolate', function () {
                 }
                 assert(success);
             })
-            .waitFor('.card-content',10000, function(err){
+            .click('[data-id="Основные параметры"] a', function(err){
+                var success = (err === undefined);
+                if(!success){
+                    console.log('Ошибка при открытиии закладки Основные параметры: '+ err);
+                }
+                assert(success);
+            })
+            .waitForVisible('.card-content',15000, function(err){
                 var success = (err === undefined);
                 if(!success){
                     console.log('.card-content not present in open card: '+ err);
                 }
                 assert(success);
             })
-            .click('[data-id=Вложения] a', function(err){
+            .click('[data-id="Вложения"] a', function(err){
                 var success = (err === undefined);
                 if(!success){
                     console.log('Ошибка при открытиии закладки вложений: '+ err);
                 }
                 assert(success);
             })
-            .waitFor('[data-id="framework/attachments/attachments.xml"]', 10000, function(err){
+            .waitForVisible('[data-id="framework/attachments/attachments.xml"]', 15000, function(err){
                 var success = (err === undefined);
                 if(!success){
                     console.log('Закладка вложения не открылась: '+ err);
                 }
                 assert(success);
             })
-            .click('[data-id=Журнал] a', function(err){
+            .click('[data-id="Журнал"] a', function(err){
                 var success = (err === undefined);
                 if(!success){
                     console.log('Ошибка при открытиии закладки журнал: '+ err);
@@ -112,7 +123,7 @@ describe('Chocolate', function () {
                 assert(success);
 
             })
-            .waitFor('[data-id="log.xml"]', 10000, function(err){
+            .waitForVisible('[data-id="log.xml"]', 15000, function(err){
                 var success = (err === undefined);
                 if(!success){
                     console.log('Закладка журнал не открылась: '+ err);
@@ -126,7 +137,7 @@ describe('Chocolate', function () {
                 }
                 assert(success);
             })
-            .waitFor('a[rel^=lastmodifydate]', 10000, function(err){
+            .waitForVisible('a[rel^=lastmodifydate]', 15000, function(err){
                 var success = (err === undefined);
                 if(!success){
                     console.log('Служебные параметры: '+ err);
