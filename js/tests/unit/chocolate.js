@@ -265,8 +265,8 @@ test('Chocolate.tab.close', function(){
     var stubGetExitMessage = this.stub(ChGridForm.prototype, 'getExitMessage' , function(){
         return 'message';
     });
-    var stubConfirm = this.stub(window, 'confirm', function(){return true});
-    var stubReflow = this.stub(ChocolateDraw, 'reflowActiveTab')
+    var stubConfirm = this.stub(window, 'confirm', function(){return true;});
+    var stubReflow = this.stub(chApp.draw, 'reflowActiveTab');
 
     var stubTabs = this.stub($.fn, 'tabs');
     var stubUndoChange = this.stub(ChCard.prototype,'_undoChange');
@@ -275,7 +275,7 @@ test('Chocolate.tab.close', function(){
     Chocolate.tab.close($('<a>'));
     ok(Chocolate.$tabs.find(Chocolate.idSel(panelID)).length == 0, 'Закрытая закладка должна удаляться из DOM');
     ok(spyGarbageCollection.calledOnce, 'После закрытия закладки вызывается garbageCollection');
-    spyGarbageCollection.reset()
+    spyGarbageCollection.reset();
     stubReflow.reset();
     stubTabs.reset();
 
@@ -302,14 +302,14 @@ test('Chocolate.tab.close', function(){
     Chocolate.tab.close($('<a>'));
     ok(stubUndoChange.calledOnce, 'Закрытая закладка с типом Карточка, должна отменять изменение в карточке');
     window.confirm.restore();
-    ChocolateDraw.reflowActiveTab.restore();
+    chApp.getDraw().reflowActiveTab.restore();
     ChTab.prototype.isCardTypePanel.restore();
     ChTab.prototype.getPanel.restore();
     ChTab.prototype.getLi.restore();
     ChGridForm.prototype.isHasChange.restore();
     ChGridForm.prototype.getExitMessage.restore();
     ChCard.prototype._undoChange.restore();
-    ChObjectStorage.getChGridForm.restore()
+    ChObjectStorage.getChGridForm.restore();
     $.fn.tabs.restore();
 
 
@@ -384,8 +384,8 @@ test('Chocolate.tab.card._onBeforeLoad', function(){
     Chocolate.tab.card._initScripts.restore();
    var  stubData = this.stub($.fn, 'data'),
         stubFireOnce = this.stub(ChCardInitCallback, 'fireOnce'),
-        stubReflowActiveTab = this.stub(ChocolateDraw, 'reflowActiveTab'),
-        stubDrawCardPanel = this.stub(ChocolateDraw, 'drawCardPanel');
+        stubReflowActiveTab = this.stub(chApp.draw, 'reflowActiveTab'),
+        stubDrawCardPanel = this.stub(chApp.draw, 'drawCardPanel');
     var badTemplate = '<div id ="' + 'dsad' + '">fd<a>dd</a></div><script>'+ 'console.log($(this).attr(&#039;rel&#039;))'+'</script>';
     fakeServer.respondWith(
         'GET',
@@ -443,7 +443,7 @@ test('Chocolate.tab.card._onBeforeLoad', function(){
 //    Chocolate.log.error.restore();
     $.fn.data.restore();
     ChCardInitCallback.fireOnce.restore();
-    ChocolateDraw.reflowActiveTab.restore();
+    chApp.getDraw().reflowActiveTab.restore();
     jQuery.attr.restore();
     ChCard.prototype.getKey.restore();
     ChCard.prototype.getFmCardCollection.restore();
@@ -492,7 +492,7 @@ test('Chocolate.tab.card._initScripts', function(){
     var stubHtml = this.stub($.fn, 'html'),
         stubData = this.stub($.fn, 'data'),
         stubFireOnce = this.stub(ChCardInitCallback, 'fireOnce'),
-        stubDrawCardPanel = this.stub(ChocolateDraw, 'drawCardPanel');
+        stubDrawCardPanel = this.stub(chApp.draw, 'drawCardPanel');
     Chocolate.tab.card._initScripts(fakeUi, fakeContent, $fakeContext);
     ok(stubFireOnce.calledAfter(stubHtml), 'Сначала вставляются данные, потом инициализируются скрипты.');
     ok(stubDrawCardPanel.calledAfter(stubFireOnce), 'После инициализации скриптов рисуется карточка');

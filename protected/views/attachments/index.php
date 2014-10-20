@@ -83,7 +83,7 @@ endif;
         var $context = $('#' + '<?php echo $sectionID ?>').parent();
         var is_new_row = '<? echo $isNewRow?>';
         if(!$context.hasClass('card-grid')){
-            ChocolateDraw.drawGrid($context)
+            chApp.getDraw().drawGrid($context)
         }
         if(!is_new_row){
 

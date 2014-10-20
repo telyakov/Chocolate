@@ -360,7 +360,7 @@ ChGridForm.prototype.openCard = function (pk) {
             $tabs.tabs({ active: chTab.getIndex()})
             var href = '#' + chTab.getPanelID(),
                 $context = $(href)
-            ChocolateDraw.drawCard($context)
+            chApp.getDraw().drawCard($context)
             //инициализируем вложенные табы
             Chocolate.tab.card.init($context)
             $a.attr('href', href)

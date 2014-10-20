@@ -39,7 +39,7 @@ JS
     public function processBeforeRender($id)
     {
         \Yii::app()->clientScript->registerScript($id, <<<JS
-            ChocolateDraw.drawCardGrid($('#' +'$id'));
+            chApp.getDraw().drawCardGrid($('#' +'$id'));
 JS
             , \CClientScript::POS_LOAD);
     }

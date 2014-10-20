@@ -75,7 +75,7 @@ module.exports = function (grunt) {
                     '../js/main/classes/ch.form.settings.js',
                     '../js/main/classes/ch.grid.form.js',
                     '../js/main/classes/ch.card.js',
-                    '../js/main/static/chocolate.draw.js',
+                    '../js/main/static/chocolateDraw.js',
                     '../js/main/classes/ch.canvas.options.js',
                     '../js/main/classes/ch.canvas.js',
                     '../js/main/classes/elements/ch.editable.js',
@@ -166,8 +166,13 @@ module.exports = function (grunt) {
             //required started selenuim
             test: {
                 options: {
-                    timeout: 5000,
-                    reporter: 'spec'
+                    timeout: 5000
+//                    clearRequireCache: true
+
+//                    'reporter': 'xunit',
+//                    'output': 'result.xml',
+//                    log: true,
+//                    'c': false
                 },
                 src: ['../js/tests/functional/*.js']
             }
@@ -210,6 +215,6 @@ module.exports = function (grunt) {
     grunt.registerTask('build', ['exec', 'concat', 'sass', 'cssmin']); //build test version
     grunt.registerTask('allTest', ['mochaTest', 'qunit']);
     grunt.registerTask('unitTest', ['qunit']);
-    grunt.registerTask('funcTest', [ 'selenium_phantom_hub','mochaTest', 'selenium_stop']);
+    grunt.registerTask('funcTest', [ 'selenium_start','mochaTest', 'selenium_stop']);
 //    grunt.registerTask('funcTest', [ 'mochaTest']);
 };

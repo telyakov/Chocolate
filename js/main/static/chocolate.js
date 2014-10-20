@@ -297,7 +297,7 @@ var Chocolate = {
             if ($tab.hasClass(ChOptions.classes.activeTab)) {
                 var nextIndex = ChTabHistory.pop();
                 Chocolate.$tabs.tabs({ active: nextIndex });
-                ChocolateDraw.reflowActiveTab();
+                chApp.getDraw().reflowActiveTab();
             }
             var tabSelector = Chocolate.idSel($tab.remove().attr("aria-controls"));
             var $panel = $(tabSelector);
@@ -388,9 +388,9 @@ var Chocolate = {
             _initScripts: function (ui, content, $context) {
                 ui.panel.html(content);
                 ChCardInitCallback.fireOnce();
-                ChocolateDraw.drawCardPanel(ui.panel, $context);
+                chApp.getDraw().drawCardPanel(ui.panel, $context);
                 setTimeout(function () {
-                    ChocolateDraw.reflowActiveTab();
+                    chApp.getDraw().reflowActiveTab();
                 }, 0);
                 ui.tab.data('loaded', 1);
             },
