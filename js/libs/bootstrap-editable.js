@@ -1853,13 +1853,13 @@
         this.$element = $(element);
 //        //data-* has more priority over js options: because dynamically created elements may change data-*
         this.options =options;
-        var config = $.fn.editableutils.getConfigData(this.$element);
+        var config = this.$element.data();
 
-        if(typeof(config.pk)!='undefined'){
+        if(typeof config.pk !== 'undefined'){
             this.options.pk = config.pk;
         }
 
-        if(typeof(config.value)!='undefined'){
+        if(typeof config.value !=='undefined'){
             this.options.value = config.value;
         }else{
             this.options.value = null;
@@ -1872,22 +1872,22 @@
             this.options.disabled = false;
 //        }
 //        }
-        if(typeof(this.options.display) == 'undefined'){
+        if(typeof this.options.display === 'undefined'){
             this.options.display = null;
         }
 //        if(typeof(this.options.emptyclass) == 'undefined'){
             this.options.emptyclass = 'editable-empty';
 //        }
-        if(typeof(this.options.mode) == 'undefined'){
-            this.options.mode = 'popup'
+        if(typeof this.options.mode === 'undefined'){
+            this.options.mode = 'popup';
         }
 //        if(typeof(this.options.selector) == 'undefined'){
             this.options.selector = null;
 //        }
-        if(typeof(this.options.toggle) == 'undefined'){
+        if(typeof this.options.toggle === 'undefined'){
             this.options.toggle = 'click';
         }
-        if(typeof(this.options.type) == 'undefined'){
+        if(typeof this.options.type === 'undefined'){
             this.options.type = 'text';
         }
 //        if(typeof(this.options.unsavedclass) == 'undefined'){

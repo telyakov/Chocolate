@@ -399,7 +399,7 @@ class ChEditable extends CWidget
 
     public function registerClientScript()
     {
-        $script = "if(typeof \$cnt=='undefined'){\$cnt = $('body')};\$cnt.find('[rel^=\"{$this->htmlOptions['rel']}\"]')";
+        $script = "\$cnt.find('[rel^=\"{$this->htmlOptions['rel']}\"]')";
         foreach(['init', 'shown', 'save', 'hidden'] as $event) {
             $eventName = 'on'.ucfirst($event);
             if (isset($this->$eventName)) {
@@ -412,9 +412,10 @@ class ChEditable extends CWidget
         //apply editable
         $options = CJavaScript::encode($this->options);
         $script .= ".editable($options);";
+        $r =$this->name;
         $id = $this->htmlOptions['identity'];
         $script = <<<JS
-        ChEditableCallback.add(function (\$cnt){ $script }, '$id');
+        ChEditableCallback.add(function (\$cnt){setTimeout(function(){ $script}, 0)}, '$id');
 
 JS;
         Yii::app()->getClientScript()->registerScript(__CLASS__ . '#' . $this->id, $script);
