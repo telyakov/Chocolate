@@ -9,6 +9,7 @@ use Chocolate\HTML\Filter\Settings\DateRange;
 ?>
 <div>
     <?
+    $disabled = !$settings->filter->isEnabled();
     $attribute = $settings->getAttributeFrom();
     echo $form->labelEx($model, $attribute);
     $form->widget('zii.widgets.jui.CJuiDatePicker', [
@@ -26,6 +27,7 @@ use Chocolate\HTML\Filter\Settings\DateRange;
         ],
         'htmlOptions' => [
 //        'style' => 'width: 120px;',
+            'disabled' => $disabled,
             'class' => 'filter-date',
             'id' => uniqid('from')
         ],
@@ -40,6 +42,7 @@ use Chocolate\HTML\Filter\Settings\DateRange;
 
         ],
         'htmlOptions' => [
+            'disabled' => $disabled,
             'class' => 'filter-date',
 //        'style' => 'width: 120px;',
             'id' => uniqid('to')

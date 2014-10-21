@@ -22,6 +22,7 @@ class AgileFilter
     protected $tooltiptext;
     protected $tonextrow;
     protected $visible;
+    protected $enabled;
     protected $dialogtype;
     protected $dialogcaption;
     protected $properties;
@@ -35,7 +36,14 @@ class AgileFilter
     protected $_filterType;
     protected $_nameInModel;
     protected $_isMultiselect;
+    private $_isEnabled;
 
+    public function isEnabled(){
+        if($this->_isEnabled === null){
+            $this->_isEnabled = self::boolExpressionEval($this->enabled, true);
+        }
+        return $this->_isEnabled;
+    }
     /**
      * @return mixed
      */

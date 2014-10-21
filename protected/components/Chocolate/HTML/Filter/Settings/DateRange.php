@@ -36,7 +36,6 @@ class DateRange extends EditableFilterSettings{
 
             }
         }
-//        $model->filters[$]
         $id = uniqid();
         echo \CHtml::openTag('li', [
             'class' => 'filter-item',
@@ -47,6 +46,13 @@ class DateRange extends EditableFilterSettings{
             'model' => $model,
             'settings' => $this
         ]);
+        $disabled = !$this->filter->isEnabled();
+        if($disabled){
+            $nameFrom =$this->filter->getName();
+            $nameTo =self::getAttributeTo($nameFrom);
+            $model->filters[$nameFrom] = null;
+            $model->filters[$nameTo] = null;
+        }
         return $id;
 
     }
