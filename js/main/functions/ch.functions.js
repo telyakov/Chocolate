@@ -187,8 +187,8 @@ var chFunctions = {
                 ChFilterForm = ChObjectStorage.create(jForm, 'ChFilterForm'),
                 rawUrl = chApp.getOptions().urls.filterLayouts;
             //TODO: поддержка всех типов фильтро
-            var value = ChFilterForm.getData()[parentName]
-            if (typeof(value) != 'undefined') {
+            var value = ChFilterForm.getData()[parentName];
+            if (typeof(value) !== 'undefined') {
                 var url = rawUrl + '?name=' + name + '&view=' + view + '&parentID=' + value;
                 $.post(url)
                     .done(function (response) {
@@ -225,16 +225,16 @@ var chFunctions = {
         var options = {
             children: $context.data().editable.options.source,
             getInput: function () {
-                return this
+                return this;
             },
             getTitleValue: function (node) {
-                return node.text
+                return node.text;
             },
             getKey: function (node) {
-                return node.id
+                return node.id;
             },
             getParentID: function (node) {
-                return null
+                return null;
             },
             restore_state: true,
             expand_nodes: true,
@@ -255,7 +255,7 @@ var chFunctions = {
                         var is_select_all = chDynatree.isSelectAll();
                         for (var i in selected_nodes) {
                             var node = selected_nodes[i];
-                            if (is_select_all || node.childList == null) {
+                            if (is_select_all || node.childList === null) {
                                 val += node.data.key;
                                 if (!chDynatree.isSingleMode()) {
                                     val += chDynatree.getSeparator();
@@ -268,12 +268,12 @@ var chFunctions = {
                         }
                         var column = chApp.getFactory().getChGridColumnBody($input);
                         var name = $input.data().editable.options.name;
-                        column.setChangedValue(name, val)
-                        $input.attr('data-value', val)
+                        column.setChangedValue(name, val);
+                        $input.attr('data-value', val);
                         $input.html(select_html);
-                        $checkbox.children('input').attr('checked', false)
+                        $checkbox.children('input').attr('checked', false);
                         $(this).dialog("close");
-                    }}
+                    }};
             }
         };
         if (isSingle) {
@@ -330,14 +330,17 @@ var chFunctions = {
         chColumn.setChangedValue(name, newVal);
     },
     treeOnQuerySelect: function (flag, node) {
-        if (node.childList == null) {
+        if (node.childList === null) {
             return true;
         } else {
             for (var i in node.childList) {
-                node.childList[i].select(flag);
+                if(node.childList.hasOwnProperty(i)){
+
+                    node.childList[i].select(flag);
+                }
             }
         }
-        return true
+        return true;
     },
     initPrintActions: function (id, jsonPrintActions) {
         var $actionButton = $('#' + id);
@@ -364,7 +367,7 @@ var chFunctions = {
                 }
                 window.open(url);
             }
-        })
+        });
     },
     initActions: function (id, jsonActions) {
         var $actionButton = $('#' + id);
@@ -393,11 +396,8 @@ var chFunctions = {
         });
     },
     initGrid: function (jsonData, jsonPreview, jsonDefault, jsonRequired, jsonGridProperties, formID, header, headerImg, jsonCardCollection, jsonOrder) {
-        /**
-         * @type {ChGridForm}
-         */
-        var chForm = ChObjectStorage.create($('#' + formID), 'ChGridForm');
-        chForm.saveInStorage(
+        var form = chApp.getFactory().getChGridForm($('#' + formID));
+        form.saveInStorage(
             json_parse(jsonData, Chocolate.parse),
             json_parse(jsonPreview),
             json_parse(jsonDefault),
@@ -405,15 +405,13 @@ var chFunctions = {
             json_parse(jsonGridProperties),
             json_parse(jsonOrder)
         );
-        chForm.setFmCardsCollection(
+        form.setFmCardsCollection(
             new FmCardsCollection(header, headerImg, json_parse(jsonCardCollection, Chocolate.parse))
         );
     },
     initCardGrid: function (jsonDefault, jsonRequired, jsonGridProperties, formID, header, headerImg, jsonCardCollection, view, parentView, parentID, sql, jsonPreview) {
-        /**
-         * @type {ChGridForm}
-         */
-        var chForm = ChObjectStorage.create($('#' + formID), 'ChGridForm');
+
+        var chForm = chApp.getFactory().getChGridForm($('#' + formID));
         chForm.saveInStorage(
             {},
             json_parse(jsonPreview),
@@ -426,11 +424,6 @@ var chFunctions = {
         chForm.setFmCardsCollection(
             new FmCardsCollection(header, headerImg, json_parse(jsonCardCollection, Chocolate.parse))
         );
-
-//        var url =ChOptions.urls.gridExecute + '?view='+encodeURIComponent(view)
-//            + '&parentView='+ encodeURIComponent(parentView)
-//            + '&parentID=' + parentID;
-        console.log(sql)
         var params = {
             sql: sql,
             view: view,

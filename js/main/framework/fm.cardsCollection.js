@@ -55,34 +55,62 @@ FmCardsCollection.prototype._generateHeader = function () {
     return html;
 
 };
-FmCardsCollection.prototype.generateTabs = function (view, pk, viewID) {
-    return this._generateHeader() + this._generateList(view, pk, viewID);
-
+FmCardsCollection.prototype.generateTabs = function (view, pk, viewID, $panel) {
+    $panel.html(this._generateHeader());
+    this._generateList(view, pk, viewID, $panel);
 };
-FmCardsCollection.prototype._generateList = function (view, pk, viewID) {
+/**
+ * @param card {ChCard}
+ */
+FmCardsCollection.prototype.createSqlTasks = function (card, idList) {
+    if (this.isVisibleCaptions()) {
+        var bindModule = chApp.getBindService();
+        for (var key in this.cards) {
+            if (this.cards.hasOwnProperty(key)) {
+                var sql = jQuery.trim(this.cards[key].captionReadProc);
+                if (sql) {
+                    sql = bindModule.sqlInCard(card, sql);
+                    chApp.getMain().createRequest({type: 'jquery', query: sql, id: idList[key]});
+                }
+            }
+        }
+    }
+};
+FmCardsCollection.prototype.isVisibleCaptions = function () {
+    return Object.keys(this.cards).length > 1;
+};
+FmCardsCollection.prototype._generateList = function (view, pk, viewID, $panel) {
 
     var html = '<div data-id="grid-tabs"' +
         'data-view="' + view + '"' +
         'data-pk="' + pk + '"' + 'data-form-id="' + viewID + '"' +
         'data-save-url="/grid/save?view=' + view + '">';
-    if (Object.keys(this.cards).length > 1) {
+    var isVisibleCaption = this.isVisibleCaptions();
+    if (isVisibleCaption) {
         html += '<ul>';
     } else {
         html += '<ul class="hidden">';
     }
     var tabs = [];
+    var tabIdList = {};
     for (var key in this.cards) {
         if (this.cards.hasOwnProperty(key)) {
             html += ' <li class="card-tab" data-id="' + key + '"';
             var id = Chocolate.uniqueID();
             html += ' aria-controls="' + id + '">';
-            html += '<a href="1" title="' + key + '">' + this.cards[key].caption + '</a>';
+            var tabID = Chocolate.uniqueID();
+            tabIdList[key] = tabID;
+            html += '<a id="' + tabID + '" href="1" title="' + key + '">' + this.cards[key].caption + '</a>';
         }
     }
     html += '</ul>';
-    if (Object.keys(this.cards).length > 1) {
+    if (isVisibleCaption) {
         html += '<span class="tab-menu"><a class="tab-menu-link"></a></span>';
     }
     html += '</div>';
-    return html;
+    $panel.append(html);
+
+    var card = chApp.getFactory().getChCard($panel.children('[data-id=grid-tabs]'));
+    this.createSqlTasks(card, tabIdList);
+
 };

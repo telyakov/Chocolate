@@ -26,46 +26,46 @@ ChCard.prototype.getTabDataUrl = function (tabID) {
     ].join('');
 };
 ChCard.prototype.getHeaderContainer = function () {
-    if (this._$header == null) {
+    if (this._$header === null) {
         this._$header = this.getContainer().children('header');
     }
     return this._$header;
 };
 ChCard.prototype.getErrorContainer = function () {
-    if (this._$error_container == null) {
+    if (this._$error_container === null) {
         this._$error_container = this.getHeaderContainer().children('.card-error');
     }
     return this._$error_container;
 
 };
 ChCard.prototype.getSaveUrl = function () {
-    if (this._save_url == null) {
+    if (this._save_url === null) {
         this._save_url = this.$grid_tabs.attr('data-save-url');
     }
     return this._save_url;
 };
 ChCard.prototype.getContainer = function () {
-    if (this._$container == null) {
+    if (this._$container === null) {
         this._$container = this.$grid_tabs.parent('div');
     }
     return this._$container;
 
 };
 ChCard.prototype.getKey = function () {
-    if (this._key == null) {
+    if (this._key === null) {
         //TODO: сменить на дата-кей;
         this._key = this.$grid_tabs.attr('data-pk');
     }
     return this._key;
 };
 ChCard.prototype.getView = function () {
-    if (this._view == null) {
+    if (this._view === null) {
         this._view = this.$grid_tabs.attr("data-view");
     }
     return this._view;
 };
 ChCard.prototype.getFormID = function () {
-    if (this._form_id == null) {
+    if (this._form_id === null) {
         this._form_id = this.$grid_tabs.attr('data-form-id');
     }
     return this._form_id;
@@ -81,10 +81,10 @@ ChCard.prototype.getGridForm = function () {
     if (this._$grid_form == null) {
         this._$grid_form = ChObjectStorage.create($('#' + this.getFormID()), 'ChGridForm');
     }
-    return this._$grid_form
+    return this._$grid_form;
 };
 ChCard.prototype.getContainerID = function () {
-    if (this._container_id == null) {
+    if (this._container_id === null) {
         this._container_id = this.getContainer().attr('id');
     }
     return this._container_id;
@@ -95,32 +95,32 @@ ChCard.prototype._closeCard = function () {
     Chocolate.tab.close($li.children('a'));
 };
 ChCard.prototype.getChangedObj = function () {
-    var grid_from = this.getGridForm(),
+    var form = this.getGridForm(),
         pk = this.getKey();
-    if (typeof grid_from.getChangedObj() == 'undefined') {
+    if (typeof form.getChangedObj() === 'undefined') {
         return {};
     }
-    return grid_from.getChangedObj()[pk];
+    return form.getChangedObj()[pk];
 };
 ChCard.prototype.getDataObj = function () {
-    var grid_from = this.getGridForm(),
+    var form = this.getGridForm(),
         pk = this.getKey();
-    return grid_from.getDataObj()[pk];
+    return form.getDataObj()[pk];
 };
 ChCard.prototype._isChanged = function () {
-    var change_obj = this.getChangedObj();
-    return !$.isEmptyObject(change_obj);
+    var changeObj = this.getChangedObj();
+    return !$.isEmptyObject(changeObj);
 };
 ChCard.prototype.getActualDataObj = function () {
     return Chocolate.mergeObj(this.getDataObj(), this.getChangedObj());
 };
 ChCard.prototype.validate = function (data_obj) {
-    var grid_form = this.getGridForm(),
-        errors = grid_form.validate(data_obj);
+    var form = this.getGridForm(),
+        errors = form.validate(data_obj);
     if ($.isEmptyObject(errors)) {
         return true;
     } else {
-        this._showErrors(errors)
+        this._showErrors(errors);
         return false;
     }
 };
@@ -147,7 +147,7 @@ ChCard.prototype.getGridCollection = function () {
          */
         var form = ChObjectStorage.create($(this), 'ChGridForm');
         collection.push(form);
-    })
+    });
     return collection;
 };
 ChCard.prototype.save = function () {

@@ -320,6 +320,9 @@ ChGridForm.prototype.isAutoOpenCard = function () {
 ChGridForm.prototype.generateCardID = function (id) {
     return [ 'card_', this.getView(), id ].join('');
 };
+ChGridForm.prototype.getEntityTypeID = function(){
+    return this.getGridPropertiesObj().entityTypeID;
+};
 ChGridForm.prototype.openCard = function (pk) {
     if (this.isCardSupport()) {
         var view = this.getView(),
@@ -351,18 +354,17 @@ ChGridForm.prototype.openCard = function (pk) {
             $tabs.tabs({
                 beforeLoad: function (event, ui) {
                     ui.jqXHR.abort();
-                    var html = _this.getFmCardsCollection().generateTabs(view, pk, viewID);
-                    ui.panel.html(html)
-
+                    var fmCollection = _this.getFmCardsCollection();
+                    fmCollection.generateTabs(view, pk, viewID, ui.panel);
                 }
             });
 
-            $tabs.tabs({ active: chTab.getIndex()})
+            $tabs.tabs({ active: chTab.getIndex()});
             var href = '#' + chTab.getPanelID(),
-                $context = $(href)
-            chApp.getDraw().drawCard($context)
+                $context = $(href);
+            chApp.getDraw().drawCard($context);
             //инициализируем вложенные табы
-            Chocolate.tab.card.init($context)
+            Chocolate.tab.card.init($context);
             $a.attr('href', href)
         } else {
             /**
@@ -1271,7 +1273,6 @@ ChGridForm.prototype.updateStorage = function (data, order) {
     var storage = this.getStorage();
     storage[this.getID()].order = order;
     storage[this.getID()].data = data;
-//    storage[this.getID()].preview = preview;
     storage[this.getID()].change = {};
     storage[this.getID()].deleted = {};
 };
@@ -1288,17 +1289,17 @@ ChGridForm.prototype.toggleColls = function (isHidden, $thList) {
     $thList.each(function (i) {
         positions.push($(this).get(0).cellIndex);
         sum += parseInt(_this.getColumnWidth($(this).get(0).cellIndex), 10);
-    })
+    });
     if (isHidden) {
         ChTableHelper.showColsManyTables(tables, positions);
         newWidth = curWidth + sum;
 
     } else {
-        ChTableHelper.hideColsManyTables(tables, positions)
+        ChTableHelper.hideColsManyTables(tables, positions);
         newWidth = curWidth - sum;
     }
-    $table.width(newWidth)
-    $fixedTable.width(newWidth)
+    $table.width(newWidth);
+    $fixedTable.width(newWidth);
     $table.floatThead('reflow');
 };
 

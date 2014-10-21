@@ -128,6 +128,7 @@ socket.on('response', function(data) {
         resData = json_parse(data.data);
     }
 
+
     switch(type){
         case optionsModule.sql.types.roles:
             mainModule.user.setRoles(resData);
@@ -135,7 +136,23 @@ socket.on('response', function(data) {
         case optionsModule.sql.types.forms:
             chApp.getFunctions().createMenu(resData);
             break;
+        case optionsModule.sql.types.jquery:
+            var firstRow;
+            for( var i in resData){
+                if (resData.hasOwnProperty(i)){
+                    firstRow = resData[i];
+                    break;
+                }
+            }
+            var $elem = $('#' +data.id);
+            for( var j in firstRow){
+                if (firstRow.hasOwnProperty(j)){
+                    $elem.html(firstRow[j]);
+                    break;
+                }
+            }
+            break;
         default:
-        console.log(data)
+        console.log(data);
     }
 });

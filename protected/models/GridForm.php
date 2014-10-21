@@ -347,7 +347,8 @@ class GridForm extends CFormModel
         return json_encode([
             'colorColumnName' => $this->gridProperties->getColorColumnName(),
             'colorKey' => $this->gridProperties->getKeyColorColumnName(),
-            'autoOpenCard' => $this->cardCollection->isAutoOpen()
+            'autoOpenCard' => $this->cardCollection->isAutoOpen(),
+            'entityTypeID' => $this->dataFormProperties->getAttachmentsEntityTypeID()
         ]);
     }
 

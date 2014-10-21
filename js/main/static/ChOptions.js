@@ -24,14 +24,15 @@ var ChOptions = {
       controlColumn: 'chocolate-control-column'
     },
     sql:{
-      getForms: 'core.UserFormsGet :userid',
-      getRoles: 'core.UserRolesGet :userid',
+      getForms: 'core.UserFormsGet [userid]',
+      getRoles: 'core.UserRolesGet [userid]',
       types:{
           forms: 'forms',
-          roles: 'roles'
+          roles: 'roles',
+          jquery: 'jquery'
       },
       params:{
-          userID: ':userid'
+          userID: '[userid]'
       }
     },
     classes: {
