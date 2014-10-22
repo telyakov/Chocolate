@@ -8,6 +8,7 @@
 @import "main/fm";
 @import "main/discussion";
 @import "main/no_internet";
+@import "main/modal_elements";
 @font-face {
     font-family: 'prod-icon';
     src: url("../css/fonts/icon.eot");
@@ -74,7 +75,7 @@ html, body {
 }
 
 #pagewrap {
-//    overflow-x: hidden;
+    //    overflow-x: hidden;
     margin: 0 auto;
 }
 
@@ -190,94 +191,7 @@ body {
 MODAL CONTROLS.popover-title
   */
 
-.editable-popup {
-    textarea {
-        font-family: 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;
-        font-size: 1em;
-        border: 1px solid #c0c0c0;
-        outline: none;
-        &:focus {
-            font-family: 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;
-            font-size: 1em;
-            border: 1px solid #c0c0c0;
-            outline: none;
-        }
-    }
-    .editable-input {
-        /*TODO: В завимимости от экрана корректировать высоту и ширину*/
-        height: 510px !important;
-        width: 917px !important;
-        box-sizing: border-box;
-    }
-    textarea {
-        /*TODO: В завимимости от экрана корректировать высоту и ширину*/
-        height: 510px !important;
-        width: 917px !important;
-        box-sizing: border-box;
-        &:focus {
-            /*TODO: В завимимости от экрана корректировать высоту и ширину*/
-            height: 510px !important;
-            width: 917px !important;
-            box-sizing: border-box;
-        }
-    }
-}
 
-.wizard-dialog .ui-dialog-content {
-    /*TODO: В завимимости от экрана корректировать высоту и ширину*/
-    height: 510px !important;
-    width: 917px !important;
-    box-sizing: border-box;
-}
-
-.wysihtml5-sandbox {
-    height: 440px !important;
-}
-
-.bootstrap-wysihtml5-insert-link-modal, .bootstrap-wysihtml5-insert-image-modal {
-    /*line-height: 20px;*/
-    height: 20px;
-}
-
-.wizard-dialog .ui-dialog-content {
-    margin: 0 3px;
-    overflow: hidden;
-}
-
-/*Тикет Ch-55*/
-
-.editable-popup, .wizard-dialog {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    margin-top: -300px;
-    margin-left: -500px;
-    display: table;
-    z-index: 9002;
-    height: 590px;
-}
-
-.wizard-text, .ui-dialog-content .widget-editable-input {
-    border: 1px solid #c0c0c0;
-    width: 898px;
-    height: 390px;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;
-    font-size: 1em;
-    outline: 0;
-    margin-left: 10px;
-//    line-height: 12px;
-    text-indent: 0;
-}
-.widget-editable-input{
-    padding: 2px;
-}
-.wizard-text{
-    line-height: 20px;
-}
-.widget-tree, .widget-panel {
-    height: 440px;
-}
 
 .fm-phone, .fm-iplink, .attachment-file {
     color: #ff8800 !important;
@@ -307,9 +221,7 @@ MODAL CONTROLS.popover-title
     margin-top: 3px;
 }
 
-.editable-popup, .ui-menu.ui-widget.ui-widget-content {
-    border: 1px solid rgba(0, 0, 0, 0.2);
-}
+
 
 .popover, .ui-widget-content {
     -webkit-border-radius: 6px;
@@ -528,14 +440,9 @@ Card controls
 }
 
 .card-default-height {
-    /*height: 22px;*/
-    /*min-height: 22px;*/
     box-sizing: border-box;
 }
 
-/*.card-input .wysihtml5-sandbox{*/
-/*margin-top: -1px!important;*/
-/*}*/
 
 .ch-card-iframe {
     margin-top: -2px;
