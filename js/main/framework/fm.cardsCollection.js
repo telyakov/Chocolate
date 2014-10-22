@@ -40,23 +40,27 @@ FmCardsCollection.prototype.getCardTemplate = function (cardKey, isNewRow) {
 FmCardsCollection.prototype.hasHeader = function () {
     return this.header || this.headerImage;
 };
-FmCardsCollection.prototype._generateHeader = function () {
-    var html = '<header class="card-header">';
-    html += '<div class="card-bottom-header card-error"></div>';
+FmCardsCollection.prototype._generateHeader = function (view) {
+    var html = [
+        '<header class="card-header">',
+        '<div class="card-bottom-header card-error"></div>'
+    ];
     if (this.hasHeader()) {
-        html += '<div class="card-top-header"><div class="card-header-left">';
-        html += this.headerImage;
-        html += '</div><div class="card-header-right">';
-        html += this.header;
-        html += '</div></div>';
+        html.push('<div class="card-top-header"><div class="card-header-left">');
+        html.push(this.headerImage);
+        html.push('</div><div class="card-header-right">');
+        html.push(this.header);
+        html.push('</div></div>');
     }
-    html += '<menu class="menu"><button class="active menu-button card-menu-save"><span class="fa-save"></span><span>Сохранить</span></button></menu>';
-    html += '</header>';
-    return html;
+    if(chApp.getOptions().settings.topsViews.indexOf(view) !== -1){
+        html.push('<menu class="menu"><button class="active menu-button card-menu-save"><span class="fa-save"></span><span>Сохранить</span></button></menu>');
+    }
+    html.push('</header>');
+    return html.join('');
 
 };
 FmCardsCollection.prototype.generateTabs = function (view, pk, viewID, $panel) {
-    $panel.html(this._generateHeader());
+    $panel.html(this._generateHeader(view));
     this._generateList(view, pk, viewID, $panel);
 };
 /**
@@ -111,6 +115,8 @@ FmCardsCollection.prototype._generateList = function (view, pk, viewID, $panel) 
     $panel.append(html);
 
     var card = chApp.getFactory().getChCard($panel.children('[data-id=grid-tabs]'));
-    this.createSqlTasks(card, tabIdList);
+    if($.isNumeric(pk)){
+        this.createSqlTasks(card, tabIdList);
+    }
 
 };

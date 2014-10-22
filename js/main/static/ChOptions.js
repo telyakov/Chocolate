@@ -18,6 +18,7 @@ var ChOptions = {
         signatureFormat: 'DD.MM.YYYY HH:mm',
         emailCol: 'emails',
         systemCols: ['lastmodifier', 'lastmodifydate', 'insdate', 'username' , 'userid'],
+        topsViews: ['tasks/tasksfortops.xml'],
         keyCaption: 'ключ'
     },
     keys: {
