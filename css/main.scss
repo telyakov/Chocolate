@@ -1,6 +1,7 @@
 @import "main/cardGrid";
 @import "main/filters";
 @import "main/grid/footer";
+@import "main/grid/grid";
 @import "main/card";
 @import "main/attachment";
 @import "main/menu";
@@ -495,7 +496,7 @@ a.editable-click {
         margin: 0;
         white-space: nowrap;
         padding: 0;
-        color: #0274bd;
+//        color: #0274bd;
         font-size: 12px !important;
     }
 }
@@ -1072,16 +1073,7 @@ input:focus, textarea:focus, keygen:focus, select:focus {
     margin-bottom: 0;
 }
 
-.fast-filter label {
-    color: #0274bd;
-    min-width: 33px;
-    cursor: pointer;
-    text-align: center;
-}
 
-.section-filters {
-    border-left: 3px #99bce8 solid;
-}
 
 .checkbox.inline, .radio.inline {
     display: inline-block;
@@ -1489,22 +1481,7 @@ td.td-red {
     }
 }
 
-.tablesorter-filter-row td {
-    background: white;
-    padding: 2px 4px !important;
-    box-sizing: border-box;
-    text-align: center !important;
-    &:nth-of-type(1) {
-        &:before {
-            color: #878787;
-            content: "\f0b0";
-            font-family: 'FontAwesome';
-        }
-        input {
-            display: none !important;
-        }
-    }
-}
+
 
 /*Заглушка для первого столбца в фильтрах*/
 

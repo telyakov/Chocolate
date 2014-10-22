@@ -1,3 +1,4 @@
+$color:#0072c6;
 .filter {
     padding: 4px;
     height: 16px !important;
@@ -5,6 +6,7 @@
     margin-bottom: 0;
     box-sizing: content-box;
 }
+
 
 .filter-mock-no-edit {
     position: absolute;
@@ -33,7 +35,19 @@
     box-sizing: content-box;
     background-color: white;
     &:hover {
-        border-color: orange;
+        border-color: $color;
         cursor: pointer;
+        background: #dfedfa !important;
     }
+}
+
+.fast-filter label {
+    color: $color!important;
+    min-width: 33px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.section-filters {
+    border-left: 3px #99bce8 solid;
 }
