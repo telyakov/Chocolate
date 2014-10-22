@@ -29,7 +29,8 @@ class DateSettings extends EditableCardElementSettings {
             'onHidden' => $this->createHiddenFunction(),
             'validate' => $this->createValidateFunction($isAllowEdit, $this->isRequired()),
             'htmlOptions' => [
-                'tabIndex' => $tabIndex
+                'tabIndex' => $tabIndex,
+                'id' => ChHtml::generateUniqueID()
             ],
             'options' =>[
                 'onblur' => 'submit',

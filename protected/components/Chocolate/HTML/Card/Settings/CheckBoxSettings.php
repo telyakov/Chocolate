@@ -21,7 +21,10 @@ class CheckBoxSettings extends EditableCardElementSettings
             'name' => $name,
             'mode' => 'inline',
             'options' => ['onblur' => 'submit',],
-            'htmlOptions' => ['tabIndex' => $tabIndex],
+            'htmlOptions' => [
+                'tabIndex' => $tabIndex,
+                'id' => ChHtml::generateUniqueID()
+            ],
             'showbuttons' => false,
             'pk' => ChHtml::ID_KEY,
             'onHidden' => $this->createHiddenFunction(),

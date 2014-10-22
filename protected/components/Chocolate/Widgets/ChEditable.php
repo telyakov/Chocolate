@@ -412,7 +412,6 @@ class ChEditable extends CWidget
         //apply editable
         $options = CJavaScript::encode($this->options);
         $script .= ".editable($options);";
-        $r =$this->name;
         $id = $this->htmlOptions['identity'];
         $script = <<<JS
         ChEditableCallback.add(function (\$cnt){setTimeout(function(){ $script}, 0)}, '$id');

@@ -32,7 +32,8 @@ class TextSettings extends EditableCardElementSettings{
 //                'toggle' => 'mouseenter'
             ],
             'htmlOptions' => [
-                'tabIndex' => $tabIndex
+                'tabIndex' => $tabIndex,
+                'id' => ChHtml::generateUniqueID()
             ],
             'inputclass' => 'chocolate-textarea',
 //            'onHidden' => $this->createHiddenFunction(),

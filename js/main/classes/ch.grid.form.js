@@ -7,9 +7,7 @@ function ChGridForm($form) {
     this.refreshTimerID = null;
     this.$form = $form;
     this.ch_form_settings = new ChFormSettings(this);
-    this._id = null;
     this._view_id = null;
-    this._tab_caption = null;
     this._$table = null;
     this._$fixed_table = null;
     this._refresh_url = null;
@@ -326,52 +324,49 @@ ChGridForm.prototype.getEntityTypeID = function(){
 ChGridForm.prototype.openCard = function (pk) {
     if (this.isCardSupport()) {
         var view = this.getView(),
-            $tabs = Chocolate.$tabs,
-            uniqueID = this.generateCardID(pk),
-            $a = $tabs.find('li[data-tab-id=\'' + uniqueID + '\']').children('a');
-        if ($a.length == 0) {
+            mainModule = chApp.getMain(),
+            $tabs = mainModule.$tabs,
+            cardID = this.generateCardID(pk),
+            $a = $tabs.find("li[data-tab-id='" + cardID + "']").children('a'),
+            tab;
+        if ($a.length === 0) {
             var viewID = this.getID(),
-                caption;
+                caption =  this.getTabCaption();
             if ($.isNumeric(pk)) {
-                caption = this.getTabCaption() + ' [' + pk + ']';
+                caption += ' [' + pk + ']';
             } else {
-                caption = this.getTabCaption() + '[новая запись]';
+                caption += '[новая запись]';
             }
-            var tabTemplate = "<li data-tab-id=" + uniqueID + " data-id =\'" + pk + "\' data-view=\'" + view + "\' >" +
-                    Chocolate.tab.createTabLink('', caption) + "</li>",
-                $li = $(tabTemplate);
-
+            var $li = $('<li/>',{
+                'data-tab-id': cardID,
+                'data-id': pk,
+                'data-view': view,
+                'html': mainModule.tab.createTabLink('', caption)
+            });
             ChTabHistory.push($li);
             $tabs.children('ul').append($li);
             $tabs.tabs("refresh");
             var _this = this;
-            $a = $li.children('a');
-            /**
-             * @type {ChTab}
-             */
-            var chTab = ChObjectStorage.create($a, 'ChTab');
-
             $tabs.tabs({
                 beforeLoad: function (event, ui) {
                     ui.jqXHR.abort();
                     var fmCollection = _this.getFmCardsCollection();
                     fmCollection.generateTabs(view, pk, viewID, ui.panel);
+
                 }
             });
 
-            $tabs.tabs({ active: chTab.getIndex()});
-            var href = '#' + chTab.getPanelID(),
+            $a = $li.children('a');
+            tab = chApp.getFactory().getChTab($a);
+            $tabs.tabs({ active: tab.getIndex()});
+            var href = '#' + tab.getPanelID(),
                 $context = $(href);
             chApp.getDraw().drawCard($context);
-            //инициализируем вложенные табы
-            Chocolate.tab.card.init($context);
+            mainModule.tab.card.init($context);
             $a.attr('href', href)
         } else {
-            /**
-             * @type {ChTab}
-             */
-            var chTab = ChObjectStorage.create($a, 'ChTab');
-            $tabs.tabs({ active: chTab.getIndex() })
+            tab = chApp.getFactory().getChTab($a);
+            $tabs.tabs({ active: tab.getIndex() })
         }
     }
 
@@ -1021,10 +1016,7 @@ ChGridForm.prototype.getUserGridID = function () {
     return this._user_grid_id;
 };
 ChGridForm.prototype.getID = function () {
-    if (this._id == null) {
-        this._id = this.$form.attr('id');
-    }
-    return this._id;
+   return this.$form.attr('id');
 };
 ChGridForm.prototype.getView = function () {
     if (this._view_id == null) {
@@ -1033,10 +1025,7 @@ ChGridForm.prototype.getView = function () {
     return this._view_id;
 };
 ChGridForm.prototype.getTabCaption = function () {
-    if (this._tab_caption == null) {
-        this._tab_caption = this.$form.attr('data-tab-caption');
-    }
-    return this._tab_caption;
+    return this.$form.attr('data-tab-caption');
 };
 ChGridForm.prototype.getTable = function () {
     if (this._$table == null) {

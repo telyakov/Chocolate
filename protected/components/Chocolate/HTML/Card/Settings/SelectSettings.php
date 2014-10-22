@@ -35,7 +35,8 @@ class SelectSettings extends EditableCardElementSettings {
             'showbuttons' => false,
             'mode' => 'inline',
             'htmlOptions' => [
-                'tabIndex' => $tabIndex
+                'tabIndex' => $tabIndex,
+                'id' => ChHtml::generateUniqueID()
             ],
             'options' => [
                 'onblur' => 'submit',

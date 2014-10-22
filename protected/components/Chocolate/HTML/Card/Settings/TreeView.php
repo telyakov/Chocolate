@@ -27,7 +27,8 @@ class TreeView extends EditableCardElementSettings
             'showbuttons' => false,
             'mode' => 'modal',
             'htmlOptions' => [
-                'tabIndex' => $tabIndex
+                'tabIndex' => $tabIndex,
+                'id' => ChHtml::generateUniqueID()
             ],
             'validate'=> $this->createValidateFunction($isAllowEdit, $this->isRequired())
         ];

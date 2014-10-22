@@ -413,7 +413,8 @@ class ChCardEditable extends CWidget
     public function registerClientScript()
     {
         $rel = $this->htmlOptions['rel'];
-        $script = 'if(typeof($cnt)=="undefined"){$cnt=$("body");}$cnt.find("a[rel^='. $rel .']")';
+        $id = $this->htmlOptions['id'];
+        $script = '$el';
         //attach events
         foreach(array('init', 'shown', 'save', 'hidden') as $event) {
             $eventName = 'on'.ucfirst($event);
@@ -428,7 +429,7 @@ class ChCardEditable extends CWidget
         //apply editable
         $options = CJavaScript::encode($this->options);
         $script .= ".editable($options);";
-        $script = ';(function($cnt){'.$script.'})();';
+        $script = ';(function($el){'.$script.'})($("#"+"'.$id.'"));';
         Yii::app()->getClientScript()->registerScript(__CLASS__ . '#' . $this->id, $script);
         return $script;
 
