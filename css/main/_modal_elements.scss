@@ -35,25 +35,30 @@ $large: 1680px;
         height: $height - 90px;
         width: $width - 10px;
     }
-    .wysihtml5-sandbox{
-        height: $height - 120px!important;
+    .wysihtml5-sandbox {
+        height: $height - 120px !important;
     }
 }
 
+$border-color: #c0c0c0;
 .editable-popup {
     textarea {
         font-family: 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;
         font-size: 1em;
-        border: 1px solid #c0c0c0;
+        border: 1px solid $border-color;
         outline: none;
         box-sizing: border-box;
     }
-    max-width: none !important;
-    border: 1px solid #c0c0c0;
-    box-sizing: border-box;
-}
 
-.editable-popup {
+    max-width: none !important;
+    border: 1px solid $border-color;
+    box-sizing: border-box;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    display: table;
+    z-index: 9002;
+
     @include respond-to(small-screens) {
         @include editable-popup(750px, 450px)
     }
@@ -68,39 +73,69 @@ $large: 1680px;
     }
 }
 
+@mixin dialog($width, $height) {
+    .widget-tree, .widget-panel {
+        height: $height - 70px;
+    }
 
+    .ui-dialog-content {
+        height: $height !important;
+        width: $width !important;
+    }
 
-
-.ui-menu.ui-widget.ui-widget-content {
-    border: 1px solid #c0c0c0;
+    .wizard-text,
+    .widget-editable-input {
+        width: $width - 15px;
+        height: $height - 90px;
+    }
+    margin-top: -$height/2;
+    margin-left: -$width;
+    height: $height !important;
+    width: $width !important;
 }
 
-.wizard-dialog .ui-dialog-content {
+.wizard-dialog {
+    .wizard-text,
+    .widget-editable-input {
+        border: 1px solid $border-color;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;
+        font-size: 1em;
+        outline: 0;
+        margin-left: 10px;
+        text-indent: 0;
+    }
+    .wizard-text {
+        line-height: 20px;
+    }
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    display: table;
+    z-index: 9002;
+    box-sizing: border-box;
+
     @include respond-to(small-screens) {
-        height: 510px !important;
-        width: 917px !important;
+        @include dialog(750px, 450px)
     }
     @include respond-to(medium-screens) {
-        height: 510px !important;
-        width: 917px !important;
+        @include dialog(990px, 540px)
     }
     @include respond-to(wide-screens) {
-        height: 510px !important;
-        width: 917px !important;
+        @include dialog(1200px, 630px)
     }
     @include respond-to(max-screens) {
-        height: 510px !important;
-        width: 917px !important;
+        @include dialog(1400px, 730px)
     }
 
-    box-sizing: border-box;
 }
 
-//.wysihtml5-sandbox {
-//    height: 440px !important;
-//}
+.ui-menu.ui-widget.ui-widget-content {
+    border: 1px solid $border-color;
+}
 
-.bootstrap-wysihtml5-insert-link-modal, .bootstrap-wysihtml5-insert-image-modal {
+.bootstrap-wysihtml5-insert-link-modal,
+.bootstrap-wysihtml5-insert-image-modal {
     height: 20px;
 }
 
@@ -109,43 +144,7 @@ $large: 1680px;
     overflow: hidden;
 }
 
-/*Тикет Ch-55*/
-
-.editable-popup, .wizard-dialog {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-
-    display: table;
-    z-index: 9002;
-
-}
-.wizard-dialog{
-    margin-top: -300px;
-    margin-left: -500px;
-    height: 590px;
-}
-
-.wizard-text, .ui-dialog-content .widget-editable-input {
-    border: 1px solid #c0c0c0;
-    width: 898px;
-    height: 390px;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif;
-    font-size: 1em;
-    outline: 0;
-    margin-left: 10px;
-    text-indent: 0;
-}
-
 .widget-editable-input {
     padding: 2px;
 }
 
-.wizard-text {
-    line-height: 20px;
-}
-
-.widget-tree, .widget-panel {
-    height: 440px;
-}
