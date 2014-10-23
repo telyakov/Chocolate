@@ -84,7 +84,10 @@
     position: absolute;
     background: #8DC897;
 }
-
+.grid-message,
+.grid-message .alert{
+    height: 21px;
+}
 .menu-button-save.active {
     color: #E17769 !important;
     border: 1px solid #E17769 !important;

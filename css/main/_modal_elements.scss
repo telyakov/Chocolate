@@ -147,4 +147,8 @@ $border-color: #c0c0c0;
 .widget-editable-input {
     padding: 2px;
 }
-
+.refresh-dialog,
+.refresh-dialog .ui-dialog-content {
+    height: 110px !important;
+    width: 400px !important;
+}

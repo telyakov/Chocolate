@@ -90,3 +90,9 @@ chApp.getTableHelper = function(){
 chApp.getCallback = function(){
     return this.callback;
 };
+/**
+ * @returns {ch.attachments}
+ */
+chApp.getAttachment = function(){
+    return this.attachments;
+};

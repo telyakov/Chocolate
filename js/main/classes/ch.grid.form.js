@@ -21,7 +21,6 @@ function ChGridForm($form) {
     this._$grid_form = null;
     this._parent_view = null;
     this._save_url = null;
-    this._parent_pk = null;
     this._is_card_support = null;
     this._$footer = null;
     this._$thead = null;
@@ -43,13 +42,12 @@ function ChGridForm($form) {
         delete this._$save_btn;
         delete this._$grid_form;
         delete this._$user_grid;
-    }
+    };
 }
-//ChGridForm.TEMPLATE_TD = '<td style class="{class}{class2}"><div class="table-td table-td-3"><a data-value="{value}" data-pk ="{pk}" rel="{rel}" class="editable"></a></div></td>';
 ChGridForm.TEMPLATE_TD = '<td style class="{class}{class2}"><div class="table-td"><a data-value="{value}" data-pk ="{pk}" rel="{rel}" class="editable"></a></div></td>';
 ChGridForm.TEMPLATE_FIRST_TD = '<td class="grid-menu"><span class="card-button" data-id="card-button" title="Открыть карточку"></span>';
 ChGridForm.prototype.getExitMessage = function () {
-    return 'В форме "' + this.getTabCaption() + '" имеются несохраненные изменения. Закрыть без сохранения?'
+    return 'В форме "' + this.getTabCaption() + '" имеются несохраненные изменения. Закрыть без сохранения?';
 };
 ChGridForm.prototype.removeSelectedRows = function () {
     this.removeRows(this.getSelectedRows());
@@ -618,9 +616,7 @@ ChGridForm.prototype.setCorrectScroll = function($row){
 };
 ChGridForm.prototype.save = function (refresh) {
     this._resetErrors();
-    var user_grid_id = this.getUserGridID(),
-        parent_view = this.getParentView(),
-        parent_id = this.getParentPK(),
+    var userGridID= this.getUserGridID(),
         ch_messages_container = this.getMessagesContainer(),
         _this = this,
         deleted_obj = $.extend({}, this.getDeletedObj());
@@ -690,7 +686,7 @@ ChGridForm.prototype.save = function (refresh) {
             } else {
                 for (var pk_key in errors) {
                     for (var column_key in errors[pk_key]) {
-                        this.$form.find('a[data-pk=' + pk_key + '][rel=' + user_grid_id + '_' + errors[pk_key][column_key] + ']').closest('td').addClass('grid-error')
+                        this.$form.find('a[data-pk=' + pk_key + '][rel=' + userGridID + '_' + errors[pk_key][column_key] + ']').closest('td').addClass('grid-error')
                     }
                 }
                 ch_messages_container.sendMessage('Заполните обязательные поля( ошибки подсвечены в сетке).', ChResponseStatus.ERROR)
@@ -715,13 +711,7 @@ ChGridForm.prototype.save = function (refresh) {
                 });
                 this.$form.fileupload('send', {files: file})
             }
-
-//            if (refresh) {
-//                alert('refresh')
-//                this.refresh();
-//            }
         }
-//        }
         else {
             if (!$.isEmptyObject(deleted_obj)) {
                 chFunctions.saveAttachment(this);
@@ -757,15 +747,11 @@ ChGridForm.prototype.getFilterForm = function () {
     return this._ch_filter_form;
 };
 ChGridForm.prototype.getParentPK = function () {
-//    console.log(this.$form.attr('data-parent-pk'), this._parent_pk)
-    if (this._parent_pk == null) {
-        if (typeof( this.$form.attr('data-parent-pk')) != 'undefined') {
-            this._parent_pk = this.$form.attr('data-parent-pk');
+        if (typeof this.$form.attr('data-parent-pk') !== 'undefined') {
+            return this.$form.attr('data-parent-pk');
         } else {
-            this._parent_pk = '';
+            return  '';
         }
-    }
-    return this._parent_pk;
 };
 ChGridForm.prototype.getSearchData = function () {
     var ch_filter_form = this.getFilterForm();
@@ -918,26 +904,26 @@ ChGridForm.prototype._clearChangedObj = function () {
 };
 ChGridForm.prototype.refresh = function () {
     var url = this.getRefreshUrl(),
-        parent_view = this.getParentView(),
-        search_data = this.getSearchData(),
-        ch_messages_container = this.getMessagesContainer(),
+        parentView = this.getParentView(),
+        searchData = this.getSearchData(),
+        chMessagesContainer = this.getMessagesContainer(),
         _this = this;
 
     $.ajax({
-        url: url + '&ParentView=' + parent_view,
+        url: url + '&ParentView=' + parentView,
         type: "POST",
-        data: search_data,
+        data: searchData,
         success: function (response, st, xhr) {
-            var ch_response = new ChSearchResponse(response);
+            var chResponse = new ChSearchResponse(response);
             var type = _this.getType();
-            if (ch_response.isSuccess()) {
+            if (chResponse.isSuccess()) {
                 if (type == 'map') {
                     var $map = _this.$form.children('section').children('.map');
                     /**
                      * @type {ChMap}
                      */
                     var ch_map = ChObjectStorage.create($map, 'ChMap');
-                    ch_map.refreshPoints(ch_response.getData(), ch_messages_container);
+                    ch_map.refreshPoints(chResponse.getData(), chMessagesContainer);
 
                 } else if (type == 'canvas') {
                     var $canvas = _this.$form.find('canvas');
@@ -945,13 +931,13 @@ ChGridForm.prototype.refresh = function () {
                      * @type {ChCanvas}
                      */
                     var ch_canvas = ChObjectStorage.create($canvas, 'ChCanvas');
-                    var data = ch_response.getData();
+                    var data = chResponse.getData();
                     _this.updateStorage(data, {});
                     var options = new ChCanvasOptions();
                     ch_canvas.refreshData(data, options);
                 }
                 else {
-                    _this.updateData(ch_response.getData(), ch_response.getOrder());
+                    _this.updateData(chResponse.getData(), chResponse.getOrder());
                     _this._clearDeletedObj();
                     _this._clearChangedObj();
                     _this.clearSelectedArea();
@@ -987,16 +973,16 @@ ChGridForm.prototype.refresh = function () {
 
                 }
             }
-            ch_response.destroy();
-            delete ch_response;
+            chResponse.destroy();
+            delete chResponse;
             delete response;
             delete xhr.responseText;
             delete xhr;
             chApp.getFactory().garbageCollection();
 
         },
-        error: function (xhr, status, error) {
-            ch_messages_container.sendMessage(xhr.responseText, ChResponseStatus.ERROR)
+        error: function (xhr, st, er) {
+            chMessagesContainer.sendMessage(er, ChResponseStatus.ERROR)
         }
     })
 };

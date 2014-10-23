@@ -1,6 +1,7 @@
 <?
 use \FrameWork\DataForm\DataFormModel\DataFormModel;
 use \Chocolate\HTML\ChHtml;
+
 /**
  * @var $this Controller
  * @var $parentViewID string
@@ -19,7 +20,7 @@ $options = [
     'maxFileSize' => 50000000,
     'acceptFileTypes' => 'js:/(.*)$/i',
     'added' => 'js:function (e, data) {
-                    var form_id ="'.$formID.'";
+                    var form_id ="' . $formID . '";
                      var ch_form = ChObjectStorage.create($("#' . $formID . '"), "ChGridForm");
                 if(data.isValidated){
                     ChAttachments.push(form_id,data.files)
@@ -33,16 +34,20 @@ $options = [
                    ch_form.getMessagesContainer().sendMessage("Слишком большой размер файла (максисмум 50мб.)", ChResponseStatus.ERROR);
                 }
             }',
-    'stop' => 'js:function(){
+    'stop' => 'js:function(e, e2){
+    console.log("stop",e ,e2)
         var ch_form = ChObjectStorage.create($("#' . $formID . '"), "ChGridForm")
         ch_form.refresh();
+    }',
+    'fail' => 'js:function(){
+    console.log("fail")
     }',
     'done' => 'js:function(){
                 return true;
             }',
 ];
 $isNewRow = DataFormModel::isNewRow($parentID);
-if(!$isNewRow):
+if (!$isNewRow):
     $options['dropZone'] = 'js:$("#' . $sectionID . '")';
 else:
     $options['dropZone'] = false;
@@ -67,8 +72,6 @@ endif;
             'data-id' => $view,
             'parent-data-id' => $parentView,
             'data-parent-id' => $parentViewID,
-//            'data-refresh-url' => Yii::app()->createUrl('grid/search', ['view' => $view]),
-//            'data-save' => Yii::app()->createUrl('grid/save', ['view' => $view]),
             'data-parent-pk' => ChHtml::ID_KEY,
             'data-parent-pk2' => $parentID,
             'delUrl' => Yii::app()->createAbsoluteUrl('Attachment/RemoveRow'),
@@ -79,38 +82,10 @@ endif;
 
 </section>
 <script>
-    $(document).ready(function () {
-        var $context = $('#' + '<?php echo $sectionID ?>').parent();
-        var is_new_row = '<? echo $isNewRow?>';
-        if(!$context.hasClass('card-grid')){
-            chApp.getDraw().drawGrid($context)
-        }
-        if(!is_new_row){
-
-            $('#' + '<?php echo $sectionID ?>').on('drop', function (e) {
-                $(this).removeClass("attachment-dragover")
-                e.preventDefault();
-            })
-                .on('dragover', function (e) {
-                    $(this).addClass("attachment-dragover")
-                    e.preventDefault();
-                })
-                .on('dragleave', function (e) {
-                    $(this).removeClass("attachment-dragover")
-
-                });
-        }
-        var formID = '<?php echo $formID ?>'
-        var $form = $('#' + formID)
-        /**
-         *
-         * @type {ChGridForm}
-         */
-        var ch_form = ChObjectStorage.create($form, 'ChGridForm');
-        $form.on('fileuploadsubmit', function (e, data) {
-            return false
-        });
-        var defaultValues = jQuery.parseJSON('<?php echo $model->defaultValuesToJS() ?>')
-        ch_form.saveInStorage({}, {}, defaultValues, {}, {})
-    })
+chApp.getAttachment().initScript(
+  '<? echo $sectionID?>',
+  '<? echo $formID?>',
+  '<? echo $isNewRow?>',
+  '<? echo $model->defaultValuesToJS()?>'
+);
 </script>

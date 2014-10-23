@@ -139,7 +139,37 @@ var ch ={
                 if(!isNewRow){
                     chTable.ch_form.refresh();
                 }
-            })
+            });
+        },
+        initScript: function(sectionID, formID, isNewRow, jsonDefaultValues ){
+            $(function () {
+                var $section = $('#' + sectionID),
+                    $cnt = $section.parent();
+                if (!$cnt.hasClass('card-grid')) {
+                    chApp.getDraw().drawGrid($cnt);
+                }
+                if (!isNewRow) {
+                    $section
+                        .on('drop', function (e) {
+                            $(this).removeClass("attachment-dragover");
+                            e.preventDefault();
+                        })
+                        .on('dragover', function (e) {
+                            $(this).addClass("attachment-dragover");
+                            e.preventDefault();
+                        })
+                        .on('dragleave', function () {
+                            $(this).removeClass("attachment-dragover")
+                        });
+                }
+                var $form = $('#' + formID),
+                    form = chApp.getFactory().getChGridForm($form);
+                $form.on('fileuploadsubmit', function () {
+                    return false;
+                });
+                var defaultValues = $.parseJSON(jsonDefaultValues);
+                form.saveInStorage({}, {}, defaultValues, {}, {});
+            });
         }
     }
 };
