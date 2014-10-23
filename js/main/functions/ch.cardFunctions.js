@@ -141,7 +141,7 @@ var ch ={
                 }
             });
         },
-        initScript: function(sectionID, formID, isNewRow, jsonDefaultValues ){
+        initScript: function(sectionID, formID, isNewRow, jsonDefaultValues ) {
             $(function () {
                 var $section = $('#' + sectionID),
                     $cnt = $section.parent();
@@ -170,6 +170,18 @@ var ch ={
                 var defaultValues = $.parseJSON(jsonDefaultValues);
                 form.saveInStorage({}, {}, defaultValues, {}, {});
             });
+        },
+        stopHandler: function(formID){
+            var form = chApp.getFactory().getChGridForm($('#' + formID));
+            if(form.isHasChange()){
+                form.save();
+            }else{
+                form.refresh();
+            }
+        },
+        failHandler: function(formID, data){
+//            data.files
+            console.log('fail', data)
         }
     }
 };

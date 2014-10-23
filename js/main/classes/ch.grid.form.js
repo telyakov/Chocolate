@@ -698,17 +698,18 @@ ChGridForm.prototype.save = function (refresh) {
             return [];
         }
     } else {
-        var form_id = this.getID();
+        var formID = this.getID(),
+            fileModule = chApp.getFiles();
 
-        if (ChAttachments.isNotEmpty(form_id)) {
-            while (ChAttachments.isNotEmpty(form_id)) {
-                var dev_obj = this.getDefaultObj();
-                var ownerLock = dev_obj['ownerlock'];
-                var file = ChAttachments.pop(form_id);
+        if (fileModule.isNotEmpty(formID)) {
+            while (fileModule.isNotEmpty(formID)) {
+                var defObj = this.getDefaultObj(),
+                    ownerLock = defObj['ownerlock'],
+                    file = fileModule.pop(formID);
                 this.$form.fileupload({
                     formData: {FilesTypesID: 4, OwnerLock: ownerLock}
                 });
-                this.$form.fileupload('send', {files: file})
+                this.$form.fileupload('send', {files: file});
             }
         }
         else {

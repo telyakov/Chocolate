@@ -29,5 +29,6 @@ js/libs/classie
 js/libs/socket.io
 js/libs/moment
 protected/config/main_production.php
+protected/.ftppass
 
 

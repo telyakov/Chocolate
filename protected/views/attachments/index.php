@@ -34,13 +34,8 @@ $options = [
                    ch_form.getMessagesContainer().sendMessage("Слишком большой размер файла (максисмум 50мб.)", ChResponseStatus.ERROR);
                 }
             }',
-    'stop' => 'js:function(){
-        var ch_form = ChObjectStorage.create($("#' . $formID . '"), "ChGridForm")
-        ch_form.refresh();
-    }',
-    'done' => 'js:function(){
-                return true;
-            }',
+    'stop' => 'js:function(){chApp.getAttachment().stopHandler("'.$formID.'");}',
+    'fail' => 'js:function(e,data){chApp.getAttachment().failHandler("'.$formID.'", data);}'
 ];
 $isNewRow = DataFormModel::isNewRow($parentID);
 if (!$isNewRow):

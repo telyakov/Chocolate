@@ -184,6 +184,22 @@ module.exports = function (grunt) {
                 }
             }
         },
+        'sftp-deploy': {
+            build: {
+                auth: {
+                    host: '192.168.0.34',
+                    port: 22,
+                    authKey: 'key1'
+                },
+                src: '../js',
+                exclusions: ['../js/libs', '../js/main', '../js/tests'],
+                dest: '/vagrant/js',
+                serverSep: '/',
+                concurrency: 4,
+                progress: true
+            }
+        },
+
         sass: {
             //required installed ruby && sass
             dist: {
@@ -207,6 +223,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-bower-task');
+    grunt.loadNpmTasks('grunt-sftp-deploy');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-selenium-webdriver');
     grunt.loadNpmTasks('grunt-exec');
@@ -216,5 +233,5 @@ module.exports = function (grunt) {
     grunt.registerTask('allTest', ['mochaTest', 'qunit']);
     grunt.registerTask('unitTest', ['qunit']);
     grunt.registerTask('funcTest', [ 'selenium_start','mochaTest', 'selenium_stop']);
-//    grunt.registerTask('funcTest', [ 'mochaTest']);
+    grunt.registerTask('deploy', ['unitTest', 'sftp-deploy']);
 };

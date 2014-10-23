@@ -7,7 +7,8 @@ var chApp = chApp || {
     draw: new ChocolateDraw(),
     tableHelper: ChTableHelper,
     attachments: ch.attachments,
-    callback: ChEditableCallback
+    callback: ChEditableCallback,
+    files: ChAttachments
 };
 chApp.namespace = function (ns) {
     var parts = ns.split('.'),
@@ -95,4 +96,10 @@ chApp.getCallback = function(){
  */
 chApp.getAttachment = function(){
     return this.attachments;
+};
+/**
+ * @returns {ChAttachments}
+ */
+chApp.getFiles = function(){
+    return this.files;
 };
