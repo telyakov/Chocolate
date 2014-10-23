@@ -1212,20 +1212,23 @@ ChGridForm.prototype.getSelectedRows = function () {
     var rows = [];
     this.getTable().find('.row-selected').each(function () {
         rows.push($(this));
-    })
-    return rows
+    });
+    return rows;
 };
 ChGridForm.prototype.removeRows = function ($rows) {
     var lng = $rows.length;
-    var deleted_obj = this.getDeletedObj();
-    for (var i = 0; i < lng; i++) {
-        deleted_obj[$rows[i].attr('data-id')] = true;
-        $rows[i].remove();
+    if (lng) {
+        var delObj = this.getDeletedObj();
+        for (var i = 0; i < lng; i++) {
+            delObj[$rows[i].attr('data-id')] = true;
+            $rows[i].remove();
+        }
+
+        this.getTable().trigger("update");
+        this.getSaveButton().addClass('active');
+        this.getTable().parent().find('.' + chApp.getOptions().classes.selectedArea).remove();
     }
-    this.getTable().trigger("update");
-    this.getSaveButton().addClass('active');
-    this.getTable().parent().find('.' + ChOptions.classes.selectedArea).remove()
-    Chocolate.leaveFocus();
+    chApp.getMain().leaveFocus();
 };
 ChGridForm.prototype.removeRow = function ($table_cell) {
     var $table = this.getTable(),
