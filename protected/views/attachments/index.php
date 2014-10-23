@@ -19,21 +19,7 @@ $options = [
     'autoUpload' => false,
     'maxFileSize' => 50000000,
     'acceptFileTypes' => 'js:/(.*)$/i',
-    'added' => 'js:function (e, data) {
-                    var form_id ="' . $formID . '";
-                     var ch_form = ChObjectStorage.create($("#' . $formID . '"), "ChGridForm");
-                if(data.isValidated){
-                    ChAttachments.push(form_id,data.files)
-                      var row_id = Chocolate.uniqueID();
-                      data.context.attr("data-id", row_id);
-                      data.context.find("td input[type=file]").attr("parent-id", row_id);
-                   $("#' . $formID . ' div[data-id=user-grid] table" ).trigger("update");
-                     ch_form.getSaveButton().addClass("active");
-                }else{
-                   data.context.remove();
-                   ch_form.getMessagesContainer().sendMessage("Слишком большой размер файла (максисмум 50мб.)", ChResponseStatus.ERROR);
-                }
-            }',
+    'added' => 'js:function(e,data){chApp.getAttachment().addedHandler("'.$formID.'", data);}',
     'stop' => 'js:function(){chApp.getAttachment().stopHandler("'.$formID.'");}',
     'fail' => 'js:function(e,data){chApp.getAttachment().failHandler("'.$formID.'", data);}'
 ];

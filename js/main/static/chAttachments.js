@@ -1,5 +1,21 @@
 var ChAttachments = {
     files: [],
+    errors: [],
+    hasErrors: function(id){
+        return this.isSetError(id) && this.errors[id].length > 0;
+    },
+    pushError: function(id, error){
+        if(!this.isSetError(id)){
+            this.errors[id] = [];
+        }
+        this.errors[id].push(error);
+    },
+    clearErrors: function(id){
+        delete this.errors[id];
+    },
+    isSetError: function (id) {
+        return typeof this.errors[id] !== 'undefined';
+    },
     /**
      * @param id {string}
      * @param file {*}
@@ -15,7 +31,7 @@ var ChAttachments = {
      * @returns {boolean}
      */
     isSet: function (id) {
-        return typeof this.files[id] != 'undefined';
+        return typeof this.files[id] !== 'undefined';
     },
     /**
      * @param id {string}

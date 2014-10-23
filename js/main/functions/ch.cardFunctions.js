@@ -172,16 +172,38 @@ var ch ={
             });
         },
         stopHandler: function(formID){
-            var form = chApp.getFactory().getChGridForm($('#' + formID));
-            if(form.isHasChange()){
-                form.save();
+            var filesModule = chApp.getFiles(),
+                form = chApp.getFactory().getChGridForm($('#' + formID));
+            if(filesModule.hasErrors(formID)){
+                form.getMessagesContainer().sendMessage('Возникли ошибки при добавлении вложений', chApp.getResponseStatuses().ERROR);
+                filesModule.clearErrors(formID);
             }else{
-                form.refresh();
+                if(form.isHasChange()){
+                    form.save();
+                }else{
+                    form.refresh();
+                }
             }
         },
         failHandler: function(formID, data){
-//            data.files
-            console.log('fail', data)
+            var filesModule = chApp.getFiles();
+            filesModule.pushError(formID, data.errorThrown);
+            filesModule.push(formID, data.files);
+        },
+        addedHandler: function(formID, data){
+            var $form = $('#' + formID),
+                form = chApp.getFactory().getChGridForm($form);
+            if(data.isValidated){
+                chApp.getFiles().push(formID,data.files);
+                var rowID = Chocolate.uniqueID();
+                data.context.attr("data-id", rowID);
+                data.context.find("td input[type=file]").attr("parent-id", rowID);
+                $form.find("div[data-id=user-grid] table").trigger("update");
+                form.getSaveButton().addClass("active");
+            }else{
+                data.context.remove();
+                form.getMessagesContainer().sendMessage("Слишком большой размер файла (максисмум 50мб.)", chApp.getResponseStatuses().ERROR);
+            }
         }
     }
 };

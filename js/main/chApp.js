@@ -49,7 +49,7 @@ chApp.getFactory = function () {
  * @returns {ChResponseStatus}
  */
 chApp.getResponseStatuses = function () {
-    return this.options.responseStatuses;
+    return this.responseStatuses;
 };
 /**
  * @returns {bindingService}
