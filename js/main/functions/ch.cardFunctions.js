@@ -194,8 +194,9 @@ var ch ={
             var $form = $('#' + formID),
                 form = chApp.getFactory().getChGridForm($form);
             if(data.isValidated){
-                chApp.getFiles().push(formID,data.files);
                 var rowID = Chocolate.uniqueID();
+                data.files[0].rowID = rowID;
+                chApp.getFiles().push(formID,data.files);
                 data.context.attr("data-id", rowID);
                 data.context.find("td input[type=file]").attr("parent-id", rowID);
                 $form.find("div[data-id=user-grid] table").trigger("update");

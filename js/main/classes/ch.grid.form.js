@@ -702,14 +702,18 @@ ChGridForm.prototype.save = function (refresh) {
             fileModule = chApp.getFiles();
 
         if (fileModule.isNotEmpty(formID)) {
+            var isEmpty = $.isEmptyObject(deleted_obj);
             while (fileModule.isNotEmpty(formID)) {
                 var defObj = this.getDefaultObj(),
                     ownerLock = defObj['ownerlock'],
                     file = fileModule.pop(formID);
-                this.$form.fileupload({
-                    formData: {FilesTypesID: 4, OwnerLock: ownerLock}
-                });
-                this.$form.fileupload('send', {files: file});
+                var rowID = file[0].rowID;
+                if (isEmpty || !deleted_obj[rowID]) {
+                    this.$form.fileupload({
+                        formData: {FilesTypesID: 4, OwnerLock: ownerLock}
+                    });
+                    this.$form.fileupload('send', {files: file});
+                }
             }
         }
         else {

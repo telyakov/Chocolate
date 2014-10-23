@@ -42,6 +42,12 @@ var chFunctions = {
     saveAttachment: function (chForm) {
         var delData = chForm.getDeletedObj();
         if (!$.isEmptyObject(delData)) {
+            for (var property in delData) {
+                if (!$.isNumeric(property)) {
+                    delete delData[property];
+                }
+            }
+
             var chMsgContainer = chForm.getMessagesContainer(),
                 data = {
                     jsonChangedData: {},
