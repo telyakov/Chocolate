@@ -2,7 +2,7 @@ var chFunctions = {
     systemColsInit: function (sysColsID) {
         var $btn = $('#' + sysColsID),
             form = chApp.getFactory().getChGridForm($btn.closest('form'));
-        if (!form.ch_form_settings.isSystemVisibleMode()) {
+        if (!form.chFormSettings.isSystemVisibleMode()) {
             $btn.addClass(chApp.getOptions().classes.menuButtonSelected);
         }
     },

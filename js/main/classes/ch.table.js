@@ -130,8 +130,8 @@ ChTable.prototype._initData = function () {
 };
 ChTable.prototype._initSettings = function () {
     this.ch_form.setDefaultSettings();
-    if (this.ch_form.ch_form_settings.isAutoUpdate()) {
-        this.ch_form.ch_form_settings.startAutoUpdate();
+    if (this.ch_form.chFormSettings.isAutoUpdate()) {
+        this.ch_form.chFormSettings.startAutoUpdate();
     }
 
 };
@@ -193,11 +193,11 @@ ChTable.prototype.initScript = function () {
     var _this = this;
     setTimeout(function(){
     _this._initData();
-    if(_this.ch_form.ch_form_settings.isShortVisibleMode()){
+    if(_this.ch_form.chFormSettings.isShortVisibleMode()){
         var $th = this.ch_form.getFixedTable().find('[' + ChOptions.classes.allowHideColumn + ']');
         _this.ch_form.toggleColls(false, $th);
     }
-    if(_this.ch_form.ch_form_settings.isSystemVisibleMode()){
+    if(_this.ch_form.chFormSettings.isSystemVisibleMode()){
         var $th2 = _this.ch_form.getFixedTable().find('th').filter(function (index) {
             return $.inArray($(this).attr('data-id'), ChOptions.settings.systemCols) !== -1;
         });

@@ -34,13 +34,9 @@ $options = [
                    ch_form.getMessagesContainer().sendMessage("Слишком большой размер файла (максисмум 50мб.)", ChResponseStatus.ERROR);
                 }
             }',
-    'stop' => 'js:function(e, e2){
-    console.log("stop",e ,e2)
+    'stop' => 'js:function(){
         var ch_form = ChObjectStorage.create($("#' . $formID . '"), "ChGridForm")
         ch_form.refresh();
-    }',
-    'fail' => 'js:function(){
-    console.log("fail")
     }',
     'done' => 'js:function(){
                 return true;
@@ -73,7 +69,7 @@ endif;
             'parent-data-id' => $parentView,
             'data-parent-id' => $parentViewID,
             'data-parent-pk' => ChHtml::ID_KEY,
-            'data-parent-pk2' => $parentID,
+            'data-is-new' => $isNewRow,
             'delUrl' => Yii::app()->createAbsoluteUrl('Attachment/RemoveRow'),
         ],
         'options' => $options

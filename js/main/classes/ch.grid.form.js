@@ -6,8 +6,7 @@ function ChGridForm($form) {
     this.selectedTimerID = null;
     this.refreshTimerID = null;
     this.$form = $form;
-    this.ch_form_settings = new ChFormSettings(this);
-    this._view_id = null;
+    this.chFormSettings = new ChFormSettings(this);
     this._$table = null;
     this._$fixed_table = null;
     this._refresh_url = null;
@@ -29,10 +28,10 @@ function ChGridForm($form) {
     this.fmChildGridCollection = new FmChildGridCollection();
     this._chCardsCollection = null;
     this.priorityColorCol = [];
-    this.destroy = function(){
+    this.destroy = function () {
         delete this.fmChildGridCollection;
-        delete this.ch_form_settings.ch_grid_form;
-        delete this.ch_form_settings;
+        delete this.chFormSettings.ch_grid_form;
+        delete this.chFormSettings;
         delete this._ch_messages_container;
         delete this._chCardsCollection;
         delete this._$fixed_table;
@@ -142,7 +141,7 @@ ChGridForm.prototype.getType = function () {
 };
 ChGridForm.prototype.getTh = function () {
 //    if (this._$th == null) {
-       return this.getThead().children('tr').first().children('th');
+    return this.getThead().children('tr').first().children('th');
 //    }
 //    return this._$th;
 };
@@ -316,7 +315,7 @@ ChGridForm.prototype.isAutoOpenCard = function () {
 ChGridForm.prototype.generateCardID = function (id) {
     return [ 'card_', this.getView(), id ].join('');
 };
-ChGridForm.prototype.getEntityTypeID = function(){
+ChGridForm.prototype.getEntityTypeID = function () {
     return this.getGridPropertiesObj().entityTypeID;
 };
 ChGridForm.prototype.openCard = function (pk) {
@@ -329,13 +328,13 @@ ChGridForm.prototype.openCard = function (pk) {
             tab;
         if ($a.length === 0) {
             var viewID = this.getID(),
-                caption =  this.getTabCaption();
+                caption = this.getTabCaption();
             if ($.isNumeric(pk)) {
                 caption += ' [' + pk + ']';
             } else {
                 caption += '[новая запись]';
             }
-            var $li = $('<li/>',{
+            var $li = $('<li/>', {
                 'data-tab-id': cardID,
                 'data-id': pk,
                 'data-view': view,
@@ -491,13 +490,13 @@ ChGridForm.prototype.layoutSelectedArea = function ($row, isMouse, $activeRow) {
 
             if (typeof(preview_data) != 'undefined') {
                 var html = '';
-                for(var key in preview_data){
-                    if(data.hasOwnProperty(key)){
+                for (var key in preview_data) {
+                    if (data.hasOwnProperty(key)) {
                         html += '<span class="footer-title">';
                         html += preview_data[key]['caption'] + '</span>: <span>';
-                        if(preview_data[key]['type'] == 'dt'){
+                        if (preview_data[key]['type'] == 'dt') {
                             html += moment(data[key], 'MM.DD.YYYY HH:mm:ss').format(chApp.getOptions().settings.signatureFormat);
-                        }else{
+                        } else {
                             html += data[key];
                         }
                         html += ' </span><span class="footer-separator"></span>';
@@ -604,7 +603,7 @@ ChGridForm.prototype.getDefaultObj = function () {
 ChGridForm.prototype._resetErrors = function () {
     this.$form.find('td.grid-error').removeClass('grid-error');
 };
-ChGridForm.prototype.setCorrectScroll = function($row){
+ChGridForm.prototype.setCorrectScroll = function ($row) {
     var $userGrid = this._getUserGrid(),
         leftBound = $userGrid.find('thead').height(),
         rightBound = $userGrid.height() - leftBound,
@@ -616,7 +615,7 @@ ChGridForm.prototype.setCorrectScroll = function($row){
 };
 ChGridForm.prototype.save = function (refresh) {
     this._resetErrors();
-    var userGridID= this.getUserGridID(),
+    var userGridID = this.getUserGridID(),
         ch_messages_container = this.getMessagesContainer(),
         _this = this,
         deleted_obj = $.extend({}, this.getDeletedObj());
@@ -740,18 +739,18 @@ ChGridForm.prototype.validate = function (data) {
 ChGridForm.prototype.getFilterForm = function () {
     if (this._ch_filter_form == null) {
         var $form = this.getGridForm().closest('div').find('section[data-id=filters]').find('form');
-        if($form.length){
+        if ($form.length) {
             this._ch_filter_form = chApp.getFactory().getChFilterForm($form);
         }
     }
     return this._ch_filter_form;
 };
 ChGridForm.prototype.getParentPK = function () {
-        if (typeof this.$form.attr('data-parent-pk') !== 'undefined') {
-            return this.$form.attr('data-parent-pk');
-        } else {
-            return  '';
-        }
+    if (typeof this.$form.attr('data-parent-pk') !== 'undefined') {
+        return this.$form.attr('data-parent-pk');
+    } else {
+        return  '';
+    }
 };
 ChGridForm.prototype.getSearchData = function () {
     var ch_filter_form = this.getFilterForm();
@@ -783,11 +782,11 @@ ChGridForm.prototype.getOrderData = function () {
     var storage = this.getStorage();
     return storage[this.getID()].order;
 };
-ChGridForm.prototype.clearSelectedArea = function(){
+ChGridForm.prototype.clearSelectedArea = function () {
     this.getTable().parent().children('.sel-area').remove();
 };
-ChGridForm.prototype.getLayoutSubscribeName = function(){
-  return ['layout', this.getUserGridID()].join('/');
+ChGridForm.prototype.getLayoutSubscribeName = function () {
+    return ['layout', this.getUserGridID()].join('/');
 };
 ChGridForm.prototype.initData = function (data, order) {
     var $table = this.getTable(), $html;
@@ -801,29 +800,29 @@ ChGridForm.prototype.initData = function (data, order) {
             .trigger("update")
     } else {
         $html = this.generateRows(data, order);
-        var $tbody = $table.find('tbody'), $tr, cacheVisible =[],
+        var $tbody = $table.find('tbody'), $tr, cacheVisible = [],
             $userGrid = this._getUserGrid(), subscribeName = this.getLayoutSubscribeName();
         $.unsubscribe(subscribeName);
-        $.subscribe(subscribeName, function(e, refreshCache){
-            var scrollTop =$userGrid.scrollTop();
-            if(refreshCache || !$tr){
+        $.subscribe(subscribeName, function (e, refreshCache) {
+            var scrollTop = $userGrid.scrollTop();
+            if (refreshCache || !$tr) {
                 $tr = $tbody.children('tr').filter(':not(.filtered)');
                 cacheVisible = [];
             }
             var trHeight = $tr.eq(2).height();
-            if(!trHeight){
-                if($tr.hasClass('ch-mobile')){
-                    trHeight=67;
-                }else{
+            if (!trHeight) {
+                if ($tr.hasClass('ch-mobile')) {
+                    trHeight = 67;
+                } else {
                     trHeight = 23;
                 }
             }
             var visibleHeight = $userGrid.height(),
-                startIndex = Math.max((scrollTop/trHeight^0 )- 7, 0),
-                endIndex =Math.min(((scrollTop + visibleHeight)/trHeight^0) +7, $tr.length);
-            $tr.filter(function(i){
-                if( i>=startIndex && i <= endIndex){
-                    if(cacheVisible[i]){
+                startIndex = Math.max((scrollTop / trHeight ^ 0 ) - 7, 0),
+                endIndex = Math.min(((scrollTop + visibleHeight) / trHeight ^ 0) + 7, $tr.length);
+            $tr.filter(function (i) {
+                if (i >= startIndex && i <= endIndex) {
+                    if (cacheVisible[i]) {
                         return false
                     }
                     cacheVisible[i] = 1;
@@ -833,13 +832,13 @@ ChGridForm.prototype.initData = function (data, order) {
             })
                 .find('.table-td')
                 .css({display: 'block'});
-            $tr.filter(function(i){
-                if(i<startIndex || i > endIndex){
-                    if(cacheVisible[i]){
+            $tr.filter(function (i) {
+                if (i < startIndex || i > endIndex) {
+                    if (cacheVisible[i]) {
                         delete cacheVisible[i];
                         return true;
                     }
-                    if(refreshCache){
+                    if (refreshCache) {
                         return true;
                     }
                 }
@@ -849,10 +848,10 @@ ChGridForm.prototype.initData = function (data, order) {
                 .css({display: 'none'});
         });
 
-        var prevScrollTop =0;
-        $userGrid.unbind('scroll.chocolate').on('scroll.chocolate', $.debounce(150, false, function(){
-            var curScrollTop =$(this).scrollTop();
-            if(curScrollTop !== prevScrollTop){
+        var prevScrollTop = 0;
+        $userGrid.unbind('scroll.chocolate').on('scroll.chocolate', $.debounce(150, false, function () {
+            var curScrollTop = $(this).scrollTop();
+            if (curScrollTop !== prevScrollTop) {
                 $.publish(subscribeName, false);
             }
             prevScrollTop = curScrollTop;
@@ -862,16 +861,16 @@ ChGridForm.prototype.initData = function (data, order) {
         ChEditableCallback.fire($table, this.getCallbackID());
         $table.trigger("update");
         var _this = this;
-        $table.unbind('sortEnd').unbind('filterEnd').bind('sortEnd filterEnd', function(){
-          _this.clearSelectedArea();
+        $table.unbind('sortEnd').unbind('filterEnd').bind('sortEnd filterEnd', function () {
+            _this.clearSelectedArea();
             $.publish(subscribeName, true);
         });
         $.publish(subscribeName, true);
     }
     this.setRowCount(Object.keys(data).length);
 };
-ChGridForm.prototype.setRowCount = function(count){
-    if(count){
+ChGridForm.prototype.setRowCount = function (count) {
+    if (count) {
         this.getFooter().children('.footer-counter').text(count)
     }
 };
@@ -954,7 +953,7 @@ ChGridForm.prototype.refresh = function () {
                              * @param chFilter {ChFilter}
                              */
                                 function (chFilter) {
-                                $.get('/majestic/filterLayout', {'name': chFilter.getKey(), view: _this.getView(), 'parentID': _this.getParentPK()}).done(function (response,st ,xhr) {
+                                $.get('/majestic/filterLayout', {'name': chFilter.getKey(), view: _this.getView(), 'parentID': _this.getParentPK()}).done(function (response, st, xhr) {
                                     var $filter = $('<li>' + response + '</li>');
                                     var selValues = chFilter.getNamesSelectedValues();
                                     chFilter.$elem.html($filter.html());
@@ -966,8 +965,8 @@ ChGridForm.prototype.refresh = function () {
                                     delete response;
 
                                 }).fail(function () {
-                                        console.log('error')
-                                    })
+                                    console.log('error')
+                                })
                             })
                     }
 
@@ -1002,13 +1001,10 @@ ChGridForm.prototype.getUserGridID = function () {
     return this._user_grid_id;
 };
 ChGridForm.prototype.getID = function () {
-   return this.$form.attr('id');
+    return this.$form.attr('id');
 };
 ChGridForm.prototype.getView = function () {
-    if (this._view_id == null) {
-        this._view_id = this.$form.attr("data-id");
-    }
-    return this._view_id;
+    return this.$form.attr("data-id");
 };
 ChGridForm.prototype.getTabCaption = function () {
     return this.$form.attr('data-tab-caption');
@@ -1153,7 +1149,7 @@ ChGridForm.prototype.generateRow = function (templates, data, gridProp) {
         idClass = ' td-red';
     }
 
-    if (this.ch_form_settings.getGlobalStyle() == 2) {
+    if (this.chFormSettings.getGlobalStyle() == 2) {
         rowClass = 'class="ch-mobile"';
     }
     var id = data['id'],
@@ -1280,21 +1276,21 @@ ChGridForm.prototype.toggleColls = function (isHidden, $thList) {
 
 ChGridForm.prototype.toggleAllCols = function () {
     var
-        isHidden = this.ch_form_settings.isShortVisibleMode(),
+        isHidden = this.chFormSettings.isShortVisibleMode(),
 //        hiddenClass = ChOptions.classes.hiddenAllColsTable,
         $th = this.getFixedTable().find('[' + ChOptions.classes.allowHideColumn + ']');
     this.toggleColls(isHidden, $th);
-    this.ch_form_settings.setShortVisibleMode(!isHidden);
+    this.chFormSettings.setShortVisibleMode(!isHidden);
     return this;
 };
 ChGridForm.prototype.toggleSystemCols = function () {
-    var isHidden = this.ch_form_settings.isSystemVisibleMode(),
+    var isHidden = this.chFormSettings.isSystemVisibleMode(),
         $th = this.getFixedTable().find('th').filter(function (index) {
             return $.inArray($(this).attr('data-id'), ChOptions.settings.systemCols) !== -1;
         });
     this.toggleColls(isHidden, $th);
     this.$form.find('.menu-button-toggle').toggleClass(chApp.getOptions().classes.menuButtonSelected)
-    this.ch_form_settings.setSystemVisibleMode(!isHidden);
+    this.chFormSettings.setSystemVisibleMode(!isHidden);
     return this;
 };
 ChGridForm.prototype.getActiveRow = function () {
@@ -1324,7 +1320,7 @@ ChGridForm.prototype.openSettings = function () {
     /**
      * @type {ChFormSettings}
      */
-    var chFormSettings = this.ch_form_settings;
+    var chFormSettings = this.chFormSettings;
     if (chFormSettings.isAutoUpdate()) {
         $input.attr('checked', 'checked');
     }

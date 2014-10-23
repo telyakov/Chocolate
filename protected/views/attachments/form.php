@@ -1,14 +1,14 @@
 <?
 use Chocolate\HTML\ChHtml;
 use Chocolate\HTML\Grid\Settings\XEditableSettings;
-use FrameWork\DataForm\DataFormModel\DataFormModel;
 
 /**
  * @var $this ChFileUpload
+ * @var $name String
  * @var $controller CController
  */
 ?>
-<? $isNewRow = DataFormModel::isNewRow($this->htmlOptions['data-parent-pk2']); ?>
+<? $isNewRow = $this->htmlOptions['data-is-new']; ?>
 
     <section class="section-header" data-id="header">
         <div class="top-header">
@@ -37,14 +37,17 @@ use FrameWork\DataForm\DataFormModel\DataFormModel;
                 <menu class="menu" type="toolbar">
                     <span class="fileinput-button menu-button active">
                        <span class="menu-border-green"></span>
-                         <span> Вложить</span>
+                         <span>Вложить</span>
                         <?
-                        echo CHtml::fileField($name, $this->value, ['id' => ChHtml::generateUniqueID('ff')]);
+                        echo CHtml::fileField($name, $this->value, [
+                            'id' => ChHtml::generateUniqueID('ff'),
+                            'multiple' => true
+                        ]);
                         ?>
                     </span>
                     <!--        Class="start" Обязательная опция, по которой осуществляется загрузка всех файлов. Не удалять!-->
                     <button class="menu-button menu-button-save start" type="submit"
-                            data-url="<? echo Yii::app()->createUrl('attachment/save') ?>">
+                            data-url="/attachment/save">
                         <span class="fa-save"></span>
                         <span title="Сохранить">Сохранить</span>
                     </button>
@@ -59,7 +62,7 @@ use FrameWork\DataForm\DataFormModel\DataFormModel;
             </div>
         <? endif; ?>
         <section data-id="grid">
-            <div class=" grid-view" data-id="user-grid"
+            <div class="grid-view" data-id="user-grid"
                  id="<? echo ChHtml::generateUniqueID('gv') ?>">
                 <table class="items table-bordered" tabindex="0">
                     <thead>
@@ -68,7 +71,7 @@ use FrameWork\DataForm\DataFormModel\DataFormModel;
                     </th>
                     <th data-id="name">
                         <div><a>
-                                <?php echo XEditableSettings::getHeaderHtml('Скачать') ?>
+                                <? echo XEditableSettings::getHeaderHtml('Скачать') ?>
                             </a></div>
                     </th>
                     <th data-id="version">
