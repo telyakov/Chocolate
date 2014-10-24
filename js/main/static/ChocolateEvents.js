@@ -50,7 +50,24 @@ var ChocolateEvents = {
         this.sendEmailEvent($tabs);
         this.sendMessageEvent($tabs);
         this.openCardTabMenuEvent($tabs);
-
+        this.filterTreeEvent($body);
+    },
+    filterTreeEvent: function($cnt){
+      $cnt.on('click','.filter-button',this.filterTreeHandler);
+    },
+    filterTreeHandler: function(){
+        var $this = $(this),
+            $tree = $this.closest('div').siblings('.widget-tree'),
+            nodes = $tree.find('li');
+        $this.toggleClass('menu-button-selected');
+        var selectedNodes =nodes.filter(function(){
+            return $(this).has('.dynatree-selected').length === 0;
+        });
+        if($this.hasClass('menu-button-selected')){
+            selectedNodes.hide();
+        }else{
+            selectedNodes.show();
+        }
     },
     openCardTabMenuEvent: function ($context) {
         $context.on('click', '.tab-menu-link', this.openCardTabMenuHandler);

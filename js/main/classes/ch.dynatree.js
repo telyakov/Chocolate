@@ -2,136 +2,138 @@ function ChDynatree($elm) {
     this.$elm = $elm;
     this.options = null;
     this.data = [];
-    this.auto_complete_data = [];
-    this.defaultsElements = []
+    this.autoCompleteData = [];
+    this.defaultsElements = [];
 }
 ChDynatree.prototype.init = function (options) {
     this.options = options;
-    this.hasInfoPanel = function(){
-        if( typeof options['infoPanel'] == 'undefined'){
+    this.hasInfoPanel = function () {
+        if (typeof options.infoPanel === 'undefined') {
             return false;
-        }else{
-            return options['infoPanel'];
+        } else {
+            return options.infoPanel;
         }
     };
     this.getNodes = function () {
-        return options['children'];
+        return options.children;
     };
     this.getUrl = function () {
-        return options['url'];
+        return options.url;
     };
     this.isExpandNodes = function () {
-        return options['expand_nodes'];
+        return options.expand_nodes;
     };
     this.isSelectAll = function () {
-        return options['select_all'];
+        return options.select_all;
     };
     this.isRestoreState = function () {
-        return options['restore_state'];
+        return options.restore_state;
     };
     this.getSeparator = function () {
-        return options['separator'];
+        return options.separator;
     };
     this.getRootID = function () {
-        return options['root_id'];
+        return options.root_id;
     };
     this.getTitle = function () {
-        return options['title'];
+        return options.title;
     };
     this.getColumnTitle = function () {
-        return options['column_title'];
+        return options.column_title;
     };
     this.getColumnID = function () {
-        return options['column_id'];
+        return options.column_id;
     };
     this.getColumnParentID = function () {
-        return options['column_parent_id'];
+        return options.column_parent_id;
     };
-    this.isSingleMode = function(){
-       return this.options.selectMode == 1;
-    }
-    this.getInput = function(){
-        if(typeof options['getInput'] == 'undefined'){
+    this.isSingleMode = function () {
+        return this.options.selectMode === 1;
+    };
+    this.getInput = function () {
+        if (typeof options.getInput === 'undefined') {
             return this.$elm.parent().children('input[type=hidden]');
-        }else{
-            return options['getInput'].apply(this.$elm);
+        } else {
+            return options.getInput.apply(this.$elm);
         }
     };
-    this.isDialogEvent = function(){
-        if( typeof options['isDialogEvent'] === 'undefined' ){
-            return true
-        }else{
-            return options['isDialogEvent'];
-        }
-    }
-    this.getTitleValue = function(node){
-      if( typeof options['getTitleValue'] == 'undefined'){
-          return  node[this.getColumnTitle()];
-      }  else{
-          return options['getTitleValue'].apply(this,[node])
-      }
-    };
-    this.getKey = function(node){
-        if( typeof options['getKey'] == 'undefined'){
-            return  node[this.getColumnID()];
-        }  else{
-            return options['getKey'].apply(this,[node])
+    this.isDialogEvent = function () {
+        if (typeof options.isDialogEvent === 'undefined') {
+            return true;
+        } else {
+            return options.isDialogEvent;
         }
     };
-    this.getParentID = function(node){
-        if( typeof options['getParentID'] == 'undefined'){
-            return  node[this.getColumnParentID()];
-        }  else{
-            return options['getParentID'].apply(this,[node])
+    this.getTitleValue = function (node) {
+        if (typeof options.getTitleValue === 'undefined') {
+            return node[this.getColumnTitle()];
+        } else {
+            return options.getTitleValue.apply(this, [node]);
         }
     };
-    this.defaultValues = function(){
-        if(typeof options['defaultValues'] == 'undefined'){
+    this.getKey = function (node) {
+        if (typeof options.getKey === 'undefined') {
+            return node[this.getColumnID()];
+        } else {
+            return options.getKey.apply(this, [node]);
+        }
+    };
+    this.getParentID = function (node) {
+        if (typeof options.getParentID === 'undefined') {
+            return node[this.getColumnParentID()];
+        } else {
+            return options.getParentID.apply(this, [node]);
+        }
+    };
+    this.defaultValues = function () {
+        if (typeof options.defaultValues === 'undefined') {
             return false;
-        }else{
-            return options['defaultValues'].apply(this.$elm);
+        } else {
+            return options.defaultValues.apply(this.$elm);
         }
-    }
-    this.okButton = function( $tree, $input, $checkbox, $select){
-        if(typeof options['okButton'] == 'undefined'){
+    };
+    this.okButton = function ($tree, $input, $checkbox, $select) {
+        if (typeof options.okButton === 'undefined') {
             var _this = this;
-            return  {
+            return {
                 'text': 'OK',
                 'class': 'wizard-active wizard-next-button',
-                click: function (bt, elem) {
-                    var selected_nodes = $tree.dynatree("getSelectedNodes");
-                    var val = '', select_html = '';
-                    var is_select_all = _this.isSelectAll();
-                    for (var i in selected_nodes) {
-                        var node = selected_nodes[i];
-                        if (is_select_all || node.childList == null) {
-                            val += node.data.key + _this.getSeparator();
-                            select_html += "<option>" + node.data.title + "</option>";
+                click: function () {
+                    var selectedNodes = $tree.dynatree("getSelectedNodes"),
+                        val = '',
+                        selectHtml = '',
+                        isSelectAll = _this.isSelectAll();
+                    for (var i in selectedNodes) {
+                        if (selectedNodes.hasOwnProperty(i)) {
+                            var node = selectedNodes[i];
+                            if (isSelectAll || node.childList === null) {
+                                val += node.data.key + _this.getSeparator();
+                                selectHtml += "<option>" + node.data.title + "</option>";
+                            }
                         }
                     }
                     $input.val(val);
-                    $select.html(select_html);
-                    $checkbox.children('input').attr('checked', false)
+                    $select.html(selectHtml);
+                    $checkbox.children('input').attr('checked', false);
                     $(this).dialog("close");
-                }}
-        }else{
-            return options['okButton'].apply(this, [$tree, $input, $checkbox, $select])
+                }};
+        } else {
+            return options.okButton.apply(this, [$tree, $input, $checkbox, $select]);
         }
-    }
+    };
 };
-ChDynatree.prototype._getDefaultValues = function(){
-    var defaultValues = this.defaultValues();
-    if(defaultValues){
-        defaultValues = defaultValues.split(this.getSeparator());
+ChDynatree.prototype._getDefaultValues = function () {
+    var defValues = this.defaultValues();
+    if (defValues) {
+        defValues = defValues.split(this.getSeparator());
     }
-    return  defaultValues
-}
+    return defValues;
+};
 ChDynatree.prototype.setData = function ($input, $content) {
     var url = this.getUrl(),
-        raw_data,
+        rawData,
         map = {},
-        root_id = this.getRootID();
-
+        rootID = this.getRootID();
     if (url) {
         jQuery.ajax({
             type: 'GET',
@@ -140,43 +142,43 @@ ChDynatree.prototype.setData = function ($input, $content) {
             success: function (response) {
                 var ch_response = new ChResponse(response);
                 if (ch_response.isSuccess()) {
-                    raw_data = ch_response.getData();
+                    rawData = ch_response.getData();
                     jQuery.data($input.get(0), "dialog", $content);
                 } else {
                     alert('Ошибка при загрузке данных')
                 }
             }
-        })
+        });
     } else {
-        raw_data = this.getNodes();
+        rawData = this.getNodes();
     }
     var defaultValues = this._getDefaultValues();
 
-    for (var i in raw_data) {
-        var node = raw_data[i];
+    for (var i in rawData) {
+        var node = rawData[i];
         node.title = this.getTitleValue(node);
         node.key = this.getKey(node);
         node.desc = node.description;
-        if(defaultValues && (defaultValues.length > 1  || this.isSingleMode()) && $.inArray(node.key, defaultValues) != '-1'){
-                node.select = true;
+        if (defaultValues && (defaultValues.length > 1 || this.isSingleMode()) && $.inArray(node.key, defaultValues) != '-1') {
+            node.select = true;
             this.defaultsElements.push(node);
 
 //                node.activate = true;
-        }else{
-                node.select = false;
+        } else {
+            node.select = false;
         }
         node.index = i;
         node.icon = false;
         node.parentid = this.getParentID(node)
         node.children = [];
         map[node.key] = node.index; // use map to look-up the parents
-        this.auto_complete_data.push({label: node.title, id: node.key});
+        this.autoCompleteData.push({label: node.title, id: node.key});
     }
 
-    for (var i in raw_data) {
-        var node = raw_data[i];
-        if (typeof(node.parentid) != 'undefined' && node.parentid !== root_id && node.parentid) {
-            raw_data[map[node.parentid]].children.push(node);
+    for (var i in rawData) {
+        var node = rawData[i];
+        if (typeof(node.parentid) != 'undefined' && node.parentid !== rootID && node.parentid) {
+            rawData[map[node.parentid]].children.push(node);
         } else {
             this.data.push(node);
         }
@@ -189,7 +191,7 @@ ChDynatree.prototype.dialogEvent = function ($content, $tree, $input, $checkbox,
         'title': this.getTitle(),
         'dialogClass': 'wizard-dialog',
         modal: true,
-        close: function(){
+        close: function () {
             $input.focus();
         },
         buttons: {
@@ -227,7 +229,7 @@ ChDynatree.prototype.autoCompleteEvent = function ($search, $tree, $content) {
         source: function (request, response) {
             var searchParam = request.term.toLowerCase();
 
-            var responseArray = _this.auto_complete_data.filter(function (item, i, arr) {
+            var responseArray = _this.autoCompleteData.filter(function (item, i, arr) {
                 var source = item.label.toLowerCase();
                 if (source.indexOf(searchParam) != -1) {
                     return true
@@ -243,21 +245,32 @@ ChDynatree.prototype.autoCompleteEvent = function ($search, $tree, $content) {
 
         },
         select: function (event, ui) {
-            var id = ui.item.id
-            $content.find('.node-searched').removeClass('node-searched')
-            var tree = $tree.dynatree("getTree");
-            tree.selectKey(id, true);
-            tree.activateKey(id);
+            $content.find('.node-searched').removeClass('node-searched');
+            var id = ui.item.id,
+                tree = $tree.dynatree("getTree"),
+                node = tree.getNodeByKey(id);
+            node.select(true);
+            node.activate();
+            var parent = node,
+                $li = $(node.li);
+            do{
+                $li.show();
+                parent = parent.parent;
+                if(parent){
+                    $li = $(parent.li);
+                }
+            }
+            while(parent);
         }
     });
 }
 ChDynatree.prototype.load = function (options) {
     this.init(options);
-    var $tree_con = this.$elm.parent(),
+    var $treeCon = this.$elm.parent(),
         $input = this.getInput(),
         $dialog = jQuery.data($input.get(0), "dialog"),
         is_restore_state = this.isRestoreState(),
-        $select = $tree_con.children('select');
+        $select = $treeCon.children('select');
 
     if (typeof($dialog) != 'undefined') {
         var default_values = $input.val().split(this.getSeparator());
@@ -272,6 +285,7 @@ ChDynatree.prototype.load = function (options) {
                 node.select(false);
             }
         });
+        $dialog.dialog("option", "position", {at: "center", collision: "fit", my: "center"});
         $dialog.dialog('open');
     } else {
         var $content = $('<div></div>'),
@@ -280,11 +294,11 @@ ChDynatree.prototype.load = function (options) {
         //Необходимо инициализировать данные
         this.setData($input, $content);
         this.options.children = this.data;
-        if(this.hasInfoPanel()){
+        if (this.hasInfoPanel()) {
             var $panel = $('<div class="widget-panel"></div>');
-            this.options.onActivate = function(node) {
+            this.options.onActivate = function (node) {
                 $panel.html(_this.createPanelElement(node.data));
-            }
+            };
 
         }
         $tree.dynatree(this.options);
@@ -293,27 +307,28 @@ ChDynatree.prototype.load = function (options) {
                 node.expand(true);
             });
         }
-        var $search = $('<input type="text">'),
+        var $search = $('<input type="search">'),
             $header = $('<div class="widget-header-tree"></div>'),
             $checkbox = $('<span class="tree-checkbox"><input type="checkbox"><span class="tree-checkbox-caption">Выделить все</span></span>');
         $header.append($search);
+        $header.append('<button class="active filter-button menu-button small-button"><span class="fa-eye"></span></button>');
         $content.prepend($header);
-        if(this.hasInfoPanel()){
+        if (this.hasInfoPanel()) {
             $tree.addClass('widget-tree-compact');
-            var panelContent = ''
-            for(var i in this.defaultsElements){
+            var panelContent = '';
+            for (var i in this.defaultsElements) {
                 var node = this.defaultsElements[i];
                 panelContent += _this.createPanelElement(node);
             }
-            $panel.html(panelContent)
+            $panel.html(panelContent);
             $content.append($tree);
-            $content.append($panel)
-        }else{
+            $content.append($panel);
+        } else {
             $content.append($tree);
         }
 
 
-        if(this.isDialogEvent()){
+        if (this.isDialogEvent()) {
             this.dialogEvent($content, $tree, $input, $checkbox, $select);
         }
 
@@ -323,21 +338,21 @@ ChDynatree.prototype.load = function (options) {
         return $content;
     }
 }
-ChDynatree.prototype.createPanelElement = function(node){
+ChDynatree.prototype.createPanelElement = function (node) {
     var desc = '';
-    if(node.desc){
+    if (node.desc) {
         desc = node.desc
-    }else if(typeof node.data !='undefined' && node.data.description){
+    } else if (typeof node.data != 'undefined' && node.data.description) {
         desc = node.data.description;
     }
     return [
         '<div class="widget-panel-elm"',
         ' data-key="',
-         node.key,
-         '">',
+        node.key,
+        '">',
         '<div class="widget-panel-title">',
         '<span>',
-         node.title,
+        node.title,
         '</span>',
         '<span class="widget-elem-close fa-times"></span>',
         '</div>',

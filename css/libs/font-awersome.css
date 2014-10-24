@@ -485,9 +485,9 @@
 /*.fa-fire:before {*/
     /*content: "\f06d";*/
 /*}*/
-/*.fa-eye:before {*/
-    /*content: "\f06e";*/
-/*}*/
+.fa-eye:before {
+    content: "\f06e";
+}
 /*.fa-eye-slash:before {*/
     /*content: "\f070";*/
 /*}*/

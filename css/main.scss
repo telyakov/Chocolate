@@ -1644,6 +1644,7 @@ Navigations
 }
 
 .ui-autocomplete-input, #nav-search, .select2-input {
+    box-sizing: content-box;
     border: dashed 1px silver;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
@@ -1735,7 +1736,9 @@ Navigations
     display: none;
 }
 
-.fa-level-down, .fa-user, .fa-plus-circle, .fa-refresh, .fa-edit, .fa-tasks, .fa-save, .fa-paperclip, .fa-times, .fa-asterisk, .card-button, .icon-th, .fa-check, .fa-exclamation, .fa-italic, .fa-bold, .fa-underline, .fa-eye-slash, .fa-file-excel-o, .fa-wrench, .fa-question {
+.fa-level-down, .fa-user, .fa-plus-circle, .fa-refresh, .fa-edit, .fa-tasks, .fa-save, .fa-paperclip, .fa-times, .fa-asterisk, .card-button, .icon-th, .fa-check, .fa-exclamation, .fa-italic, .fa-bold, .fa-underline,
+.fa-eye-slash, .fa-file-excel-o, .fa-wrench, .fa-question,
+.fa-eye{
     font-family: FontAwesome;
     font-style: normal;
 }
