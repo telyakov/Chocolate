@@ -2,19 +2,19 @@ $(function () {
     /* jQuery Tiny Pub/Sub - v0.7 - 10/27/2011
      * http://benalman.com/
      * Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT, GPL */
-    (function($) {
+    (function ($) {
 
         var o = $({});
 
-        $.subscribe = function() {
+        $.subscribe = function () {
             o.on.apply(o, arguments);
         };
 
-        $.unsubscribe = function() {
+        $.unsubscribe = function () {
             o.off.apply(o, arguments);
         };
 
-        $.publish = function() {
+        $.publish = function () {
             o.trigger.apply(o, arguments);
         };
 
@@ -30,9 +30,9 @@ $(function () {
     }
     $.fn.extend({
         insertAtCaretIframe: function (val) {
-            var winObject = function (el){
+            var winObject = function (el) {
                 var doc = el.ownerDocument;
-                return doc.defaultView || doc.parentWindow
+                return doc.defaultView || doc.parentWindow;
             };
             return this.each(function () {
                     var sel, range, w = this;
@@ -69,7 +69,7 @@ $(function () {
                         w.document.selection.createRange().pasteHTML(val);
                     }
                 }
-            )
+            );
         },
         insertAtCaret: function (val) {
             return this.each(function () {
@@ -95,64 +95,71 @@ $(function () {
                     this.value += val;
                     this.focus();
                 }
-            })
+            });
         }
     });
-   chApp.namespace('events').createEventsHandlers();
+    chApp.namespace('events').createEventsHandlers();
 
 
 });
-var socket =  io.connect('http://crm.78stroy.ru', {reconnectionDelay: 3000});
-function connectError(){
-    chApp.getMain().$page.append('<div id="no-internet">Нет подключения к интернету. Некоторые функции могут быть недоступны</div>');
+var socket = io.connect(chApp.getOptions().urls.webSocketServer, {reconnectionDelay: 3000});
+function connectError() {
+    var $error = $('<div>', {
+        id: 'no-internet',
+        text: chApp.getMessages().noConnectWebsocket
+    });
+    chApp.getMain().$page.append($error);
     this.off('connect_error');
-    this.on('connect', connectSuccess);
-
+    socket
+        .off('connect')
+        .on('connect', connectSuccess);
 }
-function connectSuccess(){
+function connectSuccess() {
     $('#no-internet').remove();
     this.off('connect');
-    this.on('connect_error', connectError);
+    this.io
+        .off('connect_error')
+        .on('connect_error', connectError);
 }
-socket.io
-    .on('connect_error',connectError)
-    .on('connect', connectSuccess);
-socket.on('response', function(data) {
-    var optionsModule = chApp.getOptions(),
-        mainModule = chApp.getMain();
-    var type = data.type, error = data.error, resData;
+socket.io.on('connect_error', connectError);
+socket
+    .on('connect', connectSuccess)
+    .on('response', function (data) {
+        var optionsModule = chApp.getOptions(),
+            mainModule = chApp.getMain();
+        var type = data.type, error = data.error, resData;
 
-    if(error){
-        resData = {};
-    }else{
-        resData = json_parse(data.data);
-    }
+        if (error) {
+            resData = {};
+        } else {
+            resData = json_parse(data.data);
+        }
 
 
-    switch(type){
-        case optionsModule.sql.types.roles:
-            mainModule.user.setRoles(resData);
-            break;
-        case optionsModule.sql.types.forms:
-            chApp.getFunctions().createMenu(resData);
-            break;
-        case optionsModule.sql.types.jquery:
-            var firstRow;
-            for( var i in resData){
-                if (resData.hasOwnProperty(i)){
-                    firstRow = resData[i];
-                    break;
+        switch (type) {
+            case optionsModule.sql.types.roles:
+                mainModule.user.setRoles(resData);
+                break;
+            case optionsModule.sql.types.forms:
+                chApp.getFunctions().createMenu(resData);
+                break;
+            case optionsModule.sql.types.jquery:
+                var firstRow;
+                for (var i in resData) {
+                    if (resData.hasOwnProperty(i)) {
+                        firstRow = resData[i];
+                        break;
+                    }
                 }
-            }
-            var $elem = $('#' +data.id);
-            for( var j in firstRow){
-                if (firstRow.hasOwnProperty(j)){
-                    $elem.html(firstRow[j]);
-                    break;
+                var $elem = $('#' + data.id);
+                for (var j in firstRow) {
+                    if (firstRow.hasOwnProperty(j)) {
+                        $elem.html(firstRow[j]);
+                        break;
+                    }
                 }
-            }
-            break;
-        default:
-        console.log(data);
-    }
-});
+                break;
+            default:
+                console.log(data);
+        }
+    });

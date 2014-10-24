@@ -62,7 +62,7 @@ var ChOptions = {
         discussionForm: 'discussion-form'
     },
     urls:{
-        webSocketServer: 'http://192.168.0.34:3000',
+        webSocketServer: 'http://crm.78stroy.ru',
         addRow: '/grid/insertRow',
         imagesUrls: '/majestic/images',
         export2excel: '/majestic/export2excel',
@@ -82,6 +82,7 @@ var ChOptions = {
     },
     messages:{
         ru: {
+            noConnectWebsocket: 'Нет подключения к WebSocket серверу. Некоторые функции могут быть недоступны',
             projectName: 'Шоколад',
             chocolateHasChange: 'ВНИМАНИЕ! У Вас есть несохраненные изменения. В результате перехода они могут быть потеряны.',
             refreshForm: 'Сохранить изменения?',
