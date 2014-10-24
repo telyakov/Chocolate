@@ -145,47 +145,49 @@ ChDynatree.prototype.setData = function ($input, $content) {
                     rawData = ch_response.getData();
                     jQuery.data($input.get(0), "dialog", $content);
                 } else {
-                    alert('Ошибка при загрузке данных')
+                    alert('Ошибка при загрузке данных');
                 }
             }
         });
     } else {
         rawData = this.getNodes();
     }
-    var defaultValues = this._getDefaultValues();
+    var defaultValues = this._getDefaultValues(), node;
 
     for (var i in rawData) {
-        var node = rawData[i];
-        node.title = this.getTitleValue(node);
-        node.key = this.getKey(node);
-        node.desc = node.description;
-        if (defaultValues && (defaultValues.length > 1 || this.isSingleMode()) && $.inArray(node.key, defaultValues) != '-1') {
-            node.select = true;
-            this.defaultsElements.push(node);
-
-//                node.activate = true;
-        } else {
-            node.select = false;
+        if (rawData.hasOwnProperty(i)) {
+            node = rawData[i];
+            node.title = this.getTitleValue(node);
+            node.key = this.getKey(node);
+            node.desc = node.description;
+            if (defaultValues && (defaultValues.length > 1 || this.isSingleMode()) && $.inArray(node.key, defaultValues) !== -1) {
+                node.select = true;
+                this.defaultsElements.push(node);
+            } else {
+                node.select = false;
+            }
+            node.index = i;
+            node.icon = false;
+            node.parentid = this.getParentID(node);
+            node.children = [];
+            map[node.key] = node.index;
+            this.autoCompleteData.push({label: node.title, id: node.key});
         }
-        node.index = i;
-        node.icon = false;
-        node.parentid = this.getParentID(node)
-        node.children = [];
-        map[node.key] = node.index; // use map to look-up the parents
-        this.autoCompleteData.push({label: node.title, id: node.key});
     }
 
-    for (var i in rawData) {
-        var node = rawData[i];
-        if (typeof(node.parentid) != 'undefined' && node.parentid !== rootID && node.parentid) {
-            rawData[map[node.parentid]].children.push(node);
-        } else {
-            this.data.push(node);
+    for (var k in rawData) {
+        if (rawData.hasOwnProperty(k)) {
+            node = rawData[k];
+            if (typeof node.parentid !== 'undefined' && node.parentid !== rootID && node.parentid) {
+                rawData[map[node.parentid]].children.push(node);
+            } else {
+                this.data.push(node);
+            }
         }
     }
 };
 ChDynatree.prototype.dialogEvent = function ($content, $tree, $input, $checkbox, $select) {
-    var _this = this;
+    var dynatree = this;
     $content.dialog({
         resizable: false,
         'title': this.getTitle(),
@@ -195,12 +197,12 @@ ChDynatree.prototype.dialogEvent = function ($content, $tree, $input, $checkbox,
             $input.focus();
         },
         buttons: {
-            OK: _this.okButton($tree, $input, $checkbox, $select),
+            OK: dynatree.okButton($tree, $input, $checkbox, $select),
             Отмена: {
                 'text': 'Отмена',
                 'class': 'wizard-cancel-button',
                 click: function () {
-                    $checkbox.children('input').attr('checked', false)
+                    $checkbox.children('input').attr('checked', false);
                     $(this).dialog("close");
                 }
             }
@@ -208,7 +210,6 @@ ChDynatree.prototype.dialogEvent = function ($content, $tree, $input, $checkbox,
     });
 };
 ChDynatree.prototype.checkboxClickEvent = function ($checkbox, $tree) {
-
     $checkbox.on('click', 'input', function () {
         if ($(this).is(':checked')) {
             $tree.dynatree("getRoot").visit(function (node) {
@@ -219,30 +220,24 @@ ChDynatree.prototype.checkboxClickEvent = function ($checkbox, $tree) {
                 node.select(false);
             });
         }
-    })
-
-}
+    });
+};
 ChDynatree.prototype.autoCompleteEvent = function ($search, $tree, $content) {
-    var _this = this;
+    var dynatree = this;
     $search.autocomplete({
         delay: 100,
         source: function (request, response) {
-            var searchParam = request.term.toLowerCase();
-
-            var responseArray = _this.autoCompleteData.filter(function (item, i, arr) {
-                var source = item.label.toLowerCase();
-                if (source.indexOf(searchParam) != -1) {
-                    return true
-                }
-                return false
-            });
-            $content.find('.node-searched').removeClass('node-searched')
-            $content.find("[data-title*='" + searchParam + "']").addClass('node-searched')
-            response(responseArray)
+            var search = chApp.getMain().eng2rus(request.term.toLowerCase()),
+                prepareResp = dynatree.autoCompleteData.filter(function (item) {
+                    var source = item.label.toLowerCase();
+                    return source.indexOf(search) !== -1;
+                });
+            $content.find('.node-searched').removeClass('node-searched');
+            $content.find("[data-title*='" + search + "']").addClass('node-searched');
+            response(prepareResp);
         },
-        close: function (event, ui) {
-            $content.find('.node-searched').removeClass('node-searched')
-
+        close: function () {
+            $content.find('.node-searched').removeClass('node-searched');
         },
         select: function (event, ui) {
             $content.find('.node-searched').removeClass('node-searched');
@@ -253,17 +248,17 @@ ChDynatree.prototype.autoCompleteEvent = function ($search, $tree, $content) {
             node.activate();
             var parent = node,
                 $li = $(node.li);
-            do{
+            do {
                 $li.show();
                 parent = parent.parent;
-                if(parent){
+                if (parent) {
                     $li = $(parent.li);
                 }
             }
-            while(parent);
+            while (parent);
         }
     });
-}
+};
 ChDynatree.prototype.load = function (options) {
     this.init(options);
     var $treeCon = this.$elm.parent(),
@@ -272,14 +267,14 @@ ChDynatree.prototype.load = function (options) {
         is_restore_state = this.isRestoreState(),
         $select = $treeCon.children('select');
 
-    if (typeof($dialog) != 'undefined') {
+    if (typeof $dialog !== 'undefined') {
         var default_values = $input.val().split(this.getSeparator());
         if (!is_restore_state) {
             $input.val('');
             $select.html('');
         }
         $dialog.children('.widget-tree').dynatree("getRoot").visit(function (node) {
-            if (is_restore_state && $.inArray(node.data.key, default_values) != '-1') {
+            if (is_restore_state && $.inArray(node.data.key, default_values) !== -1) {
                 node.select(true);
             } else {
                 node.select(false);
@@ -289,13 +284,14 @@ ChDynatree.prototype.load = function (options) {
         $dialog.dialog('open');
     } else {
         var $content = $('<div></div>'),
-            $tree = $('<div class="widget-tree"></div>');
-        var _this = this;
+            $tree = $('<div class="widget-tree"></div>'),
+            _this = this,
+            $panel;
         //Необходимо инициализировать данные
         this.setData($input, $content);
         this.options.children = this.data;
         if (this.hasInfoPanel()) {
-            var $panel = $('<div class="widget-panel"></div>');
+            $panel = $('<div class="widget-panel"></div>');
             this.options.onActivate = function (node) {
                 $panel.html(_this.createPanelElement(node.data));
             };
@@ -317,8 +313,10 @@ ChDynatree.prototype.load = function (options) {
             $tree.addClass('widget-tree-compact');
             var panelContent = '';
             for (var i in this.defaultsElements) {
-                var node = this.defaultsElements[i];
-                panelContent += _this.createPanelElement(node);
+                if (this.defaultsElements.hasOwnProperty(i)) {
+                    var node = this.defaultsElements[i];
+                    panelContent += _this.createPanelElement(node);
+                }
             }
             $panel.html(panelContent);
             $content.append($tree);
@@ -337,12 +335,12 @@ ChDynatree.prototype.load = function (options) {
         this.checkboxClickEvent($checkbox, $tree);
         return $content;
     }
-}
+};
 ChDynatree.prototype.createPanelElement = function (node) {
     var desc = '';
     if (node.desc) {
-        desc = node.desc
-    } else if (typeof node.data != 'undefined' && node.data.description) {
+        desc = node.desc;
+    } else if (typeof node.data !== 'undefined' && node.data.description) {
         desc = node.data.description;
     }
     return [
@@ -360,5 +358,5 @@ ChDynatree.prototype.createPanelElement = function (node) {
         desc,
         '</div>',
         '</div>'
-    ].join('')
+    ].join('');
 };
