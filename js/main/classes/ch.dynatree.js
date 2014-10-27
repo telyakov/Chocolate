@@ -122,12 +122,81 @@ ChDynatree.prototype.init = function (options) {
         }
     };
 };
-ChDynatree.prototype._getDefaultValues = function () {
-    var defValues = this.defaultValues();
-    if (defValues) {
-        defValues = defValues.split(this.getSeparator());
+ChDynatree.prototype.build = function (options) {
+    this.init(options);
+    var $treeCon = this.$elm.parent(),
+        $input = this.getInput(),
+        $dialog = $.data($input.get(0), 'dialog'),
+        isRestoreState = this.isRestoreState(),
+        $select = $treeCon.children('select');
+
+    if (typeof $dialog !== 'undefined') {
+        var defValues = $input.val().split(this.getSeparator());
+        if (!isRestoreState) {
+            $input.val('');
+            $select.empty();
+        }
+        $dialog.children('.widget-tree').dynatree("getRoot").visit(function (node) {
+            if (isRestoreState && defValues.indexOf(node.data.key)!== -1) {
+                node.select(true);
+            } else {
+                node.select(false);
+            }
+        });
+        $dialog.dialog('option', 'position', {at: 'center', collision: 'fit', my: 'center'});
+        $dialog.dialog('open');
+    } else {
+        var $content = $('<div>'),
+            $tree = $('<div>', {'class': 'widget-tree'}),
+            _this = this,
+            $panel;
+        //Необходимо инициализировать данные
+        this.setData($input, $content);
+        this.options.children = this.data;
+        if (this.hasInfoPanel()) {
+            $panel = $('<div class="widget-panel"></div>');
+            this.options.onActivate = function (node) {
+                $panel.html(_this.createPanelElement(node.data));
+            };
+
+        }
+        $tree.dynatree(this.options);
+        if (this.isExpandNodes()) {
+            $tree.dynatree("getRoot").visit(function (node) {
+                node.expand(true);
+            });
+        }
+        var $search = $('<input type="search">'),
+            $header = $('<div class="widget-header-tree"></div>'),
+            $checkbox = $('<span class="tree-checkbox"><input type="checkbox"><span class="tree-checkbox-caption">Выделить все</span></span>');
+        $header.append($search);
+        $header.append('<button class="active filter-button menu-button small-button"><span class="fa-eye"></span></button>');
+        $content.prepend($header);
+        if (this.hasInfoPanel()) {
+            $tree.addClass('widget-tree-compact');
+            var panelContent = '';
+            for (var i in this.defaultsElements) {
+                if (this.defaultsElements.hasOwnProperty(i)) {
+                    var node = this.defaultsElements[i];
+                    panelContent += _this.createPanelElement(node);
+                }
+            }
+            $panel.html(panelContent);
+            $content.append($tree);
+            $content.append($panel);
+        } else {
+            $content.append($tree);
+        }
+        if (this.isDialogEvent()) {
+            this.dialogEvent($content, $tree, $input, $checkbox, $select);
+        }
+
+        $content.next().prepend($checkbox);
+        this
+            .autoCompleteEvent($search, $tree, $content)
+            .checkboxClickEvent($checkbox, $tree);
+        return $content;
     }
-    return defValues;
 };
 ChDynatree.prototype.setData = function ($input, $content) {
     var url = this.getUrl(),
@@ -185,6 +254,37 @@ ChDynatree.prototype.setData = function ($input, $content) {
             }
         }
     }
+};
+ChDynatree.prototype._getDefaultValues = function () {
+    var defValues = this.defaultValues();
+    if (defValues) {
+        defValues = defValues.split(this.getSeparator());
+    }
+    return defValues;
+};
+ChDynatree.prototype.createPanelElement = function (node) {
+    var desc = '';
+    if (node.desc) {
+        desc = node.desc;
+    } else if (typeof node.data !== 'undefined' && node.data.description) {
+        desc = node.data.description;
+    }
+    return [
+        '<div class="widget-panel-elm"',
+        ' data-key="',
+        node.key,
+        '">',
+        '<div class="widget-panel-title">',
+        '<span>',
+        node.title,
+        '</span>',
+        '<span class="widget-elem-close fa-times"></span>',
+        '</div>',
+        '<div class="widget-panel-desc">',
+        desc,
+        '</div>',
+        '</div>'
+    ].join('');
 };
 ChDynatree.prototype.dialogEvent = function ($content, $tree, $input, $checkbox, $select) {
     var dynatree = this;
@@ -260,104 +360,4 @@ ChDynatree.prototype.autoCompleteEvent = function ($search, $tree, $content) {
         }
     });
     return dynatree;
-};
-ChDynatree.prototype.load = function (options) {
-    this.init(options);
-    var $treeCon = this.$elm.parent(),
-        $input = this.getInput(),
-        $dialog = $.data($input.get(0), "dialog"),
-        isRestoreState = this.isRestoreState(),
-        $select = $treeCon.children('select');
-
-    if (typeof $dialog !== 'undefined') {
-        var defValues = $input.val().split(this.getSeparator());
-        if (!isRestoreState) {
-            $input.val('');
-            $select.html('');
-        }
-        $dialog.children('.widget-tree').dynatree("getRoot").visit(function (node) {
-            if (isRestoreState && $.inArray(node.data.key, defValues) !== -1) {
-                node.select(true);
-            } else {
-                node.select(false);
-            }
-        });
-        $dialog.dialog("option", "position", {at: "center", collision: "fit", my: "center"});
-        $dialog.dialog('open');
-    } else {
-        var $content = $('<div></div>'),
-            $tree = $('<div class="widget-tree"></div>'),
-            _this = this,
-            $panel;
-        //Необходимо инициализировать данные
-        this.setData($input, $content);
-        this.options.children = this.data;
-        if (this.hasInfoPanel()) {
-            $panel = $('<div class="widget-panel"></div>');
-            this.options.onActivate = function (node) {
-                $panel.html(_this.createPanelElement(node.data));
-            };
-
-        }
-        $tree.dynatree(this.options);
-        if (this.isExpandNodes()) {
-            $tree.dynatree("getRoot").visit(function (node) {
-                node.expand(true);
-            });
-        }
-        var $search = $('<input type="search">'),
-            $header = $('<div class="widget-header-tree"></div>'),
-            $checkbox = $('<span class="tree-checkbox"><input type="checkbox"><span class="tree-checkbox-caption">Выделить все</span></span>');
-        $header.append($search);
-        $header.append('<button class="active filter-button menu-button small-button"><span class="fa-eye"></span></button>');
-        $content.prepend($header);
-        if (this.hasInfoPanel()) {
-            $tree.addClass('widget-tree-compact');
-            var panelContent = '';
-            for (var i in this.defaultsElements) {
-                if (this.defaultsElements.hasOwnProperty(i)) {
-                    var node = this.defaultsElements[i];
-                    panelContent += _this.createPanelElement(node);
-                }
-            }
-            $panel.html(panelContent);
-            $content.append($tree);
-            $content.append($panel);
-        } else {
-            $content.append($tree);
-        }
-        if (this.isDialogEvent()) {
-            this.dialogEvent($content, $tree, $input, $checkbox, $select);
-        }
-
-        $content.next().prepend($checkbox);
-        this
-            .autoCompleteEvent($search, $tree, $content)
-            .checkboxClickEvent($checkbox, $tree);
-        return $content;
-    }
-};
-ChDynatree.prototype.createPanelElement = function (node) {
-    var desc = '';
-    if (node.desc) {
-        desc = node.desc;
-    } else if (typeof node.data !== 'undefined' && node.data.description) {
-        desc = node.data.description;
-    }
-    return [
-        '<div class="widget-panel-elm"',
-        ' data-key="',
-        node.key,
-        '">',
-        '<div class="widget-panel-title">',
-        '<span>',
-        node.title,
-        '</span>',
-        '<span class="widget-elem-close fa-times"></span>',
-        '</div>',
-        '<div class="widget-panel-desc">',
-        desc,
-        '</div>',
-        '</div>'
-    ].join('');
 };

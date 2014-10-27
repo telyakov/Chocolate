@@ -44,14 +44,14 @@ SelectExecutorsTaskStep.prototype.run = function (mjWizard) {
             options.infoPanel = true;
             options.separator = '|';
             options.checkbox = true;
-            var $newCont = dynatreeElem.load(options);
+            var $newCont = dynatreeElem.build(options);
             openWizardDialog($newCont, mjWizard, _this, true, 'Выберните исполнителей '+mjWizard.getStepCaption());
             var $checkbox = $('<span class="tree-checkbox"><input type="checkbox"><span class="tree-checkbox-caption">Выделить все</span></span>');
             $newCont.next().prepend($checkbox);
             ChDynatree.prototype.checkboxClickEvent($checkbox, $newCont.find('.widget-tree'))
         }
 
-    )
+    );
 
     }
 };

@@ -300,8 +300,8 @@ var chFunctions = {
                 var dynatreeElem = new ChDynatree($context);
                 var options = chFunctions.treeViewOptions($context, isSingle);
                 options.title = chEditable.getTitle($context.attr('data-pk'), caption);
-                dynatreeElem.load(options);
-            })
+                dynatreeElem.build(options);
+            });
         } else {
             col.markAsNoChanged();
         }

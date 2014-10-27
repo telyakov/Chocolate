@@ -100,7 +100,7 @@ JS
     {
         $script = <<<JS
         var dnt = chApp.getFactory().getChDynatree($(this));
-        dnt.load($options);
+        dnt.build($options);
 JS;
         return $script;
     }

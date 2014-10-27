@@ -58,8 +58,8 @@ var ch ={
                             var options = chFunctions.treeViewOptions($context, isSingle);
                             options.okButton = ch.card.treeView._okButton();
                             options.defaultValues = function(){return this.data().editable.value}
-                            dynatreeElem.load(options);
-                        })
+                            dynatreeElem.build(options);
+                        });
                     }
                 });
             },
@@ -86,8 +86,8 @@ var ch ={
                             options.okButton = ch.card.treeView._okButton();
                             options.title = chEditable.getTitle($context.attr('data-pk'), caption);
                             options.defaultValues = function(){return this.data().editable.value}
-                            dynatreeElem.load(options);
-                        })
+                            dynatreeElem.build(options);
+                        });
                     }else{
                         cardElement.markAsNoChanged();
                     }
@@ -120,8 +120,8 @@ var ch ={
                             options.okButton = ch.card.treeView._okButton();
                             options.title = chEditable.getTitle($context.attr('data-pk'), caption);
                             options.defaultValues = function(){return this.data().editable.value}
-                            dynatreeElem.load(options);
-                        })
+                            dynatreeElem.build(options);
+                        });
                     }else{
                         cardElement.markAsNoChanged();
                     }
