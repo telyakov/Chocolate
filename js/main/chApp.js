@@ -114,12 +114,6 @@ chApp.getDraw = function(){
     return this.draw;
 };
 /**
- * @returns {socket}
- */
-chApp.getSocket = function(){
-    return this.main.socket;
-};
-/**
  * @returns {chFunctions}
  */
 chApp.getFunctions = function(){

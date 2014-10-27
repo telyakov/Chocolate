@@ -107,6 +107,7 @@ module.exports = function (grunt) {
                     '../js/main/functions/open_wizard_dialog.js',
                     '../js/main/functions/open_task_wizard_dialog_end.js',
                     '../js/main/chApp.js',
+                    '../js/main/modules/socket.js',
                     '../js/main/run.js'
                 ],
                 dest: '../js/main.js'

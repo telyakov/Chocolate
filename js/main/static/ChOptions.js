@@ -9,6 +9,9 @@ var ChOptions = {
     constants: {
       multiTaskService: 81
     },
+    channels:{
+      socketRequest: 'socket_request'
+    },
     settings: {
         key:'6543210',
         taskWizardSelector: '[href$=TasksWizard]',

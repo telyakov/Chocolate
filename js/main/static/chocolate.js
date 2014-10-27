@@ -10,17 +10,17 @@ var Chocolate = {
     $footer: null,
     $page: null,
     $content: null,
-    socket: null,
     _idCounter: 1,
     _initStorage: function () {
         this.storage.session = {};
-        if (typeof this.storage.local.settings == 'undefined') {
+        if (typeof this.storage.local.settings === 'undefined') {
             this.storage.local.settings = {};
         }
-        if (typeof this.storage.local.grid_settings == 'undefined') {
+        if (typeof this.storage.local.grid_settings === 'undefined') {
             this.storage.local.grid_settings = {};
         }
     },
+
     _initLog: function () {
         this.log.removeAllAppenders();
         this.log.addAppender(new log4javascript.BrowserConsoleAppender());
@@ -30,69 +30,13 @@ var Chocolate = {
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText;
     },
+
     _initSocket: function(){
-        var context = this;
-        this.socket = io.connect(chApp.getOptions().urls.webSocketServer, {reconnectionDelay: 3000});
-        function connectError() {
-            var $error = $('<div>', {
-                id: 'no-internet',
-                text: chApp.getMessages().noConnectWebsocket
-            });
-            chApp.getMain().$page.append($error);
-            this.off('connect_error');
-            context.socket
-                .off('connect')
-                .on('connect', connectSuccess);
-        }
-        function connectSuccess() {
-            $('#no-internet').remove();
-            this.off('connect');
-            this.io
-                .off('connect_error')
-                .on('connect_error', connectError);
-        }
-        context.socket.io.on('connect_error', connectError);
-        context.socket
-            .on('connect', connectSuccess)
-            .on('response', function (data) {
-                var optionsModule = chApp.getOptions(),
-                    mainModule = chApp.getMain();
-                var type = data.type, error = data.error, resData;
-
-                if (error) {
-                    resData = {};
-                } else {
-                    resData = json_parse(data.data);
-                }
-
-
-                switch (type) {
-                    case optionsModule.sql.types.roles:
-                        mainModule.user.setRoles(resData);
-                        break;
-                    case optionsModule.sql.types.forms:
-                        chApp.getFunctions().createMenu(resData);
-                        break;
-                    case optionsModule.sql.types.jquery:
-                        var firstRow;
-                        for (var i in resData) {
-                            if (resData.hasOwnProperty(i)) {
-                                firstRow = resData[i];
-                                break;
-                            }
-                        }
-                        var $elem = $('#' + data.id);
-                        for (var j in firstRow) {
-                            if (firstRow.hasOwnProperty(j)) {
-                                $elem.html(firstRow[j]);
-                                break;
-                            }
-                        }
-                        break;
-                    default:
-                        console.log(data);
-                }
-            });
+        socket(chApp);
+    },
+    createRequest: function (data) {
+        var channel = chApp.getOptions().channels.socketRequest;
+        chApp.getMediator().publish(channel, data);
     },
     init: function () {
         this._initSocket();
@@ -119,10 +63,7 @@ var Chocolate = {
     idSel: function (id) {
         return ['#', id].join('');
     },
-    createRequest: function (data) {
-        data.key = chApp.getOptions().settings.key;
-        chApp.getSocket().emit('request', data);
-    },
+
     /**
      * @returns {ChTab}
      */
