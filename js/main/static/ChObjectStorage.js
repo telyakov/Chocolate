@@ -5,7 +5,7 @@ var ChObjectStorage = {
      * @returns {object|null}
      */
     getByID: function (id) {
-        if (typeof this._objectStorage[id] != 'undefined') {
+        if (typeof this._objectStorage[id] !== 'undefined') {
             return this._objectStorage[id];
         }
         return null;
@@ -23,7 +23,7 @@ var ChObjectStorage = {
      * @param $elem
      * @returns {ChTable}
      */
-    getChTable: function($elem){
+    getChTable: function ($elem) {
         return ChObjectStorage.create($elem, 'ChTable');
 
     },
@@ -50,6 +50,13 @@ var ChObjectStorage = {
     },
     /**
      * @param $elem {jQuery}
+     * @returns {ChDynatree}
+     */
+    getChDynatree: function ($elem) {
+        return ChObjectStorage.create($elem, 'ChDynatree');
+    },
+    /**
+     * @param $elem {jQuery}
      * @returns {ChFilterForm}
      */
     getChFilterForm: function ($elem) {
@@ -67,7 +74,7 @@ var ChObjectStorage = {
      * @param $el {jQuery}
      * @returns {ChGridColumnBody}
      */
-    getChGridColumnBody: function($el){
+    getChGridColumnBody: function ($el) {
         return ChObjectStorage.create($el, 'ChGridColumnBody');
     },
     /**
@@ -81,7 +88,7 @@ var ChObjectStorage = {
      * @param $elem {jQuery}
      * @returns {ChMessagesContainer}
      */
-    getChMessagesContainer: function($elem){
+    getChMessagesContainer: function ($elem) {
         return ChObjectStorage.create($elem, 'ChMessagesContainer');
     },
 
@@ -113,7 +120,7 @@ var ChObjectStorage = {
     garbageCollection: function () {
         for (var id in this._objectStorage) {
             if (this._objectStorage.hasOwnProperty(id) && !$(Chocolate.idSel(id)).length) {
-                if( typeof this._objectStorage[id].destroy == 'function'){
+                if (typeof this._objectStorage[id].destroy === 'function') {
                     this._objectStorage[id].destroy();
                 }
                 delete this._objectStorage[id];
@@ -121,8 +128,8 @@ var ChObjectStorage = {
             }
         }
 
-        for(var prop in ChEditableCallback.callbacks){
-            if (ChEditableCallback._hasCallback(prop)&& !$(Chocolate.idSel(prop)).length) {
+        for (var prop in ChEditableCallback.callbacks) {
+            if (ChEditableCallback._hasCallback(prop) && !$(Chocolate.idSel(prop)).length) {
                 ChEditableCallback.remove(prop);
             }
         }

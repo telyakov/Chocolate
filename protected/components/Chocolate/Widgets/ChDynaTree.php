@@ -69,7 +69,6 @@ class ChDynaTree extends CWidget
         ));
         $script = $this->createTreeScript($options);
 
-
         Yii::app()->getClientScript()->registerScript($this->_buttonID,
             <<<JS
                 $('#$this->_buttonID').on('click', function(){
@@ -100,12 +99,11 @@ JS
     protected function createTreeScript($options)
     {
         $script = <<<JS
-        var ch_dynatree = ChObjectStorage.create($(this), 'ChDynatree');
-        ch_dynatree.load($options);
+        var dnt = chApp.getFactory().getChDynatree($(this));
+        dnt.load($options);
 JS;
         return $script;
     }
 
 }
-
 ?>

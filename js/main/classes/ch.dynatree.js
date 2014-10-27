@@ -221,6 +221,7 @@ ChDynatree.prototype.checkboxClickEvent = function ($checkbox, $tree) {
             });
         }
     });
+    return this;
 };
 ChDynatree.prototype.autoCompleteEvent = function ($search, $tree, $content) {
     var dynatree = this;
@@ -258,23 +259,24 @@ ChDynatree.prototype.autoCompleteEvent = function ($search, $tree, $content) {
             while (parent);
         }
     });
+    return dynatree;
 };
 ChDynatree.prototype.load = function (options) {
     this.init(options);
     var $treeCon = this.$elm.parent(),
         $input = this.getInput(),
-        $dialog = jQuery.data($input.get(0), "dialog"),
-        is_restore_state = this.isRestoreState(),
+        $dialog = $.data($input.get(0), "dialog"),
+        isRestoreState = this.isRestoreState(),
         $select = $treeCon.children('select');
 
     if (typeof $dialog !== 'undefined') {
-        var default_values = $input.val().split(this.getSeparator());
-        if (!is_restore_state) {
+        var defValues = $input.val().split(this.getSeparator());
+        if (!isRestoreState) {
             $input.val('');
             $select.html('');
         }
         $dialog.children('.widget-tree').dynatree("getRoot").visit(function (node) {
-            if (is_restore_state && $.inArray(node.data.key, default_values) !== -1) {
+            if (isRestoreState && $.inArray(node.data.key, defValues) !== -1) {
                 node.select(true);
             } else {
                 node.select(false);
@@ -324,15 +326,14 @@ ChDynatree.prototype.load = function (options) {
         } else {
             $content.append($tree);
         }
-
-
         if (this.isDialogEvent()) {
             this.dialogEvent($content, $tree, $input, $checkbox, $select);
         }
 
         $content.next().prepend($checkbox);
-        this.autoCompleteEvent($search, $tree, $content);
-        this.checkboxClickEvent($checkbox, $tree);
+        this
+            .autoCompleteEvent($search, $tree, $content)
+            .checkboxClickEvent($checkbox, $tree);
         return $content;
     }
 };

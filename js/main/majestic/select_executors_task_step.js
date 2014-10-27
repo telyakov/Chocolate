@@ -32,7 +32,7 @@ SelectExecutorsTaskStep.prototype.run = function (mjWizard) {
             var $content = $('<div><div class="widget-header"><div class="widget-titles">Выберите исполнителей</div><div class="widget-titles-content">Пожалуйста, выберите исполнителей вашего поручения</div></div></div>'),
                 $select = $('<div class="wizard-select2"></div>');
 
-            var dynatreeElem = new ChDynatree($select);
+            var dynatreeElem = chApp.getFactory().getChDynatree($select);
             var options = [];
             options.getInput = function(){return $select};
             options.isDialogEvent = false;
