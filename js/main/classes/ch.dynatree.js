@@ -124,12 +124,12 @@ ChDynatree.prototype.init = function (options) {
 };
 ChDynatree.prototype.build = function (options) {
     this.init(options);
-    var $dialog = $.data($input.get(0), 'dialog');
+    var $input = this.getInput(),
+        $dialog = $.data($input.get(0), 'dialog');
     if (typeof $dialog !== 'undefined') {
         this.loadFromCache($dialog);
     } else {
         var $treeCon = this.$elm.parent(),
-            $input = this.getInput(),
             $select = $treeCon.children('select'),
             $content = $('<div>'),
             $tree = $('<div>', {'class': 'widget-tree'}),

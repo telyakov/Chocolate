@@ -458,7 +458,7 @@ var ChocolateEvents = {
     warningMessageHandler: function () {
         var main = chApp.namespace('main');
         if (main.hasChange()) {
-            var messages = chApp.namespace('options.messages')[main.locale];
+            var messages = chApp.getMessages();
             return messages.chocolateHasChange;
         }
     },
@@ -646,7 +646,7 @@ var ChocolateEvents = {
     },
     contextFormMenuEvent: function ($context) {
         var main = chApp.namespace('main'),
-            messages = chApp.namespace('options.messages')[main.locale];
+            messages = chApp.getMessages();
         $context.contextmenu({
             delegate: 'span.card-button, td.attachment-grid-menu',
             show: { effect: 'blind', duration: 0 },
@@ -741,7 +741,7 @@ var ChocolateEvents = {
     refreshFormHandler: function () {
         var factory = chApp.namespace('factory'),
             main = chApp.namespace('main'),
-            messages = chApp.namespace('options.messages')[main.locale],
+            messages = chApp.getMessages(),
             form = factory.getChGridForm($(this).closest('form'));
         if (form.isHasChange()) {
             var $dialog = $('<div>' + messages.refreshForm + '</div>');

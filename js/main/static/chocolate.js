@@ -1,7 +1,6 @@
 var Chocolate = {
     ATTACHMENTS_VIEW: 'attachments.xml',
     ID_REG_EXP: /00pk00/g,
-    locale: 'ru',
     storage: new ObjectStorage(),
     log: log4javascript.getLogger(),
     $window: null,
@@ -32,7 +31,7 @@ var Chocolate = {
     },
 
     _initSocket: function(){
-        socket(chApp);
+        socket(chApp, io, optionsModule);
     },
     createRequest: function (data) {
         var channel = chApp.getOptions().channels.socketRequest;

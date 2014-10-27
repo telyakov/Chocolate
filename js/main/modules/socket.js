@@ -1,15 +1,17 @@
 /**
  * @param app chApp
+ * @param io {Socket}
+ * @param optionsModule {optionsModule}
  * @returns {{facade: facade}}
  */
-function socket(app) {
-    var optionsModule = app.getOptions(),
-        socketCon = io.connect(optionsModule.urls.webSocketServer, {reconnectionDelay: 3000}),
+function socket(app, io, optionsModule) {
+    var connectUrl = optionsModule.getUrl('webSocketServer'),
+        socketCon = io.connect(connectUrl, {reconnectionDelay: 3000}),
         _private = {
             connectErrorHandler: function () {
                 var $error = $('<div>', {
                     id: 'no-internet',
-                    text: app.getMessages().noConnectWebsocket
+                    text: optionsModule.getMessage('noConnectWebsocket')
                 });
                 app.getMain().$page.append($error);
                 socketCon.io.off('connect_error');
@@ -33,13 +35,13 @@ function socket(app) {
                     var type = data.type,
                         resData = json_parse(data.data);
                     switch (type) {
-                        case optionsModule.sql.types.roles:
+                        case optionsModule.getRequestType('roles'):
                             mainModule.user.setRoles(resData);
                             break;
-                        case optionsModule.sql.types.forms:
+                        case optionsModule.getRequestType('forms'):
                             app.getFunctions().createMenu(resData);
                             break;
-                        case optionsModule.sql.types.jquery:
+                        case optionsModule.getRequestType('jquery'):
                             var firstRow;
                             for (var i in resData) {
                                 if (resData.hasOwnProperty(i)) {
@@ -66,9 +68,9 @@ function socket(app) {
         .on('connect', _private.connectHandler)
         .on('response', _private.responseHandler);
 
-    var channel = optionsModule.channels.socketRequest;
+    var channel = optionsModule.getChannel('socketRequest');
     app.getMediator().subscribe(channel, function (data) {
-        data.key = optionsModule.settings.key;
+        data.key = optionsModule.getSetting('key');
         socketCon.emit('request', data);
     });
 

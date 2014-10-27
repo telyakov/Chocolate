@@ -80,7 +80,7 @@ chApp.getMain = function () {
  * @returns {ChOptions.messages.ru}
  */
 chApp.getMessages = function () {
-    return this.options.messages[chApp.getMain().locale];
+    return this.options.messages[this.options.settings.locale];
 };
 /**
  * @returns {ChObjectStorage}

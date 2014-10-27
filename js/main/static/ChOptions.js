@@ -3,17 +3,18 @@ var ChOptions = {
         output: "с {startRow} по {endRow} ({totalRows})",
         size: 40
     },
-    attributes:{
-      filterAutoRefresh: 'data-auto-ref'
+    attributes: {
+        filterAutoRefresh: 'data-auto-ref'
     },
     constants: {
-      multiTaskService: 81
+        multiTaskService: 81
     },
-    channels:{
-      socketRequest: 'socket_request'
+    channels: {
+        socketRequest: 'socket_request'
     },
     settings: {
-        key:'6543210',
+        locale: 'ru',
+        key: '6543210',
         taskWizardSelector: '[href$=TasksWizard]',
         defaultColumnsWidth: '150',
         defaultAutoUpdateMS: 100000,
@@ -27,22 +28,22 @@ var ChOptions = {
         keyCaption: 'ключ'
     },
     keys: {
-      controlColumn: 'chocolate-control-column'
+        controlColumn: 'chocolate-control-column'
     },
-    sql:{
-      getForms: 'core.UserFormsGet [userid]',
-      getRoles: 'core.UserRolesGet [userid]',
-      types:{
-          forms: 'forms',
-          roles: 'roles',
-          jquery: 'jquery'
-      },
-      params:{
-          userID: '[userid]'
-      }
+    sql: {
+        getForms: 'core.UserFormsGet [userid]',
+        getRoles: 'core.UserRolesGet [userid]',
+        types: {
+            forms: 'forms',
+            roles: 'roles',
+            jquery: 'jquery'
+        },
+        params: {
+            userID: '[userid]'
+        }
     },
     classes: {
-        allowHideColumn :'data-col-hide',
+        allowHideColumn: 'data-col-hide',
         hiddenAllColsTable: 'ch-hide',
         hiddenSystemColsTable: 'ch-hide-system',
         activeRow: 'row-active',
@@ -64,7 +65,7 @@ var ChOptions = {
         searchedColumn: 'grid-column-searched',
         discussionForm: 'discussion-form'
     },
-    urls:{
+    urls: {
         webSocketServer: 'http://crm.78stroy.ru',
         addRow: '/grid/insertRow',
         imagesUrls: '/majestic/images',
@@ -79,11 +80,11 @@ var ChOptions = {
         formSave: '/grid/save',
         bpOneTask: 'http://bp.78stroy.ru/grid/searchByID?view=tasks%5Ctasksfortops.xml&id='
     },
-    labels:{
+    labels: {
         attention: 'attention',
         notView: 'not-view'
     },
-    messages:{
+    messages: {
         ru: {
             noConnectWebsocket: 'Нет подключения к WebSocket серверу. Некоторые функции могут быть недоступны',
             projectName: 'Шоколад',
@@ -97,3 +98,41 @@ var ChOptions = {
         }
     }
 };
+
+var optionsModule = (function () {
+    var context = ChOptions,
+        _private = {
+            getSetting: function (key) {
+                return context.settings[key];
+            },
+            getMessage: function (key) {
+                return context.messages[_private.getSetting('locale')][key];
+            },
+            getUrl: function (key) {
+                return context.urls[key];
+            },
+            getRequestType: function (key) {
+                return context.sql.types[key];
+            },
+            getChannel: function (key) {
+                return context.channels[key];
+            }
+        };
+    return {
+        getMessage: function (key) {
+            return _private.getMessage(key);
+        },
+        getUrl: function (key) {
+            return _private.getUrl(key);
+        },
+        getRequestType: function (key) {
+            return _private.getRequestType(key);
+        },
+        getChannel: function (key) {
+            return _private.getChannel(key);
+        },
+        getSetting: function (key) {
+            return _private.getSetting(key);
+        }
+    };
+}());
