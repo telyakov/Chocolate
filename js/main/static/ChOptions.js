@@ -10,7 +10,9 @@ var ChOptions = {
         multiTaskService: 81
     },
     channels: {
-        socketRequest: 'socket_request'
+        socketRequest: 'socket_request',
+        logError: 'log_error',
+        showError: 'show_error'
     },
     settings: {
         locale: 'ru',

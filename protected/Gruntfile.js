@@ -106,7 +106,9 @@ module.exports = function (grunt) {
                     '../js/main/majestic/select_description_task_step.js',
                     '../js/main/functions/open_wizard_dialog.js',
                     '../js/main/functions/open_task_wizard_dialog_end.js',
+                    '../js/main/modules/mediator.js',
                     '../js/main/chApp.js',
+                    '../js/main/modules/log.js',
                     '../js/main/modules/socket.js',
                     '../js/main/run.js'
                 ],

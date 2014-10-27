@@ -31,7 +31,7 @@ var Chocolate = {
     },
 
     _initSocket: function(){
-        socket(chApp, io, optionsModule);
+        socket(chApp, io, optionsModule, logModule);
     },
     createRequest: function (data) {
         var channel = chApp.getOptions().channels.socketRequest;
@@ -459,3 +459,4 @@ var Chocolate = {
         }
     }
 };
+

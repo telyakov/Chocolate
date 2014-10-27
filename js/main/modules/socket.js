@@ -1,10 +1,12 @@
 /**
+ * Socket module. Using socket.io library https://github.com/Automattic/socket.io-client
  * @param app chApp
  * @param io {Socket}
  * @param optionsModule {optionsModule}
+ * @param logModule {logModule}
  * @returns {{facade: facade}}
  */
-function socket(app, io, optionsModule) {
+function socket(app, io, optionsModule, logModule) {
     var connectUrl = optionsModule.getUrl('webSocketServer'),
         socketCon = io.connect(connectUrl, {reconnectionDelay: 3000}),
         _private = {
@@ -13,7 +15,8 @@ function socket(app, io, optionsModule) {
                     id: 'no-internet',
                     text: optionsModule.getMessage('noConnectWebsocket')
                 });
-                app.getMain().$page.append($error);
+
+                logModule.showMessage($error);
                 socketCon.io.off('connect_error');
                 socketCon
                     .off('connect')
