@@ -20,7 +20,6 @@ $(function () {
 
     }(jQuery));
 
-    chApp.namespace('main').init();
     if (typeof $.fn.editableform === 'function') {
         $.fn.editableform.buttons =
             [
@@ -98,68 +97,7 @@ $(function () {
             });
         }
     });
+
+    chApp.getMain().init();
     chApp.namespace('events').createEventsHandlers();
-
-
 });
-var socket = io.connect(chApp.getOptions().urls.webSocketServer, {reconnectionDelay: 3000});
-function connectError() {
-    var $error = $('<div>', {
-        id: 'no-internet',
-        text: chApp.getMessages().noConnectWebsocket
-    });
-    chApp.getMain().$page.append($error);
-    this.off('connect_error');
-    socket
-        .off('connect')
-        .on('connect', connectSuccess);
-}
-function connectSuccess() {
-    $('#no-internet').remove();
-    this.off('connect');
-    this.io
-        .off('connect_error')
-        .on('connect_error', connectError);
-}
-socket.io.on('connect_error', connectError);
-socket
-    .on('connect', connectSuccess)
-    .on('response', function (data) {
-        var optionsModule = chApp.getOptions(),
-            mainModule = chApp.getMain();
-        var type = data.type, error = data.error, resData;
-
-        if (error) {
-            resData = {};
-        } else {
-            resData = json_parse(data.data);
-        }
-
-
-        switch (type) {
-            case optionsModule.sql.types.roles:
-                mainModule.user.setRoles(resData);
-                break;
-            case optionsModule.sql.types.forms:
-                chApp.getFunctions().createMenu(resData);
-                break;
-            case optionsModule.sql.types.jquery:
-                var firstRow;
-                for (var i in resData) {
-                    if (resData.hasOwnProperty(i)) {
-                        firstRow = resData[i];
-                        break;
-                    }
-                }
-                var $elem = $('#' + data.id);
-                for (var j in firstRow) {
-                    if (firstRow.hasOwnProperty(j)) {
-                        $elem.html(firstRow[j]);
-                        break;
-                    }
-                }
-                break;
-            default:
-                console.log(data);
-        }
-    });

@@ -124,29 +124,14 @@ ChDynatree.prototype.init = function (options) {
 };
 ChDynatree.prototype.build = function (options) {
     this.init(options);
-    var $treeCon = this.$elm.parent(),
-        $input = this.getInput(),
-        $dialog = $.data($input.get(0), 'dialog'),
-        isRestoreState = this.isRestoreState(),
-        $select = $treeCon.children('select');
-
+    var $dialog = $.data($input.get(0), 'dialog');
     if (typeof $dialog !== 'undefined') {
-        var defValues = $input.val().split(this.getSeparator());
-        if (!isRestoreState) {
-            $input.val('');
-            $select.empty();
-        }
-        $dialog.children('.widget-tree').dynatree("getRoot").visit(function (node) {
-            if (isRestoreState && defValues.indexOf(node.data.key)!== -1) {
-                node.select(true);
-            } else {
-                node.select(false);
-            }
-        });
-        $dialog.dialog('option', 'position', {at: 'center', collision: 'fit', my: 'center'});
-        $dialog.dialog('open');
+        this.loadFromCache($dialog);
     } else {
-        var $content = $('<div>'),
+        var $treeCon = this.$elm.parent(),
+            $input = this.getInput(),
+            $select = $treeCon.children('select'),
+            $content = $('<div>'),
             $tree = $('<div>', {'class': 'widget-tree'}),
             _this = this,
             $panel;
@@ -197,6 +182,25 @@ ChDynatree.prototype.build = function (options) {
             .checkboxClickEvent($checkbox, $tree);
         return $content;
     }
+};
+ChDynatree.prototype.loadFromCache = function($dialog){
+    var $treeCon = this.$elm.parent(),
+        $input = this.getInput(),
+        isRestoreState = this.isRestoreState();
+    var defValues = $input.val().split(this.getSeparator());
+    if (!isRestoreState) {
+        $input.val('');
+        $treeCon.children('select').empty();
+    }
+    $dialog.children('.widget-tree').dynatree("getRoot").visit(function (node) {
+        if (isRestoreState && defValues.indexOf(node.data.key)!== -1) {
+            node.select(true);
+        } else {
+            node.select(false);
+        }
+    });
+    $dialog.dialog('option', 'position', {at: 'center', collision: 'fit', my: 'center'});
+    $dialog.dialog('open');
 };
 ChDynatree.prototype.setData = function ($input, $content) {
     var url = this.getUrl(),
