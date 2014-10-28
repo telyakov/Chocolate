@@ -5,24 +5,24 @@
  * @param optionsModule {optionsModule}
  * @param mediator {mediator}
  */
-var socketModule = (function socket(io, optionsModule, mediator) {
+var socketModule = (function (io, optionsModule, mediator) {
     var connectUrl = optionsModule.getUrl('webSocketServer'),
-        socketCon = io.connect(connectUrl, {reconnectionDelay: 3000}),
+        socket = io.connect(connectUrl, {reconnectionDelay: 3000}),
         _private = {
             connectErrorHandler: function () {
                 mediator.publish(
                     optionsModule.getChannel('showError'),
                     optionsModule.getMessage('noConnectWebsocket')
                 );
-                socketCon.io.off('connect_error');
-                socketCon
+                socket.io.off('connect_error');
+                socket
                     .off('connect')
                     .on('connect', _private.connectHandler);
             },
             connectHandler: function () {
                 $('#no-internet').remove();
-                socketCon.off('connect');
-                socketCon.io
+                socket.off('connect');
+                socket.io
                     .off('connect_error')
                     .on('connect_error', _private.connectErrorHandler);
             },
@@ -33,13 +33,13 @@ var socketModule = (function socket(io, optionsModule, mediator) {
                 );
             }
         };
-    socketCon.io.on('connect_error', _private.connectErrorHandler);
-    socketCon
+    socket.io.on('connect_error', _private.connectErrorHandler);
+    socket
         .on('connect', _private.connectHandler)
         .on('response', _private.responseHandler);
     return {
         emit: function(event, data){
-            socketCon.emit(event, data);
+            socket.emit(event, data);
         }
     };
 })(io,optionsModule, mediator);
