@@ -9,9 +9,7 @@
  * http://www.codrops.com
  */
 ;( function( window ) {
-	
 	'use strict';
-
 	// http://stackoverflow.com/a/11381730/989439
 	function mobilecheck() {
 		var check = false;
@@ -19,12 +17,12 @@
 		return check;
 	}
 
-	function gnMenu( el, options ) {	
+	function GnMenu( el, options ) {
 		this.el = el;
 		this._init();
 	}
 
-	gnMenu.prototype = {
+    GnMenu.prototype = {
 		_init : function() {
 			this.trigger = this.el.querySelector( 'a.gn-icon-menu' );
 			this.menu = this.el.querySelector( 'nav.gn-menu-wrapper' );
@@ -46,12 +44,6 @@
                     self._openMenu();
                     document.addEventListener( self.eventtype, self.bodyClickFn );
                 } );
-//				this.menu.addEventListener( 'mouseout', function(ev) { self._closeMenu() } );
-			
-//				this.menu.addEventListener( 'mouseover', function(ev) {
-//					self._openMenu();
-//					document.addEventListener( self.eventtype, self.bodyClickFn );
-//				} );
 			}
 			this.trigger.addEventListener( this.eventtype, function( ev ) {
 				ev.stopPropagation();
@@ -65,31 +57,27 @@
 					document.addEventListener( self.eventtype, self.bodyClickFn );
 				}
 			} );
-//			this.menu.addEventListener( this.eventtype, function(ev) { ev.stopPropagation(); } );
 		},
-//		_openIconMenu : function() {
-//			classie.add( this.menu, 'gn-open-part' );
-//		},
 		_closeIconMenu : function() {
 			classie.remove( this.menu, 'gn-open-part' );
 		},
 		_openMenu : function() {
-			if( this.isMenuOpen ) return;
+			if( this.isMenuOpen ) {return;}
 			classie.add( this.trigger, 'gn-selected' );
 			this.isMenuOpen = true;
 			classie.add( this.menu, 'gn-open-all' );
 			this._closeIconMenu();
 		},
 		_closeMenu : function() {
-			if( !this.isMenuOpen ) return;
+			if( !this.isMenuOpen ) {return;}
 			classie.remove( this.trigger, 'gn-selected' );
 			this.isMenuOpen = false;
 			classie.remove( this.menu, 'gn-open-all' );
 			this._closeIconMenu();
 		}
-	}
+	};
 
 	// add to global namespace
-	window.gnMenu = gnMenu;
+	window.GnMenu = GnMenu;
 
 } )( window );

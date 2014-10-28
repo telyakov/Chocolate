@@ -1,7 +1,7 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
  */
-var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule) {
+var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule) {
     var showErrorsChannel = optionsModule.getChannel('showError'),
         setRolesChannel = optionsModule.getChannel('setRoles'),
         logErrorChannel =  optionsModule.getChannel('logError');
@@ -34,7 +34,7 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
                     mediator.publish(setRolesChannel, resData);
                     break;
                 case optionsModule.getRequestType('forms'):
-                    chApp.getFunctions().createMenu(resData);
+                    menuModule.init(resData);
                     break;
                 case optionsModule.getRequestType('jquery'):
                     var firstRow;
@@ -88,4 +88,4 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
         }
     };
 
-}(logModule, mediator, optionsModule, socketModule, storageModule, userModule));
+}(logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule));
