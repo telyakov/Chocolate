@@ -56,20 +56,21 @@ var chAjaxQueue = {
                         var chResponse = new ChPackageResponse(response);
                         chResponse.applyResponse();
                     } catch (e) {
-                        Chocolate.log.error(
+                        mediator.publish(facade.getOptionsModule().getChannel('logError'),
                             'Возникла ошибка при обработке ответа выполнения  ajax - очереди с сервера на клиенте',
                             e
                         );
                     }
                 })
                 .fail(function (response) {
-                    Chocolate.log.error(
+                    mediator.publish(facade.getOptionsModule().getChannel('logError'),
                         'Возникла ошибка на сервере при отправке ajax - очереди',
                         data,
                         response.responseText,
                         response.status
                     );
-                })
+
+                });
         }
     }
 };

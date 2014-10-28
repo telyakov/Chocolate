@@ -58,7 +58,7 @@ test('chAjaxQueue.send',function(){
         .enqueue(this.firstTask)
         .enqueue(this.secondTask)
         .enqueue(this.thirdTask);
-    var errorSpy = this.stub(Chocolate.log, 'error')
+    var errorSpy = this.stub(log4javascript.getLogger(), 'error');
     fakeServer.respondWith(
         'POST',
         ChOptions.urls.queueExecute,
@@ -72,7 +72,7 @@ test('chAjaxQueue.send',function(){
     fakeServer.respond();
     ok(errorSpy.calledOnce, 'В случае успешного ответа, но в неправильном формате ошибка логируется');
 
-    errorSpy.reset()
+    errorSpy.reset();
 
     var spyApplyResponse = this.stub(ChPackageResponse.prototype, 'applyResponse');
     chAjaxQueue
@@ -92,7 +92,7 @@ test('chAjaxQueue.send',function(){
     fakeServer.respond();
     ok(spyApplyResponse.calledOnce, 'В случае успешного ответа в форматe json - вызывается метод ChPackageResponse.applyResponse');
     ChPackageResponse.prototype.applyResponse.restore();
-    spyApplyResponse.restore()
+    spyApplyResponse.restore();
 
     chAjaxQueue
         .enqueue(this.firstTask)
@@ -111,5 +111,5 @@ test('chAjaxQueue.send',function(){
     fakeServer.respond();
     ok(errorSpy.calledOnce, 'В случае серверной ошибки - логируется исключение.');
     errorSpy.reset();
-    Chocolate.log.error.restore();
+    log4javascript.getLogger().error.restore();
 });

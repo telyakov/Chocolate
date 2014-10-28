@@ -155,7 +155,7 @@ test('Chocolate.openForm', function(){
     fakeServer.respond();
     ok(Chocolate.$tabs.children('#'+formID).length, 'В случае успешного ajax - запроса, данные добавляются на страницу');
 
-    var errorStub = this.stub(Chocolate.log, 'error');
+    var errorStub = this.stub(log4javascript.getLogger(), 'error');
     var spyToAppend = sinon.spy($.prototype, "append"), badContentID = 'bad-content';
     fakeServer.respondWith(
         'POST',
@@ -185,7 +185,7 @@ test('Chocolate.openForm', function(){
     fakeServer.respond();
     ok(errorStub.calledOnce, 'Ошибка на сервере, должна залогироваться');
     errorStub.reset();
-    Chocolate.log.error.restore();
+    log4javascript.getLogger().error.restore();
 });
 test('Chocolate._isValidFormUrl', function(){
     expect(3);
@@ -373,7 +373,7 @@ test('Chocolate.tab.card._onBeforeLoad', function(){
         ]
     );
 
-    var stubErrorLog = this.stub(Chocolate.log, 'error');
+    var stubErrorLog = this.stub(log4javascript.getLogger(), 'error');
     Chocolate.tab.card._onBeforeLoad(fakeEvent, fakeUi, $tabPanel);
     fakeServer.respond();
     ok(!stubSetCardTemplate.called && fakeUi.panel.html() === '' && stubErrorLog.calledOnce, 'Если при вставке шаблона в DOM генерируется ошибка - данные не должны быть добавлены на страницу(DOM) и не сохраняются в шаблоне + логируется ошибка');

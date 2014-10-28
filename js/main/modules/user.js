@@ -1,9 +1,9 @@
 /**
  * User module. Dependencies moment.js, optionsModule, storageModule, mediator
  */
-var userModule = (function (moment, optionsModule, storageModule, mediator) {
-    var context = this,
-        _private = {
+var userModule = (function (moment, optionsModule, storageModule) {
+    'use strict';
+    var _private = {
             getName: function () {
                 return storageModule.getUserName();
             },
@@ -40,4 +40,4 @@ var userModule = (function (moment, optionsModule, storageModule, mediator) {
         }
     };
 
-})(moment, optionsModule, storageModule, mediator);
+})(moment, optionsModule, storageModule);

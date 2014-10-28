@@ -109,7 +109,7 @@ var ChObjectStorage = {
                 objInStorage = new window[objectClass]($elem);
                 this._set(id, objInStorage);
             } catch (e) {
-                Chocolate.log.error(
+                mediator.publish(facade.getOptionsModule().getChannel('logError'),
                     'Ошибка при создании и сохранении класса с именем: ' + objectClass,
                     e
                 );

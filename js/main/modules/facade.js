@@ -3,9 +3,13 @@
  */
 var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule) {
     var showErrorsChannel = optionsModule.getChannel('showError'),
-        setRolesChannel = optionsModule.getChannel('setRoles');
+        setRolesChannel = optionsModule.getChannel('setRoles'),
+        logErrorChannel =  optionsModule.getChannel('logError');
     mediator.subscribe(showErrorsChannel, function (msg) {
         logModule.showMessage(msg);
+    });
+    mediator.subscribe(logErrorChannel, function (args) {
+        logModule.error(args);
     });
 
     var requestChannel = optionsModule.getChannel('socketRequest');
@@ -19,7 +23,7 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
         var error = data.error;
         if (error) {
             mediator.publish(
-                optionsModule.getChannel('logError'),
+                logErrorChannel,
                 error
             );
         } else {
@@ -75,6 +79,12 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
     return {
         getUserModule: function(){
             return userModule;
+        },
+        getLogModule: function(){
+            return logModule;
+        },
+        getOptionsModule: function(){
+            return optionsModule;
         }
     };
 

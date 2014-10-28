@@ -58,19 +58,13 @@ test('ChObjectStorage.create', function(){
     ok(ChObjectStorage.getByID(elemID) instanceof ChGridForm, 'jQuery объект с ключом должен сохранить свой ключ при сохранении');
     ok(card instanceof ChCard, 'jQuery объект без ключа получает уникальный ключ и сохраняется в хранилище');
 
-//    var mockID = 'yj43dfdw';
-//    var $mockElem = $('<div></div>').attr('id', mockID);
-//    var form = ChObjectStorage.create($mockElem, 'ChGridForm');
-//    var tab = ChObjectStorage.create($mockElem, 'ChTab');
-//    ok(tab instanceof ChTab, 'Создается новый объект указанного типа, если его не было в хранилище или с этим ключом был другой объект');
-
     var spyCreate = this.spy(ChObjectStorage, 'create');
-    var stubErrorLog = this.stub(Chocolate.log, 'error');
+    var stubErrorLog = this.stub(log4javascript.getLogger(), 'error');
     var invalidObj = ChObjectStorage.create($('<a></a>'), 'invalidObj');
     ok(!spyCreate.threw() && invalidObj === null, 'Если указанного объекта не существует, возвращается null и логируется ошибка;');
     spyCreate.reset();
     stubErrorLog.reset();
-    Chocolate.log.error.restore();
+    log4javascript.getLogger().error.restore();
     var formID = 'qodfskl342';
     var $formElem = $('<div></div>').attr('id', formID);
     var spySet =  this.spy(ChObjectStorage, '_set');

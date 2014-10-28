@@ -3,6 +3,7 @@
  * Dependencies jQuery, log4javascript
  */
 var logModule = (function(log4javascript, $) {
+    'use strict';
     var log = log4javascript.getLogger();
     log.removeAllAppenders();
     log.addAppender(new log4javascript.BrowserConsoleAppender());

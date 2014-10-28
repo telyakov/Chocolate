@@ -2,7 +2,6 @@ var Chocolate = {
     ATTACHMENTS_VIEW: 'attachments.xml',
     ID_REG_EXP: /00pk00/g,
     storage:null,
-    log: log4javascript.getLogger(),
     $window: null,
     $tabs: null,
     $header: null,
@@ -12,10 +11,6 @@ var Chocolate = {
     _idCounter: 1,
     _initStorage: function () {
         this.storage = storageModule.getStorage();
-    },
-    _initLog: function () {
-        this.log.removeAllAppenders();
-        this.log.addAppender(new log4javascript.BrowserConsoleAppender());
     },
     stripHtml: function strip(html) {
         var tmp = document.createElement("DIV");
@@ -34,7 +29,6 @@ var Chocolate = {
         this.$content = $('#content');
         this.$page = $('#pagewrap');
         this._initStorage();
-        this._initLog();
     },
     /**
      * @param className {string}
@@ -172,7 +166,7 @@ var Chocolate = {
                         Chocolate.$tabs.append($form);
                     } catch (e) {
                         $form.remove();
-                        Chocolate.log.error(
+                        mediator.publish(facade.getOptionsModule().getChannel('logError'),
                             'Ошибка при вставке js + html формы в дерево',
                             e
                         );
@@ -181,11 +175,11 @@ var Chocolate = {
                     }
                 })
                 .fail(function (e) {
-                    Chocolate.log.error(
-                        'Ошибка при получении формы с сервера'
-                        , e
-                    )
-                })
+                    mediator.publish(facade.getOptionsModule().getChannel('logError'),
+                        'Ошибка при получении формы с сервера',
+                        e
+                    );
+                });
         }
     },
     /**
@@ -341,18 +335,18 @@ var Chocolate = {
                                     fmCardCollection.setCardTemplate(tabID, template, isNumeric);
                                 } catch (e) {
                                     $content.remove();
-                                    Chocolate.log.error(
+                                    mediator.publish(facade.getOptionsModule().getChannel('logError'),
                                         'Возникла ошибка при инициализации шаблона',
                                         e
-                                    )
+                                    );
                                 }
                             })
                             .fail(function (e) {
-                                Chocolate.log.error(
+                                mediator.publish(facade.getOptionsModule().getChannel('logError'),
                                     'Ошибка при получении с сервера шаблон закладки для карточки',
                                     e
-                                )
-                            })
+                                );
+                            });
                     } else {
                         Chocolate.tab.card._initScripts(ui, Chocolate.layoutTemplate(template, pk), $tabPanel);
 

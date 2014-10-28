@@ -393,15 +393,23 @@ var ChocolateEvents = {
                                 $tabs.tabs("refresh");
                                 form.getFmChildGridCollection().setCardTemplate(view, parentView, template, isNew);
                             } catch (er) {
-                                main.log.error('Возникла ошибка при вставке html+ js дочерней сетке в DOM', er);
+                                mediator.publish(facade.getOptionsModule().getChannel('logError'),
+                                    'Возникла ошибка при вставке html+ js дочерней сетке в DOM',
+                                    er
+                                );
                                 $html.remove();
                             }
                         } else {
-                            main.log.error(response.getStatusMsg);
+                            mediator.publish(facade.getOptionsModule().getChannel('logError'),
+                                response.getStatusMsg
+                            );
                         }
                     })
                     .fail(function (er) {
-                        main.log.error('Возникла ошибка при открытии дочерней карточки', er);
+                        mediator.publish(facade.getOptionsModule().getChannel('logError'),
+                            'Возникла ошибка при открытии дочерней карточки',
+                            er
+                        );
                     });
             } else {
                 $('<div></div>')
@@ -423,11 +431,15 @@ var ChocolateEvents = {
             .done(function (res) {
                 var response = new ChResponse(res);
                 if (response.hasError()) {
-                    main.log.error(response.getStatusMsg());
+                    mediator.publish(facade.getOptionsModule().getChannel('logError'),
+                        response.getStatusMsg()
+                    );
                 }
             })
             .fail(function (er) {
-                main.log.error(er);
+                mediator.publish(facade.getOptionsModule().getChannel('logError'),
+                    er
+                );
             });
 
     },
@@ -696,7 +708,7 @@ var ChocolateEvents = {
                     var resStatuses = chApp.namespace('responseStatuses'),
                         main = chApp.namespace('main');
                     form.getMessagesContainer().sendMessage(e.responseText, resStatuses.ERROR);
-                    main.log.error(
+                    mediator.publish(facade.getOptionsModule().getChannel('logError'),
                         'Ошибка при получении данных при создании новой строки:',
                         e.responseText,
                         e.statusText,

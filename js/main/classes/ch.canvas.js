@@ -27,13 +27,12 @@ ChCanvas.prototype.prepareData = function (data) {
             var a_index = parseInt(a[x_key], 10);
             var b_index = parseInt(b[x_key], 10);
             return a_index > b_index ? 1 : -1;
-        })
+        });
 
         data2storage[index] = data;
-    })
-//    console.log(data2storage)
+    });
     return data2storage;
-}
+};
 /**
  * Прорисовка начинает
  * @param data array
