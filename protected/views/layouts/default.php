@@ -85,7 +85,7 @@ JS
 
     $userID = Yii::app()->user->id;
     Yii::app()->clientScript->registerScript('authorization', <<<JS
-        Chocolate.user.setIdentity('$userName', '$userID');
+        mediator.publish(optionsModule.getChannel('setIdentity'),'$userID','$userName');
 JS
         , CClientScript::POS_READY
     )

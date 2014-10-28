@@ -13,7 +13,9 @@ var ChOptions = {
         socketRequest: 'socket_request',
         socketResponse: 'socket_response',
         logError: 'log_error',
-        showError: 'show_error'
+        showError: 'show_error',
+        setIdentity: 'set_identity',
+        setRoles: 'set_roles'
     },
     settings: {
         locale: 'ru',
@@ -119,6 +121,9 @@ var optionsModule = (function () {
             },
             getChannel: function (key) {
                 return context.channels[key];
+            },
+            getSql: function(key){
+                return context.sql[key];
             }
         };
     return {
@@ -136,6 +141,9 @@ var optionsModule = (function () {
         },
         getSetting: function (key) {
             return _private.getSetting(key);
+        },
+        getSql: function(key){
+            return _private.getSql(key);
         }
     };
 }());

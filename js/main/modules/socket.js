@@ -1,9 +1,6 @@
 /**
  * Socket module. Based on socket.io library
  * https://github.com/Automattic/socket.io-client
- * @param io {Socket}
- * @param optionsModule {optionsModule}
- * @param mediator {mediator}
  */
 var socketModule = (function (io, optionsModule, mediator) {
     var connectUrl = optionsModule.getUrl('webSocketServer'),

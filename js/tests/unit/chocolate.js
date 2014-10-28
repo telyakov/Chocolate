@@ -218,14 +218,6 @@ test('Chocolate.hasChange', function(){
     ok(Chocolate.hasChange(), 'При наличии изменении в формах возвращается true');
 
 });
-test('Chocolate.user.setIdentity', function(){
-    expect(2);
-    var name = 'Крокодил Гена', id =0;
-    Chocolate.user.setIdentity(name, 0);
-    equal(Chocolate.storage.session.user.name, name, 'Имя сохраняется в локальном хранилище ');
-    equal(Chocolate.storage.session.user.id, id, 'ID пользователя сохраняется в локальном хранилище ');
-
-});
 test('Chocolate.user.getName', function(){
     expect(1);
     var userName = 'Джон Малкович';

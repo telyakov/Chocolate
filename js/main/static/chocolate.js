@@ -1,7 +1,7 @@
 var Chocolate = {
     ATTACHMENTS_VIEW: 'attachments.xml',
     ID_REG_EXP: /00pk00/g,
-    storage: new ObjectStorage(),
+    storage:null,
     log: log4javascript.getLogger(),
     $window: null,
     $tabs: null,
@@ -11,15 +11,8 @@ var Chocolate = {
     $content: null,
     _idCounter: 1,
     _initStorage: function () {
-        this.storage.session = {};
-        if (typeof this.storage.local.settings === 'undefined') {
-            this.storage.local.settings = {};
-        }
-        if (typeof this.storage.local.grid_settings === 'undefined') {
-            this.storage.local.grid_settings = {};
-        }
+        this.storage = storageModule.getStorage();
     },
-
     _initLog: function () {
         this.log.removeAllAppenders();
         this.log.addAppender(new log4javascript.BrowserConsoleAppender());
@@ -211,48 +204,6 @@ var Chocolate = {
                 moment(new Date()).format(ChOptions.settings.signatureFormat),
                 ''
             ].join(' ')
-        },
-        /**
-         * @param name {string}
-         * @param id {string}
-         */
-        setIdentity: function (name, id) {
-
-            Chocolate.storage.session.user = {
-                id: id,
-                name: name
-            };
-
-            var bindModule = chApp.getBindService(),
-                optionsModule = chApp.getOptions(),
-                mainModule = chApp.getMain();
-
-            var rolesSql = bindModule.bindSql(optionsModule.sql.getRoles),
-                formsSql = bindModule.bindSql(optionsModule.sql.getForms);
-            mainModule.createRequest({
-                query: rolesSql,
-                type: optionsModule.sql.types.roles
-            });
-            mainModule.createRequest({
-                query: formsSql,
-                type: optionsModule.sql.types.forms
-            });
-        },
-        setRoles: function (roles) {
-            var result = [];
-            var i,
-                hasOwn = Object.prototype.hasOwnProperty,
-                role;
-            for (i in roles) {
-                if (hasOwn.call(roles, i)) {
-                    role = roles[i].name.toLowerCase();
-                    result.push(role);
-                }
-            }
-            if(typeof Chocolate.storage.session.user === 'undefined'){
-                Chocolate.storage.session.user = {};
-            }
-            Chocolate.storage.session.user.roles = result;
         },
         /**
          * @returns {string}

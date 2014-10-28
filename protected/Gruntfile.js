@@ -110,6 +110,8 @@ module.exports = function (grunt) {
                     '../js/main/chApp.js',
                     '../js/main/modules/log.js',
                     '../js/main/modules/socket.js',
+                    '../js/main/modules/storage.js',
+                    '../js/main/modules/user.js',
                     '../js/main/modules/facade.js', //latest loading module
                     '../js/main/run.js'
                 ],
