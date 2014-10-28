@@ -196,36 +196,6 @@ var Chocolate = {
     layoutTemplate: function (template, id) {
         return template.replace(Chocolate.ID_REG_EXP, id);
     },
-    user: {
-        getSign: function () {
-            return [
-                '',
-                Chocolate.user.getName(),
-                moment(new Date()).format(ChOptions.settings.signatureFormat),
-                ''
-            ].join(' ')
-        },
-        /**
-         * @returns {string}
-         */
-        getID: function () {
-            return Chocolate.storage.session.user.id;
-        },
-        /**
-         * @returns {string}
-         */
-        getName: function () {
-            return Chocolate.storage.session.user.name;
-        },
-        /**
-         * @param role {string}
-         * @returns {boolean}
-         */
-        hasRole: function (role) {
-            //#tips 1
-            return Boolean(~$.inArray(role, Chocolate.storage.session.user.roles));
-        }
-    },
     tab: {
         closeActiveTab: function () {
             var $a = Chocolate.getActiveChTab().$a;

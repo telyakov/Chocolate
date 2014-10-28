@@ -44,10 +44,10 @@ var bindingService ={
         });
     },
     bindSql: function(sql){
-        var mainModule = chApp.getMain(),
+        var userModule = facade.getUserModule(),
             optionsModule = chApp.getOptions();
 
-        var userID = mainModule.user.getID();
+        var userID = userModule.getID();
         return sql
             .replace(optionsModule.sql.params.userID, userID);
     }

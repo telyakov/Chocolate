@@ -218,22 +218,6 @@ test('Chocolate.hasChange', function(){
     ok(Chocolate.hasChange(), 'При наличии изменении в формах возвращается true');
 
 });
-test('Chocolate.user.getName', function(){
-    expect(1);
-    var userName = 'Джон Малкович';
-    Chocolate.storage.session.user = {name: userName};
-    equal(Chocolate.user.getName(), userName, 'Возвращает имя текущего пользователя');
-});
-test('Chocolate.user.hasRole', function(){
-    expect(2);
-    var role1 = 'Администратор 1',
-        role2 = 'Джон Малкович',
-        invalidRole ='нет такой роли',
-        userRoles = [role1, role2];
-    Chocolate.storage.session.user = {roles: userRoles};
-    ok(Chocolate.user.hasRole(role1), 'Если у пользователя ЕСТЬ определенная РОЛЬ, возвращается true');
-    ok(!Chocolate.user.hasRole(invalidRole), 'Если у пользователя НЕТ определенная РОЛЬ, возвращается false');
-});
 test('Chocolate.tab.close', function(){
     expect(5);
     var panelID = 'fdds11';

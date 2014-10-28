@@ -487,7 +487,7 @@ var chCardFunction = {
                             }
                             break;
                         case 'role':
-                            if(Chocolate.user.hasRole(value.toLowerCase())){
+                            if(facade.getUserModule().hasRole(value)){
                                 isAllowEdit = true;
                             }
                             break;

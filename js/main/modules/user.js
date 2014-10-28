@@ -19,19 +19,25 @@ var userModule = (function (moment, optionsModule, storageModule, mediator) {
                 return storageModule.getUserID();
             },
             hasRole: function (role) {
-                var roles = storageModule.getUserRoles();
+                var prepareRole = role.toLowerCase(),
+                    roles = storageModule.getUserRoles();
                 if(Array.isArray(roles)){
-                    return storageModule.getUserRoles().indexOf(role) !== -1;
+                    return storageModule.getUserRoles().indexOf(prepareRole) !== -1;
                 }else{
                     return false;
                 }
-            },
-            setIdentity: function (name, id) {
-                mediator.publish(optionsModule.getChannel('setIdentity'), id, name);
-            },
-            setRoles: function (roles) {
-                mediator.publish(optionsModule.getChannel('setRoles'), roles);
             }
         };
+    return{
+        getSign: function(){
+            return _private.getSign();
+        },
+        getID: function(){
+            return _private.getID();
+        },
+        hasRole: function(role){
+            return _private.hasRole(role);
+        }
+    };
 
 })(moment, optionsModule, storageModule, mediator);

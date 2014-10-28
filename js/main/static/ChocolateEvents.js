@@ -798,9 +798,9 @@ var ChocolateEvents = {
      */
     addSignToIframeHandler: function (e) {
         var moduleKey = chApp.namespace('events.KEY'),
-            moduleMain = chApp.namespace('main');
+            userModule = facade.getUserModule();
         if (e.keyCode === moduleKey.F4) {
-            $(this).insertAtCaretIframe(moduleMain.user.getSign());
+            $(this).insertAtCaretIframe(userModule.getSign());
             return false;
         }
         return true;
@@ -814,9 +814,9 @@ var ChocolateEvents = {
      */
     addSignToTextHandler: function (e) {
         var keys = chApp.namespace('events.KEY'),
-            user = chApp.namespace('main.user');
+            userModule = facade.getUserModule();
         if (e.keyCode === keys.F4) {
-            $(e.target).insertAtCaret(user.getSign());
+            $(e.target).insertAtCaret(userModule.getSign());
             return false;
         }
         return true;
