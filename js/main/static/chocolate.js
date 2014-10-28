@@ -29,16 +29,11 @@ var Chocolate = {
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText;
     },
-
-    _initSocket: function(){
-        socket(chApp, io, optionsModule, logModule);
-    },
     createRequest: function (data) {
         var channel = chApp.getOptions().channels.socketRequest;
         chApp.getMediator().publish(channel, data);
     },
     init: function () {
-        this._initSocket();
         this.$window = $(window);
         this.$tabs = $('#tabs');
         this.$header = $('#header');

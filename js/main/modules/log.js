@@ -6,12 +6,24 @@ var logModule = (function(log4javascript, $) {
     var log = log4javascript.getLogger();
     log.removeAllAppenders();
     log.addAppender(new log4javascript.BrowserConsoleAppender());
-    return {
-        error: function(args) {
+    var _private = {
+        error: function(args){
             log.error(args);
         },
-        showMessage: function($msg){
-            $('#pagewrap').append($msg);
+        showMessage: function(msg){
+            var $error = $('<div>', {
+                id: 'no-internet',
+                text: msg
+            });
+            $('#pagewrap').append($error);
+        }
+    };
+    return {
+        error: function(args) {
+            _private.error(args);
+        },
+        showMessage: function(msg){
+            _private.showMessage(msg);
         }
     };
 }(log4javascript, jQuery));
