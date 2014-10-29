@@ -789,7 +789,7 @@ var ChocolateEvents = {
         }
     },
     openTaskWizardEvent: function ($context) {
-        $context.on('click', chApp.namespace('options.settings.taskWizardSelector'), this.openTaskWizardHandler);
+        $context.on('click', '.fm-wizard-task', this.openTaskWizardHandler);
     },
     openTaskWizardHandler: function () {
         var factory = chApp.namespace('factory'),

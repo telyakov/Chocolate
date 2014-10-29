@@ -20,7 +20,6 @@ var ChOptions = {
     settings: {
         locale: 'ru',
         key: '6543210',
-        taskWizardSelector: '[href$=TasksWizard]',
         defaultColumnsWidth: '150',
         defaultAutoUpdateMS: 100000,
         formatDate: 'YYYY.MM.DD HH:mm:ss',
