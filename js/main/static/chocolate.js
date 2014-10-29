@@ -17,10 +17,6 @@ var Chocolate = {
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText;
     },
-    createRequest: function (data) {
-        var channel = chApp.getOptions().channels.socketRequest;
-        chApp.getMediator().publish(channel, data);
-    },
     init: function () {
         this.$window = $(window);
         this.$tabs = $('#tabs');

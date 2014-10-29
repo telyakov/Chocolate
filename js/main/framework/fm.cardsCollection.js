@@ -73,7 +73,13 @@ FmCardsCollection.prototype.createSqlTasks = function (card, idList) {
                 var sql = jQuery.trim(this.cards[key].captionReadProc);
                 if (sql) {
                     sql = facade.getBindModule().bindCardSql(sql, card);
-                    chApp.getMain().createRequest({type: 'jquery', query: sql, id: idList[key]});
+
+                    var channel = facade.getOptionsModule().getChannel('socketRequest');
+                    mediator.publish(channel,{
+                        type: 'jquery',
+                        query: sql,
+                        id: idList[key]
+                    });
                 }
             }
         }
