@@ -1,4 +1,8 @@
-var factoryModule = (function () {
+/**
+ * Factory module
+ */
+var factoryModule = (function ($, window, optionsModule, mediator) {
+    'use strict';
     var _private = {
         storage: [],
         getByID: function (id) {
@@ -106,7 +110,7 @@ var factoryModule = (function () {
                     objInStorage = new window[objClass]($el);
                     _private._set(id, objInStorage);
                 } catch (e) {
-                    mediator.publish(facade.getOptionsModule().getChannel('logError'),
+                    mediator.publish(optionsModule.getChannel('logError'),
                         'Не удалось создать ' + objClass,
                         e
                     );
@@ -114,24 +118,19 @@ var factoryModule = (function () {
             }
             return objInStorage;
         },
+        isGarbage: function(id){
+            return $('#' + id).length === 0;
+        },
         garbageCollection: function () {
             var id, hasOwn = Object.prototype.hasOwnProperty;
             for (id in _private.storage) {
-                if (hasOwn.call(_private.storage, id) && !$('#' + id).length) {
+                if (hasOwn.call(_private.storage, id) && _private.isGarbage(id)) {
                     if (typeof _private.storage[id].destroy === 'function') {
                         _private.storage[id].destroy();
                     }
                     delete _private.storage[id];
-                    delete Chocolate.storage.session[id];
                 }
             }
-            var prop;
-            for (prop in ChEditableCallback.callbacks) {
-                if (ChEditableCallback._hasCallback(prop) && !$(Chocolate.idSel(prop)).length) {
-                    ChEditableCallback.remove(prop);
-                }
-            }
-
         }
     };
     return {
@@ -177,9 +176,8 @@ var factoryModule = (function () {
         makeChDiscussionForm: function ($el) {
             return _private.makeChDiscussionForm($el);
         },
-
         garbageCollection: function () {
             _private.garbageCollection();
         }
     };
-})();
+})(jQuery, window, optionsModule, mediator);

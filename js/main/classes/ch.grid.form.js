@@ -1,6 +1,3 @@
-/**
- * Класс, представляющий Форму в Шоколаде на клиенте(<form>)
- */
 function ChGridForm($form) {
     this.previewTimerID = null;
     this.selectedTimerID = null;
@@ -28,21 +25,23 @@ function ChGridForm($form) {
     this.fmChildGridCollection = new FmChildGridCollection();
     this._chCardsCollection = null;
     this.priorityColorCol = [];
-    this.destroy = function () {
-        delete this.fmChildGridCollection;
-        delete this.chFormSettings.ch_grid_form;
-        delete this.chFormSettings;
-        delete this._ch_messages_container;
-        delete this._chCardsCollection;
-        delete this._$fixed_table;
-        delete this._$table;
-        delete this.$form;
-        delete this._$thead;
-        delete this._$save_btn;
-        delete this._$grid_form;
-        delete this._$user_grid;
-    };
 }
+ChGridForm.prototype.destroy = function () {
+    ChEditableCallback.remove(this.getCallbackID());
+    delete Chocolate.storage.session[this.getID()];
+    delete this.fmChildGridCollection;
+    delete this.chFormSettings.ch_grid_form;
+    delete this.chFormSettings;
+    delete this._ch_messages_container;
+    delete this._chCardsCollection;
+    delete this._$fixed_table;
+    delete this._$table;
+    delete this.$form;
+    delete this._$thead;
+    delete this._$save_btn;
+    delete this._$grid_form;
+    delete this._$user_grid;
+};
 ChGridForm.TEMPLATE_TD = '<td style class="{class}{class2}"><div class="table-td"><a data-value="{value}" data-pk ="{pk}" rel="{rel}" class="editable"></a></div></td>';
 ChGridForm.TEMPLATE_FIRST_TD = '<td class="grid-menu"><span class="card-button" data-id="card-button" title="Открыть карточку"></span>';
 ChGridForm.prototype.getExitMessage = function () {
