@@ -1,4 +1,7 @@
-var menuModule = (function () {
+/**
+ * Main menu module. Dependencies gnmenu.js, jQuery
+ */
+var menuModule = (function (GnMenu, $) {
     'use strict';
     var _private = {
         init: function (items) {
@@ -132,4 +135,4 @@ var menuModule = (function () {
             _private.init(items);
         }
     };
-})();
+})(GnMenu, jQuery);

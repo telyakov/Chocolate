@@ -42,9 +42,6 @@ var ChOptions = {
             forms: 'forms',
             roles: 'roles',
             jquery: 'jquery'
-        },
-        params: {
-            userID: '[userid]'
         }
     },
     classes: {

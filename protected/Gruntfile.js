@@ -84,7 +84,6 @@ module.exports = function (grunt) {
                     '../js/main/framework/fm.cardsCollection.js',
                     '../js/main/framework/fm.ChildGridCollection.js',
                     '../js/main/static/chocolate.js',
-                    '../js/main/static/bindingService.js',
                     '../js/main/static/ChocolateEvents.js',
                     '../js/main/functions/ch.cardFunctions.js',
                     '../js/main/functions/ch.functions.js',
@@ -106,13 +105,14 @@ module.exports = function (grunt) {
                     '../js/main/majestic/select_description_task_step.js',
                     '../js/main/functions/open_wizard_dialog.js',
                     '../js/main/functions/open_task_wizard_dialog_end.js',
-                    '../js/main/modules/mediator.js',
+                    '../js/main/modules/mediator.js', //first loading module
                     '../js/main/chApp.js',
                     '../js/main/modules/log.js',
                     '../js/main/modules/socket.js',
                     '../js/main/modules/storage.js',
                     '../js/main/modules/menu.js',
                     '../js/main/modules/user.js',
+                    '../js/main/modules/bind.js',
                     '../js/main/modules/facade.js', //latest loading module
                     '../js/main/run.js'
                 ],

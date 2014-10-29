@@ -1,7 +1,7 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
  */
-var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule) {
+var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule) {
     var showErrorsChannel = optionsModule.getChannel('showError'),
         setRolesChannel = optionsModule.getChannel('setRoles'),
         logErrorChannel =  optionsModule.getChannel('logError');
@@ -60,7 +60,6 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
 
     mediator.subscribe(optionsModule.getChannel('setIdentity'), function (id, name) {
         storageModule.saveUser(id, name);
-        var bindModule = chApp.getBindService();
         var rolesSql = bindModule.bindSql(optionsModule.getSql('getRoles')),
             formsSql = bindModule.bindSql(optionsModule.getSql('getForms'));
         mediator.publish(requestChannel, {
@@ -85,7 +84,10 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
         },
         getOptionsModule: function(){
             return optionsModule;
+        },
+        getBindModule: function(){
+            return bindModule;
         }
     };
 
-}(logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule));
+}(logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule));

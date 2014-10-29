@@ -108,7 +108,7 @@ var ch ={
                     $context.html(elemText);
                     $context.unbind('click');
                     if(isAllowEdit){
-                        sql = chApp.getBindService().fromData(sql, cardElement.getCard().getActualDataObj());
+                        sql = facade.getBindModule().bindSql(sql, cardElement.getCard().getActualDataObj());
                         var url = chApp.getOptions().urls.execute +'?cache=1&view=' +cardElement.getCard().getView() + '&sql=' + sql;
                         $context.on('click', function(){
                             var chEditable = new ChEditable($context),
@@ -534,8 +534,9 @@ var chCardFunction = {
         });
     },
     multimediaInitFunction: function (pk, sql, formID, id) {
-        var form = chApp.getFactory().getChGridForm($('#' + formID));
-        sql = chApp.getBindService().fromParentData(sql, form.getDataObj()[pk]);
+        var $gridTabs = $('#' + id).closest('[data-id=grid-tabs]'),
+            card = chApp.getFactory().getChCard($gridTabs);
+        sql = facade.getBindModule().bindCardSql(sql, card);
         $.get(chApp.getOptions().urls.imagesUrls, {sql: sql})
             .done(function (response) {
                 var res = new ChResponse(response),

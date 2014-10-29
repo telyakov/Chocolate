@@ -63,12 +63,6 @@ chApp.getResponseStatuses = function () {
     return this.responseStatuses;
 };
 /**
- * @returns {bindingService}
- */
-chApp.getBindService = function(){
-    return bindingService;
-};
-/**
  * @returns {ChOptions}
  */
 chApp.getOptions = function(){

@@ -316,6 +316,9 @@ ChGridForm.prototype.generateCardID = function (id) {
     return [ 'card_', this.getView(), id ].join('');
 };
 ChGridForm.prototype.getEntityTypeID = function () {
+    if(typeof this.getGridPropertiesObj() === 'undefined'){
+        return '';
+    }
     return this.getGridPropertiesObj().entityTypeID;
 };
 ChGridForm.prototype.openCard = function (pk) {

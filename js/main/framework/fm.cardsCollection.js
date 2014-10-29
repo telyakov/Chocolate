@@ -68,12 +68,11 @@ FmCardsCollection.prototype.generateTabs = function (view, pk, viewID, $panel) {
  */
 FmCardsCollection.prototype.createSqlTasks = function (card, idList) {
     if (this.isVisibleCaptions()) {
-        var bindModule = chApp.getBindService();
         for (var key in this.cards) {
             if (this.cards.hasOwnProperty(key)) {
                 var sql = jQuery.trim(this.cards[key].captionReadProc);
                 if (sql) {
-                    sql = bindModule.sqlInCard(card, sql);
+                    sql = facade.getBindModule().bindCardSql(sql, card);
                     chApp.getMain().createRequest({type: 'jquery', query: sql, id: idList[key]});
                 }
             }
