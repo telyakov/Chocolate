@@ -223,7 +223,7 @@ test('Chocolate.tab.close', function(){
     var panelID = 'fdds11';
     var stubIsHasChange = this.stub(ChGridForm.prototype, 'isHasChange');
     stubIsHasChange.returns(false);
-    this.stub(ChObjectStorage, 'getChGridForm', function(){
+    this.stub(facade.getFactoryModule(), 'makeChGridForm', function(){
         return new ChGridForm('<form></form>');
     });
     var $panelContent = $('<div id="'+panelID+'"><span>ssssss</span>выфвыф</div>');
@@ -246,7 +246,7 @@ test('Chocolate.tab.close', function(){
 
     var stubTabs = this.stub($.fn, 'tabs');
     var stubUndoChange = this.stub(ChCard.prototype,'_undoChange');
-    var spyGarbageCollection = this.spy(ChObjectStorage, 'garbageCollection');
+    var spyGarbageCollection = this.spy(facade.getFactoryModule(), 'garbageCollection');
 
     Chocolate.tab.close($('<a>'));
     ok(Chocolate.$tabs.find(Chocolate.idSel(panelID)).length === 0, 'Закрытая закладка должна удаляться из DOM');
@@ -285,7 +285,7 @@ test('Chocolate.tab.close', function(){
     ChGridForm.prototype.isHasChange.restore();
     ChGridForm.prototype.getExitMessage.restore();
     ChCard.prototype._undoChange.restore();
-    ChObjectStorage.getChGridForm.restore();
+    facade.getFactoryModule().makeChGridForm.restore();
     $.fn.tabs.restore();
 
 

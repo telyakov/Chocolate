@@ -15,7 +15,7 @@ function ChGridForm($form) {
     this._is_ajax_add = null;
     this._$user_grid = null;
     this._user_grid_id = null;
-    this._storage = null;
+    this.storage = null;
     this._ch_filter_form = null;
     this._$grid_form = null;
     this._parent_view = null;
@@ -357,7 +357,7 @@ ChGridForm.prototype.openCard = function (pk) {
             });
 
             $a = $li.children('a');
-            tab = chApp.getFactory().getChTab($a);
+            tab = facade.getFactoryModule().makeChTab($a);
             $tabs.tabs({ active: tab.getIndex()});
             var href = '#' + tab.getPanelID(),
                 $context = $(href);
@@ -365,7 +365,7 @@ ChGridForm.prototype.openCard = function (pk) {
             mainModule.tab.card.init($context);
             $a.attr('href', href)
         } else {
-            tab = chApp.getFactory().getChTab($a);
+            tab = facade.getFactoryModule().makeChTab($a);
             $tabs.tabs({ active: tab.getIndex() })
         }
     }
@@ -547,7 +547,7 @@ ChGridForm.prototype.getParentView = function () {
     if (this._parent_view == null) {
         var parent_form_id = this.getParentFormID();
         if (parent_form_id) {
-            this._parent_view = ChObjectStorage.create($('#' + parent_form_id), 'ChGridForm').getView();
+            this._parent_view = facade.getFactoryModule().makeChGridForm($('#' + parent_form_id)).getView();
         } else {
             this._parent_view = '';
         }
@@ -558,15 +558,15 @@ ChGridForm.prototype.getParentView = function () {
  * @returns {Object}
  */
 ChGridForm.prototype.getStorage = function () {
-    if (this._storage == null) {
+    if (this.storage == null) {
         var form_id = this.getID(),
             storage = Chocolate.storage.session[form_id];
         if (typeof(storage) == 'undefined' || $.isEmptyObject(storage)) {
             Chocolate.storage.session[form_id] = new Object({data: {}, preview: {}, change: {}, deleted: {}, defaultValues: {}, required: {}});
         }
-        this._storage = Chocolate.storage.session;
+        this.storage = Chocolate.storage.session;
     }
-    return this._storage;
+    return this.storage;
 };
 ChGridForm.prototype.getRequiredObj = function () {
     var storage = this.getStorage();
@@ -748,7 +748,7 @@ ChGridForm.prototype.getFilterForm = function () {
     if (this._ch_filter_form == null) {
         var $form = this.getGridForm().closest('div').find('section[data-id=filters]').find('form');
         if ($form.length) {
-            this._ch_filter_form = chApp.getFactory().getChFilterForm($form);
+            this._ch_filter_form = facade.getFactoryModule().makeChFilterForm($form);
         }
     }
     return this._ch_filter_form;
@@ -926,18 +926,12 @@ ChGridForm.prototype.refresh = function () {
             if (chResponse.isSuccess()) {
                 if (type == 'map') {
                     var $map = _this.$form.children('section').children('.map');
-                    /**
-                     * @type {ChMap}
-                     */
-                    var ch_map = ChObjectStorage.create($map, 'ChMap');
+                    var ch_map = facade.getFactoryModule().makeChMap($map);
                     ch_map.refreshPoints(chResponse.getData(), chMessagesContainer);
 
                 } else if (type == 'canvas') {
                     var $canvas = _this.$form.find('canvas');
-                    /**
-                     * @type {ChCanvas}
-                     */
-                    var ch_canvas = ChObjectStorage.create($canvas, 'ChCanvas');
+                    var ch_canvas = facade.getFactoryModule().makeChCanvas($canvas);
                     var data = chResponse.getData();
                     _this.updateStorage(data, {});
                     var options = new ChCanvasOptions();
@@ -985,7 +979,7 @@ ChGridForm.prototype.refresh = function () {
             delete response;
             delete xhr.responseText;
             delete xhr;
-            chApp.getFactory().garbageCollection();
+            facade.getFactoryModule().garbageCollection();
 
         },
         error: function (xhr, st, er) {
@@ -1055,8 +1049,8 @@ ChGridForm.prototype.getParentFormID = function () {
  * @returns {ChMessagesContainer}
  */
 ChGridForm.prototype.getMessagesContainer = function () {
-    if (this._ch_messages_container == null) {
-        this._ch_messages_container = ChObjectStorage.create(this.$form.find(".messages-container"), 'ChMessagesContainer');
+    if (this._ch_messages_container === null) {
+        this._ch_messages_container = facade.getFactoryModule().makeChMessagesContainer(this.$form.find(".messages-container"));
     }
     return this._ch_messages_container;
 };
@@ -1079,7 +1073,7 @@ ChGridForm.prototype._getChGridColumns = function () {
 
     $column_headers.each(function (i) {
         if (i >= count_fixed_column) {
-            var ch_column = ChObjectStorage.create($($column_headers[i]), 'ChGridColumnHeader');
+            var ch_column = facade.getFactoryModule().makeChGridColumnHeader($($column_headers[i]));
             sorting_columns.push(ch_column);
         }
     })

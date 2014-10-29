@@ -4,17 +4,17 @@ function ChFilterForm($filter_form) {
 ChFilterForm.prototype.getValueByKey = function (filterKey) {
     var key = this.prepareKey(filterKey);
     var value = this.getData()[key];
-    if (typeof value != 'undefined') {
+    if (typeof value !== 'undefined') {
         return value;
     }
     return '';
 };
 ChFilterForm.prototype.prepareKey = function (key) {
     if (key.slice(-2) == '[]') {
-        key = key.slice(0, key.length - 2)
+        key = key.slice(0, key.length - 2);
     }
     return key;
-}
+};
 ChFilterForm.prototype.getCaptionByKey = function (filterKey) {
     var caption = '';
     this.$form.find('[name="' + filterKey + '"]').eq(0).closest('li').find('input[type="checkbox"]:checked + label,  input[type="radio"]:checked + label')
@@ -23,8 +23,8 @@ ChFilterForm.prototype.getCaptionByKey = function (filterKey) {
                 caption += '/';
             }
             caption += $(item).text();
-        })
-    return caption
+        });
+    return caption;
 };
 ChFilterForm.prototype.getData = function () {
     var data = this.$form.serializeArray(),
@@ -34,11 +34,11 @@ ChFilterForm.prototype.getData = function () {
         var value = element.value,
             name = element.name;
         if (name.slice(-2) == '[]') {
-            name = name.slice(0, name.length - 2)
-            if (typeof(result[name]) == 'undefined') {
+            name = name.slice(0, name.length - 2);
+            if (typeof result[name] === 'undefined') {
                 result[name] = '';
             }
-            result[name] += value + '|'
+            result[name] += value + '|';
         } else {
             if (value != '') {
                 if (_this.$form.find('[name="' + name + '"]').closest('li').attr('data-format') == 'idlist') {
@@ -49,7 +49,7 @@ ChFilterForm.prototype.getData = function () {
                     });
                     result[name] = numericArray.join('|') + '|';
                 } else {
-                    result[name] = value
+                    result[name] = value;
                 }
             }
         }
@@ -62,14 +62,10 @@ ChFilterForm.prototype.getFiltersObj = function () {
 ChFilterForm.prototype.getAutoRefreshFiltersCol = function () {
     var collection = [];
     this.getFiltersObj().each(function () {
-        /**
-         *
-         * @type {ChFilter}
-         */
-        var chFilter = ChObjectStorage.create($(this), 'ChFilter');
+        var chFilter = facade.getFactoryModule().makeChFilter($(this));
         if (chFilter.isAutoRefresh()) {
-            collection.push(chFilter)
+            collection.push(chFilter);
         }
     });
     return collection;
-}
+};

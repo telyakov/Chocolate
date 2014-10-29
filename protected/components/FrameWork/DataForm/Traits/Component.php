@@ -117,7 +117,7 @@ trait Component
         if(strpos($expession, 'script') === 0){
             $script = substr($expession,6);
             $result = <<<JS
-                    var chFilter = ChObjectStorage.create($(this), 'ChFilter');
+                    var chFilter = facade.getFactoryModule().makeChFilter($(this));
 JS;
 ;
             $commands = explode(';', $script);

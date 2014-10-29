@@ -25,21 +25,21 @@ var ch ={
                                 }
                             }
                             $input.editable('setValue', val);
-                            var chCardElement = ChObjectStorage.getChCardElement($input);
+                            var chCardElement = facade.getFactoryModule().makeChCardElement($input);
                             var name =$input.data().editable.options.name;
-                            $input.html(select_html)
+                            $input.html(select_html);
 
                             chCardElement
                                 .setChangedValue(name, val)
                                 .setChangedValueInGrid(name, val, select_html);
-                            chCardElement.getParentElement(name).html(select_html)
+                            chCardElement.getParentElement(name).html(select_html);
                             $(this).dialog("close");
 //                            $input.focus();
-                        }}
-                }
+                        }};
+                };
             },
             defaultInit: function($context, attribute, allowEdit, titleKey, editable, caption, isSingle){
-                var cardElement = ChObjectStorage.getChCardElement($context),
+                var cardElement = facade.getFactoryModule().makeChCardElement($context),
                     card = cardElement.getCard(),
                     actualDataObj = card.getActualDataObj(),
                     value = actualDataObj[attribute],
@@ -64,7 +64,7 @@ var ch ={
                 });
             },
             gridInit: function($context, attribute, allowEdit, titleKey, editable, caption, isSingle){
-                var cardElement = ChObjectStorage.getChCardElement($context),
+                var cardElement = facade.getFactoryModule().makeChCardElement($context),
                     card = cardElement.getCard(),
                     actualDataObj = card.getActualDataObj(),
                     value = actualDataObj[attribute],
@@ -94,7 +94,7 @@ var ch ={
                 });
             },
             dynamicInit: function($context, attribute, allowEdit, titleKey, editable, caption, isSingle, sql){
-                var cardElement = ChObjectStorage.getChCardElement($context),
+                var cardElement = facade.getFactoryModule().makeChCardElement($context),
                     card = cardElement.getCard(),
                     actualDataObj = card.getActualDataObj(),
                     value = actualDataObj[attribute],
@@ -132,9 +132,8 @@ var ch ={
     attachments: {
         initData: function(id, isNewRow){
             $(function(){
-                var factory = chApp.namespace('factory'),
-                    main = chApp.namespace('main');
-                var chTable = factory.getChTable($(main.idSel(id)).find('table'));
+                var main = chApp.namespace('main');
+                var chTable = facade.getFactoryModule().makeChTable($(main.idSel(id)).find('table'));
                 chTable.initAttachmentScript();
                 if(!isNewRow){
                     chTable.ch_form.refresh();
@@ -159,11 +158,11 @@ var ch ={
                             e.preventDefault();
                         })
                         .on('dragleave', function () {
-                            $(this).removeClass("attachment-dragover")
+                            $(this).removeClass("attachment-dragover");
                         });
                 }
                 var $form = $('#' + formID),
-                    form = chApp.getFactory().getChGridForm($form);
+                    form = facade.getFactoryModule().makeChGridForm($form);
                 $form.on('fileuploadsubmit', function () {
                     return false;
                 });
@@ -173,7 +172,7 @@ var ch ={
         },
         stopHandler: function(formID){
             var filesModule = chApp.getFiles(),
-                form = chApp.getFactory().getChGridForm($('#' + formID));
+                form = facade.getFactoryModule().makeChGridForm($('#' + formID));
             if(filesModule.hasErrors(formID)){
                 form.getMessagesContainer().sendMessage('Возникли ошибки при добавлении вложений', chApp.getResponseStatuses().ERROR);
                 filesModule.clearErrors(formID);
@@ -192,7 +191,7 @@ var ch ={
         },
         addedHandler: function(formID, data){
             var $form = $('#' + formID),
-                form = chApp.getFactory().getChGridForm($form);
+                form = facade.getFactoryModule().makeChGridForm($form);
             if(data.isValidated){
                 var rowID = Chocolate.uniqueID();
                 data.files[0].rowID = rowID;
@@ -262,33 +261,20 @@ var chCardFunction = {
     },
     defaultSaveFunc: function (e, params, name) {
         var $target = $(e.target);
-        /**
-         *
-         * @type {ChCardElement}
-         */
-        ChObjectStorage.create($target, 'ChCardElement')
+        facade.getFactoryModule().makeChCardElement($target)
             .setChangedValue(name, params.newValue)
             .setChangedValueInGrid(name, params.newValue, $target.text());
     },
     dateSaveFunc: function (e, params, name) {
         var $target = $(e.target);
-        /**
-         *
-         * @type {ChCardElement}
-         */
         var dtValue = moment(params.newValue).format(ChOptions.settings.formatDate);
-        ChObjectStorage.create($target, 'ChCardElement')
+        facade.getFactoryModule().makeChCardElement($target)
             .setChangedValue(name, dtValue)
             .setChangedValueInGrid(name, params.newValue);
     },
     textAreaInitFunc: function (e, editable, attribute, allowEdit, caption, isNeedFormat, context, isMarkupSupport) {
         var jCell = $(context);
-
-        /**
-         *
-         * @type {ChCardElement}
-         */
-        var chCardElement = ChObjectStorage.create(jCell, 'ChCardElement'),
+        var chCardElement = facade.getFactoryModule().makeChCardElement(jCell),
             chCard = chCardElement.getCard(),
             value = chCard.getActualDataObj()[attribute];
         var isAllowEdit = this._isAllowEdit(chCard.getActualDataObj(), allowEdit);
@@ -311,9 +297,9 @@ var chCardFunction = {
     checkBoxDisplayFunction: function (value, $context, label, color, priority) {
             var chForm;
         if($context.closest('tr').length && color && priority){
-            chForm = ChObjectStorage.create($context.closest('form'), 'ChGridForm');
+            chForm = facade.getFactoryModule().makeChGridForm($context.closest('form'));
         }
-        if (typeof(value) != 'undefined' && parseInt(value, 10)) {
+        if (typeof(value) !== 'undefined' && parseInt(value, 10)) {
                if(chForm){
                    chForm.addPriorityColorAndApply($context.attr('data-pk'),priority, color)
                }
@@ -333,7 +319,7 @@ var chCardFunction = {
         }
     },
     checkBoxInitFunction: function ($context, attribute, allowEdit) {
-        var cardElement = chApp.namespace('factory').getChCardElement($context),
+        var cardElement = facade.getFactoryModule().makeChCardElement($context),
             card = cardElement.getCard(),
             value = card.getActualDataObj()[attribute],
             isAllowEdit = this._isAllowEdit(card.getActualDataObj(), allowEdit);
@@ -359,12 +345,7 @@ var chCardFunction = {
         });
     },
     dateInitFunction: function ($context, attribute, allowEdit) {
-
-        /**
-         *
-         * @type {ChCardElement}
-         */
-        var chCardElement = ChObjectStorage.create($context, 'ChCardElement');
+        var chCardElement = facade.getFactoryModule().makeChCardElement($context);
         var chCard = chCardElement.getCard(),
             value = chCard.getActualDataObj()[attribute],
             dtValue;
@@ -387,10 +368,7 @@ var chCardFunction = {
     select2SaveFunction: function (e, params, attribute) {
 
         var $context = $(e.target);
-        /**
-         * @type {ChCardElement}
-         */
-        var chCardElement = ChObjectStorage.create($context, 'ChCardElement');
+        var chCardElement = facade.getFactoryModule().makeChCardElement($context);
 
         var new_value = chCardFunction._select2PrepareNewValue(params.newValue);
         $context.editable('setValue', new_value);
@@ -400,7 +378,7 @@ var chCardFunction = {
             .setChangedValueInGrid(attribute, params.newValue, $context.text());
     },
     select2GetParentDataSource: function (element, name) {
-        var chCardElement = ChObjectStorage.create(element, "ChCardElement");
+        var chCardElement = facade.getFactoryModule().makeChCardElement(element);
         return chCardElement.getParentElement(name).data().editable.options.source;
     },
     select2GetDataSource: function (formID, pk, name) {
@@ -450,11 +428,7 @@ var chCardFunction = {
 //    },
     select2InitFunction: function ($context, attribute, allowEdit, titleKey, editable, caption) {
 
-        /**
-         *
-         * @type {ChCardElement}
-         */
-        var chCardElement = ChObjectStorage.create($context, 'ChCardElement');
+        var chCardElement = facade.getFactoryModule().makeChCardElement($context);
         var chCard = chCardElement.getCard(),
             actualDataObj = chCard.getActualDataObj(),
             value = actualDataObj[attribute];
@@ -513,18 +487,12 @@ var chCardFunction = {
     },
 
     selectInitFunction: function ($context, attribute, allowEdit) {
-
-
-        /**
-         *
-         * @type {ChCardElement}
-         */
-        var chCardElement = ChObjectStorage.create($context, 'ChCardElement');
+        var chCardElement = facade.getFactoryModule().makeChCardElement($context);
         var chCard = chCardElement.getCard(),
             value = chCard.getActualDataObj()[attribute];
         var isAllowEdit = this._isAllowEdit(chCard.getActualDataObj(), allowEdit)
         if(!isAllowEdit){
-            $context.unbind('click')
+            $context.unbind('click');
             chCardElement.markAsNoChanged();
 
         }
@@ -535,7 +503,7 @@ var chCardFunction = {
     },
     multimediaInitFunction: function (pk, sql, formID, id) {
         var $gridTabs = $('#' + id).closest('[data-id=grid-tabs]'),
-            card = chApp.getFactory().getChCard($gridTabs);
+            card = facade.getFactoryModule().makeChCard($gridTabs);
         sql = facade.getBindModule().bindCardSql(sql, card);
         $.get(chApp.getOptions().urls.imagesUrls, {sql: sql})
             .done(function (response) {

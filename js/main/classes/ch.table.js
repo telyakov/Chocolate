@@ -3,7 +3,7 @@ function ChTable($table) {
     /**
      * @type {ChGridForm}
      */
-    this.ch_form = ChObjectStorage.create($table.closest('form'), 'ChGridForm');
+    this.ch_form = facade.getFactoryModule().makeChGridForm($table.closest('form'));
 }
 ChTable.prototype._initTableSorter = function () {
     $.tablesorter.addParser({
@@ -32,18 +32,18 @@ ChTable.prototype._initTableSorter = function () {
         }
     };
     //todo: перенести в настройки арбуза
-    if(this.ch_form.getView() !='tasks/tasksfortops.xml' && this.ch_form.getView() != 'attachments.xml' && this.ch_form.getView() !='framework/attachments/attachments.xml'){
+    if(this.ch_form.getView() !=='tasks/tasksfortops.xml' && this.ch_form.getView() !== 'attachments.xml' && this.ch_form.getView() !=='framework/attachments/attachments.xml'){
         options.widgets =  ["filter"];
     }
-    this.$table.tablesorter(options)
+    this.$table.tablesorter(options);
 };
 ChTable.prototype._initResize = function () {
     var $table = this.$table,
         $headers = this.ch_form.getTh().filter(function (i) {
-            return i > 0
+            return i > 0;
         }).children('div'),
         start_width = 0,
-        ch_form = ChObjectStorage.create($table.closest('form'), 'ChGridForm');
+        ch_form =facade.getFactoryModule().makeChGridForm($table.closest('form'));
 
     $headers.each(function (i) {
         var $column_resize, $body_resize;
@@ -70,15 +70,15 @@ ChTable.prototype._initResize = function () {
                     if(delta_width<0){
                          selWidth += delta_width;
                     }
-                    $userGrid.find('.sel-right').css({left: selWidth})
-                    $userGrid.find('.sel-bottom, .sel-top').css({width: selWidth -28 })
+                    $userGrid.find('.sel-right').css({left: selWidth});
+                    $userGrid.find('.sel-bottom, .sel-top').css({width: selWidth -28 });
                     if (delta_width < 0) {
                         var table_width = $fixed_table.get(0).offsetWidth + delta_width;
                         $fixed_table.width(table_width);
                         $table.width(table_width);
                     }
                 } catch (e) {
-                    console.log(e)
+                    console.log(e);
                 } finally {
                     $column_resize.remove();
                     $body_resize.remove();
@@ -107,11 +107,11 @@ ChTable.prototype._initResize = function () {
                         'height': Math.min(visible_height, real_height)
                     });
 
-                Chocolate.$content.append($column_resize).append($body_resize)
+                Chocolate.$content.append($column_resize).append($body_resize);
                 start_width = ui.element.width();
             }
         });
-    })
+    });
 };
 
 ChTable.prototype._initFloatThead = function () {
@@ -139,7 +139,7 @@ ChTable.prototype._initContextMenu = function () {
     var $fixed_table = this.ch_form.getFixedTable(),
         $th = $fixed_table.children('thead').find('th'),
         $sorted_th = $th.filter(function (i) {
-            return i > 0
+            return i > 0;
         }),
         _this = this,
         count = Object.keys(this.ch_form.getSettingsObj()).length -1,
@@ -175,7 +175,7 @@ ChTable.prototype._initContextMenu = function () {
                     break;
                 default :
 //                        alert('неизвестная команда')
-                    break
+                    break;
             }
         }
     });

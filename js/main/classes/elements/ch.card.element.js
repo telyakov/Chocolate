@@ -5,7 +5,7 @@ function ChCardElement($elem) {
 }
 ChCardElement.prototype._id = null;
 ChCardElement.prototype.getID = function () {
-    if (this._id == null) {
+    if (this._id === null) {
         this._id = this.getCard().getKey();
     }
     return this._id;
@@ -14,17 +14,17 @@ ChCardElement.prototype.getID = function () {
  * @returns {ChCard}
  */
 ChCardElement.prototype.getCard = function () {
-    if (this._ch_card == null) {
-        this._ch_card = ChObjectStorage.create(this.$elem.closest('div[data-id=grid-tabs]'), 'ChCard');
+    if (this._ch_card === null) {
+        this._ch_card = facade.getFactoryModule().makeChCard(this.$elem.closest('div[data-id=grid-tabs]'));
     }
-    return this._ch_card
+    return this._ch_card;
 };
 /**
  *
  * @returns {ChGridForm}
  */
 ChCardElement.prototype.getGridForm = function () {
-    if (this._ch_grid_form == null) {
+    if (this._ch_grid_form === null) {
         this._ch_grid_form = this.getCard().getGridForm();
     }
     return this._ch_grid_form;
@@ -42,7 +42,7 @@ ChCardElement.prototype.markAsNoChanged = function(){
  */
 ChCardElement.prototype.setChangedValue = function (name, val2storage) {
     var changed_obj = this.getGridForm().getChangedObj();
-    if (typeof(changed_obj[this.getID()]) == "undefined") {
+    if (typeof changed_obj[this.getID()] === "undefined") {
         changed_obj[this.getID()] = {};
     }
     //TODO: добавить подсветку строк если надо

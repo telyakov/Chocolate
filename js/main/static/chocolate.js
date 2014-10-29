@@ -49,7 +49,7 @@ var Chocolate = {
             .children(Chocolate.clsSel(ChOptions.classes.tabMenuClass))
             .children(Chocolate.clsSel(ChOptions.classes.activeTab))
             .children('a');
-        return ChObjectStorage.getChTab($activeLink);
+        return facade.getFactoryModule().makeChTab($activeLink);
     },
     leaveFocus: function () {
         Chocolate.$content.trigger('click');
@@ -142,7 +142,7 @@ var Chocolate = {
         var session = Chocolate.storage.session, chForm;
         for (var formID in session) {
             if (formID != 'user' && session.hasOwnProperty(formID)) {
-                chForm = ChObjectStorage.getChGridForm($(Chocolate.idSel(formID)));
+                chForm =facade.getFactoryModule().makeChGridForm($('#'+formID));
                 if (chForm.isHasChange()) {
                     return true;
                 }
@@ -195,12 +195,12 @@ var Chocolate = {
          * @param $a {jQuery}
          */
         close: function ($a) {
-            var activeTab = ChObjectStorage.getChTab($a);
+            var activeTab = facade.getFactoryModule().makeChTab($a);
             if (activeTab.isCardTypePanel()) {
-                var card = ChObjectStorage.getChCard(activeTab.getPanel().children('[data-id = grid-tabs]'));
+                var card = facade.getFactoryModule().makeChCard(activeTab.getPanel().children('[data-id = grid-tabs]'));
                 card._undoChange();
             } else {
-                var form = ChObjectStorage.getChGridForm(activeTab.getPanel().find('.section-grid>form'));
+                var form = facade.getFactoryModule().makeChGridForm(activeTab.getPanel().find('.section-grid>form'));
                 if (typeof form.isHasChange != 'undefined' && form.$form.length && form.isHasChange() && !confirm(form.getExitMessage())) {
                     return;
                 }
@@ -249,7 +249,7 @@ var Chocolate = {
 
             $panel.remove();
             Chocolate.$tabs.tabs("refresh");
-            ChObjectStorage.garbageCollection();
+            facade.getFactoryModule().garbageCollection();
         },
         /**
          * @param id {string}
@@ -316,13 +316,13 @@ var Chocolate = {
              */
             _onBeforeLoad: function (e, ui, $tabPanel) {
                 if (!ui.tab.data('loaded')) {
-                    var chCard = ChObjectStorage.getChCard($(this)),
+                    var chCard = facade.getFactoryModule().makeChCard($(this)),
                         tabID = $(ui.tab).attr('data-id'),
                         pk = chCard.getKey(),
                         fmCardCollection = chCard.getFmCardCollection(),
                         isNumeric = $.isNumeric(pk),
                         template = fmCardCollection.getCardTemplate(tabID, isNumeric);
-                    if (template == null) {
+                    if (template === null) {
                         $.get(chCard.getTabDataUrl(tabID))
                             .done(function (template) {
                                 var $content = $(Chocolate.layoutTemplate(template, pk));

@@ -78,8 +78,8 @@ ChCard.prototype.getFmCardCollection = function () {
  * @returns {ChGridForm}
  */
 ChCard.prototype.getGridForm = function () {
-    if (this._$grid_form == null) {
-        this._$grid_form = ChObjectStorage.create($('#' + this.getFormID()), 'ChGridForm');
+    if (this._$grid_form === null) {
+        this._$grid_form = facade.getFactoryModule().makeChGridForm($('#' + this.getFormID()));
     }
     return this._$grid_form;
 };
@@ -142,10 +142,7 @@ ChCard.prototype._clearChangeObj = function () {
 ChCard.prototype.getGridCollection = function () {
     var collection = [];
     this.$grid_tabs.find('.grid-form').each(function () {
-        /**
-         * @type {ChGridForm}
-         */
-        var form = ChObjectStorage.create($(this), 'ChGridForm');
+        var form = facade.getFactoryModule().makeChGridForm($(this));
         collection.push(form);
     });
     return collection;
@@ -161,7 +158,7 @@ ChCard.prototype.save = function () {
          */
         gridErrors = chForm.save(false);
         if (!$.isEmptyObject(gridErrors)) {
-            success = false
+            success = false;
         }
     });
     if (success) {
@@ -186,37 +183,35 @@ ChCard.prototype.save = function () {
                             chResponse.sendMessage(gridForm.getMessagesContainer());
                             gridForm.refresh();
                         } else {
-                            var msgContainer = chApp.getFactory().getChMessagesContainer(_this.getErrorContainer());
+                            var msgContainer = facade.getFactoryModule().makeChMessagesContainer(_this.getErrorContainer());
                             chResponse.sendMessage(msgContainer);
                         }
                     })
                     .fail(function (res) {
-                        var msgContainer = chApp.getFactory().getChMessagesContainer(_this.getErrorContainer());
+                        var msgContainer = facade.getFactoryModule().makeChMessagesContainer(_this.getErrorContainer());
                         msgContainer._sendErrorMessage('Возникла непредвиденная ошибка при сохранении');
-                    })
+                    });
             }
         } else {
             this._closeCard();
         }
     } else {
-        var moduleFactory = chApp.getFactory(),
-            moduleMain = chApp.getMain(),
-            moduleMessages= chApp.getMessages(),
+        var moduleMessages= chApp.getMessages(),
             errorMessage = moduleMessages.NotFilledRequiredFields;
-        moduleFactory
-            .getChMessagesContainer(this.getErrorContainer())
+        facade.getFactoryModule()
+            .makeChMessagesContainer(this.getErrorContainer())
             .sendMessage(errorMessage, chApp.getResponseStatuses().ERROR);
     }
 
 };
 ChCard.prototype.setElementValue = function ($card_element, value, isEdit, text) {
-    $card_element.editable('setValue', value)
+    $card_element.editable('setValue', value);
     if (!isEdit) {
-        $card_element.editable('disable')
+        $card_element.editable('disable');
     }
     //затык для селект 2
-    if (typeof(text) != 'undefined' && text !== null && text.length > 0) {
-        $card_element.text(text)
+    if (typeof(text) !== 'undefined' && text !== null && text.length > 0) {
+        $card_element.text(text);
     }
 };
 
@@ -233,15 +228,15 @@ ChCard.prototype._undoChange = function () {
                 if(oldValue === 'null'){
                     oldValue = '';
                 }
-                $gridCell.editable("setValue", oldValue, true)
+                $gridCell.editable("setValue", oldValue, true);
 
-                var fromID = $gridCell.data().editable.options['data-from-id']
+                var fromID = $gridCell.data().editable.options['data-from-id'];
                 if (fromID) {
-                    $gridCell.html(dataObj[fromID])
+                    $gridCell.html(dataObj[fromID]);
 
                 }
             }
-        })
+        });
     }
 };
 /**

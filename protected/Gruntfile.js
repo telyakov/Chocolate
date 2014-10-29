@@ -48,7 +48,6 @@ module.exports = function (grunt) {
                 src: [
                     '../js/main/static/ObjectStorage.js',
                     '../js/main/static/ChOptions.js',
-                    '../js/main/static/ChObjectStorage.js',
                     '../js/main/static/ch.table.helper.js',
                     '../js/main/static/ChEditableCallback.js',
                     '../js/main/static/ChCardInitCallback.js',
@@ -113,6 +112,7 @@ module.exports = function (grunt) {
                     '../js/main/modules/menu.js',
                     '../js/main/modules/user.js',
                     '../js/main/modules/bind.js',
+                    '../js/main/modules/factory.js',
                     '../js/main/modules/facade.js', //latest loading module
                     '../js/main/run.js'
                 ],

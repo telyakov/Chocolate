@@ -32,11 +32,11 @@ SelectExecutorsTaskStep.prototype.run = function (mjWizard) {
             var $content = $('<div><div class="widget-header"><div class="widget-titles">Выберите исполнителей</div><div class="widget-titles-content">Пожалуйста, выберите исполнителей вашего поручения</div></div></div>'),
                 $select = $('<div class="wizard-select2"></div>');
 
-            var dynatreeElem = chApp.getFactory().getChDynatree($select);
+            var dynatreeElem = facade.getFactoryModule().makeChDynatree($select);
             var options = [];
-            options.getInput = function(){return $select};
+            options.getInput = function(){return $select;};
             options.isDialogEvent = false;
-            options.defaultValues = function(){return mjWizard.usersidlist}
+            options.defaultValues = function(){return mjWizard.usersidlist;};
             options.children = data;
             options.column_title = 'name';
             options.root_id = 'parentid';

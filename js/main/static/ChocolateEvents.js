@@ -101,14 +101,14 @@ var ChocolateEvents = {
     },
     sendMessageHandler: function () {
         var msg = $(this).prev('.discussion-input').val();
-        var form = chApp.getFactory().create($(this).closest('section').prev('form'), 'ChDiscussionForm');
+        var form = facade.getFactoryModule().makeChDiscussionForm($(this).closest('section').prev('form'));
         form.sendMessage(msg);
     },
     sendEmailEvent: function ($context) {
         $context.on('click', '.fm-email-send', this.sendEmailHandler);
     },
     sendEmailHandler: function () {
-        var form = chApp.getFactory().getChGridForm($(this).closest('.section-header').siblings('.section-grid').children('form'));
+        var form = facade.getFactoryModule().makeChGridForm($(this).closest('.section-header').siblings('.section-grid').children('form'));
         var id = form.getActiveRowID();
         if (id) {
             var dataObj = form.getDataObj()[id],
@@ -128,7 +128,7 @@ var ChocolateEvents = {
     searchColumnsHandler: function (e) {
         var keys = chApp.events.KEY,
             $this = $(this),
-            form = chApp.getFactory().getChGridForm($this.closest('form')),
+            form = facade.getFactoryModule().makeChGridForm($this.closest('form')),
             $th = form.getTh(),
             searchedClass = chApp.getOptions().classes.searchedColumn,
             $fixedTable = form.getFixedTable(),
@@ -239,7 +239,7 @@ var ChocolateEvents = {
             isMarkupSupport = parseInt($this.attr('data-markup'), 10),
             $elem = $(this).prevAll('a'),
             $cell = $elem.parent(),
-            column = chApp.getFactory().getChGridColumnBody($elem),
+            column = facade.getFactoryModule().makeChGridColumnBody($elem),
             $popupControl = $('<a class="grid-textarea"></a>');
         Chocolate.leaveFocus();
         $popupControl.appendTo($cell.closest('section'));
@@ -328,8 +328,7 @@ var ChocolateEvents = {
             $editable = $(this).find('.editable'),
             options = $editable.data().editable.options,
             view = options.view,
-            factory = chApp.getFactory(),
-            column = factory.getChGridColumnBody($editable),
+            column = facade.getFactoryModule().makeChGridColumnBody($editable),
             form = column.getChForm(),
             parentID = column.getID(),
             isNew = !$.isNumeric(parentID),
@@ -372,7 +371,7 @@ var ChocolateEvents = {
                                     .appendTo($tabs)
                                     .html($html);
                                 $('#' + tabID).find('.grid-select').on('click', function () {
-                                        var form = factory.getChGridForm($(this).closest('.grid-footer').prev('form'));
+                                        var form = facade.getFactoryModule().makeChGridForm($(this).closest('.grid-footer').prev('form'));
                                         if (form.isHasChange()) {
                                             form.getMessagesContainer().sendMessage('Сохраните сетку, перед выбором!', ChResponseStatus.ERROR);
                                         } else {
@@ -452,13 +451,11 @@ var ChocolateEvents = {
      * #tips2
      */
     exportToExcelHandler: function () {
-        var factory = chApp.namespace('factory'),
-            form = factory.getChGridForm($(this).closest('form'));
+        var form = facade.getFactoryModule().makeChGridForm($(this).closest('form'));
         form.exportToExcel();
     },
     openFormSettingHandler: function () {
-        var factory = chApp.namespace('factory'),
-            form = factory.getChGridForm($(this).closest('form'));
+        var form = facade.getFactoryModule().makeChGridForm($(this).closest('form'));
         form.openSettings();
     },
     warningMessageEvent: function ($context) {
@@ -478,8 +475,7 @@ var ChocolateEvents = {
         $context.on('click', '.menu-button-toggle', this.toggleSystemColsHandler);
     },
     toggleSystemColsHandler: function () {
-        var factory = chApp.namespace('factory');
-        factory.getChGridForm($(this).closest('form'))
+        facade.getFactoryModule().makeChGridForm($(this).closest('form'))
             .toggleSystemCols()
             .clearSelectedArea();
     },
@@ -538,8 +534,7 @@ var ChocolateEvents = {
     searchInFilterHandler: function (e) {
         var keys = chApp.namespace('events.KEY');
         if (e.keyCode === keys.ENTER) {
-            var factory = chApp.namespace('factory'),
-                form = factory.getChGridForm($(this).closest('.section-filters').next('.section-grid').children('form'));
+            var form = facade.getFactoryModule().makeChGridForm($(this).closest('.section-filters').next('.section-grid').children('form'));
             form.refresh();
             return false;
         }
@@ -590,10 +585,9 @@ var ChocolateEvents = {
         $context.on('touchmove dblclick', '.card-button', this.openCardHandler);
     },
     openCardHandler: function () {
-        var factory = chApp.namespace('factory'),
-            $cell = $(this),
-            form = factory.getChGridForm($cell.closest('form')),
-            column = chApp.getFactory().getChGridColumnBody($cell);
+        var $cell = $(this),
+            form = facade.getFactoryModule().makeChGridForm($cell.closest('form')),
+            column = facade.getFactoryModule().makeChGridColumnBody($cell);
         form.openCard(column.getID());
     },
     keyActionsFormEvent: function ($context) {
@@ -609,8 +603,7 @@ var ChocolateEvents = {
              * #tips 1
              */
             if (catchKeys.indexOf(keyCode)!== -1) {
-                var factory = chApp.namespace('factory'),
-                    form = factory.getChGridForm($(this).closest('form')),
+                var form = facade.getFactoryModule().makeChGridForm($(this).closest('form')),
                     $activeRow,
                     $nextRow;
 
@@ -651,9 +644,8 @@ var ChocolateEvents = {
      * @param e {Event}
      */
     selectFormRowHandler: function (e) {
-        var factory = chApp.namespace('factory'),
-            $this = $(this),
-            form = factory.getChGridForm($this.closest('form'));
+        var $this = $(this),
+            form = facade.getFactoryModule().makeChGridForm($this.closest('form'));
         form.selectRow($this, e.ctrlKey || e.shiftKey, true);
     },
     contextFormMenuEvent: function ($context) {
@@ -666,10 +658,9 @@ var ChocolateEvents = {
                 {title: messages.Delete + ' [DEL]', cmd: 'delete', uiIcon: 'ui-icon-trash'}
             ],
             select: function (e, ui) {
-                var factory = chApp.namespace('factory');
                 switch (ui.cmd) {
                     case 'delete':
-                        var form = factory.getChGridForm(ui.target.closest('form'));
+                        var form = facade.getFactoryModule().makeChGridForm(ui.target.closest('form'));
                         form.removeSelectedRows();
                         break;
                     default :
@@ -682,17 +673,15 @@ var ChocolateEvents = {
         $context.on('click', '.card-cancel', this.cardCancelHandler);
     },
     cardCancelHandler: function () {
-        var factory = chApp.namespace('factory'),
-            card = factory.getChCard($(this).closest('[data-id=grid-tabs]'));
+        var card = facade.getFactoryModule().makeChCard($(this).closest('[data-id=grid-tabs]'));
         card.undoChange();
     },
     addRowToForm: function ($context) {
         $context.on('click', '.menu-button-add', this.addRowToFormHandler);
     },
     addRowToFormHandler: function () {
-        var factory = chApp.namespace('factory'),
-            urls = chApp.namespace('options.urls'),
-            form = factory.getChGridForm($(this).closest('form'));
+        var urls = chApp.namespace('options.urls'),
+            form = facade.getFactoryModule().makeChGridForm($(this).closest('form'));
         if (form.isAjaxAdd()) {
             $.get(urls.addRow, {view: form.getView()})
                 .done(function (res) {
@@ -724,8 +713,7 @@ var ChocolateEvents = {
         $context.on('click', '.menu-button-save', this.saveFormHandler);
     },
     saveFormHandler: function () {
-        var factory = chApp.namespace('factory'),
-            form = factory.getChGridForm($(this).closest('form'));
+        var form = facade.getFactoryModule().makeChGridForm($(this).closest('form'));
         form.save(true);
     },
     cardSaveEvent: function ($context) {
@@ -735,15 +723,13 @@ var ChocolateEvents = {
     },
     cardSaveFromMenuHandler: function () {
         var main = chApp.namespace('main'),
-            factory = chApp.namespace('factory'),
-            card = factory.getChCard($(this).closest('header').siblings('[data-id=grid-tabs]'));
+            card = facade.getFactoryModule().makeChCard($(this).closest('header').siblings('[data-id=grid-tabs]'));
         main.leaveFocus();
         card.save();
     },
     cardSaveButtonHandler: function () {
         var main = chApp.namespace('main'),
-            factory = chApp.namespace('factory'),
-            card = factory.getChCard($(this).closest('[data-id=grid-tabs]'));
+            card = facade.getFactoryModule().makeChCard($(this).closest('[data-id=grid-tabs]'));
         main.leaveFocus();
         card.save();
     },
@@ -751,10 +737,9 @@ var ChocolateEvents = {
         $context.on('click', '.menu-button-refresh', this.refreshFormHandler);
     },
     refreshFormHandler: function () {
-        var factory = chApp.namespace('factory'),
-            main = chApp.namespace('main'),
+        var main = chApp.namespace('main'),
             messages = chApp.getMessages(),
-            form = factory.getChGridForm($(this).closest('form'));
+            form = facade.getFactoryModule().makeChGridForm($(this).closest('form'));
         if (form.isHasChange()) {
             var $dialog = $('<div>' + messages.refreshForm + '</div>');
             $dialog.dialog({
@@ -792,10 +777,9 @@ var ChocolateEvents = {
         $context.on('click', '.fm-wizard-task', this.openTaskWizardHandler);
     },
     openTaskWizardHandler: function () {
-        var factory = chApp.namespace('factory'),
-            clsSel = chApp.namespace('main.clsSel'),
+        var clsSel = chApp.namespace('main.clsSel'),
             classes = chApp.namespace('options.classes'),
-            form = factory.getChGridForm(
+            form = facade.getFactoryModule().makeChGridForm(
                 $(this)
                     .closest(clsSel(classes.headerSection))
                     .siblings(clsSel(classes.gridSection))
@@ -848,7 +832,7 @@ var ChocolateEvents = {
                 if (e.keyCode === keys.ESCAPE && e.target.tagName === 'BODY') {
                     var tab = chApp.getMain().getActiveChTab();
                     if (tab.isCardTypePanel()) {
-                        var card = chApp.getFactory().getChCard(tab.getPanel().children('[data-id=grid-tabs]'));
+                        var card = facade.getFactoryModule().makeChCard(tab.getPanel().children('[data-id=grid-tabs]'));
                         if (!card._isChanged()) {
                             chApp.getMain().tab.closeActiveTab();
                         }

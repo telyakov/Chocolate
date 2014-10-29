@@ -843,6 +843,9 @@ span.required {
 .map, .ymaps-map {
     height: inherit !important;
 }
+.map{
+    width: 100%;
+}
 
 .tree-checkbox {
     position: absolute;

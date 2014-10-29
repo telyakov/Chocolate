@@ -13,13 +13,9 @@ ChPackageResponse.prototype.applyResponse = function(){
         var data = item['data'];
 //        var preview = item['preview'];
         var order = item['order'];
-        if(type == 'ChGridForm'){
-            /**
-             *
-             * @type {ChGridForm}
-             */
-            var chForm =ChObjectStorage.create($('#' + id), type);
+        if(type === 'ChGridForm'){
+            var chForm = facade.getFactoryModule().makeChGridForm($('#' + id));
             chForm.updateData(data, order);
         }
-    })
-}
+    });
+};

@@ -99,7 +99,7 @@ JS
     protected function createTreeScript($options)
     {
         $script = <<<JS
-        var dnt = chApp.getFactory().getChDynatree($(this));
+        var dnt = facade.getFactoryModule().makeChDynatree($(this));
         dnt.build($options);
 JS;
         return $script;

@@ -37,7 +37,7 @@ echo CHtml::closeTag('form');
 Yii::app()->clientScript->registerScript(uniqid(),
     <<<JS
 
-    var form = ChObjectStorage.create($('#'+'$id'), 'ChDiscussionForm');
+    var form = facade.getFactoryModule().makeChDiscussionForm($('#'+'$id'));
     form.init('$sql');
     form.refresh();
 JS

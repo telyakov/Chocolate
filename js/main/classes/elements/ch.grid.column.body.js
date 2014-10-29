@@ -11,13 +11,13 @@ function ChGridColumnBody($cell) {
 }
 ChGridColumnBody.prototype = {
     getID: function () {
-        if (this._id == null) {
+        if (this._id === null) {
             this._id = this.getRow().attr("data-id");
         }
         return  this._id;
     },
     getRow: function () {
-        if (this._$row == null) {
+        if (this._$row === null) {
             this._$row = this.$cell.closest('tr');
         }
         return this._$row;
@@ -26,14 +26,14 @@ ChGridColumnBody.prototype = {
      * @returns {ChGridForm}
      */
     getChForm: function () {
-        if (this._ch_form == null) {
-            this._ch_form = ChObjectStorage.create(this.$cell.closest('form'), 'ChGridForm');
+        if (this._ch_form === null) {
+            this._ch_form = facade.getFactoryModule().makeChGridForm(this.$cell.closest('form'));
         }
         return this._ch_form;
     },
     setChangedValue: function (name, val2storage) {
         var changed_obj = this.getChForm().getChangedObj();
-        if (typeof(changed_obj[this.getID()]) == "undefined") {
+        if (typeof(changed_obj[this.getID()]) === "undefined") {
             changed_obj[this.getID()] = {};
         }
         var row_obj = changed_obj[this.getID()];

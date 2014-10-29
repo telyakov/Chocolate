@@ -1,7 +1,7 @@
 var chFunctions = {
     systemColsInit: function (sysColsID) {
         var $btn = $('#' + sysColsID),
-            form = chApp.getFactory().getChGridForm($btn.closest('form'));
+            form = facade.getFactoryModule().makeChGridForm($btn.closest('form'));
         if (!form.chFormSettings.isSystemVisibleMode()) {
             $btn.addClass(chApp.getOptions().classes.menuButtonSelected);
         }
@@ -10,7 +10,7 @@ var chFunctions = {
         (new ChTextColumn($element)).create($context, e, allowEdit, columnName, caption, isMarkupSupport);
     },
     textShownFunction: function (e, editable) {
-        var $body = editable.$form.find("iframe").contents().find("body")
+        var $body = editable.$form.find("iframe").contents().find("body");
         $body
             .on("keydown.chocolate", function () {
                 $(this).unbind('keydown.chocolate');
@@ -75,13 +75,13 @@ var chFunctions = {
 
     filterSearchData: function (seacrh, key) {
         return function filter(item, i, arr) {
-            return item[key].toLowerCase().indexOf(seacrh) != -1;
-        }
+            return item[key].toLowerCase().indexOf(seacrh) !== -1;
+        };
     },
     layoutChildrenFilters: function (targetID, name, view, currentID, parentName) {
         $('#' + targetID).on('click', function (e) {
             var jForm = $(this).closest('form'),
-                ChFilterForm = ChObjectStorage.create(jForm, 'ChFilterForm'),
+                ChFilterForm = facade.getFactoryModule().makeChFilterForm(jForm);
                 rawUrl = chApp.getOptions().urls.filterLayouts;
             //TODO: поддержка всех типов фильтро
             var value = ChFilterForm.getData()[parentName];
@@ -100,7 +100,7 @@ var chFunctions = {
         })
     },
     checkBoxInitFunc: function ($context, attribute, allowEdit) {
-        var column = chApp.getFactory().getChGridColumnBody($context),
+        var column = facade.getFactoryModule().makeChGridColumnBody($context),
             isAllowEdit = chCardFunction._isAllowEdit(column.getDataObj(), allowEdit);
         $context.unbind('click');
         if (isAllowEdit) {
@@ -113,7 +113,7 @@ var chFunctions = {
                 }
                 $context.editable('setValue', val);
                 column.setChangedValue(attribute, val);
-            })
+            });
         } else {
             column.markAsNoChanged();
         }
@@ -163,7 +163,7 @@ var chFunctions = {
                                 select_html += node.data.title;
                             }
                         }
-                        var column = chApp.getFactory().getChGridColumnBody($input);
+                        var column = facade.getFactoryModule().makeChGridColumnBody($input);
                         var name = $input.data().editable.options.name;
                         column.setChangedValue(name, val);
                         $input.attr('data-value', val);
@@ -179,7 +179,7 @@ var chFunctions = {
         return options;
     },
     treeViewInitFunc: function ($context, caption, datakey, allowEdit, isSingle) {
-        var col = chApp.getFactory().getChGridColumnBody($context);
+        var col = facade.getFactoryModule().makeChGridColumnBody($context);
         if (typeof col.getDataObj() !== 'undefined') {
             $context.html(col.getDataObj()[datakey]);
         }
@@ -199,7 +199,7 @@ var chFunctions = {
 
     },
     selectColumnInitFunc: function ($context, allowEdit) {
-        var column = chApp.getFactory().getChGridColumnBody($context),
+        var column = facade.getFactoryModule().makeChGridColumnBody($context),
             isAllowEdit = chCardFunction._isAllowEdit(column.getDataObj(), allowEdit);
         if (!isAllowEdit) {
             $context.unbind('click');
@@ -207,11 +207,11 @@ var chFunctions = {
         }
     },
     defaultColumnSaveFunc: function (e, params, name) {
-        var chColumn = chApp.getFactory().getChGridColumnBody($(e.target));
+        var chColumn = facade.getFactoryModule().makeChGridColumnBody($(e.target));
         chColumn.setChangedValue(name, params.newValue);
     },
     dateColumnInitFunction: function ($context, allowEdit) {
-        var column = chApp.getFactory().getChGridColumnBody($context),
+        var column = facade.getFactoryModule().makeChGridColumnBody($context),
             isAllowEdit = chCardFunction._isAllowEdit(column.getDataObj(), allowEdit);
         if (!isAllowEdit) {
             $context.unbind('click').unbind('mouseenter');
@@ -219,7 +219,7 @@ var chFunctions = {
         }
     },
     dateColumnSaveFunction: function (e, params, name) {
-        var chColumn = chApp.getFactory().getChGridColumnBody($(e.target)),
+        var chColumn = facade.getFactoryModule().makeChGridColumnBody($(e.target)),
             newVal = params.newValue;
         if (newVal) {
             newVal = moment(newVal).format(ChOptions.settings.formatDate);
@@ -245,7 +245,7 @@ var chFunctions = {
          *
          * @type {ChGridForm}
          */
-        var chForm = ChObjectStorage.create($actionButton.closest('form'), 'ChGridForm'),
+        var chForm =facade.getFactoryModule().makeChGridForm($actionButton.closest('form')),
             rexExp = new RegExp('\[IdList\]');
 
         $actionButton.contextmenu({
@@ -268,11 +268,7 @@ var chFunctions = {
     },
     initActions: function (id, jsonActions) {
         var $actionButton = $('#' + id);
-        /**
-         *
-         * @type {ChGridForm}
-         */
-        var chForm = ChObjectStorage.create($actionButton.closest('form'), 'ChGridForm');
+        var chForm = facade.getFactoryModule().makeChGridForm($actionButton.closest('form'));
         $actionButton.contextmenu({
             show: { effect: "blind", duration: 0 },
             menu: json_parse(jsonActions, Chocolate.parse),
@@ -293,7 +289,7 @@ var chFunctions = {
         });
     },
     initGrid: function (jsonData, jsonPreview, jsonDefault, jsonRequired, jsonGridProperties, formID, header, headerImg, jsonCardCollection, jsonOrder) {
-        var form = chApp.getFactory().getChGridForm($('#' + formID));
+        var form = facade.getFactoryModule().makeChGridForm($('#' + formID));
         form.saveInStorage(
             json_parse(jsonData, Chocolate.parse),
             json_parse(jsonPreview),
@@ -308,7 +304,7 @@ var chFunctions = {
     },
     initCardGrid: function (jsonDefault, jsonRequired, jsonGridProperties, formID, header, headerImg, jsonCardCollection, view, parentView, parentID, sql, jsonPreview) {
 
-        var chForm = chApp.getFactory().getChGridForm($('#' + formID));
+        var chForm = facade.getFactoryModule().makeChGridForm($('#' + formID));
         chForm.saveInStorage(
             {},
             json_parse(jsonPreview),
@@ -330,4 +326,4 @@ var chFunctions = {
         var ajaxTask = new ChAjaxTask(formID, 'ChGridForm', params);
         chAjaxQueue.enqueue(ajaxTask);
     }
-}
+};

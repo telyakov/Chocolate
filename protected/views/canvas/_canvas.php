@@ -33,15 +33,12 @@ $form = $this->beginWidget('CActiveForm', [
 <?php $this->endWidget(); ?>
 <script>
     $(function () {
-        /**
-         * @type {ChGridForm}
-         */
-        var ch_form = ChObjectStorage.create($('#' +  '<? echo $formID ?>'), 'ChGridForm');
+        var form = facade.getFactoryModule().makeChGridForm($('#' +  '<? echo $formID ?>'));
         var fmCardsCollection = new FmCardsCollection(
             '<? echo $model->getCardCollection()->getHeader()?>',
             '<? echo \Chocolate\HTML\ImageAdapter::getHtml($model->getCardCollection()->getHeaderImage()) ?>',
             json_parse('<? echo $model->cardCollectionToJs()?>', Chocolate.parse)
-        )
-        ch_form.setFmCardsCollection(fmCardsCollection);
+        );
+        form.setFmCardsCollection(fmCardsCollection);
     })
 </script>

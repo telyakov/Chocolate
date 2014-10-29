@@ -334,7 +334,7 @@
              */
             function reflow() {
                 var sum = 0,
-                    form = chApp.getFactory().getChGridForm($table.closest('form')),
+                    form = facade.getFactoryModule().makeChGridForm($table.closest('form')),
                     i,
                     numCols = columnNum();//if the tables columns change dynamically since last time (datatables) we need to rebuild the sizer rows and get new count
 

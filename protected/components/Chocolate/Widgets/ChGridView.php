@@ -92,7 +92,7 @@ class ChGridView extends CBaseListView
         parent::renderContent();
         $id = $this->htmlOptions['id'];
         $script = <<<JS
-            ChObjectStorage.create($('#$id>table'), 'ChTable').initScript();
+            facade.getFactoryModule().makeChTable($('#$id>table')).initScript();
 JS;
         \Yii::app()->clientScript->registerScript($id, $script, CClientScript::POS_READY);
     }

@@ -56,7 +56,7 @@ function ChocolateDraw() {
                 formSectionHgt = formHeight - $menu.outerHeight(true);
             $formSection.height(formSectionHgt);
             if ($formSection.attr('data-id') === 'map') {
-                var map = chApp.getFactory().getChMap($formSection.children('.map'));
+                var map = facade.getFactoryModule().makeChMap($formSection.children('.map'));
                 map.map.container.fitToViewport();
             } else {
                 var $userGrid = $formSection.find('.grid-view');
@@ -107,7 +107,7 @@ function ChocolateDraw() {
                     ._addTabToCache(tab);
             }
             var activeTabClass = chApp.getOptions().classes.activeTab,
-                cardTab = chApp.getFactory().getChTab($cont.find('.' +activeTabClass).children('a'));
+                cardTab = facade.getFactoryModule().makeChTab($cont.find('.' +activeTabClass).children('a'));
             if (context._isNeedReflow(cardTab)) {
                 var $panel = cardTab.getPanel();
                 context

@@ -220,15 +220,11 @@
 
         },
         _stop: function (e) {
-            if(this.start_index != null &&  this.end_index != null){
-
-
-                /**
-                 * @type {ChGridForm}
-                 */
-                var ch_form = ChObjectStorage.create($(this.element).closest('form'), ' ChGridForm');
-                var $th = ch_form.getFixedTable().children('thead').find('th');
-                var start, end;
+            if(this.start_index !== null &&  this.end_index !== null){
+                var form = facade.getFactoryModule().makeChGridForm($(this.element).closest('form')),
+                    $th = form.getFixedTable().children('thead').find('th'),
+                    start,
+                    end;
                 if(this.start_index < this.end_index){
                     start = this.end_index;
                     end = this.end_index - 1 ;
@@ -239,7 +235,7 @@
                     start = this.end_index ;
                     end = this.end_index +1;
                 }
-                ch_form.changeSettings( ch_form.getPositionColumn( $th.eq(start).attr('data-id')), ch_form.getPositionColumn( $th.eq(end).attr('data-id')));
+                form.changeSettings( form.getPositionColumn( $th.eq(start).attr('data-id')), form.getPositionColumn( $th.eq(end).attr('data-id')));
                 this._swapBodyCol(this.start_index, this.end_index);
             }
             this._clearVars();
@@ -248,12 +244,11 @@
                     .unbind('mousemove.' + this.widgetEventPrefix)
                     .unbind('touchmove')
                     .enableSelection()
-                    .css('cursor', 'move')
+                    .css('cursor', 'move');
                 this.dropCol();
-                this.dragDisplay.remove()
+                this.dragDisplay.remove();
             }
-            ;
-            this.element.floatThead('reflow')
+            this.element.floatThead('reflow');
 
         },
 

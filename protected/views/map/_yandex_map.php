@@ -3,15 +3,12 @@
  * @var $model GridForm
  * @var $this CController
  */
-?>
-<?
 $mapID = uniqid('map');
 $recordset = $model->loadData();
 $data = json_encode($recordset->rawUrlEncode());
 ?>
 
-    <div class="map" id="<? echo $mapID ?>" style="width: 100%; height: 600px"></div>
-<!--    <script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>-->
+<div class="map" id="<? echo $mapID ?>"></div>
 <?
 Yii::app()->clientScript->registerScript('yandex_map', <<<JS
 
@@ -27,10 +24,9 @@ jQuery.cachedScript = function( url, options ) {
 };
     $.cachedScript('http://api-maps.yandex.ru/2.1/?lang=ru_RU').done(
      function(){
-     console.log('sdsad')
       ymaps.ready(function(){
-      var ch_map =ChObjectStorage.create($('#' + '$mapID'), 'ChMap');
-         ch_map.init(ymaps, '$data');
+      var map = facade.getFactoryModule().makeChMap($('#' + '$mapID'));
+      map.init(ymaps, '$data');
   });
     } );
 JS

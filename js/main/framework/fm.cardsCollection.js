@@ -119,7 +119,7 @@ FmCardsCollection.prototype._generateList = function (view, pk, viewID, $panel) 
     html += '</div>';
     $panel.append(html);
 
-    var card = chApp.getFactory().getChCard($panel.children('[data-id=grid-tabs]'));
+    var card = facade.getFactoryModule().makeChCard($panel.children('[data-id=grid-tabs]'));
     if($.isNumeric(pk)){
         this.createSqlTasks(card, tabIdList);
     }

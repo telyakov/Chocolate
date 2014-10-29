@@ -5,7 +5,6 @@ var chApp = chApp || {
     main: Chocolate,
     events: ChocolateEvents,
     options: ChOptions,
-    factory: ChObjectStorage,
     responseStatuses: ChResponseStatus,
     draw: new ChocolateDraw(),
     tableHelper: ChTableHelper,
@@ -50,12 +49,7 @@ chApp.getMain = function () {
 chApp.getMessages = function () {
     return this.options.messages[this.options.settings.locale];
 };
-/**
- * @returns {ChObjectStorage}
- */
-chApp.getFactory = function () {
-    return this.factory;
-};
+
 /**
  * @returns {ChResponseStatus}
  */
