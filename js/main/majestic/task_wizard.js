@@ -1,8 +1,3 @@
-
-/**
- * Мастер создание поручений
- * @param ch_form {ChGridForm}
- */
 function TaskWizard(ch_form) {
     MajesticWizard.apply(this, arguments);
     this.ch_form = ch_form;

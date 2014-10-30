@@ -52,20 +52,20 @@ var ChocolateEvents = {
         this.openCardTabMenuEvent($tabs);
         this.filterTreeEvent($body);
     },
-    filterTreeEvent: function($cnt){
-      $cnt.on('click','.filter-button',this.filterTreeHandler);
+    filterTreeEvent: function ($cnt) {
+        $cnt.on('click', '.filter-button', this.filterTreeHandler);
     },
-    filterTreeHandler: function(){
+    filterTreeHandler: function () {
         var $this = $(this),
             $tree = $this.closest('div').siblings('.widget-tree'),
             nodes = $tree.find('li');
         $this.toggleClass('menu-button-selected');
-        var selectedNodes =nodes.filter(function(){
+        var selectedNodes = nodes.filter(function () {
             return $(this).has('.dynatree-selected').length === 0;
         });
-        if($this.hasClass('menu-button-selected')){
+        if ($this.hasClass('menu-button-selected')) {
             selectedNodes.hide();
-        }else{
+        } else {
             selectedNodes.show();
         }
     },
@@ -75,14 +75,14 @@ var ChocolateEvents = {
     openCardTabMenuHandler: function () {
         var $this = $(this),
             $tabs = $this.closest('.tab-menu').prevAll('.ui-tabs-nav').find('a'),
-             menu = [],
+            menu = [],
             activeClass = chApp.getOptions().classes.activeTab;
         $tabs.each(function () {
             var item = {
                 title: $(this).text(),
                 cmd: $(this).attr('id')
             };
-            if($(this).parent().hasClass(activeClass)){
+            if ($(this).parent().hasClass(activeClass)) {
                 item.uiIcon = 'ui-icon-check';
             }
             menu.push(item);
@@ -379,7 +379,7 @@ var ChocolateEvents = {
                                             if (selectedRows.length !== 1) {
                                                 form.getMessagesContainer().sendMessage('Выберите одну строчку', ChResponseStatus.ERROR);
                                             }
-                                                //todo: реализовать алгоритм биндинга
+                                            //todo: реализовать алгоритм биндинга
 //                                                    var rowID = factory.getSelectedRows[0].attr('data-id');
 //                                                    var data =  form.getDataObj()[rowID];
 //                                                    var $tr = $editable.closest('tr');
@@ -602,7 +602,7 @@ var ChocolateEvents = {
             /**
              * #tips 1
              */
-            if (catchKeys.indexOf(keyCode)!== -1) {
+            if (catchKeys.indexOf(keyCode) !== -1) {
                 var form = facade.getFactoryModule().makeChGridForm($(this).closest('form')),
                     $activeRow,
                     $nextRow;
@@ -777,14 +777,12 @@ var ChocolateEvents = {
         $context.on('click', '.fm-wizard-task', this.openTaskWizardHandler);
     },
     openTaskWizardHandler: function () {
-        var clsSel = chApp.namespace('main.clsSel'),
-            classes = chApp.namespace('options.classes'),
-            form = facade.getFactoryModule().makeChGridForm(
-                $(this)
-                    .closest(clsSel(classes.headerSection))
-                    .siblings(clsSel(classes.gridSection))
-                    .children('form')
-            );
+        var form = facade.getFactoryModule().makeChGridForm(
+            $(this)
+                .closest('.' + optionsModule.getClass('headerSection'))
+                .siblings('.' + optionsModule.getClass('gridSection'))
+                .children('form')
+        );
         (new TaskWizard(form)).open();
         return false;
     },
@@ -822,7 +820,7 @@ var ChocolateEvents = {
             /**
              * #tip 1
              */
-            var isNotTextEditMode = (['INPUT', 'TEXTAREA'].indexOf(e.target.tagName) ===-1);
+            var isNotTextEditMode = (['INPUT', 'TEXTAREA'].indexOf(e.target.tagName) === -1);
             if (isNotTextEditMode) {
                 var keys = chApp.namespace('events.KEY');
 

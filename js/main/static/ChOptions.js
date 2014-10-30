@@ -120,6 +120,9 @@ var optionsModule = (function () {
             },
             getSql: function(key){
                 return context.sql[key];
+            },
+            getClass: function(key){
+                return context.classes[key];
             }
         };
     return {
@@ -140,6 +143,9 @@ var optionsModule = (function () {
         },
         getSql: function(key){
             return _private.getSql(key);
+        },
+        getClass: function(key){
+            return _private.getClass(key);
         }
     };
 }());

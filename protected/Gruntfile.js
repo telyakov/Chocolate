@@ -96,7 +96,6 @@ module.exports = function (grunt) {
                     '../js/main/majestic/majestic.expression.js',
                     '../js/main/majestic/majestic.interpreter.js',
                     '../js/main/majestic/majestic.wizard_method.js',
-                    '../js/main/majestic/majestic.queue.js',
                     '../js/main/majestic/majestic.wizard.js',
                     '../js/main/majestic/task_wizard.js',
                     '../js/main/majestic/select_service_task_step.js',
@@ -113,6 +112,7 @@ module.exports = function (grunt) {
                     '../js/main/modules/user.js',
                     '../js/main/modules/bind.js',
                     '../js/main/modules/factory.js',
+                    '../js/main/plugins/wizard.js',
                     '../js/main/modules/facade.js', //latest loading module
                     '../js/main/run.js'
                 ],
