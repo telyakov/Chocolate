@@ -7,15 +7,19 @@
         commandObj: {},
         commands: [],
         onDone: function(){},
-        currentStep: 0
+        currentStep: 0,
+        titleFn: function(){
+            var currentStep = this.currentStep + 1;
+            return '( Шаг ' + currentStep + ' из ' + this.commands.length + ')';
+        }
     };
     var methods = {
         init: function (options) {
-            var $context = this;
-            var data = $context.data('chWizard');
+            var $context = this,
+                data = $context.data('chWizard');
             if (!data) {
-                var settings = $.extend(defaults, options);
-                var commandObj = settings.commandObj,
+                var settings = $.extend(defaults, options),
+                    commandObj = settings.commandObj,
                     doneFn = settings.onDone,
                     commands = settings.commands,
                     currentStep = settings.currentStep;

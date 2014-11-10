@@ -105,6 +105,7 @@ module.exports = function (grunt) {
                     '../js/main/functions/open_task_wizard_dialog_end.js',
                     '../js/main/modules/mediator.js', //first loading module
                     '../js/main/chApp.js',
+                    '../js/main/plugins/wizard.js',
                     '../js/main/modules/log.js',
                     '../js/main/modules/socket.js',
                     '../js/main/modules/storage.js',
@@ -112,7 +113,7 @@ module.exports = function (grunt) {
                     '../js/main/modules/user.js',
                     '../js/main/modules/bind.js',
                     '../js/main/modules/factory.js',
-                    '../js/main/plugins/wizard.js',
+                    '../js/main/modules/task_wizard.js',
                     '../js/main/modules/facade.js', //latest loading module
                     '../js/main/run.js'
                 ],

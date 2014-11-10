@@ -25,7 +25,7 @@ function openWizardDialog($content, mjWizard, mjMethod, nextIsActive, title) {
                     var $nxt_btn = $(this).parent().find('button.wizard-next-button.wizard-no-active');
                     if ($nxt_btn.length > 0) {
                         //TODO: немодально сделать
-                        alert("Сделайте действие.")
+                        alert("Сделайте действие.");
                         return false;
                     } else {
                         $(this).dialog("close");
