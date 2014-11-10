@@ -52,6 +52,10 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
                         }
                     }
                     break;
+                case optionsModule.getRequestType('wizardServices'):
+                    break;
+                case optionsModule.getRequestType('wizardExecutors'):
+                    break;
                 default:
                     console.log(data);
             }

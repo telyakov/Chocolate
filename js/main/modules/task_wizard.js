@@ -1,6 +1,26 @@
-var taskWizard = (function ($, undefined) {
+var taskWizard = (function ($, socketModule, undefined) {
     'use strict';
     var _private = {
+        makeCommandObj: function(form){
+            return {
+                form: form,
+                serviceID: null,
+                userIdList: null,
+                description: null,
+                userNames: null
+            };        },
+        onDoneFn: function(){
+            return function ($cnt) {
+                var commandObj = $cnt.data('chWizard').commandObj;
+                var form = commandObj.form,
+                    data = $.extend({}, form.getDefaultObj());
+                data.usersidlist = commandObj.usersidlist;
+                data.description = commandObj.description;
+                data.users = commandObj.usersTitle;
+                data.serviceid = commandObj.serviceID;
+                form.addRow(data);
+            };
+        },
         title: function ($cnt) {
             var data = $cnt.data('chWizard'), step = data.currentStep + 1;
             return 'Шаг (' + step + ' из ' + data.commands.length + ')';
@@ -95,27 +115,14 @@ var taskWizard = (function ($, undefined) {
          * @param form {ChGridForm}
          */
         makeCommandObject: function (form) {
-            return {
-                form: form,
-                serviceID: null,
-                userIdList: null,
-                description: null,
-                userNames: null
-            };
+            return _private.makeCommandObj(form);
         },
         onDoneFunc: function () {
-            return function ($cnt, commandObj) {
-                var form = commandObj.form,
-                    data = $.extend({}, form.getDefaultObj());
-                data.usersidlist = commandObj.usersidlist;
-                data.description = commandObj.description;
-                data.users = commandObj.usersTitle;
-                data.serviceid = commandObj.serviceID;
-                form.addRow(data);
-            };
+            return _private.onDoneFn();
         },
-        serviceCommand: function () {
-            return function ($cnt, commandObj) {
+        makeServiceCommand: function () {
+            return function ($cnt) {
+                var commandObj = $cnt.data('chWizard').commandObj;
                 jQuery.get(
                     '/majestic/execute',
                     {cache: true, sql: 'Tasks.ServicesGet'},
@@ -216,8 +223,9 @@ var taskWizard = (function ($, undefined) {
                     });
             };
         },
-        executorsCommand: function () {
-            return function ($cnt, commandObj) {
+        makeExecutorsCommand: function () {
+            return function ($cnt) {
+                var commandObj = $cnt.data('chWizard').commandObj;
                 if (chApp.getOptions().constants.multiTaskService === commandObj.serviceid) {
                     $cnt.trigger('next.chWizard');
                 } else {
@@ -275,8 +283,9 @@ var taskWizard = (function ($, undefined) {
             };
 
         },
-        descriptionCommand: function () {
-            return function ($cnt, commandObj) {
+        makeDescriptionCommand: function () {
+            return function ($cnt) {
+                var commandObj = $cnt.data('chWizard').commandObj;
                 var html = [
                         '<div class="widget-header">',
                         '<div class="widget-titles">',
@@ -310,4 +319,4 @@ var taskWizard = (function ($, undefined) {
             };
         }
     };
-})(jQuery, undefined);
+})(jQuery, socketModule, undefined);

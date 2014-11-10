@@ -7,7 +7,7 @@ var ChOptions = {
         filterAutoRefresh: 'data-auto-ref'
     },
     constants: {
-        multiTaskService: 81
+        multiTaskService: '81'
     },
     channels: {
         socketRequest: 'socket_request',
@@ -40,7 +40,9 @@ var ChOptions = {
         types: {
             forms: 'forms',
             roles: 'roles',
-            jquery: 'jquery'
+            jquery: 'jquery',
+            wizardServices: 'wizard_services',
+            wizardExecutors: 'wizard_executors'
         }
     },
     classes: {

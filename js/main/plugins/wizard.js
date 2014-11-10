@@ -28,12 +28,11 @@
                 if (commands[currentStep] !== undefined) {
                     var command = commands[currentStep],
                         data = $context.data('chWizard');
-                    data.commandObj = commandObj;
                     data.currentStep = currentStep;
                     $context.data('chWizard', data);
-                    command.call($context, $context, commandObj);
+                    command.call($context, $context);
                 } else {
-                    doneFn.call($context, $context, commandObj);
+                    doneFn.call($context, $context);
                     methods.destroy.call($context);
                 }
             });

@@ -789,9 +789,9 @@ var ChocolateEvents = {
             commandObj: tw.makeCommandObject(form),
             onDone: tw.onDoneFunc(),
             commands: [
-                tw.serviceCommand(),
-                tw.executorsCommand(),
-                tw.descriptionCommand()
+                tw.makeServiceCommand(),
+                tw.makeExecutorsCommand(),
+                tw.makeDescriptionCommand()
             ]
         });
         return false;
