@@ -777,13 +777,23 @@ var ChocolateEvents = {
         $context.on('click', '.fm-wizard-task', this.openTaskWizardHandler);
     },
     openTaskWizardHandler: function () {
-        var form = facade.getFactoryModule().makeChGridForm(
+        var $this = $(this),
+            tw = facade.getTaskWizard(),
+            form = facade.getFactoryModule().makeChGridForm(
             $(this)
                 .closest('.' + optionsModule.getClass('headerSection'))
                 .siblings('.' + optionsModule.getClass('gridSection'))
                 .children('form')
         );
-        (new TaskWizard(form)).open();
+        $this.chWizard('init', {
+            commandObj: tw.makeCommandObject(form),
+            onDone: tw.onDoneFunc(),
+            commands: [
+                tw.serviceCommand(),
+                tw.executorsCommand(),
+                tw.descriptionCommand()
+            ]
+        });
         return false;
     },
     /**
