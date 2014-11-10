@@ -1,16 +1,18 @@
-var taskWizard = (function ($) {
+var taskWizard = (function ($, undefined) {
     'use strict';
     var _private = {
         title: function ($cnt) {
             var data = $cnt.data('chWizard'), step = data.currentStep + 1;
-            return '( Шаг ' + step + ' из ' + data.commands.length + ')';
+            return 'Шаг (' + step + ' из ' + data.commands.length + ')';
         },
-        open: function ($content, $cnt, nextIsActive, commandObj, doneFn) {
-            var next_class = 'wizard-no-active wizard-next-button';
-            if (nextIsActive) {
-                next_class = 'wizard-active wizard-next-button';
+        dialogOpen: function ($data, $cnt, isActiveNext, commandObj, doneFn) {
+            var btnNextClass;
+            if (isActiveNext) {
+                btnNextClass = 'wizard-active wizard-next-button';
+            } else {
+                btnNextClass = 'wizard-no-active wizard-next-button';
             }
-            $content.dialog({
+            $data.dialog({
                 resizable: false,
                 title: _private.title($cnt),
                 dialogClass: 'wizard-dialog',
@@ -18,24 +20,30 @@ var taskWizard = (function ($) {
                 buttons: {
                     Next: {
                         text: 'Далее >',
-                        'class': next_class,
-                        click: function (bt, elem) {
-                            if (nextIsActive) {
-                                $(this).dialog("close");
-                                $(this).closest('div.ui-dialog').remove();
-
-                                doneFn.call($cnt, commandObj, $content);
+                        'class': btnNextClass,
+                        click: function () {
+                            var $this = $(this),
+                                $nextBtn = $this.parent().find('.wizard-next-button.wizard-no-active');
+                            if (isActiveNext || !$nextBtn.length) {
+                                $this.dialog('close');
+                                $this.closest('.ui-dialog').remove();
+                                doneFn.call($cnt, commandObj, $data);
                                 return true;
-                            }
-                            var $nxt_btn = $(this).parent().find('button.wizard-next-button.wizard-no-active');
-                            if ($nxt_btn.length > 0) {
-                                //TODO: немодально сделать
-                                alert("Сделайте действие.");
-                                return false;
                             } else {
-                                $(this).dialog("close");
-                                $(this).closest('div.ui-dialog').remove();
-                                doneFn.call($cnt, commandObj, $content);
+                                var $error = $('<span>', {
+                                        text: 'Выберите элемент',
+                                        'class': 'wizard-error ui-dialog-title'
+                                    }),
+                                    $placement = $this.closest('.ui-dialog').children('.ui-dialog-titlebar');
+                                $error
+                                    .appendTo($placement)
+                                    .delay(3000)
+                                    .queue(function () {
+                                        $(this).remove();
+                                    });
+
+                                return false;
+
                             }
                         }},
                     Cancel: {
@@ -50,9 +58,8 @@ var taskWizard = (function ($) {
                 }
             });
         },
-        end: function ($content, commandObj, $cnt) {
-            var next_class = 'wizard-active wizard-next-button';
-            $content.dialog({
+        end: function ($data, commandObj, $cnt) {
+            $data.dialog({
                 resizable: false,
                 title: _private.title($cnt),
                 dialogClass: 'wizard-dialog',
@@ -60,21 +67,22 @@ var taskWizard = (function ($) {
                 buttons: {
                     Next: {
                         text: 'Добавить',
-                        'class': next_class,
-                        click: function (e, elem) {
-                            var description = $(e.target).closest('div.wizard-dialog').find('.wizard-text').val();
-                            if (typeof(description) !== 'undefined') {
+                        'class': 'wizard-active wizard-next-button',
+                        click: function (e) {
+                            var description = $(e.target).closest('.wizard-dialog').find('.wizard-text').val();
+                            if (description !== 'undefined') {
                                 commandObj.description = description;
                             }
-                            $(this).dialog("close");
-                            $(this).closest('div.ui-dialog').remove();
+                            var $this = $(this);
+                            $this.dialog('close');
+                            $this.closest('.ui-dialog').remove();
                             $cnt.trigger('next.chWizard');
                         }},
                     Cancel: {
                         text: 'Отмена',
                         'class': 'wizard-cancel-button',
                         click: function () {
-                            $(this).dialog("close");
+                            $(this).dialog('close');
                             $cnt.chWizard('destroy');
                         }
                     }
@@ -173,7 +181,7 @@ var taskWizard = (function ($) {
                             $header.append($search);
                             $content.prepend($header);
                             $content.append($tree);
-                            _private.open($content, $cnt, false, commandObj, function (commandObj, $content) {
+                            _private.dialogOpen($content, $cnt, false, commandObj, function (commandObj, $content) {
                                 $(this).trigger('next.chWizard');
                             });
                             $search.autocomplete({
@@ -239,7 +247,7 @@ var taskWizard = (function ($) {
                             options.separator = '|';
                             options.checkbox = true;
                             var $newCont = dynatreeElem.build(options);
-                            _private.open($newCont, $cnt, true, commandObj, function (commandObj, $content) {
+                            _private.dialogOpen($newCont, $cnt, true, commandObj, function (commandObj, $content) {
                                 var selected_nodes = $content.find('.widget-tree').dynatree("getSelectedNodes");
                                 var val = '', select_html = '';
                                 commandObj.usersidlist = '';
@@ -258,7 +266,7 @@ var taskWizard = (function ($) {
                             });
                             var $checkbox = $('<span class="tree-checkbox"><input type="checkbox"><span class="tree-checkbox-caption">Выделить все</span></span>');
                             $newCont.next().prepend($checkbox);
-                            ChDynatree.prototype.checkboxClickEvent($checkbox, $newCont.find('.widget-tree'))
+                            ChDynatree.prototype.checkboxClickEvent($checkbox, $newCont.find('.widget-tree'));
                         }
 
                     );
@@ -269,8 +277,23 @@ var taskWizard = (function ($) {
         },
         descriptionCommand: function () {
             return function ($cnt, commandObj) {
-                var $content = $('<div class="widget-task-description"><div class="widget-header"><div class="widget-titles">Заполните описание</div><div class="widget-titles-content">Пожалуйста, заполните описание для вашего поручения</div></div></div>'),
-                    $text = $('<div class="widget-editable-input"></div>');
+                var html = [
+                        '<div class="widget-header">',
+                        '<div class="widget-titles">',
+                        'Заполните описание',
+                        '</div>',
+                        '<div class="widget-titles-content">',
+                        'Пожалуйста, заполните описание для вашего поручения',
+                        '</div>',
+                        '</div>'
+                    ].join(''),
+                    $content = $('<div>', {
+                        'class': 'widget-task-description',
+                        html: html
+                    }),
+                    $text = $('<div>', {
+                        'class': 'widget-editable-input'
+                    });
                 $content.append($text);
                 $text.editable({
                     value: commandObj.description,
@@ -287,4 +310,4 @@ var taskWizard = (function ($) {
             };
         }
     };
-})(jQuery);
+})(jQuery, undefined);
