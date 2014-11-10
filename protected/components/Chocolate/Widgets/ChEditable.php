@@ -414,7 +414,7 @@ class ChEditable extends CWidget
         $script .= ".editable($options);";
         $id = $this->htmlOptions['identity'];
         $script = <<<JS
-        ChEditableCallback.add(function (\$cnt){setTimeout(function(){ $script}, 0)}, '$id');
+        ChEditableCallback.add(function (\$cnt){ $script }, '$id');
 
 JS;
         Yii::app()->getClientScript()->registerScript(__CLASS__ . '#' . $this->id, $script);
