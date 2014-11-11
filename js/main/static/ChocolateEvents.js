@@ -841,7 +841,7 @@ var ChocolateEvents = {
                     var tab = chApp.getMain().getActiveChTab();
                     if (tab.isCardTypePanel()) {
                         var card = facade.getFactoryModule().makeChCard(tab.getPanel().children('[data-id=grid-tabs]'));
-                        if (!card._isChanged()) {
+                        if (!card._isChanged() && $(e.target).children('.fancybox-overlay').length ===0) {
                             chApp.getMain().tab.closeActiveTab();
                         }
                     }
