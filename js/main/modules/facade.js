@@ -1,7 +1,7 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
  */
-var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule) {
+var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule) {
     var showErrorsChannel = optionsModule.getChannel('showError'),
         setRolesChannel = optionsModule.getChannel('setRoles'),
         logErrorChannel =  optionsModule.getChannel('logError');
@@ -102,7 +102,10 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
         },
         getHelpersModule: function(){
             return helpersModule;
+        },
+        getTableModule: function(){
+            return tableModule;
         }
     };
 
-}(logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule));
+}(logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule));

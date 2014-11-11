@@ -1266,11 +1266,11 @@ ChGridForm.prototype.toggleColls = function (isHidden, $thList) {
         sum += parseInt(_this.getColumnWidth($(this).get(0).cellIndex), 10);
     });
     if (isHidden) {
-        ChTableHelper.showColsManyTables(tables, positions);
+        facade.getTableModule().showTableCols(tables, positions);
         newWidth = curWidth + sum;
 
     } else {
-        ChTableHelper.hideColsManyTables(tables, positions);
+        facade.getTableModule().hideTableCols(tables, positions);
         newWidth = curWidth - sum;
     }
     $table.width(newWidth);

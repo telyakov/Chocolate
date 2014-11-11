@@ -158,12 +158,12 @@ ChTable.prototype._initContextMenu = function () {
             var from = _this.ch_form.getPositionColumn( ui.target.closest('th').attr('data-id'));
             switch (ui.cmd) {
                 case 'to-first':
-                    ChTableHelper.swapColsManyTables(tables, fromReal, 1);
+                    facade.getTableModule().swapTableCols(tables, fromReal, 1);
                     _this.$table.floatThead('reflow');
                     _this.ch_form.changeSettings(from, 1);
                     break;
                 case 'to-last':
-                    ChTableHelper.swapColsManyTables(tables, fromReal, realCount);
+                    facade.getTableModule().swapTableCols(tables, fromReal, realCount);
                     _this.$table.floatThead('reflow');
                     _this.ch_form.changeSettings(from, count);
                     break;

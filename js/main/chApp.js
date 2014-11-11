@@ -7,7 +7,6 @@ var chApp = chApp || {
     options: ChOptions,
     responseStatuses: ChResponseStatus,
     draw: new ChocolateDraw(),
-    tableHelper: ChTableHelper,
     attachments: ch.attachments,
     callback: ChEditableCallback,
     files: ChAttachments,
@@ -74,9 +73,6 @@ chApp.getDraw = function(){
  */
 chApp.getFunctions = function(){
     return chFunctions;
-};
-chApp.getTableHelper = function(){
-    return this.tableHelper;
 };
 /**
  * @returns {ChEditableCallback}

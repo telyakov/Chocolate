@@ -467,7 +467,7 @@
                 to = this.options.notDraggableCount
             }
             if(from!=to){
-                ChTableHelper.swapCols(this.parentElement[0], from, to);
+                facade.getTableModule().swapCols(this.parentElement[0], from, to);
                 this._eventHelper('change', {});
 
                 this.startIndex = this.endIndex;
@@ -504,7 +504,7 @@
             if (this._eventHelper('breforechange', {}) === false) {
                 return false;
             }
-            ChTableHelper.swapCols(this.element[0], from, to);
+            facade.getTableModule().swapCols(this.element[0], from, to);
             this._eventHelper('change', {});
 
             this.startIndex = this.endIndex;
