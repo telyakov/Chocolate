@@ -46,7 +46,6 @@ module.exports = function (grunt) {
             },
             main: {
                 src: [
-                    '../js/main/static/ObjectStorage.js',
                     '../js/main/static/ChOptions.js',
                     '../js/main/static/ch.table.helper.js',
                     '../js/main/static/ChEditableCallback.js',

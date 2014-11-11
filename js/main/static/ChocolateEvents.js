@@ -827,9 +827,6 @@ var ChocolateEvents = {
     },
     preventDefaultBrowserEvents: function ($context) {
         $context.on('keydown', function (e) {
-            /**
-             * #tip 1
-             */
             var isNotTextEditMode = (['INPUT', 'TEXTAREA'].indexOf(e.target.tagName) === -1);
             if (isNotTextEditMode) {
                 var keys = chApp.namespace('events.KEY');
