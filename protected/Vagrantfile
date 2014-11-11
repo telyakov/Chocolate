@@ -1,18 +1,12 @@
 VAGRANTFILE_API_VERSION = "2"
-
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "centos7"
-  #config.vm.network "forwarded_port", guest: 80, host: 8000
-  #config.vm.network "forwarded_port", guest: 8080, host: 8080
-  #config.vm.network "forwarded_port", guest: 3000, host: 3000
-  #config.vm.network "forwarded_port", guest: 4848, host: 4848
-  #config.vm.network "private_network", ip: "192.168.150.4"
+  config.vm.box_url = "https://f0fff3908f081cb6461b407be80daf97f07ac418.googledrive.com/host/0BwtuV7VyVTSkUG1PM3pCeDJ4dVE/centos7.box"
   config.vm.network :private_network, ip: "10.0.5.2"
   config.vm.provision "shell", :path => "provision/bootstrap.sh"
   #config.vm.synced_folder "../.", "/vagrant", type: "rsync"
   config.vm.synced_folder "../.", "/vagrant"
   config.vm.synced_folder "../../MilkyWay", "/websocket"
-
   config.vm.provider "virtualbox" do |vb|
       vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
