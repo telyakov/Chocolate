@@ -857,7 +857,7 @@ var ChocolateEvents = {
         var $this = $(this),
             $controls = $this.parent().find('select, input');
         $controls.prop('disabled', false);
-        $controls.filter('input')
+        $controls.filter('input').eq(0)
             .focus()
             .trigger('click');
         $this.remove();
