@@ -1,7 +1,7 @@
 var Chocolate = {
     ATTACHMENTS_VIEW: 'attachments.xml',
     ID_REG_EXP: /00pk00/g,
-    storage:null,
+    storage: null,
     $window: null,
     $tabs: null,
     $header: null,
@@ -142,7 +142,7 @@ var Chocolate = {
         var session = Chocolate.storage.session, chForm;
         for (var formID in session) {
             if (formID != 'user' && session.hasOwnProperty(formID)) {
-                chForm =facade.getFactoryModule().makeChGridForm($('#'+formID));
+                chForm = facade.getFactoryModule().makeChGridForm($('#' + formID));
                 if (chForm.isHasChange()) {
                     return true;
                 }
@@ -366,3 +366,16 @@ var Chocolate = {
     }
 };
 
+var helpersModule = (function () {
+    var context = Chocolate;
+    return {
+        engToRus: function (s) {
+            return context.eng2rus(s);
+        },
+        filterSearchData: function (seacrh, key) {
+            return function filter(item) {
+                return item[key].toLowerCase().indexOf(seacrh) !== -1;
+            };
+        }
+    };
+})();

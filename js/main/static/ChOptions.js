@@ -37,6 +37,8 @@ var ChOptions = {
     sql: {
         getForms: 'core.UserFormsGet [userid]',
         getRoles: 'core.UserRolesGet [userid]',
+        getServices: 'Tasks.ServicesGet',
+        getExecutors: 'tasks.uspGetUsersListForTasksUsers',
         types: {
             forms: 'forms',
             roles: 'roles',
@@ -125,6 +127,9 @@ var optionsModule = (function () {
             },
             getClass: function(key){
                 return context.classes[key];
+            },
+            getConstants: function(key){
+                return context.constants[key];
             }
         };
     return {
@@ -148,6 +153,9 @@ var optionsModule = (function () {
         },
         getClass: function(key){
             return _private.getClass(key);
+        },
+        getConstants: function(key){
+            return _private.getConstants(key);
         }
     };
 }());

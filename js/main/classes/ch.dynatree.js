@@ -155,7 +155,7 @@ ChDynatree.prototype.build = function (options) {
             $header = $('<div class="widget-header-tree"></div>'),
             $checkbox = $('<span class="tree-checkbox"><input type="checkbox"><span class="tree-checkbox-caption">Выделить все</span></span>');
         $header.append($search);
-        $header.append('<button class="active filter-button menu-button small-button"><span class="fa-eye"></span></button>');
+        $header.append('<button class="active filter-button menu-button small-button"><span class="fa-eye" title="Показать элементы"></span></button>');
         $content.prepend($header);
         if (this.hasInfoPanel()) {
             $tree.addClass('widget-tree-compact');
@@ -175,8 +175,11 @@ ChDynatree.prototype.build = function (options) {
         if (this.isDialogEvent()) {
             this.dialogEvent($content, $tree, $input, $checkbox, $select);
         }
-
-        $content.next().prepend($checkbox);
+        var $checkBoxWrapper =  $('<div>', {
+            'class': 'wizard-check-con'
+        });
+        $checkBoxWrapper.append($checkbox);
+        $content.append($checkBoxWrapper);
         this
             .autoCompleteEvent($search, $tree, $content)
             .checkboxClickEvent($checkbox, $tree);

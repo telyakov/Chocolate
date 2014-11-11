@@ -13,6 +13,7 @@
         init: function (options) {
             var $context = this,
                 data = $context.data('chWizard');
+            $context.uniqueId();
             if (data) {
                 methods.destroy.call($context);
             }

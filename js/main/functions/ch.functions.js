@@ -72,16 +72,10 @@ var chFunctions = {
                 });
         }
     },
-
-    filterSearchData: function (seacrh, key) {
-        return function filter(item, i, arr) {
-            return item[key].toLowerCase().indexOf(seacrh) !== -1;
-        };
-    },
     layoutChildrenFilters: function (targetID, name, view, currentID, parentName) {
         $('#' + targetID).on('click', function (e) {
             var jForm = $(this).closest('form'),
-                ChFilterForm = facade.getFactoryModule().makeChFilterForm(jForm);
+                ChFilterForm = facade.getFactoryModule().makeChFilterForm(jForm),
                 rawUrl = chApp.getOptions().urls.filterLayouts;
             //TODO: поддержка всех типов фильтро
             var value = ChFilterForm.getData()[parentName];

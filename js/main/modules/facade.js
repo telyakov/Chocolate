@@ -1,7 +1,7 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
  */
-var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard) {
+var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule) {
     var showErrorsChannel = optionsModule.getChannel('showError'),
         setRolesChannel = optionsModule.getChannel('setRoles'),
         logErrorChannel =  optionsModule.getChannel('logError');
@@ -53,8 +53,10 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
                     }
                     break;
                 case optionsModule.getRequestType('wizardServices'):
+                    taskWizard.onServiceCommand(resData, data.id);
                     break;
                 case optionsModule.getRequestType('wizardExecutors'):
+                    taskWizard.onExecutorsCommand(resData, data.id);
                     break;
                 default:
                     console.log(data);
@@ -97,7 +99,10 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
         },
         getTaskWizard: function(){
             return taskWizard;
+        },
+        getHelpersModule: function(){
+            return helpersModule;
         }
     };
 
-}(logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard));
+}(logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule));
