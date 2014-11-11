@@ -1,3 +1,6 @@
+/**
+ * taskWizard dependencies from dynatree, editable
+ */
 var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule, helpersModule) {
     'use strict';
     var _private = {

@@ -19,7 +19,6 @@
             }
 
             var settings = $.extend({}, defaults, options),
-                commandObj = settings.commandObj,
                 doneFn = settings.onDone,
                 commands = settings.commands,
                 currentStep = settings.currentStep;
