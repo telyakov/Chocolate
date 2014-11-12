@@ -263,6 +263,13 @@ var helpersModule = (function () {
             return function filter(item) {
                 return item[key].toLowerCase().indexOf(seacrh) !== -1;
             };
+        },
+        getTabsObj: function(){
+            return context.$tabs;
+        },
+        uniqueID: function(){
+            return context.uniqueID();
         }
+
     };
 })();

@@ -53,7 +53,6 @@ module.exports = function (grunt) {
                     '../js/main/static/chAttachments.js',
                     '../js/main/static/ChResponseStatus.js',
                     '../js/main/static/chAjaxQueue.js',
-                    '../js/main/modules/tabs.js',
                     '../js/main/classes/ch.dynatree.js',
                     '../js/main/classes/ch.map.js',
                     '../js/main/classes/ch.tab.js',
@@ -97,6 +96,7 @@ module.exports = function (grunt) {
                     '../js/main/modules/user.js',
                     '../js/main/modules/bind.js',
                     '../js/main/modules/factory.js',
+                    '../js/main/modules/tabs.js',
                     '../js/main/modules/task_wizard.js',
                     '../js/main/modules/facade.js', //latest loading module
                     '../js/main/run.js'

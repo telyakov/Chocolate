@@ -1,83 +1,86 @@
-var tabsModule = (function($){
-    var history ={
+var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, undefined) {
+    'use strict';
+    var history = {
         tabs: [],
         size: 15,
-        push: function($tab){
-            var last =this.last();
-            if(last &&(last[0] === $tab[0])){
+        push: function ($tab) {
+            var last = history.last();
+            if (last && (last[0] === $tab[0])) {
                 return;
             }
-            if(this.tabs.length  > this.size){
-                this.tabs.shift();
+            if (history.tabs.length > history.size) {
+                history.tabs.shift();
             }
-            this.tabs.push($tab);
+            history.tabs.push($tab);
         },
         /**
          * @returns {int|null}
          */
-        pop: function(){
-            var $popTab = this.tabs.pop(),
-                _this = this;
-            this.tabs.forEach(function($elem,index){
-                if ($popTab[0] === $elem[0]){
-                    _this.tabs.splice(index, 1);
+        pop: function () {
+            var $popTab = history.tabs.pop();
+            history.tabs.forEach(function ($elem, index) {
+                if ($popTab[0] === $elem[0]) {
+                    history.tabs.splice(index, 1);
                 }
             });
-            return this.lastIndex();
+            return history.lastIndex();
         },
-        last: function(){
-            if(this.tabs.length){
-                return this.tabs[this.tabs.length -1];
-            }else{
+        last: function () {
+            if (history.tabs.length) {
+                return history.tabs[history.tabs.length - 1];
+            } else {
                 return null;
             }
         },
         /**
          * @returns {int|null}
          */
-        lastIndex: function(){
-            var last = this.last();
-            if(last){
+        lastIndex: function () {
+            var last = history.last();
+            if (last) {
                 return last.index();
-            }else{
+            } else {
                 return null;
             }
         }
     };
     var _private = {
-        getActiveChTab: function(){
-            var $activeLink = Chocolate.$tabs
-                .children(Chocolate.clsSel(ChOptions.classes.tabMenuClass))
-                .children(Chocolate.clsSel(ChOptions.classes.activeTab))
+        getActiveChTab: function () {
+            var $link = helpersModule.getTabsObj()
+                .children('.' + optionsModule.getClass('tabMenuClass'))
+                .children('.' + optionsModule.getClass('activeTab'))
                 .children('a');
-            return facade.getFactoryModule().makeChTab($activeLink);
+            return factoryModule.makeChTab($link);
         },
         close: function ($a) {
-            var activeTab = facade.getFactoryModule().makeChTab($a);
+            var activeTab = factoryModule.makeChTab($a);
             if (activeTab.isCardTypePanel()) {
-                var card = facade.getFactoryModule().makeChCard(activeTab.getPanel().children('[data-id = grid-tabs]'));
+                var card = factoryModule.makeChCard(activeTab.getPanel().children('[data-id=grid-tabs]'));
                 card._undoChange();
             } else {
-                var form = facade.getFactoryModule().makeChGridForm(activeTab.getPanel().find('.section-grid>form'));
-                if (typeof form.isHasChange !== 'undefined' && form.$form.length && form.isHasChange() && !confirm(form.getExitMessage())) {
+                var form = factoryModule.makeChGridForm(activeTab.getPanel().find('.section-grid>form'));
+                if (form.isHasChange !== undefined && form.$form.length && form.isHasChange() && !confirm(form.getExitMessage())) {
                     return;
                 }
             }
             var $tab = activeTab.getLi();
-            if ($tab.hasClass(ChOptions.classes.activeTab)) {
-                var nextIndex = facade.getTabsModule().pop();
-                Chocolate.$tabs.tabs({ active: nextIndex });
+            if ($tab.hasClass(optionsModule.getClass('activeTab'))) {
+                var nextIndex = history.pop();
+                helpersModule.getTabsObj().tabs({ active: nextIndex });
                 chApp.getDraw().reflowActiveTab();
             }
-            var tabSelector = Chocolate.idSel($tab.remove().attr("aria-controls"));
-            var $panel = $(tabSelector);
+            var $panel = $('#' + $tab.remove().attr("aria-controls"));
+            _private.destroy($panel);
+            helpersModule.getTabsObj().tabs('refresh');
+            factoryModule.garbageCollection();
+        },
+        destroy: function($panel){
             try {
                 $panel.find('.ui-resizable').each(function () {
                     $(this).resizable('destroy');
                 });
             } catch (e) {
             }
-
             try {
                 $panel.find('.editable').each(function () {
                     $(this).editable('destroy').remove();
@@ -86,7 +89,6 @@ var tabsModule = (function($){
                 console.log(e);
             }
             try {
-//                $panel.find('.toggle-button').each(function(){$(this).remove()});
                 $panel.find('.menu-button, .tree-button, .tablesorter-filter, .tablesorter-header a, .tablesorter-header div, .form-vertical input').each(function () {
                     $(this).remove();
                 });
@@ -104,15 +106,12 @@ var tabsModule = (function($){
             } catch (e) {
                 console.log(e);
             }
-
             $panel.remove();
-            Chocolate.$tabs.tabs("refresh");
-            facade.getFactoryModule().garbageCollection();
         },
         createTabLink: function (targetID, name) {
             return [
                 '<a id="',
-                Chocolate.uniqueID(),
+                helpersModule.uniqueID(),
                 '" href="#',
                 targetID,
                 '">',
@@ -121,35 +120,42 @@ var tabsModule = (function($){
             ].join('');
         },
         add: function (id, name) {
-            var $tabItem = $('<li>' + _private.createTabLink(id, name) + '</li>');
-            Chocolate.$tabs.children('ul').append($tabItem);
-            Chocolate.$tabs.tabs();
-            Chocolate.$tabs.tabs('refresh');
-            facade.getTabsModule().push($tabItem);
-            return $tabItem;
+            var $item = $('<li>', {
+                    html: _private.createTabLink(id, name)
+                }),
+                $tabs = helpersModule.getTabsObj();
+            $tabs.children('ul').append($item);
+            $tabs.tabs();
+            $tabs.tabs('refresh');
+            history.push($item);
+            return $item;
+        },
+        addAndSetActive: function (id, name) {
+            var $item = _private.add(id, name);
+            helpersModule.getTabsObj().tabs({ active: $item.index() });
+            return $item;
         }
     };
     return {
-        push: function($tab){
+        push: function ($tab) {
             history.push($tab);
         },
-        pop: function(){
+        pop: function () {
             return history.pop();
         },
         closeActiveTab: function () {
-            var $a = _private.getActiveChTab().$a;
-            _private.close($a);
+            _private.close(_private.getActiveChTab().$a);
         },
         /**
          * @returns {ChTab}
          */
         getActiveChTab: function () {
-          return _private.getActiveChTab();
+            return _private.getActiveChTab();
         },
         /**
          * @param $a {jQuery}
          */
-        close: function($a){
+        close: function ($a) {
             _private.close($a);
         },
         /**
@@ -158,7 +164,7 @@ var tabsModule = (function($){
          * @returns {jQuery}
          */
         add: function (id, name) {
-           return _private.add(id, name);
+            return _private.add(id, name);
         },
         /**
          * @param targetID {string}
@@ -168,16 +174,13 @@ var tabsModule = (function($){
         createTabLink: function (targetID, name) {
             return _private.createTabLink(targetID, name);
         },
-
         /**
          * @param id {string}
          * @param name {string}
          * @returns {jQuery}
          */
         addAndSetActive: function (id, name) {
-            var $item = _private.add(id, name);
-            Chocolate.$tabs.tabs({ active: $item.index() });
-            return $item;
+            return _private.addAndSetActive(id, name);
         }
     };
-})(jQuery);
+})(jQuery, helpersModule, optionsModule, factoryModule, undefined);
