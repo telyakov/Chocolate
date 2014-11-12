@@ -28,7 +28,7 @@ var chFunctions = {
                 "html": false, //Button which allows you to edit the generated HTML. Default false
                 "link": false, //Button to insert a link. Default true
                 "image": false, //Button to insert an image. Default true,
-                "color": true //Button to change color of font
+                "color": false //Button to change color of font
             },
             mode: 'popup',
             onblur: 'ignore',
