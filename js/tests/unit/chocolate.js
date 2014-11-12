@@ -21,7 +21,7 @@ test('Chocolate.idSel', function(){
 test('Chocolate.getActiveChTab', function(){
     expect(2);
     var tabStub =this.stub(window, "ChTab");
-    Chocolate.getActiveChTab();
+    facade.getTabsModule().getActiveChTab();
     ok(tabStub.calledOnce === true && tabStub.threw() === false, 'Если нет активных вкладок - объект возвращается без исключений');
 //    console.log( a)
     window.ChTab.restore();
@@ -50,7 +50,7 @@ test('Chocolate.getActiveChTab', function(){
     Chocolate.$tabs
         .prepend($content)
         .append($mainMenu);
-    equal(Chocolate.getActiveChTab().$a.attr('id'), activeID, 'Активная закладка определяется правильно');
+    equal(facade.getTabsModule().getActiveChTab().$a.attr('id'), activeID, 'Активная закладка определяется правильно');
 });
 test('Chocolate.uniqueID', function(){
     expect(1);
@@ -248,7 +248,7 @@ test('Chocolate.tab.close', function(){
     var stubUndoChange = this.stub(ChCard.prototype,'_undoChange');
     var spyGarbageCollection = this.spy(facade.getFactoryModule(), 'garbageCollection');
 
-    Chocolate.tab.close($('<a>'));
+    facade.getTabsModule().close($('<a>'));
     ok(Chocolate.$tabs.find(Chocolate.idSel(panelID)).length === 0, 'Закрытая закладка должна удаляться из DOM');
     ok(spyGarbageCollection.calledOnce, 'После закрытия закладки вызывается garbageCollection');
     spyGarbageCollection.reset();
@@ -260,12 +260,12 @@ test('Chocolate.tab.close', function(){
      stubGetLi = this.stub(ChTab.prototype, 'getLi' , function(){
         return $('<li aria-controls="' + panelID + '" class="'+ChOptions.classes.activeTab+'">');
     });
-    Chocolate.tab.close($('<a>'));
+    facade.getTabsModule().close($('<a>'));
     ok(stubReflow.calledOnce && stubTabs.calledWithExactly({active: null}), 'Если закрывается активная вкладка, открывается предыдушая вкладки и выполняется ее перерисовка');
     stubIsHasChange.reset();
     stubIsHasChange.returns(true);
 
-    Chocolate.tab.close($('<a>'));
+    facade.getTabsModule().close($('<a>'));
 
     ok(stubConfirm.calledOnce, 'При наличии изменений в форме, выводится confirm с сообщением');
     stubConfirm.reset();
@@ -275,7 +275,7 @@ test('Chocolate.tab.close', function(){
     stubIsCardPanel = this.stub(ChTab.prototype, 'isCardTypePanel' , function(){
         return true;
     });
-    Chocolate.tab.close($('<a>'));
+    facade.getTabsModule().close($('<a>'));
     ok(stubUndoChange.calledOnce, 'Закрытая закладка с типом Карточка, должна отменять изменение в карточке');
     window.confirm.restore();
     chApp.getDraw().reflowActiveTab.restore();

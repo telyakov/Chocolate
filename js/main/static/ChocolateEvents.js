@@ -570,8 +570,7 @@ var ChocolateEvents = {
             .on('touchmove', '#tabs>ul>li>a', this.closeTabHandler);
     },
     closeTabHandler: function () {
-        var tab = chApp.namespace('main.tab');
-        tab.close($(this));
+        facade.getTabsModule().close($(this));
         return false;
     },
     menuContextEvent: function ($context) {

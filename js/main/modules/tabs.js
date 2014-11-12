@@ -51,6 +51,63 @@ var tabsModule = (function($){
                 .children(Chocolate.clsSel(ChOptions.classes.activeTab))
                 .children('a');
             return facade.getFactoryModule().makeChTab($activeLink);
+        },
+        close: function ($a) {
+            var activeTab = facade.getFactoryModule().makeChTab($a);
+            if (activeTab.isCardTypePanel()) {
+                var card = facade.getFactoryModule().makeChCard(activeTab.getPanel().children('[data-id = grid-tabs]'));
+                card._undoChange();
+            } else {
+                var form = facade.getFactoryModule().makeChGridForm(activeTab.getPanel().find('.section-grid>form'));
+                if (typeof form.isHasChange !== 'undefined' && form.$form.length && form.isHasChange() && !confirm(form.getExitMessage())) {
+                    return;
+                }
+            }
+            var $tab = activeTab.getLi();
+            if ($tab.hasClass(ChOptions.classes.activeTab)) {
+                var nextIndex = facade.getTabsModule().pop();
+                Chocolate.$tabs.tabs({ active: nextIndex });
+                chApp.getDraw().reflowActiveTab();
+            }
+            var tabSelector = Chocolate.idSel($tab.remove().attr("aria-controls"));
+            var $panel = $(tabSelector);
+            try {
+                $panel.find('.ui-resizable').each(function () {
+                    $(this).resizable('destroy');
+                });
+            } catch (e) {
+            }
+
+            try {
+                $panel.find('.editable').each(function () {
+                    $(this).editable('destroy').remove();
+                });
+            } catch (e) {
+                console.log(e);
+            }
+            try {
+//                $panel.find('.toggle-button').each(function(){$(this).remove()});
+                $panel.find('.menu-button, .tree-button, .tablesorter-filter, .tablesorter-header a, .tablesorter-header div, .form-vertical input').each(function () {
+                    $(this).remove();
+                });
+                $panel.find(' .tablesorter-header,.form-vertical ').each(function () {
+                    $(this).remove();
+                });
+                $panel.find('.tablesorter').trigger('destroy');
+                $panel.find('.grid-view>table').floatThead('destroy');
+                $panel.find(' .table-bordered').each(function () {
+                    $(this).remove();
+                });
+                $panel.find(' .grid-view').each(function () {
+                    $(this).remove();
+                });
+            } catch (e) {
+                console.log(e);
+            }
+
+            $panel.remove();
+            Chocolate.$tabs.tabs("refresh");
+            facade.getFactoryModule().garbageCollection();
         }
     };
     return {
@@ -62,13 +119,19 @@ var tabsModule = (function($){
         },
         closeActiveTab: function () {
             var $a = _private.getActiveChTab().$a;
-            Chocolate.tab.close($a);
+            _private.close($a);
         },
         /**
          * @returns {ChTab}
          */
         getActiveChTab: function () {
           return _private.getActiveChTab();
+        },
+        /**
+         * @param $a {jQuery}
+         */
+        close: function($a){
+            _private.close($a);
         }
     };
 })(jQuery);

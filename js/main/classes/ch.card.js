@@ -92,7 +92,7 @@ ChCard.prototype.getContainerID = function () {
 ChCard.prototype._closeCard = function () {
     var id = this.getContainerID(),
         $li = Chocolate.$content.find('li[aria-controls=' + id + ']');
-    Chocolate.tab.close($li.children('a'));
+    facade.getTabsModule().close($li.children('a'));
 };
 ChCard.prototype.getChangedObj = function () {
     var form = this.getGridForm(),
