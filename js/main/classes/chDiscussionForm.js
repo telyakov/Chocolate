@@ -33,7 +33,7 @@ ChDiscussionForm.prototype.render = function (data) {
         }
     }
     this.$form.find('.discussion-content').html(html.join(''));
-    chApp.getDraw().reflowActiveTab();
+    mediator.publish(optionsModule.getChannel('reflowTab'));
     this.$form.next('.discussion-footer').children('.discussion-input').focus()
 };
 ChDiscussionForm.prototype.renderMessage = function (data, isMyMsg) {

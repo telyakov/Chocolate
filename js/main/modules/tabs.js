@@ -67,7 +67,7 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
             if ($tab.hasClass(optionsModule.getClass('activeTab'))) {
                 var nextIndex = history.pop();
                 helpersModule.getTabsObj().tabs({ active: nextIndex });
-                chApp.getDraw().reflowActiveTab();
+                mediator.publish(optionsModule.getChannel('reflowTab'));
             }
             var $panel = $('#' + $tab.remove().attr("aria-controls"));
             _private.destroy($panel);

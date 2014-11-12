@@ -41,6 +41,6 @@
     </section>
 <script>
     $(function(){
-        chApp.getDraw().reflowActiveTab();
+        mediator.publish(optionsModule.getChannel('reflowTab'));
     })
 </script>

@@ -71,7 +71,7 @@ class GridSettings extends EditableCardElementSettings
     public function processBeforeRender($id)
     {
         \Yii::app()->clientScript->registerScript($id, <<<JS
-            chApp.getDraw().drawCardGrid($('#' +'$id'));
+            facade.getRepaintModule().reflowCardGrid($('#' +'$id'));
 JS
             , \CClientScript::POS_LOAD);
     }

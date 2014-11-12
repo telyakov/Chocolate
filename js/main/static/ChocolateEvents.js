@@ -543,14 +543,16 @@ var ChocolateEvents = {
         $context.on('resize', $.debounce(300, false, this.reflowWindowHandler));
     },
     reflowWindowHandler: function () {
-        var draw = chApp.namespace('draw');
-        draw
-            .clearTabsCache()
-            .reflowActiveTab();
+        facade.getRepaintModule().clearCache();
+        mediator.publish(optionsModule.getChannel('reflowTab'));
     },
     reflowTabEvent: function ($context) {
-        $context.on('mouseup', '.ui-tabs-anchor[href=1]', chApp.namespace('draw.reflowActiveTab'));
-        $context.on('click', '.ui-tabs-anchor[href^=#]', chApp.namespace('draw.reflowActiveTab'));
+        $context.on('mouseup', '.ui-tabs-anchor[href=1]', this.reflowTabHandler);
+        $context.on('click', '.ui-tabs-anchor[href^=#]', this.reflowTabHandler);
+    },
+    reflowTabHandler: function(){
+        mediator.publish(facade.getOptionsModule().getChannel('reflowTab'));
+
     },
     ajaxIndicatorEvent: function () {
         var $spinner = $('#fadingBarsG');

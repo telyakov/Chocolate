@@ -15,7 +15,8 @@ var ChOptions = {
         logError: 'log_error',
         showError: 'show_error',
         setIdentity: 'set_identity',
-        setRoles: 'set_roles'
+        setRoles: 'set_roles',
+        reflowTab: 'reflow_tab'
     },
     settings: {
         locale: 'ru',

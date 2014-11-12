@@ -145,7 +145,7 @@ var ch ={
                 var $section = $('#' + sectionID),
                     $cnt = $section.parent();
                 if (!$cnt.hasClass('card-grid')) {
-                    chApp.getDraw().drawGrid($cnt);
+                    facade.getRepaintModule().reflowGrid($cnt);
                 }
                 if (!isNewRow) {
                     $section

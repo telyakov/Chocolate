@@ -47,6 +47,7 @@ module.exports = function (grunt) {
             main: {
                 src: [
                     '../js/main/static/ChOptions.js',
+                    '../js/main/modules/mediator.js', //first loading module
                     '../js/main/modules/table.js',
                     '../js/main/static/ChEditableCallback.js',
                     '../js/main/static/ChCardInitCallback.js',
@@ -72,7 +73,8 @@ module.exports = function (grunt) {
                     '../js/main/classes/ch.form.settings.js',
                     '../js/main/classes/ch.grid.form.js',
                     '../js/main/classes/ch.card.js',
-                    '../js/main/static/chocolateDraw.js',
+                    '../js/main/modules/repaint.js',
+//                    '../js/main/static/chocolateDraw.js',
                     '../js/main/classes/ch.canvas.options.js',
                     '../js/main/classes/ch.canvas.js',
                     '../js/main/classes/elements/ch.editable.js',
@@ -86,7 +88,6 @@ module.exports = function (grunt) {
                     '../js/main/functions/ch.functions.js',
                     '../js/main/functions/open_wizard_dialog.js',
                     '../js/main/functions/open_task_wizard_dialog_end.js',
-                    '../js/main/modules/mediator.js', //first loading module
                     '../js/main/chApp.js',
                     '../js/main/plugins/wizard.js',
                     '../js/main/modules/log.js',

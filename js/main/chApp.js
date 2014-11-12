@@ -6,7 +6,6 @@ var chApp = chApp || {
     events: ChocolateEvents,
     options: ChOptions,
     responseStatuses: ChResponseStatus,
-    draw: new ChocolateDraw(),
     attachments: ch.attachments,
     callback: ChEditableCallback,
     files: ChAttachments,
@@ -62,12 +61,6 @@ chApp.getOptions = function(){
     return this.options;
 };
 
-/**
- * @returns {ChocolateDraw}
- */
-chApp.getDraw = function(){
-    return this.draw;
-};
 /**
  * @returns {chFunctions}
  */

@@ -187,9 +187,9 @@ var Chocolate = {
             _initScripts: function (ui, content, $context) {
                 ui.panel.html(content);
                 ChCardInitCallback.fireOnce();
-                chApp.getDraw().drawCardPanel(ui.panel, $context);
+                facade.getRepaintModule().reflowCardPanel(ui.panel, $context);
                 setTimeout(function () {
-                    chApp.getDraw().reflowActiveTab();
+                    mediator.publish(optionsModule.getChannel('reflowTab'));
                 }, 0);
                 ui.tab.data('loaded', 1);
             },

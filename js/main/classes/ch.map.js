@@ -8,7 +8,8 @@ function ChMap($map) {
 }
 ChMap.prototype = {
     init: function (ymaps, encoded_data) {
-        chApp.getDraw().reflowActiveTab();
+        mediator.publish(optionsModule.getChannel('reflowTab'));
+//        chApp.getDraw().reflowActiveTab();
         var points = json_parse(encoded_data, Chocolate.parse);
         this.map.controls
             // Кнопка изменения масштаба.

@@ -363,7 +363,7 @@ ChGridForm.prototype.openCard = function (pk) {
             $tabs.tabs({ active: tab.getIndex()});
             var href = '#' + tab.getPanelID(),
                 $context = $(href);
-            chApp.getDraw().drawCard($context);
+            facade.getRepaintModule().reflowCard($context);
             mainModule.tab.card.init($context);
             $a.attr('href', href)
         } else {

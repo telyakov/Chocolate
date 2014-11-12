@@ -1,7 +1,7 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
  */
-var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule) {
+var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule) {
     var showErrorsChannel = optionsModule.getChannel('showError'),
         setRolesChannel = optionsModule.getChannel('setRoles'),
         logErrorChannel =  optionsModule.getChannel('logError');
@@ -81,6 +81,10 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
         storageModule.saveRoles(roles);
     });
 
+    mediator.subscribe(optionsModule.getChannel('reflowTab'), function () {
+        repaintModule.reflowActiveTab();
+    });
+
     return {
         getUserModule: function(){
             return userModule;
@@ -108,7 +112,10 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
         },
         getTabsModule: function(){
             return tabsModule;
+        },
+        getRepaintModule: function(){
+            return repaintModule;
         }
     };
 
-}(logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule));
+}(logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule));
