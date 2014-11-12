@@ -74,38 +74,8 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
             helpersModule.getTabsObj().tabs('refresh');
             factoryModule.garbageCollection();
         },
-        destroy: function($panel){
-            try {
-                $panel.find('.ui-resizable').each(function () {
-                    $(this).resizable('destroy');
-                });
-            } catch (e) {
-            }
-            try {
-                $panel.find('.editable').each(function () {
-                    $(this).editable('destroy').remove();
-                });
-            } catch (e) {
-                console.log(e);
-            }
-            try {
-                $panel.find('.menu-button, .tree-button, .tablesorter-filter, .tablesorter-header a, .tablesorter-header div, .form-vertical input').each(function () {
-                    $(this).remove();
-                });
-                $panel.find(' .tablesorter-header,.form-vertical ').each(function () {
-                    $(this).remove();
-                });
-                $panel.find('.tablesorter').trigger('destroy');
-                $panel.find('.grid-view>table').floatThead('destroy');
-                $panel.find(' .table-bordered').each(function () {
-                    $(this).remove();
-                });
-                $panel.find(' .grid-view').each(function () {
-                    $(this).remove();
-                });
-            } catch (e) {
-                console.log(e);
-            }
+        destroy: function ($panel) {
+            $panel.find('.editable').editable('destroy').remove();
             $panel.remove();
         },
         createTabLink: function (targetID, name) {

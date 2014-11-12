@@ -27,6 +27,9 @@ function ChGridForm($form) {
     this.priorityColorCol = [];
 }
 ChGridForm.prototype.destroy = function () {
+    this.getTh().find('.ui-resizable').resizable('destroy');
+    this.getTable().trigger("destroy");
+    this.getTable().floatThead('destroy');
     ChEditableCallback.remove(this.getCallbackID());
     delete Chocolate.storage.session[this.getID()];
     delete this.fmChildGridCollection;
