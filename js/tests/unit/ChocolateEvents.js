@@ -139,15 +139,15 @@ test('ChocolateEvents.searchInFilterEvent',function(){
 });
 test('ChocolateEvents.reflowWindowHandler',function(){
     expect(2);
-    var clearSpy = this.spy(chApp.draw, 'clearTabsCache'),
-        reflowStub = this.stub(chApp.draw, 'reflowActiveTab');
+    var clearSpy = this.spy(facade.getRepaintModule(), 'clearCache'),
+        reflowStub = this.stub(facade.getRepaintModule(), 'reflowActiveTab');
     ChocolateEvents.reflowWindowHandler();
     ok(clearSpy.calledOnce && reflowStub.calledOnce, 'Вызывается один раз очистка нарисованных вкладок и один раз перерисовка текущего активного таба');
     ok(reflowStub.calledAfter(clearSpy), 'Перерисовка вызывается после очистки');
     clearSpy.reset();
     reflowStub.reset();
-    chApp.getDraw().clearTabsCache.restore();
-    chApp.getDraw().reflowActiveTab.restore();
+    facade.getRepaintModule().clearCache.restore();
+    facade.getRepaintModule().reflowActiveTab.restore();
 
 });
 test('ChocolateEvents.reflowWindowEvent',function(){
@@ -171,13 +171,13 @@ test('ChocolateEvents.reflowTabEvent',function(){
     var $link = $('<a class="ui-tabs-anchor" href="#s"></a>');
     $content.append($link);
     $('body').append($content);
-    var reflowStub = this.stub(chApp.draw, 'reflowActiveTab');
+    var reflowStub = this.stub(facade.getRepaintModule(), 'reflowActiveTab');
     Chocolate.init();
     ChocolateEvents.reflowTabEvent(Chocolate.$tabs);
     $link.trigger('click');
     ok(reflowStub.calledOnce, 'При клике по закладке таба перерисовывается tab');
     reflowStub.reset();
     $content.remove();
-    chApp.getDraw().reflowActiveTab.restore();
+    facade.getRepaintModule().reflowActiveTab.restore();
 });
 

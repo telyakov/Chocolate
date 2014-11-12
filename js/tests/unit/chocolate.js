@@ -242,7 +242,7 @@ test('Chocolate.tab.close', function(){
         return 'message';
     });
     var stubConfirm = this.stub(window, 'confirm', function(){return true;});
-    var stubReflow = this.stub(chApp.draw, 'reflowActiveTab');
+    var stubReflow = this.stub(facade.getRepaintModule(), 'reflowActiveTab');
 
     var stubTabs = this.stub($.fn, 'tabs');
     var stubUndoChange = this.stub(ChCard.prototype,'_undoChange');
@@ -278,7 +278,7 @@ test('Chocolate.tab.close', function(){
     facade.getTabsModule().close($('<a>'));
     ok(stubUndoChange.calledOnce, 'Закрытая закладка с типом Карточка, должна отменять изменение в карточке');
     window.confirm.restore();
-    chApp.getDraw().reflowActiveTab.restore();
+    facade.getRepaintModule().reflowActiveTab.restore();
     ChTab.prototype.isCardTypePanel.restore();
     ChTab.prototype.getPanel.restore();
     ChTab.prototype.getLi.restore();
@@ -290,38 +290,38 @@ test('Chocolate.tab.close', function(){
 
 
 });
-test('Chocolate.tab.card._onBeforeLoad', function(){
-    expect(7);
-    var fakeEvent = document.createEvent("KeyboardEvent"),
-        fakeUi = {
-            panel: $('<div></div>'),
-            tab: $('<div></div>')
-        },
-        $tabPanel = $('<div>');
+    test('Chocolate.tab.card._onBeforeLoad', function(){
+        expect(7);
+        var fakeEvent = document.createEvent("KeyboardEvent"),
+            fakeUi = {
+                panel: $('<div></div>'),
+                tab: $('<div></div>')
+            },
+            $tabPanel = $('<div>');
 
-    var spyGet = this.spy(jQuery, 'get');
-    fakeUi.tab.data('loaded', 1);
-    var result = Chocolate.tab.card._onBeforeLoad(fakeEvent, fakeUi, $tabPanel);
-    ok(!result, 'Обработчик события всегда возвращает false');
-    ok(!spyGet.called, 'Для уже загруженных данных не должен вызываться ajax - запрос');
-    fakeUi.tab.data('loaded', 0);
-    spyGet.reset();
+        var spyGet = this.spy(jQuery, 'get');
+        fakeUi.tab.data('loaded', 1);
+        var result = Chocolate.tab.card._onBeforeLoad(fakeEvent, fakeUi, $tabPanel);
+        ok(!result, 'Обработчик события всегда возвращает false');
+        ok(!spyGet.called, 'Для уже загруженных данных не должен вызываться ajax - запрос');
+        fakeUi.tab.data('loaded', 0);
+        spyGet.reset();
 
-    var tabID = 11, fakeUrl ='param.param.pam';
-    var stubAttr = this.stub(jQuery, 'attr', function(){return tabID;}),
-        stubGetKey = this.stub(ChCard.prototype, 'getKey', function(){return '11';}),
-        stubGetFmCardCollection = this.stub(ChCard.prototype, 'getFmCardCollection', function(){return new FmCardsCollection();}),
-        stubGetCardTemplate =  this.stub(FmCardsCollection.prototype, 'getCardTemplate', function(){return 'template';}),
-        stubGetTabDataUrl = this.stub(ChCard.prototype, 'getTabDataUrl', function(){return fakeUrl;});
+        var tabID = 11, fakeUrl ='param.param.pam';
+        var stubAttr = this.stub(jQuery, 'attr', function(){return tabID;}),
+            stubGetKey = this.stub(ChCard.prototype, 'getKey', function(){return '11';}),
+            stubGetFmCardCollection = this.stub(ChCard.prototype, 'getFmCardCollection', function(){return new FmCardsCollection();}),
+            stubGetCardTemplate =  this.stub(FmCardsCollection.prototype, 'getCardTemplate', function(){return 'template';}),
+            stubGetTabDataUrl = this.stub(ChCard.prototype, 'getTabDataUrl', function(){return fakeUrl;});
 
-    var stubInitScripts = this.stub(Chocolate.tab.card, '_initScripts');
-    var chCardStub =this.spy(window, "ChCard");
-    Chocolate.tab.card._onBeforeLoad(fakeEvent, fakeUi, $tabPanel);
-    ok(!spyGet.called && stubInitScripts.calledOnce, 'Если шаблон уже загружен с сервера, не создается лишний AJAX запрос, а просто инициализируется шаблон.');
-    spyGet.reset();
-    stubAttr.reset();
-    stubGetKey.reset();
-    stubGetFmCardCollection.reset();
+        var stubInitScripts = this.stub(Chocolate.tab.card, '_initScripts');
+        var chCardStub =this.spy(window, "ChCard");
+        Chocolate.tab.card._onBeforeLoad(fakeEvent, fakeUi, $tabPanel);
+        ok(!spyGet.called && stubInitScripts.calledOnce, 'Если шаблон уже загружен с сервера, не создается лишний AJAX запрос, а просто инициализируется шаблон.');
+        spyGet.reset();
+        stubAttr.reset();
+        stubGetKey.reset();
+        stubGetFmCardCollection.reset();
     stubGetCardTemplate.reset();
     stubGetTabDataUrl.reset();
     chCardStub.reset();
@@ -360,8 +360,8 @@ test('Chocolate.tab.card._onBeforeLoad', function(){
     Chocolate.tab.card._initScripts.restore();
    var  stubData = this.stub($.fn, 'data'),
         stubFireOnce = this.stub(ChCardInitCallback, 'fireOnce'),
-        stubReflowActiveTab = this.stub(chApp.draw, 'reflowActiveTab'),
-        stubDrawCardPanel = this.stub(chApp.draw, 'drawCardPanel');
+        stubReflowActiveTab = this.stub(facade.getRepaintModule(), 'reflowActiveTab'),
+        stubDrawCardPanel = this.stub(facade.getRepaintModule(), 'reflowCardPanel');
     var badTemplate = '<div id ="' + 'dsad' + '">fd<a>dd</a></div><script>'+ 'console.log($(this).attr(&#039;rel&#039;))'+'</script>';
     fakeServer.respondWith(
         'GET',
@@ -419,7 +419,7 @@ test('Chocolate.tab.card._onBeforeLoad', function(){
 //    Chocolate.log.error.restore();
     $.fn.data.restore();
     ChCardInitCallback.fireOnce.restore();
-    chApp.getDraw().reflowActiveTab.restore();
+    facade.getRepaintModule().reflowActiveTab.restore();
     jQuery.attr.restore();
     ChCard.prototype.getKey.restore();
     ChCard.prototype.getFmCardCollection.restore();
@@ -468,7 +468,7 @@ test('Chocolate.tab.card._initScripts', function(){
     var stubHtml = this.stub($.fn, 'html'),
         stubData = this.stub($.fn, 'data'),
         stubFireOnce = this.stub(ChCardInitCallback, 'fireOnce'),
-        stubDrawCardPanel = this.stub(chApp.draw, 'drawCardPanel');
+        stubDrawCardPanel = this.stub(facade.getRepaintModule(), 'reflowCardPanel');
     Chocolate.tab.card._initScripts(fakeUi, fakeContent, $fakeContext);
     ok(stubFireOnce.calledAfter(stubHtml), 'Сначала вставляются данные, потом инициализируются скрипты.');
     ok(stubDrawCardPanel.calledAfter(stubFireOnce), 'После инициализации скриптов рисуется карточка');
