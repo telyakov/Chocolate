@@ -176,42 +176,14 @@ var Chocolate = {
         return template.replace(Chocolate.ID_REG_EXP, id);
     },
     tab: {
-        /**
-         * @param id {string}
-         * @param name {string}
-         * @returns {jQuery}
-         */
-        add: function (id, name) {
-            var $tabItem = $('<li>' + Chocolate.tab.createTabLink(id, name) + '</li>');
-            Chocolate.$tabs.children('ul').append($tabItem);
-            Chocolate.$tabs.tabs();
-            Chocolate.$tabs.tabs('refresh');
-            facade.getTabsModule().push($tabItem);
-            return $tabItem;
-        },
-        /**
-         * @param targetID {string}
-         * @param name {string}
-         * @returns {string}
-         */
-        createTabLink: function (targetID, name) {
-            return [
-                '<a id="',
-                Chocolate.uniqueID(),
-                '" href="#',
-                targetID,
-                '">',
-                name,
-                '</a><span class="tab-closed fa fa-times"></span>'
-            ].join('');
-        },
+
         /**
          * @param id {string}
          * @param name {string}
          * @returns {jQuery}
          */
         addAndSetActive: function (id, name) {
-            var $item = Chocolate.tab.add(id, name);
+            var $item = facade.getTabsModule().add(id, name);
             Chocolate.$tabs.tabs({ active: $item.index() });
             return $item;
         },

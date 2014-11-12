@@ -108,6 +108,17 @@ var tabsModule = (function($){
             $panel.remove();
             Chocolate.$tabs.tabs("refresh");
             facade.getFactoryModule().garbageCollection();
+        },
+        createTabLink: function (targetID, name) {
+            return [
+                '<a id="',
+                Chocolate.uniqueID(),
+                '" href="#',
+                targetID,
+                '">',
+                name,
+                '</a><span class="tab-closed fa fa-times"></span>'
+            ].join('');
         }
     };
     return {
@@ -132,6 +143,27 @@ var tabsModule = (function($){
          */
         close: function($a){
             _private.close($a);
+        },
+        /**
+         * @param id {string}
+         * @param name {string}
+         * @returns {jQuery}
+         */
+        add: function (id, name) {
+            var $tabItem = $('<li>' + _private.createTabLink(id, name) + '</li>');
+            Chocolate.$tabs.children('ul').append($tabItem);
+            Chocolate.$tabs.tabs();
+            Chocolate.$tabs.tabs('refresh');
+            facade.getTabsModule().push($tabItem);
+            return $tabItem;
+        },
+        /**
+         * @param targetID {string}
+         * @param name {string}
+         * @returns {string}
+         */
+        createTabLink: function (targetID, name) {
+            return _private.createTabLink(targetID, name);
         }
     };
 })(jQuery);

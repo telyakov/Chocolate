@@ -20,7 +20,7 @@ ChGridColumn.prototype.init = function(e, view, caption, url, editable ){
         var jTab = jTabs.find("[aria-controls=\'"+tab_id+"\']");
         if(jTab.length == 0) {
             var caption2 = caption + ' [' + parentID + ']';
-            Chocolate.tab.add(tab_id, caption2);
+            facade.getTabsModule().add(tab_id, caption2);
             var lastTabIndex = jTabs.tabs("length");
             jTabs.tabs({ active: lastTabIndex -1});
             if(template == null){
