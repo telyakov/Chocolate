@@ -177,16 +177,6 @@ var Chocolate = {
     },
     tab: {
 
-        /**
-         * @param id {string}
-         * @param name {string}
-         * @returns {jQuery}
-         */
-        addAndSetActive: function (id, name) {
-            var $item = facade.getTabsModule().add(id, name);
-            Chocolate.$tabs.tabs({ active: $item.index() });
-            return $item;
-        },
         card: {
             /**
              * @param ui {Object}

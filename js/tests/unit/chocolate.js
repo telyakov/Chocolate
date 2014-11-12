@@ -432,7 +432,7 @@ test('Chocolate.tab.add', function(){
     expect(4);
     var tabID = 'id673', tabName = 'First item';
     var jqueryTabsStub = this.stub($.fn, 'tabs');
-    var $tabItem = Chocolate.tab.add(tabID, tabName);
+    var $tabItem = facade.getTabsModule().add(tabID, tabName);
     equal($tabItem.get(0).nodeName, 'LI', 'Возвращается добавленныый в DOM элемент');
     ok(jqueryTabsStub.calledTwice, 'tabs() вызывается два раза');
     ok(jqueryTabsStub.calledWithExactly('refresh'), 'Вызываетмя метод refresh просле добавления таба.');
@@ -444,15 +444,15 @@ test('Chocolate.tab.add', function(){
 test('Chocolate.tab.createTabLink', function(){
     expect(2);
     var tabId ='Hhfd1', tabName = 'Закладка 1';
-    var $link = $(Chocolate.tab.createTabLink(tabId, tabName));
+    var $link = $(facade.getTabsModule().createTabLink(tabId, tabName));
     equal($link.eq(0).html(), tabName, 'Имя ссылки для закладки подставляется правильно.');
     equal($link.get(1).tagName, 'SPAN', 'Элемент для закрытия закладки генерируется.');
 });
 test('Chocolate.tab.addAndSetActive', function(){
     expect(3);
     var idActiveTabLink = 'lodas93', tabName = 'Просто закладка';
-    Chocolate.tab.addAndSetActive('', tabName);
-    var $tabItem = Chocolate.tab.addAndSetActive(idActiveTabLink, tabName);
+    facade.getTabsModule().addAndSetActive('', tabName);
+    var $tabItem = facade.getTabsModule().addAndSetActive(idActiveTabLink, tabName);
     ok($('[href ="#'+idActiveTabLink+'"]').parent().hasClass(ChOptions.classes.activeTab), 'Последняя добавленная вкладка является активной');
     equal($(Chocolate.clsSel(ChOptions.classes.activeTab)).length, 1, 'Одновременно активной является только 1 вкладка');
     equal($tabItem.get(0).nodeName, 'LI', 'Возвращается добавленныый в DOM элемент');

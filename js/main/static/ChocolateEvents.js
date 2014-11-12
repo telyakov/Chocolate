@@ -350,7 +350,7 @@ var ChocolateEvents = {
             $tabs.tabs("select", tabID);
         } else {
             var caption = [options.title, ' [', parentID, ']'].join('');
-            main.tab.addAndSetActive(tabID, caption);
+            facade.getTabsModule().addAndSetActive(tabID, caption);
             if (template === null) {
                 var urls = chApp.getOptions().urls;
                 $.get(urls.childGrid, {

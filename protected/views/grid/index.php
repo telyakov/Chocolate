@@ -19,7 +19,7 @@ $this->renderPartial('grid', [
 
 <script>
     $(function () {
-        Chocolate.tab.addAndSetActive(
+        facade.getTabsModule().addAndSetActive(
           '<? echo $tabID ?>',
           '<? echo $model->getDataFormProperties()->getWindowCaption()?>'
         );

@@ -119,6 +119,14 @@ var tabsModule = (function($){
                 name,
                 '</a><span class="tab-closed fa fa-times"></span>'
             ].join('');
+        },
+        add: function (id, name) {
+            var $tabItem = $('<li>' + _private.createTabLink(id, name) + '</li>');
+            Chocolate.$tabs.children('ul').append($tabItem);
+            Chocolate.$tabs.tabs();
+            Chocolate.$tabs.tabs('refresh');
+            facade.getTabsModule().push($tabItem);
+            return $tabItem;
         }
     };
     return {
@@ -150,12 +158,7 @@ var tabsModule = (function($){
          * @returns {jQuery}
          */
         add: function (id, name) {
-            var $tabItem = $('<li>' + _private.createTabLink(id, name) + '</li>');
-            Chocolate.$tabs.children('ul').append($tabItem);
-            Chocolate.$tabs.tabs();
-            Chocolate.$tabs.tabs('refresh');
-            facade.getTabsModule().push($tabItem);
-            return $tabItem;
+           return _private.add(id, name);
         },
         /**
          * @param targetID {string}
@@ -164,6 +167,17 @@ var tabsModule = (function($){
          */
         createTabLink: function (targetID, name) {
             return _private.createTabLink(targetID, name);
+        },
+
+        /**
+         * @param id {string}
+         * @param name {string}
+         * @returns {jQuery}
+         */
+        addAndSetActive: function (id, name) {
+            var $item = _private.add(id, name);
+            Chocolate.$tabs.tabs({ active: $item.index() });
+            return $item;
         }
     };
 })(jQuery);
