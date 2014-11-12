@@ -41,6 +41,6 @@
             '<? echo $tabID ?>',
             '<? echo $model->getDataFormProperties()->getWindowCaption()?>'
         );
-        chApp.getDraw().reflowTab(Chocolate.getActiveChTab());
+        chApp.getDraw().reflowTab(facade.getTabsModule().getActiveChTab());
     })
 </script>

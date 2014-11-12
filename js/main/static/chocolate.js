@@ -40,17 +40,6 @@ var Chocolate = {
     idSel: function (id) {
         return ['#', id].join('');
     },
-
-    /**
-     * @returns {ChTab}
-     */
-    getActiveChTab: function () {
-        var $activeLink = Chocolate.$tabs
-            .children(Chocolate.clsSel(ChOptions.classes.tabMenuClass))
-            .children(Chocolate.clsSel(ChOptions.classes.activeTab))
-            .children('a');
-        return facade.getFactoryModule().makeChTab($activeLink);
-    },
     leaveFocus: function () {
         Chocolate.$content.trigger('click');
     },
@@ -187,10 +176,6 @@ var Chocolate = {
         return template.replace(Chocolate.ID_REG_EXP, id);
     },
     tab: {
-        closeActiveTab: function () {
-            var $a = Chocolate.getActiveChTab().$a;
-            Chocolate.tab.close($a);
-        },
         /**
          * @param $a {jQuery}
          */
@@ -207,7 +192,7 @@ var Chocolate = {
             }
             var $tab = activeTab.getLi();
             if ($tab.hasClass(ChOptions.classes.activeTab)) {
-                var nextIndex = ChTabHistory.pop();
+                var nextIndex = facade.getTabsModule().pop();
                 Chocolate.$tabs.tabs({ active: nextIndex });
                 chApp.getDraw().reflowActiveTab();
             }
@@ -261,7 +246,7 @@ var Chocolate = {
             Chocolate.$tabs.children('ul').append($tabItem);
             Chocolate.$tabs.tabs();
             Chocolate.$tabs.tabs('refresh');
-            ChTabHistory.push($tabItem);
+            facade.getTabsModule().push($tabItem);
             return $tabItem;
         },
         /**

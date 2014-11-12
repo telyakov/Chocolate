@@ -226,7 +226,7 @@ var ChocolateEvents = {
         $context.on('click', '#tabs>ul>li', this.tabHistoryLogHandler);
     },
     tabHistoryLogHandler: function () {
-        ChTabHistory.push($(this));
+        facade.getTabsModule().push($(this));
     },
     modalFormElementEvent: function ($context) {
         $context.on('click', '.form-modal-button', this.modalFormElementHandler);
@@ -835,11 +835,11 @@ var ChocolateEvents = {
                     e.preventDefault();
                 }
                 if (e.keyCode === keys.ESCAPE && e.target.tagName === 'BODY') {
-                    var tab = chApp.getMain().getActiveChTab();
+                    var tab = facade.getTabsModule().getActiveChTab();
                     if (tab.isCardTypePanel()) {
                         var card = facade.getFactoryModule().makeChCard(tab.getPanel().children('[data-id=grid-tabs]'));
                         if (!card._isChanged() && $(e.target).children('.fancybox-overlay').length ===0) {
-                            chApp.getMain().tab.closeActiveTab();
+                            facade.getTabsModule().closeActiveTab();
                         }
                     }
                 }

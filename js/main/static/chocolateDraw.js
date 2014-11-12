@@ -68,7 +68,7 @@ function ChocolateDraw() {
      * @returns {ChocolateDraw}
      */
     this.reflowActiveTab = function () {
-        return context.reflowTab(chApp.getMain().getActiveChTab());
+        return context.reflowTab(facade.getTabsModule().getActiveChTab());
     };
     /**
      * @param tab {ChTab}

@@ -342,7 +342,7 @@ ChGridForm.prototype.openCard = function (pk) {
                 'data-view': view,
                 'html': mainModule.tab.createTabLink('', caption)
             });
-            ChTabHistory.push($li);
+            facade.getTabsModule().push($li);
             $tabs.children('ul').append($li);
             $tabs.tabs("refresh");
             var _this = this;
