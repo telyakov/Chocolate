@@ -47,7 +47,7 @@ module.exports = function (grunt) {
             main: {
                 src: [
                     '../js/main/static/ChOptions.js',
-                    '../js/main/static/ch.table.helper.js',
+                    '../js/main/modules/table.js',
                     '../js/main/static/ChEditableCallback.js',
                     '../js/main/static/ChCardInitCallback.js',
                     '../js/main/static/chAttachments.js',
