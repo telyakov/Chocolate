@@ -162,10 +162,6 @@ ChDynatree.prototype.generateContent = function (options, rawData) {
     for (var i in rawData) {
         if (rawData.hasOwnProperty(i)) {
             node = rawData[i];
-            if(i=== '1694'){
-            console.log(node,  this.getTitleValue,this.getKey, this.getColumnTitle())
-
-            }
             node.title = this.getTitleValue(node);
             node.key = this.getKey(node);
             node.desc = node.description;
