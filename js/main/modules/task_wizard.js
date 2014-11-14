@@ -113,14 +113,14 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
             options.defaultValues = function () {
                 return commandObj.usersidlist;
             };
-            options.children = data;
             options.column_title = 'name';
             options.root_id = 'parentid';
             options.column_id = 'id';
             options.infoPanel = true;
             options.separator = '|';
+            options.children = data;
             options.checkbox = true;
-            var $newCont = dynatreeElem.build(options);
+            var $newCont = dynatreeElem.buildFromData(options);
             _private.dialogOpen($newCont, $cnt, true, commandObj, function (commandObj, $content) {
                 commandObj.usersidlist = '';
                 commandObj.usersTitle = '';

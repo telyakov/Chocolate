@@ -7,14 +7,8 @@ class Tree extends  EditableFilterSettings{
         return $this->filter->isMultiSelect();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDataUrl(){
-        return \Yii::app()->controller->createAbsoluteUrl('/majestic/execute', [
-            'cache' => true,
-            'sql' => $this->filter->getReadProc()->__toString()
-        ]);
+    public function getSql(){
+        return $this->filter->getReadProc()->__toString();
     }
 
     public function render(\CModel $model, \ChFilterForm $form)

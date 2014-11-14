@@ -179,13 +179,14 @@ var chFunctions = {
         }
         $context.unbind('click');
         var isAllowEdit = chCardFunction._isAllowEdit(col.getDataObj(), allowEdit);
+        //todo: leak memory
         if (isAllowEdit) {
             $context.on('click', function () {
                 var chEditable = new ChEditable($context);
                 var dynatreeElem = new ChDynatree($context);
                 var options = chFunctions.treeViewOptions($context, isSingle);
                 options.title = chEditable.getTitle($context.attr('data-pk'), caption);
-                dynatreeElem.build(options);
+                dynatreeElem.buildFromData(options);
             });
         } else {
             col.markAsNoChanged();

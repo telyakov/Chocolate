@@ -9,7 +9,7 @@ $properties = $settings->getProperties();
 $form->widget('Chocolate.Widgets.ChDynaTree', [
     'model' => $model,
     'attribute' => $settings->getAttribute(),
-    'url' => $settings->getDataUrl(),
+    'sql' => $settings->getSql(),
     'descriptionData' => $properties->getDescriptionData(),
     'isRestoreState' => $properties->isRestoreState(),
     'isExpandNodes' => $properties->isExpandNodes(),

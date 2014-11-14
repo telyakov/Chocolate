@@ -17,6 +17,7 @@ var ChOptions = {
         setIdentity: 'set_identity',
         setRoles: 'set_roles',
         reflowTab: 'reflow_tab'
+//        treeView: 'tree_view'
     },
     settings: {
         locale: 'ru',
@@ -45,7 +46,8 @@ var ChOptions = {
             roles: 'roles',
             jquery: 'jquery',
             wizardServices: 'wizard_services',
-            wizardExecutors: 'wizard_executors'
+            wizardExecutors: 'wizard_executors',
+            treeControls: ' tree_controls'
         }
     },
     classes: {

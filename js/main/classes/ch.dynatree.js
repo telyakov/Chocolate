@@ -17,8 +17,8 @@ ChDynatree.prototype.init = function (options) {
     this.getNodes = function () {
         return options.children;
     };
-    this.getUrl = function () {
-        return options.url;
+    this.getSql = function () {
+        return options.sql;
     };
     this.isExpandNodes = function () {
         return options.expand_nodes;
@@ -122,117 +122,50 @@ ChDynatree.prototype.init = function (options) {
         }
     };
 };
-ChDynatree.prototype.build = function (options) {
+ChDynatree.prototype.buildFromData = function (options) {
+    this.init(options);
+    var rawData = this.getNodes();
+    return this.generateContent(options, rawData);
+};
+ChDynatree.prototype.buildFromSql = function (options) {
     this.init(options);
     var $input = this.getInput(),
         $dialog = $.data($input.get(0), 'dialog');
     if (typeof $dialog !== 'undefined') {
         this.loadFromCache($dialog);
     } else {
-        var $treeCon = this.$elm.parent(),
-            $select = $treeCon.children('select'),
-            $content = $('<div>'),
-            $tree = $('<div>', {'class': 'widget-tree'}),
-            _this = this,
-            $panel;
-        //Необходимо инициализировать данные
-        this.setData($input, $content);
-        this.options.children = this.data;
-        if (this.hasInfoPanel()) {
-            $panel = $('<div class="widget-panel"></div>');
-            this.options.onActivate = function (node) {
-                $panel.html(_this.createPanelElement(node.data));
-            };
-
-        }
-        $tree.dynatree(this.options);
-        if (this.isExpandNodes()) {
-            $tree.dynatree("getRoot").visit(function (node) {
-                node.expand(true);
-            });
-        }
-        var $search = $('<input type="search">'),
-            $header = $('<div class="widget-header-tree"></div>'),
-            $checkbox = $('<span class="tree-checkbox"><input type="checkbox"><span class="tree-checkbox-caption">Выделить все</span></span>');
-        $header.append($search);
-        $header.append('<button class="active filter-button menu-button small-button"><span class="fa-eye" title="Показать элементы"></span></button>');
-        $content.prepend($header);
-        if (this.hasInfoPanel()) {
-            $tree.addClass('widget-tree-compact');
-            var panelContent = '';
-            for (var i in this.defaultsElements) {
-                if (this.defaultsElements.hasOwnProperty(i)) {
-                    var node = this.defaultsElements[i];
-                    panelContent += _this.createPanelElement(node);
-                }
-            }
-            $panel.html(panelContent);
-            $content.append($tree);
-            $content.append($panel);
-        } else {
-            $content.append($tree);
-        }
-        if (this.isDialogEvent()) {
-            this.dialogEvent($content, $tree, $input, $checkbox, $select);
-        }
-        var $checkBoxWrapper =  $('<div>', {
-            'class': 'wizard-check-con'
+        $.data(this.$elm.get(0), 'ChDynatree',{
+            options: options
         });
-        $checkBoxWrapper.append($checkbox);
-        $content.append($checkBoxWrapper);
-        this
-            .autoCompleteEvent($search, $tree, $content)
-            .checkboxClickEvent($checkbox, $tree);
-        return $content;
+        //emit event
+        //recive response
+        var optionsModule = facade.getOptionsModule();
+        mediator.publish(optionsModule.getChannel('socketRequest'),{
+            query: options.sql,
+            id: this.$elm.attr('id'),
+            type: optionsModule.getRequestType('treeControls')
+        });
     }
 };
-ChDynatree.prototype.loadFromCache = function($dialog){
-    var $treeCon = this.$elm.parent(),
-        $input = this.getInput(),
-        isRestoreState = this.isRestoreState();
-    var defValues = $input.val().split(this.getSeparator());
-    if (!isRestoreState) {
-        $input.val('');
-        $treeCon.children('select').empty();
-    }
-    $dialog.children('.widget-tree').dynatree("getRoot").visit(function (node) {
-        if (isRestoreState && defValues.indexOf(node.data.key)!== -1) {
-            node.select(true);
-        } else {
-            node.select(false);
-        }
-    });
-    $dialog.dialog('option', 'position', {at: 'center', collision: 'fit', my: 'center'});
-    $dialog.dialog('open');
-};
-ChDynatree.prototype.setData = function ($input, $content) {
-    var url = this.getUrl(),
-        rawData,
-        map = {},
+ChDynatree.prototype.generateContent = function (options, rawData) {
+    this.init(options);
+    var $content = $('<div>');
+    var $input = this.getInput();
+    var map = {},
         rootID = this.getRootID();
-    if (url) {
-        jQuery.ajax({
-            type: 'GET',
-            url: url,
-            async: false,
-            success: function (response) {
-                var ch_response = new ChResponse(response);
-                if (ch_response.isSuccess()) {
-                    rawData = ch_response.getData();
-                    jQuery.data($input.get(0), "dialog", $content);
-                } else {
-                    alert('Ошибка при загрузке данных');
-                }
-            }
-        });
-    } else {
-        rawData = this.getNodes();
-    }
+    var $treeCon = this.$elm.parent(),
+        $select = $treeCon.children('select'),
+        $tree = $('<div>', {'class': 'widget-tree'}),
+        _this = this,
+        $panel;
     var defaultValues = this._getDefaultValues(), node;
-
     for (var i in rawData) {
         if (rawData.hasOwnProperty(i)) {
             node = rawData[i];
+            if(i=== '1694'){
+            console.log(node,  this.getTitleValue,this.getKey, this.getColumnTitle())
+
+            }
             node.title = this.getTitleValue(node);
             node.key = this.getKey(node);
             node.desc = node.description;
@@ -261,6 +194,76 @@ ChDynatree.prototype.setData = function ($input, $content) {
             }
         }
     }
+    this.options.children = this.data;
+    if (this.hasInfoPanel()) {
+        $panel = $('<div class="widget-panel"></div>');
+        this.options.onActivate = function (node) {
+            $panel.html(_this.createPanelElement(node.data));
+        };
+
+    }
+    $tree.dynatree(this.options);
+    if (this.isExpandNodes()) {
+        $tree.dynatree("getRoot").visit(function (node) {
+            node.expand(true);
+        });
+    }
+    var $search = $('<input type="search">'),
+        $header = $('<div class="widget-header-tree"></div>'),
+        $checkbox = $('<span class="tree-checkbox"><input type="checkbox"><span class="tree-checkbox-caption">Выделить все</span></span>');
+    $header.append($search);
+    $header.append('<button class="active filter-button menu-button small-button"><span class="fa-eye" title="Показать элементы"></span></button>');
+    $content.prepend($header);
+    if (this.hasInfoPanel()) {
+        $tree.addClass('widget-tree-compact');
+        var panelContent = '';
+        for (var i in this.defaultsElements) {
+            if (this.defaultsElements.hasOwnProperty(i)) {
+                var node = this.defaultsElements[i];
+                panelContent += _this.createPanelElement(node);
+            }
+        }
+        $panel.html(panelContent);
+        $content.append($tree);
+        $content.append($panel);
+    } else {
+        $content.append($tree);
+    }
+    if (this.isDialogEvent()) {
+        this.dialogEvent($content, $tree, $input, $checkbox, $select);
+    }
+    var $checkBoxWrapper = $('<div>', {
+        'class': 'wizard-check-con'
+    });
+    $checkBoxWrapper.append($checkbox);
+    $content.append($checkBoxWrapper);
+    this
+        .autoCompleteEvent($search, $tree, $content)
+        .checkboxClickEvent($checkbox, $tree);
+    $.data(this.getInput().get(0), 'dialog', $content);
+
+    return $content;
+
+
+};
+ChDynatree.prototype.loadFromCache = function ($dialog) {
+    var $treeCon = this.$elm.parent(),
+        $input = this.getInput(),
+        isRestoreState = this.isRestoreState();
+    var defValues = $input.val().split(this.getSeparator());
+    if (!isRestoreState) {
+        $input.val('');
+        $treeCon.children('select').empty();
+    }
+    $dialog.children('.widget-tree').dynatree("getRoot").visit(function (node) {
+        if (isRestoreState && defValues.indexOf(node.data.key) !== -1) {
+            node.select(true);
+        } else {
+            node.select(false);
+        }
+    });
+    $dialog.dialog('option', 'position', {at: 'center', collision: 'fit', my: 'center'});
+    $dialog.dialog('open');
 };
 ChDynatree.prototype._getDefaultValues = function () {
     var defValues = this.defaultValues();

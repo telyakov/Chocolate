@@ -1,4 +1,5 @@
 <?php
+
 /**
  * За основу взят DynaTree, радикально доработан мною:)
  */
@@ -9,7 +10,7 @@ class ChDynaTree extends CWidget
     public $columnTitle = 'name';
     public $rootID = 'root';
     public $separator = '|';
-    public $url = null;
+    public $sql = null;
     public $descriptionData = [];
     public $isRestoreState = true;
     public $isExpandNodes = true;
@@ -41,7 +42,7 @@ class ChDynaTree extends CWidget
         echo CHtml::activeLabelEx($this->model, $this->attribute);
         echo CHtml::openTag('select');
         echo CHtml::closeTag('select');
-        echo CHtml::button('', ['class' => 'tree-button', 'id' => $id, 'title'=>'Кликните, чтобы выбрать фильтр']);
+        echo CHtml::button('', ['class' => 'tree-button', 'id' => $id, 'title' => 'Кликните, чтобы выбрать фильтр']);
         echo CHtml::activeHiddenField($this->model, $this->attribute);
         echo CHtml::closeTag('div');
         ob_end_flush();
@@ -54,7 +55,7 @@ class ChDynaTree extends CWidget
             $this->options,
             [
                 'children' => $this->data,
-                'url' => $this->url,
+                'sql' => $this->sql,
                 'expand_nodes' => $this->isExpandNodes,
                 'select_all' => $this->isSelectAll,
                 'restore_state' => $this->isRestoreState,
@@ -98,12 +99,21 @@ JS
 
     protected function createTreeScript($options)
     {
-        $script = <<<JS
+        if ($this->sql) {
+
+            $script = <<<JS
         var dnt = facade.getFactoryModule().makeChDynatree($(this));
-        dnt.build($options);
+        dnt.buildFromSql($options);
 JS;
+        } else {
+            $script = <<<JS
+        var dnt = facade.getFactoryModule().makeChDynatree($(this));
+        dnt.buildFromData($options);
+JS;
+        }
         return $script;
     }
 
 }
+
 ?>

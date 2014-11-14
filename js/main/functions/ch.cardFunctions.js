@@ -57,8 +57,8 @@ var ch ={
                             var dynatreeElem = new ChDynatree($context);
                             var options = chFunctions.treeViewOptions($context, isSingle);
                             options.okButton = ch.card.treeView._okButton();
-                            options.defaultValues = function(){return this.data().editable.value}
-                            dynatreeElem.build(options);
+                            options.defaultValues = function(){return this.data().editable.value};
+                            dynatreeElem.buildFromData(options);
                         });
                     }
                 });
@@ -69,10 +69,11 @@ var ch ={
                     actualDataObj = card.getActualDataObj(),
                     value = actualDataObj[attribute],
                     isAllowEdit = chCardFunction._isAllowEdit(card.getActualDataObj(), allowEdit);
-                if (typeof(value) == 'undefined' || value === null) {
+                if (typeof(value) === 'undefined' || value === null) {
                     value = '';
                 }
                 var elemText = cardElement.getParentElement(attribute).html();
+                    //todo: leak memory
                 ChCardInitCallback.add(function () {
                     card.setElementValue($context, value, isAllowEdit, elemText);
                     $context.html(elemText);
@@ -85,8 +86,8 @@ var ch ={
                             options.children =  cardElement.getParentElement(attribute).data().editable.options.source;
                             options.okButton = ch.card.treeView._okButton();
                             options.title = chEditable.getTitle($context.attr('data-pk'), caption);
-                            options.defaultValues = function(){return this.data().editable.value}
-                            dynatreeElem.build(options);
+                            options.defaultValues = function(){return this.data().editable.value;};
+                            dynatreeElem.buildFromData(options);
                         });
                     }else{
                         cardElement.markAsNoChanged();
@@ -99,7 +100,7 @@ var ch ={
                     actualDataObj = card.getActualDataObj(),
                     value = actualDataObj[attribute],
                     isAllowEdit = chCardFunction._isAllowEdit(card.getActualDataObj(), allowEdit);
-                if (typeof(value) == 'undefined' || value === null) {
+                if (typeof(value) === 'undefined' || value === null) {
                     value = '';
                 }
                 var elemText = actualDataObj[titleKey];
@@ -109,18 +110,19 @@ var ch ={
                     $context.unbind('click');
                     if(isAllowEdit){
                         sql = facade.getBindModule().bindSql(sql, cardElement.getCard().getActualDataObj());
-                        var url = chApp.getOptions().urls.execute +'?cache=1&view=' +cardElement.getCard().getView() + '&sql=' + sql;
+                        $context.uniqueId();
+                            //todo: leak memory
                         $context.on('click', function(){
                             var chEditable = new ChEditable($context),
                                 dynatreeElem = new ChDynatree($context),
                                 options = chFunctions.treeViewOptions($context, isSingle);
                             options.children =  null;
-                            options.url = url;
-                            options.getTitleValue= function (node) {return node.name};
+                            options.sql = sql;
+                            options.getTitleValue= function (node) {return node.name;};
                             options.okButton = ch.card.treeView._okButton();
                             options.title = chEditable.getTitle($context.attr('data-pk'), caption);
-                            options.defaultValues = function(){return this.data().editable.value}
-                            dynatreeElem.build(options);
+                            options.defaultValues = function(){return this.data().editable.value};
+                            dynatreeElem.buildFromSql(options);
                         });
                     }else{
                         cardElement.markAsNoChanged();

@@ -58,6 +58,11 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
                 case optionsModule.getRequestType('wizardExecutors'):
                     taskWizard.onExecutorsCommand(resData, data.id);
                     break;
+                case optionsModule.getRequestType('treeControls'):
+                    var $el = $('#' + data.id),
+                        dnt = new ChDynatree($el);
+                    dnt.generateContent($el.data().ChDynatree.options, resData);
+                    break;
                 default:
                     console.log(data);
             }
