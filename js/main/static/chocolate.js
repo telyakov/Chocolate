@@ -267,6 +267,21 @@ var helpersModule = (function () {
         getTabsObj: function(){
             return context.$tabs;
         },
+        getContentObj: function(){
+            return context.$content;
+        },
+        getPageObj: function(){
+            return context.$page;
+        },
+        getFooterObj: function(){
+            return context.$footer;
+        },
+        getHeaderObj: function(){
+            return context.$header;
+        },
+        getWindowObj: function(){
+            return context.$window;
+        },
         uniqueID: function(){
             return context.uniqueID();
         }

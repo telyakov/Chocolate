@@ -73,8 +73,6 @@ module.exports = function (grunt) {
                     '../js/main/classes/ch.form.settings.js',
                     '../js/main/classes/ch.grid.form.js',
                     '../js/main/classes/ch.card.js',
-                    '../js/main/modules/repaint.js',
-//                    '../js/main/static/chocolateDraw.js',
                     '../js/main/classes/ch.canvas.options.js',
                     '../js/main/classes/ch.canvas.js',
                     '../js/main/classes/elements/ch.editable.js',
@@ -97,6 +95,7 @@ module.exports = function (grunt) {
                     '../js/main/modules/user.js',
                     '../js/main/modules/bind.js',
                     '../js/main/modules/factory.js',
+                    '../js/main/modules/repaint.js',
                     '../js/main/modules/tabs.js',
                     '../js/main/modules/task_wizard.js',
                     '../js/main/modules/facade.js', //latest loading module
