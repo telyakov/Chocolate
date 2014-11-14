@@ -1,4 +1,4 @@
-var repaintModule = (function(){
+var repaintModule = (function(undefined){
     function ChocolateDraw() {
         var context = this, tabsCache = [];
         /**
@@ -66,10 +66,11 @@ var repaintModule = (function(){
             }
         };
         /**
+         * @param force {boolean}
          * @returns {ChocolateDraw}
          */
-        this.reflowActiveTab = function () {
-            return context.reflowTab(facade.getTabsModule().getActiveChTab());
+        this.reflowActiveTab = function (force) {
+            return context.reflowTab(facade.getTabsModule().getActiveChTab(), force);
         };
         /**
          * @param tab {ChTab}
@@ -96,20 +97,21 @@ var repaintModule = (function(){
         };
         /**
          * @param tab {ChTab}
+         * @param force {boolean}
          * @returns {ChocolateDraw}
          */
-        this.reflowTab = function (tab) {
+        this.reflowTab = function (tab, force) {
             var $cont;
             if (tab.isCardTypePanel()) {
                 $cont = tab.getPanel();
-                if (context._isNeedReflow(tab)) {
+                if (force || context._isNeedReflow(tab)) {
                     context
                         .drawCard($cont)
                         ._addTabToCache(tab);
                 }
                 var activeTabClass = chApp.getOptions().classes.activeTab,
                     cardTab = facade.getFactoryModule().makeChTab($cont.find('.' +activeTabClass).children('a'));
-                if (context._isNeedReflow(cardTab)) {
+                if (force || context._isNeedReflow(cardTab)) {
                     var $panel = cardTab.getPanel();
                     context
                         .drawCardPanel($panel, $cont)
@@ -122,7 +124,7 @@ var repaintModule = (function(){
                     context._addTabToCache(cardTab);
                 }
             } else {
-                if (context._isNeedReflow(tab)) {
+                if (force || context._isNeedReflow(tab)) {
                     $cont = tab.getPanel();
                     context.drawGrid($cont);
                     $cont.find('.grid-view').find('table').floatThead('reflow');
@@ -312,11 +314,14 @@ var context = new ChocolateDraw();
         reflowCardPanel: function($panel, $cnt){
             context.drawCardPanel($panel, $cnt);
         },
-        reflowActiveTab: function(){
-            context.reflowActiveTab();
+        reflowActiveTab: function(force){
+            if(force === undefined){
+                force = false;
+            }
+            context.reflowActiveTab(force);
         },
         clearCache: function(){
             context.clearTabsCache();
         }
     };
-})();
+})(undefined);

@@ -93,3 +93,24 @@ $blue-color: #0072c6;
     border: 1px solid #E17769 !important;
     font-weight: bold;
 }
+.expand-hidden{
+    display: none!important;
+    height: 0!important;
+}
+.expand-card-visible{
+    top:0!important;
+    left: 0!important;
+    width: 100%!important;
+    height: 100%!important;
+    .card-input{
+        height: 100%!important;
+        >section{
+            height: 100%!important;
+        }
+    }
+}
+
+.section-grid .menu {
+    margin: 4px 4px 9px 4px!important;
+    overflow: hidden;
+}

@@ -460,9 +460,9 @@
 /*.fa-share:before {*/
     /*content: "\f064";*/
 /*}*/
-/*.fa-expand:before {*/
-    /*content: "\f065";*/
-/*}*/
+.fa-expand:before {
+    content: "\f065";
+}
 /*.fa-compress:before {*/
     /*content: "\f066";*/
 /*}*/

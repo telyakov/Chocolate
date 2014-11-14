@@ -51,6 +51,23 @@ var ChocolateEvents = {
         this.sendMessageEvent($tabs);
         this.openCardTabMenuEvent($tabs);
         this.filterTreeEvent($body);
+        this.contentExpandEvent($tabs);
+    },
+    contentExpandEvent: function ($cnt) {
+        $cnt.on('click', '.menu-button-expand', this.contentExpandHandler);
+    },
+    contentExpandHandler: function () {
+        var $this = $(this),
+            $expandSection = $this.closest('section');
+        $this.toggleClass('menu-button-selected');
+        $expandSection.siblings('.section-header, .section-filters').toggleClass('expand-hidden');
+        var $expandCardCol = $expandSection.closest('.card-col');
+        if($expandCardCol.length){
+            $expandCardCol.toggleClass('expand-card-visible');
+            $expandCardCol.siblings('.card-col').toggleClass('expand-hidden');
+        }
+        facade.getRepaintModule().reflowActiveTab(true);
+
     },
     filterTreeEvent: function ($cnt) {
         $cnt.on('click', '.filter-button', this.filterTreeHandler);
@@ -550,7 +567,7 @@ var ChocolateEvents = {
         $context.on('mouseup', '.ui-tabs-anchor[href=1]', this.reflowTabHandler);
         $context.on('click', '.ui-tabs-anchor[href^=#]', this.reflowTabHandler);
     },
-    reflowTabHandler: function(){
+    reflowTabHandler: function () {
         mediator.publish(facade.getOptionsModule().getChannel('reflowTab'));
 
     },
@@ -781,11 +798,11 @@ var ChocolateEvents = {
         var $this = $(this),
             tw = facade.getTaskWizard(),
             form = facade.getFactoryModule().makeChGridForm(
-            $(this)
-                .closest('.' + optionsModule.getClass('headerSection'))
-                .siblings('.' + optionsModule.getClass('gridSection'))
-                .children('form')
-        );
+                $(this)
+                    .closest('.' + optionsModule.getClass('headerSection'))
+                    .siblings('.' + optionsModule.getClass('gridSection'))
+                    .children('form')
+            );
         $this.chWizard('init', {
             commandObj: tw.makeCommandObject(form),
             onDone: tw.onDoneFunc(),
@@ -839,7 +856,7 @@ var ChocolateEvents = {
                     var tab = facade.getTabsModule().getActiveChTab();
                     if (tab.isCardTypePanel()) {
                         var card = facade.getFactoryModule().makeChCard(tab.getPanel().children('[data-id=grid-tabs]'));
-                        if (!card._isChanged() && $(e.target).children('.fancybox-overlay').length ===0) {
+                        if (!card._isChanged() && $(e.target).children('.fancybox-overlay').length === 0) {
                             facade.getTabsModule().closeActiveTab();
                         }
                     }

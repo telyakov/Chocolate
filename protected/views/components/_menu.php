@@ -37,6 +37,13 @@ use Chocolate\HTML\ChHtml;
         );
     endif;
     echo CHtml::htmlButton(
+        '<span class="fa-expand"></span>',
+        [
+            'class' => 'active menu-button menu-button-expand small-button',
+            'title' => 'Увеличить\\Уменьшить основную информацию',
+        ]
+    );
+    echo CHtml::htmlButton(
         '<span class="fa-file-excel-o"></span>',
         [
             'class' => 'active menu-button menu-button-excel small-button',

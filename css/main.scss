@@ -944,31 +944,10 @@ span.checkbox {
     /*margin-bottom: 5px;*/
 }
 
-/*.section-filters input[type="checkbox"]:checked + label:first-letter,*/
-/*.section-filters input[type="radio"]:checked + label:first-letter {*/
-/*font-size:19px;*/
-/*}*/
-
 .checkbox-filter {
     height: 57px;
 }
 
-.section-grid .menu {
-    /*border: 1px dashed #99bce8;*/
-    padding: 4px 4px;
-}
-
-
-
-/*select{*/
-/*-moz-appearance: none;*/
-/*text-indent: 0.01px;*/
-/*text-overflow: '';*/
-/*}*/
-
-/*select::-ms-expand {*/
-/*display: none;*/
-/*}*/
 
 .section-filters select {
     line-height: 20px;
@@ -978,16 +957,6 @@ span.checkbox {
     /*text-indent: 1px;*/
     /*text-overflow: '';*/
 }
-
-/*:-moz-any(.tree-container):before {*/
-/*background-color: red;*/
-/*z-index: 1;*/
-/*bottom: 0;*/
-/*right: 0;*/
-/*width: 30px;*/
-/*height: 20px;*/
-/*}*/
-
 input:focus, textarea:focus, keygen:focus, select:focus {
     outline-offset: 0;
 }
@@ -1741,7 +1710,11 @@ Navigations
 }
 
 .fa-level-down, .fa-user, .fa-plus-circle, .fa-refresh, .fa-edit, .fa-tasks, .fa-save, .fa-paperclip, .fa-times, .fa-asterisk, .card-button, .icon-th, .fa-check, .fa-exclamation, .fa-italic, .fa-bold, .fa-underline,
-.fa-eye-slash, .fa-file-excel-o, .fa-wrench, .fa-question,
+.fa-eye-slash,
+.fa-file-excel-o,
+.fa-wrench,
+.fa-question,
+.fa-expand,
 .fa-eye{
     font-family: FontAwesome;
     font-style: normal;
