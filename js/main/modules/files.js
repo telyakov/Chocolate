@@ -1,71 +1,71 @@
-var filesModule = (function () {
+var filesModule = (function (undefined) {
     'use strict';
-    var _private = {
-        files: [],
-        errors: [],
-        hasErrors: function (id) {
-            return this.isSetError(id) && this.errors[id].length > 0;
-        },
-        pushError: function (id, error) {
-            if (!this.isSetError(id)) {
-                this.errors[id] = [];
+    var files = [],
+        errors = [],
+        _private = {
+            hasErrors: function (id) {
+                return _private.isSetError(id) && errors[id].length > 0;
+            },
+            pushError: function (id, error) {
+                if (!_private.isSetError(id)) {
+                    errors[id] = [];
+                }
+                errors[id].push(error);
+            },
+            clearErrors: function (id) {
+                delete errors[id];
+            },
+            isSetError: function (id) {
+                return errors[id] !== undefined;
+            },
+            /**
+             * @param id {string}
+             * @param file {*}
+             */
+            push: function (id, file) {
+                if (!_private.isSet(id)) {
+                    files[id] = [];
+                }
+                files[id].push(file);
+            },
+            /**
+             * @param id {string}
+             * @returns {boolean}
+             */
+            isSet: function (id) {
+                return files[id] !== undefined;
+            },
+            /**
+             * @param id {string}
+             */
+            clear: function (id) {
+                delete files[id];
+            },
+            /**
+             * @param id {string}
+             * @returns {boolean}
+             */
+            isNotEmpty: function (id) {
+                return _private.isSet(id) && files[id].length > 0;
+            },
+            /**
+             * @param id {string}
+             * @returns {boolean}
+             */
+            isEmpty: function (id) {
+                return !_private.isNotEmpty(id);
+            },
+            /**
+             * @param id {string}
+             * @returns {object|null}
+             */
+            pop: function (id) {
+                if (_private.isNotEmpty(id)) {
+                    return files[id].pop();
+                }
+                return null;
             }
-            this.errors[id].push(error);
-        },
-        clearErrors: function (id) {
-            delete this.errors[id];
-        },
-        isSetError: function (id) {
-            return typeof this.errors[id] !== 'undefined';
-        },
-        /**
-         * @param id {string}
-         * @param file {*}
-         */
-        push: function (id, file) {
-            if (!this.isSet(id)) {
-                this.files[id] = [];
-            }
-            this.files[id].push(file);
-        },
-        /**
-         * @param id {string}
-         * @returns {boolean}
-         */
-        isSet: function (id) {
-            return typeof this.files[id] !== 'undefined';
-        },
-        /**
-         * @param id {string}
-         */
-        clear: function (id) {
-            delete this.files[id];
-        },
-        /**
-         * @param id {string}
-         * @returns {boolean}
-         */
-        isNotEmpty: function (id) {
-            return this.isSet(id) && this.files[id].length > 0;
-        },
-        /**
-         * @param id {string}
-         * @returns {boolean}
-         */
-        isEmpty: function (id) {
-            return !this.isNotEmpty(id);
-        },
-        /**
-         * @param id {string}
-         * @returns {object|null}
-         */
-        pop: function (id) {
-            if (this.isNotEmpty(id)) {
-                return this.files[id].pop();
-            }
-            return null;
-        }
-    };
+        };
 
     return{
         isNotEmpty: function (id) {
@@ -90,4 +90,4 @@ var filesModule = (function () {
             _private.push(id, file);
         }
     };
-})();
+})(undefined);
