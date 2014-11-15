@@ -84,8 +84,6 @@ module.exports = function (grunt) {
                     '../js/main/static/ChocolateEvents.js',
                     '../js/main/functions/ch.cardFunctions.js',
                     '../js/main/functions/ch.functions.js',
-                    '../js/main/functions/open_wizard_dialog.js',
-                    '../js/main/functions/open_task_wizard_dialog_end.js',
                     '../js/main/chApp.js',
                     '../js/main/plugins/wizard.js',
                     '../js/main/modules/log.js',
