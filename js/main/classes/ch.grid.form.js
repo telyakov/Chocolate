@@ -588,7 +588,7 @@ ChGridForm.prototype.getChangedObj = function () {
 ChGridForm.prototype.isHasChange = function () {
     Chocolate.leaveFocus();
     if (this._isAttachmentsModel()) {
-        return ChAttachments.isNotEmpty(this.getID()) || !$.isEmptyObject(this.getDeletedObj());
+        return facade.getFilesModule().isNotEmpty(this.getID()) || !$.isEmptyObject(this.getDeletedObj());
     } else {
         return !$.isEmptyObject(this.getChangedObj()) || !$.isEmptyObject(this.getDeletedObj());
     }
@@ -704,7 +704,7 @@ ChGridForm.prototype.save = function (refresh) {
         }
     } else {
         var formID = this.getID(),
-            fileModule = chApp.getFiles();
+            fileModule = facade.getFilesModule();
 
         if (fileModule.isNotEmpty(formID)) {
             var isEmpty = $.isEmptyObject(deleted_obj);
@@ -901,7 +901,7 @@ ChGridForm.prototype._clearDeletedObj = function () {
 };
 ChGridForm.prototype._clearChangedObj = function () {
     if (this._isAttachmentsModel()) {
-        ChAttachments.clear(this.getID());
+        facade.getFilesModule().clear(this.getID());
     } else {
 
         var changeObj = this.getChangedObj();

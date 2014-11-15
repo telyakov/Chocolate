@@ -173,7 +173,7 @@ var ch ={
             });
         },
         stopHandler: function(formID){
-            var filesModule = chApp.getFiles(),
+            var filesModule = facade.getFilesModule(),
                 form = facade.getFactoryModule().makeChGridForm($('#' + formID));
             if(filesModule.hasErrors(formID)){
                 form.getMessagesContainer().sendMessage('Возникли ошибки при добавлении вложений', chApp.getResponseStatuses().ERROR);
@@ -187,7 +187,7 @@ var ch ={
             }
         },
         failHandler: function(formID, data){
-            var filesModule = chApp.getFiles();
+            var filesModule = facade.getFilesModule();
             filesModule.pushError(formID, data.errorThrown);
             filesModule.push(formID, data.files);
         },
@@ -197,7 +197,7 @@ var ch ={
             if(data.isValidated){
                 var rowID = Chocolate.uniqueID();
                 data.files[0].rowID = rowID;
-                chApp.getFiles().push(formID,data.files);
+                facade.getFilesModule().push(formID,data.files);
                 data.context.attr("data-id", rowID);
                 data.context.find("td input[type=file]").attr("parent-id", rowID);
                 $form.find("div[data-id=user-grid] table").trigger("update");

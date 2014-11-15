@@ -51,7 +51,7 @@ module.exports = function (grunt) {
                     '../js/main/modules/table.js',
                     '../js/main/static/ChEditableCallback.js',
                     '../js/main/static/ChCardInitCallback.js',
-                    '../js/main/static/chAttachments.js',
+//                    '../js/main/static/chAttachments.js',
                     '../js/main/static/ChResponseStatus.js',
                     '../js/main/static/chAjaxQueue.js',
                     '../js/main/classes/ch.dynatree.js',
@@ -96,6 +96,7 @@ module.exports = function (grunt) {
                     '../js/main/modules/repaint.js',
                     '../js/main/modules/tabs.js',
                     '../js/main/modules/task_wizard.js',
+                    '../js/main/modules/files.js',
                     '../js/main/modules/facade.js', //latest loading module
                     '../js/main/run.js'
                 ],
