@@ -186,7 +186,7 @@ var Chocolate = {
              */
             _initScripts: function (ui, content, $context) {
                 ui.panel.html(content);
-                ChCardInitCallback.fireOnce();
+                facade.getCardModule().fireOnceCallback();
                 facade.getRepaintModule().reflowCardPanel(ui.panel, $context);
                 setTimeout(function () {
                     mediator.publish(optionsModule.getChannel('reflowTab'));

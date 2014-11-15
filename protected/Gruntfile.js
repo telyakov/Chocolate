@@ -50,8 +50,7 @@ module.exports = function (grunt) {
                     '../js/main/modules/mediator.js', //first loading module
                     '../js/main/modules/table.js',
                     '../js/main/static/ChEditableCallback.js',
-                    '../js/main/static/ChCardInitCallback.js',
-//                    '../js/main/static/chAttachments.js',
+                    '../js/main/modules/card.js',
                     '../js/main/static/ChResponseStatus.js',
                     '../js/main/static/chAjaxQueue.js',
                     '../js/main/classes/ch.dynatree.js',

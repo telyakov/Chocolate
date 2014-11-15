@@ -48,7 +48,7 @@ var ch ={
                     value = '';
                 }
                 var elemText = cardElement.getParentElement(attribute).html();
-                ChCardInitCallback.add(function () {
+                facade.getCardModule().addCallback(function () {
                     card.setElementValue($context, value, isAllowEdit, elemText);
                     $context.html(elemText);
                         $context.unbind('click');
@@ -74,7 +74,7 @@ var ch ={
                 }
                 var elemText = cardElement.getParentElement(attribute).html();
                     //todo: leak memory
-                ChCardInitCallback.add(function () {
+                facade.getCardModule().addCallback(function () {
                     card.setElementValue($context, value, isAllowEdit, elemText);
                     $context.html(elemText);
                     $context.unbind('click');
@@ -104,7 +104,7 @@ var ch ={
                     value = '';
                 }
                 var elemText = actualDataObj[titleKey];
-                ChCardInitCallback.add(function () {
+                facade.getCardModule().addCallback(function () {
                     card.setElementValue($context, value, isAllowEdit, elemText);
                     $context.html(elemText);
                     $context.unbind('click');
@@ -290,7 +290,7 @@ var chCardFunction = {
         if (value === null) {
             value = '';
         }
-        ChCardInitCallback.add(function () {
+        facade.getCardModule().addCallback(function () {
             chCard.setElementValue(jCell, value, isAllowEdit);
             var ch_column = new ChTextAreaEditableCard(editable['$element']);
             ch_column.create(context, e, isAllowEdit, attribute, caption, isNeedFormat, isMarkupSupport);
@@ -338,11 +338,11 @@ var chCardFunction = {
                 cardElement
                     .setChangedValue(attribute, val)
                     .setChangedValueInGrid(attribute, val, $context.text());
-            })
+            });
         }else{
             cardElement.markAsNoChanged();
         }
-        ChCardInitCallback.add(function () {
+        facade.getCardModule().addCallback(function () {
             card.setElementValue($context, value, isAllowEdit);
         });
     },
@@ -362,9 +362,9 @@ var chCardFunction = {
         if(!isAllowEdit){
             chCardElement.markAsNoChanged();
         }
-        ChCardInitCallback.add(function () {
+        facade.getCardModule().addCallback(function () {
             chCard.setElementValue($context, dtValue, isAllowEdit);
-        })
+        });
 
     },
     select2SaveFunction: function (e, params, attribute) {
@@ -440,7 +440,7 @@ var chCardFunction = {
         }
         var html = chCardElement.getParentElement(attribute).html();
         var prepareValue = value.split('|');
-        ChCardInitCallback.add(function () {
+        facade.getCardModule().addCallback(function () {
             chCard.setElementValue($context, prepareValue, isAllowEdit, html);
             var chEditable = new ChEditable($context);
             $context.attr('data-original-title', chEditable.getTitle($context.attr('data-pk'), caption));
@@ -499,7 +499,7 @@ var chCardFunction = {
 
         }
 
-        ChCardInitCallback.add(function () {
+        facade.getCardModule().addCallback(function () {
             chCard.setElementValue($context, value, isAllowEdit);
         });
     },
