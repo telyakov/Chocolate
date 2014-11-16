@@ -6,8 +6,7 @@ var chApp = chApp || {
     events: ChocolateEvents,
     options: ChOptions,
     responseStatuses: ChResponseStatus,
-    attachments: ch.attachments,
-    mediator: mediator
+    attachments: ch.attachments
 };
 chApp.namespace = function (ns) {
     var parts = ns.split('.'),
@@ -25,13 +24,6 @@ chApp.namespace = function (ns) {
         parent = parent[parts[i]];
     }
     return parent;
-};
-/**
- *
- * @returns {mediator}
- */
-chApp.getMediator = function(){
-    return this.mediator;
 };
 /**
  * @returns {Chocolate}
