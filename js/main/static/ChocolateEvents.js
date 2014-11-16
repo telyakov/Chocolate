@@ -381,7 +381,7 @@ var ChocolateEvents = {
                         var response = new ChGridResponse(res);
                         if (response.isSuccess()) {
                             var template = response.getData(),
-                                $html = main.layoutTemplate(template, parentID);
+                                $html = facade.getHelpersModule().layoutTemplate(template, parentID);
                             try {
                                 $('<div></div>')
                                     .attr('id', tabID)
@@ -431,7 +431,7 @@ var ChocolateEvents = {
                 $('<div></div>')
                     .attr('id', tabID)
                     .appendTo($tabs)
-                    .html(main.layoutTemplate(template, parentID));
+                    .html(facade.getHelpersModule().layoutTemplate(template, parentID));
             }
         }
         return false;

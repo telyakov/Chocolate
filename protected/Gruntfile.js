@@ -50,7 +50,6 @@ module.exports = function (grunt) {
                     '../js/main/modules/mediator.js', //first loading module
                     '../js/main/modules/table.js',
                     '../js/main/modules/form.js',
-                    '../js/main/modules/card.js',
                     '../js/main/static/ChResponseStatus.js',
                     '../js/main/static/chAjaxQueue.js',
                     '../js/main/classes/ch.dynatree.js',
@@ -93,6 +92,7 @@ module.exports = function (grunt) {
                     '../js/main/modules/bind.js',
                     '../js/main/modules/factory.js',
                     '../js/main/modules/repaint.js',
+                    '../js/main/modules/card.js',
                     '../js/main/modules/tabs.js',
                     '../js/main/modules/task_wizard.js',
                     '../js/main/modules/files.js',
