@@ -1,4 +1,5 @@
 var cardModule = (function ($) {
+    'use strict';
     var callbacks = $.Callbacks(''),
         _private = {
             fireOnceCallback: function ($cnt) {

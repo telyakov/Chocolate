@@ -30,7 +30,7 @@ ChGridForm.prototype.destroy = function () {
     this.getTh().find('.ui-resizable').resizable('destroy');
     this.getTable().trigger("destroy");
     this.getTable().floatThead('destroy');
-    ChEditableCallback.remove(this.getCallbackID());
+    facade.getFormModule().removeCallbacks(this.getCallbackID());
     delete Chocolate.storage.session[this.getID()];
     delete this.fmChildGridCollection;
     delete this.chFormSettings.ch_grid_form;
@@ -868,7 +868,7 @@ ChGridForm.prototype.initData = function (data, order) {
         }));
 
         $tbody.html($html);
-        ChEditableCallback.fire($table, this.getCallbackID());
+        facade.getFormModule().fireCallbacks($table, this.getCallbackID());
         $table.trigger("update");
         var _this = this;
         $table.unbind('sortEnd').unbind('filterEnd').bind('sortEnd filterEnd', function () {
@@ -1121,7 +1121,7 @@ ChGridForm.prototype.addRow = function (data) {
         dataObj = {};
     }
     dataObj[row_id] = jQuery.extend({}, data);
-    ChEditableCallback.fire($row, this.getCallbackID());
+    facade.getFormModule().fireCallbacks($row, this.getCallbackID());
     if (this.isAutoOpenCard()) {
         this.openCard(row_id);
     }

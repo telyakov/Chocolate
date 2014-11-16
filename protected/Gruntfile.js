@@ -49,7 +49,7 @@ module.exports = function (grunt) {
                     '../js/main/static/ChOptions.js',
                     '../js/main/modules/mediator.js', //first loading module
                     '../js/main/modules/table.js',
-                    '../js/main/static/ChEditableCallback.js',
+                    '../js/main/modules/form.js',
                     '../js/main/modules/card.js',
                     '../js/main/static/ChResponseStatus.js',
                     '../js/main/static/chAjaxQueue.js',

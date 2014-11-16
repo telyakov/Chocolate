@@ -7,8 +7,6 @@ var chApp = chApp || {
     options: ChOptions,
     responseStatuses: ChResponseStatus,
     attachments: ch.attachments,
-    callback: ChEditableCallback,
-//    files: ChAttachments,
     mediator: mediator
 };
 chApp.namespace = function (ns) {
@@ -66,12 +64,6 @@ chApp.getOptions = function(){
  */
 chApp.getFunctions = function(){
     return chFunctions;
-};
-/**
- * @returns {ChEditableCallback}
- */
-chApp.getCallback = function(){
-    return this.callback;
 };
 /**
  * @returns {ch.attachments}
