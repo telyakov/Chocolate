@@ -63,6 +63,17 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
                         dnt = new ChDynatree($el);
                     dnt.generateContent($el.data().ChDynatree.options, resData);
                     break;
+                case optionsModule.getRequestType('chFormRefresh'):
+                    var form = factoryModule.makeChGridForm($('#' + data.id)),
+                        reg =  /"(.*?)":\{.*?\}.?/gim,
+                        matches,
+                        order = [];
+                    while ((matches = reg.exec(data.data)) !== null)
+                    {
+                        order.push(matches[1]);
+                    }
+                    form.updateData(resData, order);
+                    break;
                 default:
                     console.log(data);
             }

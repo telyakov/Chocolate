@@ -318,7 +318,11 @@ var chFunctions = {
             parentView: parentView,
             parentID: parentID
         };
-        var ajaxTask = new ChAjaxTask(formID, 'ChGridForm', params);
-        chAjaxQueue.enqueue(ajaxTask);
+        var optionsModule = facade.getOptionsModule();
+        mediator.publish(optionsModule.getChannel('socketRequest'), {
+            query: sql,
+            type: optionsModule.getRequestType('chFormRefresh'),
+            id: formID
+        });
     }
 };

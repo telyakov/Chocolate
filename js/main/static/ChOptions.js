@@ -47,7 +47,8 @@ var ChOptions = {
             jquery: 'jquery',
             wizardServices: 'wizard_services',
             wizardExecutors: 'wizard_executors',
-            treeControls: ' tree_controls'
+            treeControls: ' tree_controls',
+            chFormRefresh: 'ch_form_refresh'
         }
     },
     classes: {
