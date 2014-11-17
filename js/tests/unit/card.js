@@ -1,4 +1,4 @@
-module('card', {
+module('cardModule', {
     setup: function(){
         this.module = facade.getCardModule();
         this.cardCallback = sinon.stub();
@@ -8,7 +8,7 @@ module('card', {
     }
 });
 
-test('card.fireOnce', function(){
+test('cardModule.fireOnce', function(){
     expect(1);
     this.module.addCallback(this.cardCallback);
     var $context = $('<span id="test"></span>');
