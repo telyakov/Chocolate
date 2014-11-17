@@ -1,11 +1,5 @@
-<?php
-
+<?
 namespace ClassModules\User;
-
-use FrameWork\DataBase\Recordset;
-use FrameWork\DataBase\RecordsetRow;
-use FrameWork\XML\XML;
-
 
 class User extends \CFormModel
 {
@@ -15,6 +9,7 @@ class User extends \CFormModel
     public $lastName;
     public $patronymic;
     public $email;
+    private $_employeeID;
 
     public function rules()
     {
@@ -28,6 +23,9 @@ class User extends \CFormModel
         return $this->lastName . ' ' . $this->firstName . ' ' . $this->patronymic;
     }
 
+    public function getEmployeeID(){
+        return $this->_employeeID;
+    }
     public function authenticate($username, $password)
     {
         try {
@@ -38,14 +36,13 @@ class User extends \CFormModel
                 $this->lastName = $identityData['lastname'];
                 $this->patronymic = $identityData['patronymic'];
                 $this->email = $identityData['email'];
+                $this->_employeeID = $identityData['employeeid'];
                 return true;
             }
             return false;
-        }
-        catch(\SoapFault $e){
+        } catch (\SoapFault $e) {
             throw new \Exception('Веб-сервисы недоступны', 500, $e);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw new \Exception($e->getMessage(), 500, $e);
         }
     }

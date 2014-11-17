@@ -33,6 +33,9 @@ trait Component
             case $prepareExpression == 'userid':
                 return \Yii::app()->user->id;
                 break;
+            case $prepareExpression == 'currentemployeeid':
+                return \Yii::app()->user->employeeID;
+                break;
             default:
                 if($type ==GridColumnType::DateTime || $type ==GridColumnType::Date){
                     return null;

@@ -119,11 +119,6 @@ class ColumnProperties
         if (!$this->default) {
             return $this->default;
         } else {
-//            $t=$this->default;
-//            $parsedDate = date_parse_from_format('H:i',$this->default);
-//            $date = new \DateTime();
-//            $date->($parsedDate['hour'], $parsedDate['minute']);
-//            return $date->format('m.d.Y H:i:s');
             return $this->defaultExpressionEval($this->default, $this->getGridEditType());
         }
     }

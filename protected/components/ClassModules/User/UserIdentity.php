@@ -18,6 +18,7 @@ class UserIdentity extends \CUserIdentity
         $user = new User();
         if ($user->authenticate($this->username, $this->password)) {
             $this->_id = $user->userID;
+            $this->setState('employeeID', $user->getEmployeeID());
             $this->setState('fullName', $user->getFullName());
             $this->errorCode = self::ERROR_NONE;
         } else {
