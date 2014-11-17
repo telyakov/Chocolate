@@ -27,11 +27,6 @@ class MajesticController extends Controller
         $response->send();
     }
 
-    public function actionQueueExecute(){
-        $response = MajesticModel::packageExecute();
-        $response->send();
-    }
-
     public function actionFilterLayout($name, $view, $parentID){
         $model = Controller::loadForm($view);
         $collection = $model->getFilterSettingsCollection();

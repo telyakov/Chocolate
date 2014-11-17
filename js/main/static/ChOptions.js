@@ -83,7 +83,6 @@ var ChOptions = {
         makeCall: '/majestic/makeCall',
         childGrid: '/grid/getChildGrid',
         execute: '/majestic/execute',
-        queueExecute: '/majestic/queueExecute',
         filterLayouts: '/majestic/filterLayout',
         formSearch: '/grid/search',
         formSave: '/grid/save',

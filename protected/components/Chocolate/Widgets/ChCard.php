@@ -47,7 +47,6 @@ class ChCard extends CWidget
         echo CHtml::closeTag('div');
         $this->renderCardButtons();
         ob_end_flush();
-        $this->registerScripts();
     }
 
     protected function renderTopContent()
@@ -158,14 +157,5 @@ class ChCard extends CWidget
         echo CHtml::button('Отменить', ['class' => 'card-cancel', 'data-id' => 'card-cancel',]);
         echo CHtml::closeTag('div');
         }
-    }
-
-    protected function registerScripts()
-    {
-        Yii::app()->clientScript->registerScript($this->cardID, <<<JS
-            chAjaxQueue.send();
-JS
-            ,
-            CClientScript::POS_END);
     }
 }
