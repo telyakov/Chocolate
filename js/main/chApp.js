@@ -6,10 +6,7 @@ var chApp = chApp || {
     events: ChocolateEvents,
     options: ChOptions,
     responseStatuses: ChResponseStatus,
-    attachments: ch.attachments,
-    callback: ChEditableCallback,
-    files: ChAttachments,
-    mediator: mediator
+    attachments: ch.attachments
 };
 chApp.namespace = function (ns) {
     var parts = ns.split('.'),
@@ -27,13 +24,6 @@ chApp.namespace = function (ns) {
         parent = parent[parts[i]];
     }
     return parent;
-};
-/**
- *
- * @returns {mediator}
- */
-chApp.getMediator = function(){
-    return this.mediator;
 };
 /**
  * @returns {Chocolate}
@@ -68,20 +58,8 @@ chApp.getFunctions = function(){
     return chFunctions;
 };
 /**
- * @returns {ChEditableCallback}
- */
-chApp.getCallback = function(){
-    return this.callback;
-};
-/**
  * @returns {ch.attachments}
  */
 chApp.getAttachment = function(){
     return this.attachments;
-};
-/**
- * @returns {ChAttachments}
- */
-chApp.getFiles = function(){
-    return this.files;
 };

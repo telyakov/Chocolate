@@ -49,9 +49,7 @@ module.exports = function (grunt) {
                     '../js/main/static/ChOptions.js',
                     '../js/main/modules/mediator.js', //first loading module
                     '../js/main/modules/table.js',
-                    '../js/main/static/ChEditableCallback.js',
-                    '../js/main/static/ChCardInitCallback.js',
-                    '../js/main/static/chAttachments.js',
+                    '../js/main/modules/form.js',
                     '../js/main/static/ChResponseStatus.js',
                     '../js/main/static/chAjaxQueue.js',
                     '../js/main/classes/ch.dynatree.js',
@@ -84,8 +82,6 @@ module.exports = function (grunt) {
                     '../js/main/static/ChocolateEvents.js',
                     '../js/main/functions/ch.cardFunctions.js',
                     '../js/main/functions/ch.functions.js',
-                    '../js/main/functions/open_wizard_dialog.js',
-                    '../js/main/functions/open_task_wizard_dialog_end.js',
                     '../js/main/chApp.js',
                     '../js/main/plugins/wizard.js',
                     '../js/main/modules/log.js',
@@ -96,8 +92,10 @@ module.exports = function (grunt) {
                     '../js/main/modules/bind.js',
                     '../js/main/modules/factory.js',
                     '../js/main/modules/repaint.js',
+                    '../js/main/modules/card.js',
                     '../js/main/modules/tabs.js',
                     '../js/main/modules/task_wizard.js',
+                    '../js/main/modules/files.js',
                     '../js/main/modules/facade.js', //latest loading module
                     '../js/main/run.js'
                 ],

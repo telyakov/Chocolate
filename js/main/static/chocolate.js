@@ -166,90 +166,6 @@ var Chocolate = {
                     );
                 });
         }
-    },
-    /**
-     * @param template {string}
-     * @param id {string|int}
-     * @returns {string}
-     */
-    layoutTemplate: function (template, id) {
-        return template.replace(Chocolate.ID_REG_EXP, id);
-    },
-    tab: {
-
-        card: {
-            /**
-             * @param ui {Object}
-             * @param content {string|jQuery}
-             * @param $context {jQuery}
-             * @private
-             */
-            _initScripts: function (ui, content, $context) {
-                ui.panel.html(content);
-                ChCardInitCallback.fireOnce();
-                facade.getRepaintModule().reflowCardPanel(ui.panel, $context);
-                setTimeout(function () {
-                    mediator.publish(optionsModule.getChannel('reflowTab'));
-                }, 0);
-                ui.tab.data('loaded', 1);
-            },
-            /**
-             * #tips 2
-             * @param e {Event}
-             * @param ui {Object}
-             * @param $tabPanel {jQuery}
-             * @returns {boolean}
-             * @private
-             */
-            _onBeforeLoad: function (e, ui, $tabPanel) {
-                if (!ui.tab.data('loaded')) {
-                    var chCard = facade.getFactoryModule().makeChCard($(this)),
-                        tabID = $(ui.tab).attr('data-id'),
-                        pk = chCard.getKey(),
-                        fmCardCollection = chCard.getFmCardCollection(),
-                        isNumeric = $.isNumeric(pk),
-                        template = fmCardCollection.getCardTemplate(tabID, isNumeric);
-                    if (template === null) {
-                        $.get(chCard.getTabDataUrl(tabID))
-                            .done(function (template) {
-                                var $content = $(Chocolate.layoutTemplate(template, pk));
-                                try {
-                                    Chocolate.tab.card._initScripts(ui, $content, $tabPanel);
-                                    fmCardCollection.setCardTemplate(tabID, template, isNumeric);
-                                } catch (e) {
-                                    $content.remove();
-                                    mediator.publish(facade.getOptionsModule().getChannel('logError'),
-                                        'Возникла ошибка при инициализации шаблона',
-                                        e
-                                    );
-                                }
-                            })
-                            .fail(function (e) {
-                                mediator.publish(facade.getOptionsModule().getChannel('logError'),
-                                    'Ошибка при получении с сервера шаблон закладки для карточки',
-                                    e
-                                );
-                            });
-                    } else {
-                        Chocolate.tab.card._initScripts(ui, Chocolate.layoutTemplate(template, pk), $tabPanel);
-
-                    }
-                }
-                return false;
-            },
-            /**
-             * @param $tabPanel {jQuery}
-             */
-            init: function ($tabPanel) {
-                $tabPanel.addClass(ChOptions.classes.card);
-                $tabPanel.children('div').tabs({
-                    beforeLoad: function (e, ui) {
-                        return Chocolate.tab.card._onBeforeLoad.apply(this, [e, ui, $tabPanel]);
-                    },
-                    cache: true
-                });
-            }
-        }
     }
 };
 
@@ -284,6 +200,14 @@ var helpersModule = (function () {
         },
         uniqueID: function(){
             return context.uniqueID();
+        },
+        /**
+         * @param template {string}
+         * @param id {string|int}
+         * @returns {string}
+         */
+        layoutTemplate: function (template, id) {
+            return template.replace(Chocolate.ID_REG_EXP, id);
         }
 
     };

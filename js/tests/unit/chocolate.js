@@ -359,7 +359,7 @@ test('Chocolate.tab.close', function(){
 
     Chocolate.tab.card._initScripts.restore();
    var  stubData = this.stub($.fn, 'data'),
-        stubFireOnce = this.stub(ChCardInitCallback, 'fireOnce'),
+        stubFireOnce = this.stub(facade.getCardModule(), 'fireOnceCallback'),
         stubReflowActiveTab = this.stub(facade.getRepaintModule(), 'reflowActiveTab'),
         stubDrawCardPanel = this.stub(facade.getRepaintModule(), 'reflowCardPanel');
     var badTemplate = '<div id ="' + 'dsad' + '">fd<a>dd</a></div><script>'+ 'console.log($(this).attr(&#039;rel&#039;))'+'</script>';
@@ -418,7 +418,7 @@ test('Chocolate.tab.close', function(){
 
 //    Chocolate.log.error.restore();
     $.fn.data.restore();
-    ChCardInitCallback.fireOnce.restore();
+        facade.getCardModule().fireOnceCallback.restore();
     facade.getRepaintModule().reflowActiveTab.restore();
     jQuery.attr.restore();
     ChCard.prototype.getKey.restore();
@@ -467,7 +467,7 @@ test('Chocolate.tab.card._initScripts', function(){
         $fakeContext = $('<div>');
     var stubHtml = this.stub($.fn, 'html'),
         stubData = this.stub($.fn, 'data'),
-        stubFireOnce = this.stub(ChCardInitCallback, 'fireOnce'),
+        stubFireOnce = this.stub(facade.getCardModule(), 'fireOnceCallback'),
         stubDrawCardPanel = this.stub(facade.getRepaintModule(), 'reflowCardPanel');
     Chocolate.tab.card._initScripts(fakeUi, fakeContent, $fakeContext);
     ok(stubFireOnce.calledAfter(stubHtml), 'Сначала вставляются данные, потом инициализируются скрипты.');
@@ -485,7 +485,7 @@ test('Chocolate.tab.card._initScripts', function(){
     ok(!spyInitScripts.threw(), 'Должна поддерживаться передача jQuery в качестве параметра content');
     spyInitScripts.reset();
     $.fn.data.restore();
-    ChCardInitCallback.fireOnce.restore();
+    facade.getCardModule().fireOnceCallback.restore();
 });
 test('Chocolate.tab.card.init', function(){
     expect(3);

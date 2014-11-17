@@ -1,7 +1,7 @@
 /**
  * Bind module/. Dependencies: userModule.
  */
-var bindModule = (function (userModule) {
+var bindModule = (function (userModule, undefined) {
     'use strict';
     var keys = {
             userID: 'userid',
@@ -51,7 +51,7 @@ var bindModule = (function (userModule) {
          * @returns {string}
          */
         bindSql: function (sql, data) {
-            if (typeof data === 'undefined') {
+            if (data === undefined) {
                 return _private.bindSql(sql);
             }
             return _private.bindFromData(sql, data);
@@ -65,4 +65,4 @@ var bindModule = (function (userModule) {
             return _private.bindCardSql(sql, card);
         }
     };
-})(userModule);
+})(userModule, undefined);

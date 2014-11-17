@@ -30,7 +30,7 @@ ChGridForm.prototype.destroy = function () {
     this.getTh().find('.ui-resizable').resizable('destroy');
     this.getTable().trigger("destroy");
     this.getTable().floatThead('destroy');
-    ChEditableCallback.remove(this.getCallbackID());
+    facade.getFormModule().removeCallbacks(this.getCallbackID());
     delete Chocolate.storage.session[this.getID()];
     delete this.fmChildGridCollection;
     delete this.chFormSettings.ch_grid_form;
@@ -364,7 +364,7 @@ ChGridForm.prototype.openCard = function (pk) {
             var href = '#' + tab.getPanelID(),
                 $context = $(href);
             facade.getRepaintModule().reflowCard($context);
-            mainModule.tab.card.init($context);
+            facade.getCardModule().initCard($context);
             $a.attr('href', href)
         } else {
             tab = facade.getFactoryModule().makeChTab($a);
@@ -588,7 +588,7 @@ ChGridForm.prototype.getChangedObj = function () {
 ChGridForm.prototype.isHasChange = function () {
     Chocolate.leaveFocus();
     if (this._isAttachmentsModel()) {
-        return ChAttachments.isNotEmpty(this.getID()) || !$.isEmptyObject(this.getDeletedObj());
+        return facade.getFilesModule().isNotEmpty(this.getID()) || !$.isEmptyObject(this.getDeletedObj());
     } else {
         return !$.isEmptyObject(this.getChangedObj()) || !$.isEmptyObject(this.getDeletedObj());
     }
@@ -704,7 +704,7 @@ ChGridForm.prototype.save = function (refresh) {
         }
     } else {
         var formID = this.getID(),
-            fileModule = chApp.getFiles();
+            fileModule = facade.getFilesModule();
 
         if (fileModule.isNotEmpty(formID)) {
             var isEmpty = $.isEmptyObject(deleted_obj);
@@ -868,7 +868,7 @@ ChGridForm.prototype.initData = function (data, order) {
         }));
 
         $tbody.html($html);
-        ChEditableCallback.fire($table, this.getCallbackID());
+        facade.getFormModule().fireCallbacks($table, this.getCallbackID());
         $table.trigger("update");
         var _this = this;
         $table.unbind('sortEnd').unbind('filterEnd').bind('sortEnd filterEnd', function () {
@@ -901,7 +901,7 @@ ChGridForm.prototype._clearDeletedObj = function () {
 };
 ChGridForm.prototype._clearChangedObj = function () {
     if (this._isAttachmentsModel()) {
-        ChAttachments.clear(this.getID());
+        facade.getFilesModule().clear(this.getID());
     } else {
 
         var changeObj = this.getChangedObj();
@@ -1121,7 +1121,7 @@ ChGridForm.prototype.addRow = function (data) {
         dataObj = {};
     }
     dataObj[row_id] = jQuery.extend({}, data);
-    ChEditableCallback.fire($row, this.getCallbackID());
+    facade.getFormModule().fireCallbacks($row, this.getCallbackID());
     if (this.isAutoOpenCard()) {
         this.openCard(row_id);
     }
