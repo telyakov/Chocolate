@@ -40,6 +40,7 @@ var ChOptions = {
         getForms: 'core.UserFormsGet [userid]',
         getRoles: 'core.UserRolesGet [userid]',
         getServices: 'Tasks.ServicesGet',
+        makeCall: 'crm.makeCall [userid], [phoneto]',
         getExecutors: 'tasks.uspGetUsersListForTasksUsers',
         types: {
             forms: 'forms',
@@ -80,7 +81,6 @@ var ChOptions = {
         imagesUrls: '/majestic/images',
         export2excel: '/majestic/export2excel',
         cardGet: '/grid/cardDataGet',
-        makeCall: '/majestic/makeCall',
         childGrid: '/grid/getChildGrid',
         execute: '/majestic/execute',
         filterLayouts: '/majestic/filterLayout',

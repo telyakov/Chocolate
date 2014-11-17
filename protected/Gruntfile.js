@@ -94,6 +94,7 @@ module.exports = function (grunt) {
                     '../js/main/modules/tabs.js',
                     '../js/main/modules/task_wizard.js',
                     '../js/main/modules/files.js',
+                    '../js/main/modules/phone.js',
                     '../js/main/modules/facade.js', //latest loading module
                     '../js/main/run.js'
                 ],

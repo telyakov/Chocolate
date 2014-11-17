@@ -440,24 +440,8 @@ var ChocolateEvents = {
         $context.on('click', '.fm-phone', this.makeCallHandler);
     },
     makeCallHandler: function () {
-        var urls = chApp.namespace('options.urls'),
-            main = chApp.namespace('main'),
-            phoneTo = $(this).attr('data-phone');
-        $.get(urls.makeCall, {phoneTo: phoneTo})
-            .done(function (res) {
-                var response = new ChResponse(res);
-                if (response.hasError()) {
-                    mediator.publish(facade.getOptionsModule().getChannel('logError'),
-                        response.getStatusMsg()
-                    );
-                }
-            })
-            .fail(function (er) {
-                mediator.publish(facade.getOptionsModule().getChannel('logError'),
-                    er
-                );
-            });
-
+        var phoneTo = $(this).attr('data-phone');
+        facade.getPhoneModule().makeCall(phoneTo);
     },
     formMenuButtonEvent: function ($context) {
         $context

@@ -17,11 +17,6 @@ class MajesticController extends Controller
         ];
     }
 
-    public function actionMakeCall($phoneTo){
-        $response = Phone::makeCall($phoneTo);
-        $response->send();
-    }
-
     public function actionExecute($cache = false, $sql){
         $response = MajesticModel::execute($cache,$sql);
         $response->send();
