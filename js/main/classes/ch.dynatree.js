@@ -165,7 +165,7 @@ ChDynatree.prototype.generateContent = function (options, rawData) {
             node.title = this.getTitleValue(node);
             node.key = this.getKey(node);
             node.desc = node.description;
-            if (defaultValues && (defaultValues.length > 1 || this.isSingleMode()) && $.inArray(node.key, defaultValues) !== -1) {
+            if (defaultValues && ( (defaultValues.length > 1 || defaultValues[0]) || this.isSingleMode()) && $.inArray(node.key, defaultValues) !== -1) {
                 node.select = true;
                 this.defaultsElements.push(node);
             } else {

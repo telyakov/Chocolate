@@ -176,7 +176,7 @@ class WebService extends \SoapClient implements ConnectionInterface
 
     function attachmentIns(DataBaseRoutine $sql, $fileData, $userID = null)
     {
-        self::log($sql);
+//        self::log($sql);
         $funcName = 'AttachmentIns';
         $response = $this->soapClient->{$funcName}(array(
             'securityKey' => \Yii::app()->params['soapSecurityKey'],
