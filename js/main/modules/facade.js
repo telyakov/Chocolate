@@ -4,7 +4,7 @@
 var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule) {
     var showErrorsChannel = optionsModule.getChannel('showError'),
         setRolesChannel = optionsModule.getChannel('setRoles'),
-        logErrorChannel =  optionsModule.getChannel('logError');
+        logErrorChannel = optionsModule.getChannel('logError');
     mediator.subscribe(showErrorsChannel, function (msg) {
         logModule.showMessage(msg);
     });
@@ -37,20 +37,8 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
                     menuModule.init(resData);
                     break;
                 case optionsModule.getRequestType('jquery'):
-                    var firstRow;
-                    for (var i in resData) {
-                        if (resData.hasOwnProperty(i)) {
-                            firstRow = resData[i];
-                            break;
-                        }
-                    }
-                    var $elem = $('#' + data.id);
-                    for (var j in firstRow) {
-                        if (firstRow.hasOwnProperty(j)) {
-                            $elem.html(firstRow[j]);
-                            break;
-                        }
-                    }
+                    var value = socketModule.getFirstValue(resData);
+                    $('#' + data.id).html(value);
                     break;
                 case optionsModule.getRequestType('wizardServices'):
                     taskWizard.onServiceCommand(resData, data.id);
@@ -65,11 +53,10 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
                     break;
                 case optionsModule.getRequestType('chFormRefresh'):
                     var form = factoryModule.makeChGridForm($('#' + data.id)),
-                        reg =  /"(.*?)":\{.*?\}.?/gim,
+                        reg = /"(.*?)":\{.*?\}.?/gim,
                         matches,
                         order = [];
-                    while ((matches = reg.exec(data.data)) !== null)
-                    {
+                    while ((matches = reg.exec(data.data)) !== null) {
                         order.push(matches[1]);
                     }
                     form.updateData(resData, order);
@@ -102,46 +89,46 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
     });
 
     return {
-        getUserModule: function(){
+        getUserModule: function () {
             return userModule;
         },
-        getLogModule: function(){
+        getLogModule: function () {
             return logModule;
         },
-        getOptionsModule: function(){
+        getOptionsModule: function () {
             return optionsModule;
         },
-        getBindModule: function(){
+        getBindModule: function () {
             return bindModule;
         },
-        getFactoryModule: function(){
+        getFactoryModule: function () {
             return factoryModule;
         },
-        getTaskWizard: function(){
+        getTaskWizard: function () {
             return taskWizard;
         },
-        getHelpersModule: function(){
+        getHelpersModule: function () {
             return helpersModule;
         },
-        getTableModule: function(){
+        getTableModule: function () {
             return tableModule;
         },
-        getTabsModule: function(){
+        getTabsModule: function () {
             return tabsModule;
         },
-        getRepaintModule: function(){
+        getRepaintModule: function () {
             return repaintModule;
         },
-        getFilesModule: function(){
+        getFilesModule: function () {
             return filesModule;
         },
-        getCardModule: function(){
+        getCardModule: function () {
             return cardModule;
         },
-        getFormModule: function(){
+        getFormModule: function () {
             return formModule;
         },
-        getPhoneModule: function(){
+        getPhoneModule: function () {
             return phoneModule;
         }
     };
