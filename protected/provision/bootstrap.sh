@@ -1,4 +1,7 @@
 #!/bin/sh
+#==============================================================================
+#  SERVER MINIMAL INSTALLATION
+#==============================================================================
 #for empty centos7
 #sudo yum install -y wget
 #sudo yum groupinstall "Development tools"
@@ -41,7 +44,7 @@ sudo yum install -y libxml2 libxml2-devel curl-devel libXpm-devel libc-client-de
 #for empty centos7
 #mkdir /home/vagrant
 
-wget -O /home/vagrant/php-5.6.0.tar.gz http://ru2.php.net/get/php-5.6.0.tar.gz/from/this/mirror
+sudo wget -O /home/vagrant/php-5.6.0.tar.gz http://ru2.php.net/get/php-5.6.0.tar.gz/from/this/mirror
 sudo tar zxvf /home/vagrant/php-5.6.0.tar.gz
 cd /home/vagrant/php-5.6.0
 sudo ./configure --prefix=/opt/php-5.6.0 --with-openssl --with-zlib-dir \
@@ -112,22 +115,24 @@ sudo chkconfig memcached on
 sudo /etc/init.d/php-fpm restart
 sudo service nginx restart
 
-##Install development tools(nodejs, npm)
+==============================================================================
+DEVELOPMENT TOOLS INSTALL
+==============================================================================
+
+#Install development tools(nodejs, npm)
 sudo yum install -y nodejs npm
 
 #Install composer
 curl -sS https://getcomposer.org/installer | /opt/php-5.6.0/bin/php
 sudo mv composer.phar /usr/local/bin/composer
 
-#install npm & composer dependencies
-cd /vagrant/protected
-sudo npm install --production
-#sudo npm install --production
-/opt/php-5.6.0/bin/php /usr/local/bin/composer install --no-dev
-
-#comment in production
+install npm & composer dependencies
 sudo yum install -y ruby
 sudo gem install sass
+cd /vagrant/protected
+sudo npm install --production
+/opt/php-5.6.0/bin/php /usr/local/bin/composer install --no-dev
+
 
 #Install dependencies nodejs for grunt
 sudo yum install -y freetype fontconfig
@@ -146,22 +151,25 @@ cd /vagrant/protected
 sudo grunt bower
 grunt --force
 
-###postgresSql install
-##rpm -iUvh http://yum.postgresql.org/9.3/redhat/rhel-7-x86_64/pgdg-centos93-9.3-1.noarch.rpm
-##sudo yum -y install postgresql93 postgresql93-server postgresql93-contrib postgresql93-libs --enablerepo=pgdg93
-##systemctl enable postgresql-9.3
-##/usr/pgsql-9.3/bin/postgresql93-setup initdb
-##systemctl start postgresql-9.3
-##sudo service postgresql-9.3 restart
-# ## sudo passwd postgres
-### chocolate
-### chocolate
-##Настроить пароль
-## ALTER USER postgres WITH PASSWORD 'chocolate'
-##Скопировать конфиги
-##Ребут
+#postgresSql install
+#rpm -iUvh http://yum.postgresql.org/9.3/redhat/rhel-7-x86_64/pgdg-centos93-9.3-1.noarch.rpm
+#sudo yum -y install postgresql93 postgresql93-server postgresql93-contrib postgresql93-libs --enablerepo=pgdg93
+#systemctl enable postgresql-9.3
+#/usr/pgsql-9.3/bin/postgresql93-setup initdb
+#systemctl start postgresql-9.3
+#sudo service postgresql-9.3 restart
+#sudo passwd postgres
+#chocolate
+#chocolate
+#Настроить пароль
+#ALTER USER postgres WITH PASSWORD 'chocolate'
+#Скопировать конфиги
+#Ребут
 
+#==============================================================================
 # WebSocket Server Settings
+#==============================================================================
+#
 ##maven install
 #sudo yum install -y java-1.7.0-openjdk-devel
 #cd
