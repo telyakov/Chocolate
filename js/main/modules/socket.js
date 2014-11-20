@@ -3,6 +3,7 @@
  * https://github.com/Automattic/socket.io-client
  */
 var socketModule = (function (io, optionsModule, mediator) {
+    'use strict';
     var connectUrl = optionsModule.getUrl('webSocketServer'),
         socket = io.connect(connectUrl, {reconnectionDelay: 3000}),
         _private = {
@@ -63,17 +64,10 @@ var socketModule = (function (io, optionsModule, mediator) {
         .on('connect', _private.connectHandler)
         .on('response', _private.responseHandler)
         .on('fileResponse', function (data) {
-                var b64Data =data.data;
-                var byteCharacters = atob(b64Data);
-                var byteNumbers = new Array(byteCharacters.length);
-                for (var i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-                var byteArray = new Uint8Array(byteNumbers);
-                var blob = new Blob([byteArray], {});
-                saveAs(blob, data.name);
-
-
+            mediator.publish(
+                optionsModule.getChannel('socketFileResponse'),
+                data
+            );
         });
     return {
         emit: function (event, data) {

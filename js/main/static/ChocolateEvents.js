@@ -62,7 +62,7 @@ var ChocolateEvents = {
         $this.toggleClass('menu-button-selected');
         $expandSection.siblings('.section-header, .section-filters').toggleClass('expand-hidden');
         var $expandCardCol = $expandSection.closest('.card-col');
-        if($expandCardCol.length){
+        if ($expandCardCol.length) {
             $expandCardCol.toggleClass('expand-card-visible');
             $expandCardCol.siblings('.card-col').toggleClass('expand-hidden');
         }
@@ -105,7 +105,7 @@ var ChocolateEvents = {
             menu.push(item);
         });
         $(this).contextmenu({
-            show: { effect: "blind", duration: 0 },
+            show: {effect: "blind", duration: 0},
             menu: menu,
             select: function (event, ui) {
                 $('#' + ui.cmd).trigger('click');
@@ -263,7 +263,13 @@ var ChocolateEvents = {
         if (isMarkupSupport) {
             chFunctions.wysiHtmlInit($popupControl, ChEditable.getTitle(column.getID(), caption));
         } else {
-            $popupControl.editable({type: 'textarea', mode: 'popup', onblur: 'ignore', savenochange: false, title: ChEditable.getTitle(column.getID(), caption)});
+            $popupControl.editable({
+                type: 'textarea',
+                mode: 'popup',
+                onblur: 'ignore',
+                savenochange: false,
+                title: ChEditable.getTitle(column.getID(), caption)
+            });
         }
         $popupControl
             .bind('save', {
@@ -487,15 +493,9 @@ var ChocolateEvents = {
             })
             .on('click', '.attachment-file', $.debounce(2000, true, this.downloadFileHandler));
     },
-    /**
-     * #tips 2
-     * @returns {boolean}
-     */
     downloadFileHandler: function () {
         var id = $(this).attr('data-id');
-        socketModule.emit('fileRequest', {id: id, key: '6543210'});
-        //$.fileDownload($(this).attr('href'));
-        //return false;
+        mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
     },
     openFormEvent: function ($footer, $content) {
 
@@ -657,9 +657,13 @@ var ChocolateEvents = {
             messages = chApp.getMessages();
         $context.contextmenu({
             delegate: 'span.card-button, td.attachment-grid-menu',
-            show: { effect: 'blind', duration: 0 },
+            show: {effect: 'blind', duration: 0},
             menu: [
-                {title: messages.Delete + ' [DEL]', cmd: 'delete', uiIcon: 'ui-icon-trash'}
+                {
+                    title: messages.Delete + ' [DEL]',
+                    cmd: 'delete',
+                    uiIcon: 'ui-icon-trash'
+                }
             ],
             select: function (e, ui) {
                 switch (ui.cmd) {

@@ -29,6 +29,7 @@ js/libs/classie
 js/libs/socket.io
 js/libs/moment
 js/libs/FileSaver
+js/libs/Blob
 protected/config/main_production.php
 protected/.ftppass
 

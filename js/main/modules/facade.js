@@ -1,7 +1,8 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
  */
-var facade = (function (logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule) {
+var facade = (function (Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule) {
+    'use strict';
     var showErrorsChannel = optionsModule.getChannel('showError'),
         setRolesChannel = optionsModule.getChannel('setRoles'),
         logErrorChannel = optionsModule.getChannel('logError');
@@ -17,7 +18,34 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
         data.key = optionsModule.getSetting('key');
         socketModule.emit('request', data);
     });
+    mediator.subscribe(optionsModule.getChannel('socketFileRequest'), function (data) {
+        data.key = optionsModule.getSetting('key');
+        socketModule.emit('fileRequest', data);
+    });
+    mediator.subscribe(optionsModule.getChannel('socketFileResponse'), function (data) {
+        //https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
+        var byteCharacters = atob(data.data),
+            charactersLength = byteCharacters.length,
+            byteArrays = [],
+            sliceSize = 512,
+            offset,
+            slice,
+            sliceLength,
+            byteNumbers,
+            i;
 
+        for (offset = 0; offset < charactersLength; offset += sliceSize) {
+            slice = byteCharacters.slice(offset, offset + sliceSize);
+            sliceLength =slice.length;
+            byteNumbers = new Array(sliceLength);
+            for (i = 0; i < sliceLength; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+            byteArrays.push(new Uint8Array(byteNumbers));
+        }
+        saveAs(new Blob(byteArrays, {}), data.name);
+
+    });
     var responseChannel = optionsModule.getChannel('socketResponse');
     mediator.subscribe(responseChannel, function (data) {
         var error = data.error;
@@ -133,4 +161,4 @@ var facade = (function (logModule, mediator, optionsModule, socketModule, storag
         }
     };
 
-}(logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule));
+}(Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule));

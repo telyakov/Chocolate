@@ -15,7 +15,6 @@ use \ClassModules\User\User;
         <script src="/js/erp.min.js"></script>
     <? endif; ?>
     <script src="/js/main.js"></script>
-    <script src="/js/Blob.js"></script>
     <? echo CHtml::tag('title',[], Yii::app()->name)?>
 </head>
 <body>

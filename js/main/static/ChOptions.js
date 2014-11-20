@@ -12,6 +12,8 @@ var ChOptions = {
     channels: {
         socketRequest: 'socket_request',
         socketResponse: 'socket_response',
+        socketFileRequest: 'socket_file_request',
+        socketFileResponse: 'socket_file_response',
         logError: 'log_error',
         showError: 'show_error',
         setIdentity: 'set_identity',
