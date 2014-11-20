@@ -22,16 +22,16 @@ test('ChocolateEvents.warningMessageHandler',function(){
     Chocolate.hasChange.restore();
     stubHasChange.reset();
 });
-test('ChocolateEvents.downloadFileHandler',function(){
-    expect(1);
-    var href = 'param param pam.bu';
-    var $a = $('<a></a>').attr('href', href);
-    var stubOpen = this.stub(jQuery, 'fileDownload');
-    ChocolateEvents.downloadFileHandler.apply($a);
-    ok(stubOpen.calledWithExactly(href), 'Файл скачивается в текущем окне');
-    stubOpen.reset();
-    jQuery.fileDownload.restore();
-});
+//test('ChocolateEvents.downloadFileHandler',function(){
+//    expect(1);
+//    var href = 'param param pam.bu';
+//    var $a = $('<a></a>').attr('href', href);
+//    var stubOpen = this.stub(jQuery, 'fileDownload');
+//    ChocolateEvents.downloadFileHandler.apply($a);
+//    ok(stubOpen.calledWithExactly(href), 'Файл скачивается в текущем окне');
+//    stubOpen.reset();
+//    jQuery.fileDownload.restore();
+//});
 test('ChocolateEvents.downloadAttachmentEvent',function(){
     expect(1);
     var href = 'path-to-file';

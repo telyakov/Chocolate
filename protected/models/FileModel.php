@@ -177,14 +177,8 @@ class FileModel extends CFormModel
             $result[] = [
                 'id' => $row->id,
                 'name' => $row['name'],
+                'fileid' => $row['filesid'],
                 'version' => $row['version'],
-                'url' => Yii::app()->createAbsoluteUrl('Attachment/get',
-                        [
-                            'filesID' => $row['filesid'],
-                            'view' => Attachments::VIEW,
-                            'name' => $row['name']
-                        ]
-                    ),
                 'insusername' => $row['insusername'],
                 'insdate' => $insDate
             ];

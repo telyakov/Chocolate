@@ -40,7 +40,8 @@ module.exports = function (grunt) {
                     '../js/libs/socket.io/index.js',
                     '../js/libs/log4javascript/index.js',
 //                    '../js/libs/backbone/backbone.js',
-                    '../js/libs/moment/moment.js'
+                    '../js/libs/moment/moment.js',
+                    '../js/libs/FileSaver/FileSaver.js'
                 ],
                 dest: '../js/erp.js'
             },
@@ -222,5 +223,5 @@ module.exports = function (grunt) {
     grunt.registerTask('allTest', ['mochaTest', 'qunit']);
     grunt.registerTask('unitTest', ['qunit']);
     grunt.registerTask('funcTest', [ 'selenium_start','mochaTest', 'selenium_stop']);
-    grunt.registerTask('deploy', ['unitTest', 'sftp-deploy']);
+    grunt.registerTask('deploy', ['sftp-deploy']);
 };

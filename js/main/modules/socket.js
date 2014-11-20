@@ -61,7 +61,20 @@ var socketModule = (function (io, optionsModule, mediator) {
     socket.io.on('connect_error', _private.connectErrorHandler);
     socket
         .on('connect', _private.connectHandler)
-        .on('response', _private.responseHandler);
+        .on('response', _private.responseHandler)
+        .on('fileResponse', function (data) {
+                var b64Data =data.data;
+                var byteCharacters = atob(b64Data);
+                var byteNumbers = new Array(byteCharacters.length);
+                for (var i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                var byteArray = new Uint8Array(byteNumbers);
+                var blob = new Blob([byteArray], {});
+                saveAs(blob, data.name);
+
+
+        });
     return {
         emit: function (event, data) {
             socket.emit(event, data);

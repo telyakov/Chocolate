@@ -492,8 +492,10 @@ var ChocolateEvents = {
      * @returns {boolean}
      */
     downloadFileHandler: function () {
-        $.fileDownload($(this).attr('href'));
-        return false;
+        var id = $(this).attr('data-id');
+        socketModule.emit('fileRequest', {id: id, key: '6543210'});
+        //$.fileDownload($(this).attr('href'));
+        //return false;
     },
     openFormEvent: function ($footer, $content) {
 

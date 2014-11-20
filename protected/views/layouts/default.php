@@ -15,6 +15,7 @@ use \ClassModules\User\User;
         <script src="/js/erp.min.js"></script>
     <? endif; ?>
     <script src="/js/main.js"></script>
+    <script src="/js/Blob.js"></script>
     <? echo CHtml::tag('title',[], Yii::app()->name)?>
 </head>
 <body>
@@ -99,7 +100,7 @@ JS
         <td class="attachment-grid-menu"><?php ChControlsColumn::renderCardButton() ?></td>
         <td>
             <div class="table-td">
-                <a class="attachment-file" href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}">{%=file.name%}</a>
+                <a class="attachment-file" data-id="{%=file.fileid%}" title="{%=file.name%}" download="{%=file.name%}">{%=file.name%}</a>
             </div>
         </td>
         <td>
