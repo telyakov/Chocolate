@@ -24,6 +24,7 @@ $this->widget('Chocolate.Widgets.ChGridView', [
 ?>
 <script>
     $(function () {
+        Chocolate.init()
         chFunctions.initGrid(
             '<? echo json_encode($recordet->rawUrlEncode())?>',
             '<? echo json_encode($model->getPreview());?>',
