@@ -1,5 +1,7 @@
-<? /* @var $this SiteController */
+<?
+/* @var $this SiteController */
 use \ClassModules\User\User;
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -15,7 +17,7 @@ use \ClassModules\User\User;
         <script src="/js/erp.min.js"></script>
     <? endif; ?>
     <script src="/js/main.js"></script>
-    <? echo CHtml::tag('title',[], Yii::app()->name)?>
+    <? echo CHtml::tag('title', [], Yii::app()->name) ?>
 </head>
 <body>
 <header id="header">
@@ -48,25 +50,25 @@ use \ClassModules\User\User;
 <footer id="footer">
     <?
     $userName = Yii::app()->user->fullName;
-    if(stripos(Yii::app()->request->getHostInfo(), 'bp')!== false){
+    if (stripos(Yii::app()->request->getHostInfo(), 'bp') !== false) {
 
         $taskUrl = Yii::app()->createUrl('grid/index', ['view' => 'tasks\tasksfortops.xml']);
-    }else{
+    } else {
         $taskUrl = Yii::app()->createUrl('grid/index', ['view' => 'tasks.xml']);
     }
-    if(Yii::app()->controller->action->getId() == 'default' &&  $_SERVER['HTTP_HOST'] !='10.0.5.2'){
+    if (Yii::app()->controller->action->getId() == 'default' && $_SERVER['HTTP_HOST'] != '10.0.5.2') {
 
-    Yii::app()->clientScript->registerScript('autoOpen', <<<JS
+        Yii::app()->clientScript->registerScript('autoOpen', <<<JS
   $(function(){
   Chocolate.openForm('$taskUrl');});
 JS
-        , CClientScript::POS_LOAD
-    );
+            , CClientScript::POS_LOAD
+        );
     }
     $this->widget('Chocolate.Widgets.ChNavbar', [
         'type' => 'inverse',
         'brand' => $userName,
-        'brandUrl' =>  Yii::app()->createUrl('grid/index', ['view' => 'UserSettings.xml']),
+        'brandUrl' => Yii::app()->createUrl('grid/index', ['view' => 'UserSettings.xml']),
         'brandOptions' => ['class' => 'link-profile'],
         'fluid' => true,
         'fixed' => 'bottom',
@@ -75,7 +77,7 @@ JS
             [
                 'class' => 'Chocolate.Widgets.ChMenu',
                 'items' => [
-                    ['label' => 'Поручения', 'itemOptions' => ['class' => User::MENU_ITEM_CLASS], 'url' =>$taskUrl],
+                    ['label' => 'Поручения', 'itemOptions' => ['class' => User::MENU_ITEM_CLASS], 'url' => $taskUrl],
 //                    ['label' => 'Профиль', 'itemOptions' => ['class' => 'link'],  'url' => ],
                     ['label' => 'Выйти', 'url' => Yii::app()->createUrl('site/logout')],
                 ]
@@ -85,7 +87,13 @@ JS
 
     $userID = Yii::app()->user->id;
     Yii::app()->clientScript->registerScript('authorization', <<<JS
-        mediator.publish(optionsModule.getChannel('setIdentity'),'$userID','$userName');
+        var appModel = new AppModel({
+            userId: '$userID',
+            userName: '$userName'
+        });
+        new AppView({
+            model: appModel
+        });
 JS
         , CClientScript::POS_READY
     )
@@ -93,57 +101,4 @@ JS
 
 </footer>
 </body>
-<script id="template-download" type="text/x-tmpl">
-    {% for (var i=0, file; file=o.files[i]; i++) { %}
-    <tr class="template-download fade" data-id="{%=file.id%}">
-        <td class="attachment-grid-menu"><?php ChControlsColumn::renderCardButton() ?></td>
-        <td>
-            <div class="table-td">
-                <a class="attachment-file" data-id="{%=file.fileid%}" title="{%=file.name%}" download="{%=file.name%}">{%=file.name%}</a>
-            </div>
-        </td>
-        <td>
-            <div class="table-td">
-                <span class="attachment-td">{%=file.version%}</span>
-            </div>
-        </td>
-        <td>
-            <div class="table-td">
-                <span class="attachment-td">{%=file.insusername%}</span>
-            </div>
-        </td>
-        <td>
-            <div class="table-td">
-                <span class="attachment-td">{%=file.insdate%}</span>
-            </div>
-        </td>
-    </tr>
-    {% } %}
-</script>
-<script id="template-upload" type="text/x-tmpl">
-{% for (var i=0, file; file=o.files[i]; i++) { %}
-    <tr class="template-upload fade" >
-         <td class="attachment-grid-menu"><?php ChControlsColumn::renderCardButton() ?></td>
-        <td>
-            <div class="table-td attachment-new-file">
-                <span>{%=file.name%}</span>
-            </div>
-        </td>
-        <td>
-            <div class="table-td start">
-                   <span>1</span>
-                    <button style="display:none"> </button>
-            </div>
-        </td>
-                <td>
-            <div class="table-td">
-            </div>
-        </td>
-        <td>
-            <div class="table-td">
-            </div>
-        </td>
-    </tr>
-{% } %}
-</script>
 </html>

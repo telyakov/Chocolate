@@ -30,6 +30,7 @@ js/libs/socket.io
 js/libs/moment
 js/libs/FileSaver
 js/libs/Blob
+js/libs/backbone
 protected/config/main_production.php
 protected/.ftppass
 

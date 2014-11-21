@@ -41,7 +41,8 @@ module.exports = function (grunt) {
                     '../js/libs/log4javascript/index.js',
                     '../js/libs/moment/moment.js',
                     '../js/libs/FileSaver/FileSaver.js',
-                    '../js/libs/Blob/index.js'
+                    '../js/libs/Blob/index.js',
+                    '../js/libs/backbone/backbone.js'
 
                 ],
                 dest: '../js/erp.js'
@@ -98,7 +99,11 @@ module.exports = function (grunt) {
                     '../js/main/modules/files.js',
                     '../js/main/modules/phone.js',
                     '../js/main/modules/facade.js', //latest loading module
+                    '../js/app/models/app.js',
+                    '../js/app/router.js',
+                    '../js/app/views/app/app.js',
                     '../js/main/run.js'
+
                 ],
                 dest: '../js/main.js'
             }
