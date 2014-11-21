@@ -1,9 +1,34 @@
 var AppView = Backbone.View.extend({
     initialize: function (options) {
         _.bindAll(this, 'render');
+        this.$el = options.el;
         this.model = options.model;
         this.render();
     },
+    events: {
+        'click .link-form > a, .link-profile': 'openForm',
+        'click .menu-root': 'openFormFromMenu'
+    },
+    openForm: function (e) {
+        mediator.publish(optionsModule.getChannel('openForm'), $(e.target).attr('href'));
+        return false;
+    },
+    openFormFromMenu: function (e) {
+        var $this = $(e.target),
+            $subMenu = $this.siblings('.gn-submenu');
+        if ($subMenu.length) {
+            $subMenu.toggle();
+        } else {
+            mediator.publish(optionsModule.getChannel('openForm'), $this.attr('href'));
+            $this
+                .closest('.gn-menu-wrapper')
+                .removeClass('gn-open-all')
+                .prev('.gn-icon-menu')
+                .removeClass('gn-selected');
+        }
+        return false;
+    },
+
     render: function () {
         mediator.publish(
             optionsModule.getChannel('setIdentity'),
@@ -75,7 +100,7 @@ var AppView = Backbone.View.extend({
                     '{% } %}'
                 ].join('')
             });
-        $('body')
+        this.$el
             .append($downloadAttachmentTmpl)
             .append($uploadAttachmentTmpl);
     }

@@ -18,8 +18,8 @@ var ChOptions = {
         showError: 'show_error',
         setIdentity: 'set_identity',
         setRoles: 'set_roles',
-        reflowTab: 'reflow_tab'
-//        treeView: 'tree_view'
+        reflowTab: 'reflow_tab',
+        openForm: 'open_form'
     },
     settings: {
         locale: 'ru',

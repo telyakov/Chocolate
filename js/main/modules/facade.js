@@ -22,6 +22,11 @@ var facade = (function (Blob, saveAs, json_parse, logModule, mediator, optionsMo
         data.key = optionsModule.getSetting('key');
         socketModule.emit('fileRequest', data);
     });
+
+    mediator.subscribe(optionsModule.getChannel('openForm'), function (url) {
+        helpersModule.openForm(url);
+    });
+
     mediator.subscribe(optionsModule.getChannel('socketFileResponse'), function (data) {
         //https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
         var byteCharacters = atob(data.data),

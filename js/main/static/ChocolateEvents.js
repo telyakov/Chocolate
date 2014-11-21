@@ -35,7 +35,6 @@ var ChocolateEvents = {
         this.signInTextEvents($content);
         this.disableFiltersEvent($content);
         this.searchInFilterEvent($content);
-        this.openFormEvent($footer, $body);
         this.downloadAttachmentEvent($content);
         this.toggleSystemColsEvent($tabs);
         this.warningMessageEvent($window);
@@ -496,35 +495,6 @@ var ChocolateEvents = {
     downloadFileHandler: function () {
         var id = $(this).attr('data-id');
         mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
-    },
-    openFormEvent: function ($footer, $content) {
-
-        $footer.on('click', '.link-form > a, .link-profile', this.openFormHandler);
-        $content.on('click', '.menu-root', function () {
-            var $this = $(this), $submenu = $this.siblings('.gn-submenu');
-            if ($submenu.length) {
-                $submenu.toggle();
-            } else {
-                var main = chApp.namespace('main');
-                main.openForm($(this).attr('href'));
-                $this
-                    .closest('.gn-menu-wrapper')
-                    .removeClass('gn-open-all')
-                    .prev('.gn-icon-menu')
-                    .removeClass('gn-selected');
-            }
-            return false;
-
-        });
-    },
-    /**
-     * #tips 2
-     * @params e {Event}
-     */
-    openFormHandler: function (e) {
-        var main = chApp.namespace('main');
-        main.openForm($(this).attr('href'));
-        e.preventDefault();
     },
     searchInFilterEvent: function ($context) {
         $context.on('keydown', 'input.filter', this.searchInFilterHandler);

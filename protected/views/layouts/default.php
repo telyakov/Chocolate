@@ -92,7 +92,8 @@ JS
             userName: '$userName'
         });
         new AppView({
-            model: appModel
+            model: appModel,
+            el: $('body')
         });
 JS
         , CClientScript::POS_READY

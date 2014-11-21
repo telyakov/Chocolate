@@ -208,6 +208,9 @@ var helpersModule = (function () {
          */
         layoutTemplate: function (template, id) {
             return template.replace(Chocolate.ID_REG_EXP, id);
+        },
+        openForm: function(url){
+            context.openForm(url);
         }
 
     };
