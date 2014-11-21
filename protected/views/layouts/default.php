@@ -30,24 +30,9 @@ use \ClassModules\User\User;
 <footer id="footer">
     <?
     $userName = Yii::app()->user->fullName;
-    if (stripos(Yii::app()->request->getHostInfo(), 'bp') !== false) {
-
-        $taskUrl = Yii::app()->createUrl('grid/index', ['view' => 'tasks\tasksfortops.xml']);
-    } else {
-        $taskUrl = Yii::app()->createUrl('grid/index', ['view' => 'tasks.xml']);
-    }
-    if (Yii::app()->controller->action->getId() == 'default' && $_SERVER['HTTP_HOST'] != '10.0.5.2') {
-
-        Yii::app()->clientScript->registerScript('autoOpen', <<<JS
-  $(function(){
-  Chocolate.openForm('$taskUrl');});
-JS
-            , CClientScript::POS_LOAD
-        );
-    }
     $userID = Yii::app()->user->id;
     Yii::app()->clientScript->registerScript('start', <<<JS
-    facade.startApp('$userID', '$userName', '$taskUrl');
+    facade.startApp('$userID', '$userName');
 JS
         , CClientScript::POS_READY
     )

@@ -1,4 +1,4 @@
-var AppView = (function (Backbone, $, optionsModule, mediator) {
+var AppView = (function (Backbone, $, optionsModule, mediator, location) {
     'use strict';
     return Backbone.View.extend({
         initialize: function (options) {
@@ -133,13 +133,26 @@ var AppView = (function (Backbone, $, optionsModule, mediator) {
             );
         },
         _renderNavBar: function(){
+
+            var host =location.host.toLowerCase(),
+                path = location.pathname.toLowerCase(),
+                tasksUrl;
+            if(host === 'bp.78stroy.ru'){
+                tasksUrl = optionsModule.getUrl('tasksForTops');
+            }else{
+                tasksUrl = optionsModule.getUrl('tasks');
+            }
+            if(host !== '10.0.5.2' && path !=='/grid/searchbyid'){
+                mediator.publish(optionsModule.getChannel('openForm'), tasksUrl);
+            }
+
             var options = {
                 brand:  this.model.get('userName'),
                 brandUrl: optionsModule.getUrl('userSettings'),
                 items: [
                     {
                         label: 'Поручения',
-                        url: this.model.get('tasksUrl'),
+                        url: tasksUrl,
                         'class': 'link-form'
                     },
                     {
@@ -152,4 +165,4 @@ var AppView = (function (Backbone, $, optionsModule, mediator) {
 
         }
     });
-})(Backbone, jQuery, optionsModule, mediator);
+})(Backbone, jQuery, optionsModule, mediator, location);

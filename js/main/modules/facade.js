@@ -167,17 +167,16 @@ var facade = (function (navBarModule, AppModel, AppView, Blob, saveAs, json_pars
         getNavBarModule: function(){
           return navBarModule;
         },
-        startApp: function (userID, userName, tasksUrl) {
+        startApp: function (userID, userName) {
+            helpersModule.init();
             var appModel = new AppModel({
                     userId: userID,
-                    userName: userName,
-                    tasksUrl: tasksUrl
+                    userName: userName
                 }),
                 view = new AppView({
                     model: appModel,
                     el: $('body')
                 });
-            helpersModule.init();
             ChocolateEvents.createEventsHandlers();
         }
     };

@@ -88,6 +88,8 @@ var ChOptions = {
         filterLayouts: '/majestic/filterLayout',
         formSearch: '/grid/search',
         formSave: '/grid/save',
+        tasks: '/grid/index?view=tasks.xml',
+        tasksForTops: '/grid/index?view=tasks%5Ctasksfortops.xml',
         bpOneTask: 'http://bp.78stroy.ru/grid/searchByID?view=tasks%5Ctasksfortops.xml&id=',
         userSettings: '/grid/index?view=UserSettings.xml'
     },
