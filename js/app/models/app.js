@@ -3,7 +3,8 @@ var AppModel = (function (Backbone) {
     return Backbone.Model.extend({
         defaults: {
             userName: null,
-            userId: null
+            userId: null,
+            tasksUrl: null
         }
     });
 })(Backbone);

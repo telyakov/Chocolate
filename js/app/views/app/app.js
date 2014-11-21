@@ -2,13 +2,13 @@ var AppView = (function (Backbone, $, optionsModule, mediator) {
     'use strict';
     return Backbone.View.extend({
         initialize: function (options) {
-            _.bindAll(this, 'render', '_renderAnimateIndicator');
+            _.bindAll(this, 'render', '_renderAnimateIndicator', '_renderNavBar');
             this.$el = options.el;
             this.model = options.model;
             this.render();
         },
         events: {
-            'click .link-form > a, .link-profile': 'openForm',
+            'click .link-form, .link-profile': 'openForm',
             'click .menu-root': 'openFormFromMenu'
         },
         openForm: function (e) {
@@ -38,6 +38,7 @@ var AppView = (function (Backbone, $, optionsModule, mediator) {
                 this.model.get('userName')
             );
             this._renderAnimateIndicator();
+            this._renderNavBar();
             var $downloadAttachmentTmpl = $('<script>', {
                     type: 'text/x-tmpl',
                     id: 'template-download',
@@ -130,6 +131,25 @@ var AppView = (function (Backbone, $, optionsModule, mediator) {
                     '</div>'
                 ].join('')
             );
+        },
+        _renderNavBar: function(){
+            var options = {
+                brand:  this.model.get('userName'),
+                brandUrl: optionsModule.getUrl('userSettings'),
+                items: [
+                    {
+                        label: 'Поручения',
+                        url: this.model.get('tasksUrl'),
+                        'class': 'link-form'
+                    },
+                    {
+                        label: 'Выйти',
+                        url: '/site/logout'
+                    }
+                ]
+            };
+            this.$el.children('footer').html(facade.getNavBarModule().create(options));
+
         }
     });
 })(Backbone, jQuery, optionsModule, mediator);

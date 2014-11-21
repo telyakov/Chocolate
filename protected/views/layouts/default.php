@@ -45,28 +45,9 @@ JS
             , CClientScript::POS_LOAD
         );
     }
-    $this->widget('Chocolate.Widgets.ChNavbar', [
-        'type' => 'inverse',
-        'brand' => $userName,
-        'brandUrl' => Yii::app()->createUrl('grid/index', ['view' => 'UserSettings.xml']),
-        'brandOptions' => ['class' => 'link-profile'],
-        'fluid' => true,
-        'fixed' => 'bottom',
-        'collapse' => false,
-        'items' => [
-            [
-                'class' => 'Chocolate.Widgets.ChMenu',
-                'items' => [
-                    ['label' => 'Поручения', 'itemOptions' => ['class' => User::MENU_ITEM_CLASS], 'url' => $taskUrl],
-                    ['label' => 'Выйти', 'url' => Yii::app()->createUrl('site/logout')],
-                ]
-            ],
-        ],
-    ]);
-
     $userID = Yii::app()->user->id;
     Yii::app()->clientScript->registerScript('start', <<<JS
-    facade.startApp('$userID', '$userName');
+    facade.startApp('$userID', '$userName', '$taskUrl');
 JS
         , CClientScript::POS_READY
     )
