@@ -86,15 +86,8 @@ JS
     ]);
 
     $userID = Yii::app()->user->id;
-    Yii::app()->clientScript->registerScript('authorization', <<<JS
-        var appModel = new AppModel({
-            userId: '$userID',
-            userName: '$userName'
-        });
-        new AppView({
-            model: appModel,
-            el: $('body')
-        });
+    Yii::app()->clientScript->registerScript('start', <<<JS
+    facade.startApp('$userID', '$userName');
 JS
         , CClientScript::POS_READY
     )

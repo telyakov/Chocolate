@@ -1,7 +1,7 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
  */
-var facade = (function (Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule) {
+var facade = (function (AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule) {
     'use strict';
     var showErrorsChannel = optionsModule.getChannel('showError'),
         setRolesChannel = optionsModule.getChannel('setRoles'),
@@ -41,7 +41,7 @@ var facade = (function (Blob, saveAs, json_parse, logModule, mediator, optionsMo
 
         for (offset = 0; offset < charactersLength; offset += sliceSize) {
             slice = byteCharacters.slice(offset, offset + sliceSize);
-            sliceLength =slice.length;
+            sliceLength = slice.length;
             byteNumbers = new Array(sliceLength);
             for (i = 0; i < sliceLength; i++) {
                 byteNumbers[i] = slice.charCodeAt(i);
@@ -163,7 +163,19 @@ var facade = (function (Blob, saveAs, json_parse, logModule, mediator, optionsMo
         },
         getPhoneModule: function () {
             return phoneModule;
+        },
+        startApp: function (userID, userName) {
+            helpersModule.init();
+            ChocolateEvents.createEventsHandlers();
+            var appModel = new AppModel({
+                    userId: userID,
+                    userName: userName
+                }),
+                view = new AppView({
+                    model: appModel,
+                    el: $('body')
+                });
         }
     };
 
-}(Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule));
+}(AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule));

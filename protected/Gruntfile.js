@@ -98,11 +98,11 @@ module.exports = function (grunt) {
                     '../js/main/modules/task_wizard.js',
                     '../js/main/modules/files.js',
                     '../js/main/modules/phone.js',
-                    '../js/main/modules/facade.js', //latest loading module
                     '../js/app/models/app.js',
                     '../js/app/router.js',
                     '../js/app/views/app/app.js',
-                    '../js/main/run.js'
+                    '../js/main/settings.js',
+                    '../js/main/modules/facade.js' //latest loading module
 
                 ],
                 dest: '../js/main.js'

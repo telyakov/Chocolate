@@ -211,6 +211,9 @@ var helpersModule = (function () {
         },
         openForm: function(url){
             context.openForm(url);
+        },
+        init: function(){
+            context.init();
         }
 
     };
