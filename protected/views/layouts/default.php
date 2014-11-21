@@ -20,27 +20,7 @@ use \ClassModules\User\User;
     <? echo CHtml::tag('title', [], Yii::app()->name) ?>
 </head>
 <body>
-<header id="header">
-    <div id="fadingBarsG">
-        <div id="fadingBarsG_1" class="fadingBarsG">
-        </div>
-        <div id="fadingBarsG_2" class="fadingBarsG">
-        </div>
-        <div id="fadingBarsG_3" class="fadingBarsG">
-        </div>
-        <div id="fadingBarsG_4" class="fadingBarsG">
-        </div>
-        <div id="fadingBarsG_5" class="fadingBarsG">
-        </div>
-        <div id="fadingBarsG_6" class="fadingBarsG">
-        </div>
-        <div id="fadingBarsG_7" class="fadingBarsG">
-        </div>
-        <div id="fadingBarsG_8" class="fadingBarsG">
-        </div>
-    </div>
-</header>
-
+<header id="header"></header>
 <div id="pagewrap">
     <ul id="gn-menu" class="gn-menu-main"></ul>
     <div id="content">
@@ -72,13 +52,12 @@ JS
         'brandOptions' => ['class' => 'link-profile'],
         'fluid' => true,
         'fixed' => 'bottom',
-        'collapse' => false, // requires bootstrap-responsive.css
+        'collapse' => false,
         'items' => [
             [
                 'class' => 'Chocolate.Widgets.ChMenu',
                 'items' => [
                     ['label' => 'Поручения', 'itemOptions' => ['class' => User::MENU_ITEM_CLASS], 'url' => $taskUrl],
-//                    ['label' => 'Профиль', 'itemOptions' => ['class' => 'link'],  'url' => ],
                     ['label' => 'Выйти', 'url' => Yii::app()->createUrl('site/logout')],
                 ]
             ],

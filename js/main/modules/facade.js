@@ -165,8 +165,6 @@ var facade = (function (AppModel, AppView, Blob, saveAs, json_parse, logModule, 
             return phoneModule;
         },
         startApp: function (userID, userName) {
-            helpersModule.init();
-            ChocolateEvents.createEventsHandlers();
             var appModel = new AppModel({
                     userId: userID,
                     userName: userName
@@ -175,6 +173,8 @@ var facade = (function (AppModel, AppView, Blob, saveAs, json_parse, logModule, 
                     model: appModel,
                     el: $('body')
                 });
+            helpersModule.init();
+            ChocolateEvents.createEventsHandlers();
         }
     };
 
