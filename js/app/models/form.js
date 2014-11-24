@@ -29,6 +29,25 @@ var FormModel = (function (Backbone, ActionsPropertiesCollection) {
             if (this._agileFilters) {
                 return this._agileFilters;
             }
+            var filters = [],
+                $xml =  this.get('$xml');
+            if ($xml) {
+                var $filtersPanel = $xml.find('FiltersPanelXml'),
+                    $filters;
+                $filters = $($.parseXML($.trim($filtersPanel.text())));
+                var $agileFilters = $filters.find('AgileFilters');
+                $agileFilters.find('AgileFilter').each(function () {
+                    filters.push(new AgileFilter({
+                            $obj: $(this)
+                        }
+                    ));
+                });
+                this._agileFilters = new AgileFiltersCollections(filters, {
+                    $obj: $agileFilters
+                });
+            }
+            return this._agileFilters;
+
         },
         getGridProperties: function () {
             if (this._gridProperties) {
@@ -42,11 +61,13 @@ var FormModel = (function (Backbone, ActionsPropertiesCollection) {
             var actions = [],
                 $xml = this.get('$xml');
             if ($xml) {
+                console.log($xml, $xml.html())
+
                 var $actions = $xml.find('ActionsXml');
                 $actions = $.parseXML($.trim($actions.text()));
                 $($actions).find('MenuAction').each(function () {
                     actions.push(new ActionProperties({
-                            $action: $(this)
+                            $obj: $(this)
                         }
                     ));
                 });

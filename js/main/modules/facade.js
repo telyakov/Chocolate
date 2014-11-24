@@ -32,10 +32,10 @@ var facade = (function (navBarModule, AppModel, AppView, Blob, saveAs, json_pars
         } else {
 
             if (data.data) {
-                var type= data.type,
+                var type = data.type,
                     xml = helpersModule.winToUnicode(atob(data.data)),
-                    $xml = $( $.parseXML(xml));
-                switch(type){
+                    $xml = $($.parseXML(xml));
+                switch (type) {
                     case optionsModule.getRequestType('mainForm'):
                         var model = new FormModel({
                             $xml: $xml

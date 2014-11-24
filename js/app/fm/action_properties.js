@@ -2,16 +2,16 @@ var ActionProperties = (function (Backbone) {
     'use strict';
     return Backbone.Model.extend({
         defaults: {
-            $action: null
+            $obj: null
         },
         getCaption: function () {
-            this.$action.children('caption').html();
+            this.$obj.children('caption').html();
         },
         getAction: function () {
-            this.$action.children('action').html();
+            this.$obj.children('action').html();
         },
         getRequiredRole: function () {
-            this.$action.children('requiredRole').html();
+            this.$obj.children('requiredRole').html();
         }
     });
 })(Backbone);
