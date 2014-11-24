@@ -68,7 +68,12 @@ var socketModule = (function (io, optionsModule, mediator) {
                 optionsModule.getChannel('socketFileResponse'),
                 data
             );
-        });
+        })
+        .on('xmlResponse', function(data){
+            mediator.publish(
+                optionsModule.getChannel('xmlResponse'),
+                data
+            );        });
     return {
         emit: function (event, data) {
             socket.emit(event, data);

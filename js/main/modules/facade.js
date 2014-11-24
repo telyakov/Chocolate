@@ -18,6 +18,39 @@ var facade = (function (navBarModule, AppModel, AppView, Blob, saveAs, json_pars
         data.key = optionsModule.getSetting('key');
         socketModule.emit('request', data);
     });
+
+    mediator.subscribe(optionsModule.getChannel('xmlRequest'), function (data) {
+        data.key = optionsModule.getSetting('key');
+        socketModule.emit('xmlRequest', data);
+    });
+    mediator.subscribe(optionsModule.getChannel('xmlResponse'), function (data) {
+        if (data.error) {
+            mediator.publish(
+                logErrorChannel,
+                data.error
+            );
+        } else {
+
+            if (data.data) {
+                var type= data.type,
+                    xml = helpersModule.winToUnicode(atob(data.data)),
+                    $xml = $( $.parseXML(xml));
+                switch(type){
+                    case optionsModule.getRequestType('mainForm'):
+                        var model = new FormModel({
+                            $xml: $xml
+                        });
+                        var view = new FormView({
+                            model: model
+                        });
+                        break;
+                    default :
+                        break;
+
+                }
+            }
+        }
+    });
     mediator.subscribe(optionsModule.getChannel('socketFileRequest'), function (data) {
         data.key = optionsModule.getSetting('key');
         socketModule.emit('fileRequest', data);
@@ -28,28 +61,36 @@ var facade = (function (navBarModule, AppModel, AppView, Blob, saveAs, json_pars
     });
 
     mediator.subscribe(optionsModule.getChannel('socketFileResponse'), function (data) {
-        //https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
-        var byteCharacters = atob(data.data),
-            charactersLength = byteCharacters.length,
-            byteArrays = [],
-            sliceSize = 512,
-            offset,
-            slice,
-            sliceLength,
-            byteNumbers,
-            i;
+        if (data.error) {
+            mediator.publish(
+                logErrorChannel,
+                data.error
+            );
+        } else {
+            if (data.data) {
+                //https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
+                var byteCharacters = atob(data.data),
+                    charactersLength = byteCharacters.length,
+                    byteArrays = [],
+                    sliceSize = 512,
+                    offset,
+                    slice,
+                    sliceLength,
+                    byteNumbers,
+                    i;
 
-        for (offset = 0; offset < charactersLength; offset += sliceSize) {
-            slice = byteCharacters.slice(offset, offset + sliceSize);
-            sliceLength = slice.length;
-            byteNumbers = new Array(sliceLength);
-            for (i = 0; i < sliceLength; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
+                for (offset = 0; offset < charactersLength; offset += sliceSize) {
+                    slice = byteCharacters.slice(offset, offset + sliceSize);
+                    sliceLength = slice.length;
+                    byteNumbers = new Array(sliceLength);
+                    for (i = 0; i < sliceLength; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+                    byteArrays.push(new Uint8Array(byteNumbers));
+                }
+                saveAs(new Blob(byteArrays, {}), data.name);
             }
-            byteArrays.push(new Uint8Array(byteNumbers));
         }
-        saveAs(new Blob(byteArrays, {}), data.name);
-
     });
     var responseChannel = optionsModule.getChannel('socketResponse');
     mediator.subscribe(responseChannel, function (data) {
@@ -164,8 +205,8 @@ var facade = (function (navBarModule, AppModel, AppView, Blob, saveAs, json_pars
         getPhoneModule: function () {
             return phoneModule;
         },
-        getNavBarModule: function(){
-          return navBarModule;
+        getNavBarModule: function () {
+            return navBarModule;
         },
         startApp: function (userID, userName) {
             helpersModule.init();
@@ -181,4 +222,4 @@ var facade = (function (navBarModule, AppModel, AppView, Blob, saveAs, json_pars
         }
     };
 
-}(navBarModule,AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule));
+}(navBarModule, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule));

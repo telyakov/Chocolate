@@ -19,7 +19,9 @@ var ChOptions = {
         setIdentity: 'set_identity',
         setRoles: 'set_roles',
         reflowTab: 'reflow_tab',
-        openForm: 'open_form'
+        openForm: 'open_form',
+        xmlRequest: 'xml_request',
+        xmlResponse: 'xml_response'
     },
     settings: {
         locale: 'ru',
@@ -45,6 +47,7 @@ var ChOptions = {
         makeCall: 'crm.makeCall [userid], [phoneto]',
         getExecutors: 'tasks.uspGetUsersListForTasksUsers',
         types: {
+            mainForm: 'main_form',
             forms: 'forms',
             roles: 'roles',
             jquery: 'jquery',

@@ -98,10 +98,13 @@ module.exports = function (grunt) {
                     '../js/main/modules/task_wizard.js',
                     '../js/main/modules/files.js',
                     '../js/main/modules/phone.js',
+                    '../js/app/fm/*.js',
                     '../js/app/models/app.js',
+                    '../js/app/models/form.js',
                     '../js/app/router.js',
                     '../js/app/views/app/app.js',
-                    '../js/app/modules/navBar.js',
+                    '../js/app/views/form/form.js',
+                    '../js/app/modules/nav_bar.js',
                     '../js/main/settings.js',
                     '../js/main/modules/facade.js' //latest loading module
 
