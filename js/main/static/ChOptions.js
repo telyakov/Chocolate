@@ -7,7 +7,10 @@ var ChOptions = {
         filterAutoRefresh: 'data-auto-ref'
     },
     constants: {
-        multiTaskService: '81'
+        multiTaskService: '81',
+        tasksXml: 'tasks.xml',
+        tasksForTopsXml: 'tasksForTops.xml',
+        userSettingsXml: 'UserSettings.xml'
     },
     channels: {
         socketRequest: 'socket_request',
@@ -96,7 +99,6 @@ var ChOptions = {
         tasks: '/grid/index?view=tasks.xml',
         tasksForTops: '/grid/index?view=tasks%5Ctasksfortops.xml',
         bpOneTask: 'http://bp.78stroy.ru/grid/searchByID?view=tasks%5Ctasksfortops.xml&id=',
-        userSettings: '/grid/index?view=UserSettings.xml'
     },
     labels: {
         attention: 'attention',

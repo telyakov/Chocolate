@@ -41,7 +41,8 @@ var facade = (function (navBarModule, AppModel, AppView, Blob, saveAs, json_pars
                             $xml: $xml
                         });
                         var view = new FormView({
-                            model: model
+                            model: model,
+                            $el: $('#tabs')
                         });
                         break;
                     default :

@@ -12,7 +12,10 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
             'click .menu-root': 'openFormFromMenu'
         },
         openForm: function (e) {
-            mediator.publish(optionsModule.getChannel('openForm'), $(e.target).attr('href'));
+            mediator.publish(optionsModule.getChannel('xmlRequest'), {
+                name: $(e.target).attr('href'),
+                type: optionsModule.getRequestType('mainForm')
+            });
             return false;
         },
         openFormFromMenu: function (e) {
@@ -132,23 +135,23 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
                 ].join('')
             );
         },
-        _renderNavBar: function(){
+        _renderNavBar: function () {
 
-            var host =location.host.toLowerCase(),
+            var host = location.host.toLowerCase(),
                 path = location.pathname.toLowerCase(),
                 tasksUrl;
-            if(host === optionsModule.getUrl('bp')){
-                tasksUrl = optionsModule.getUrl('tasksForTops');
-            }else{
-                tasksUrl = optionsModule.getUrl('tasks');
+            if (host === optionsModule.getUrl('bp')) {
+                tasksUrl = optionsModule.getConstants('tasksForTopsXml');
+            } else {
+                tasksUrl = optionsModule.getConstants('tasksXml');
             }
-            if(host !== '10.0.5.2' && path !== optionsModule.getUrl('openFromEmail')){
+            if (host !== '10.0.5.2' && path !== optionsModule.getUrl('openFromEmail')) {
                 mediator.publish(optionsModule.getChannel('openForm'), tasksUrl);
             }
 
             var options = {
-                brand:  this.model.get('userName'),
-                brandUrl: optionsModule.getUrl('userSettings'),
+                brand: this.model.get('userName'),
+                brandUrl: optionsModule.getConstants('userSettingsXml'),
                 items: [
                     {
                         label: 'Поручения',
@@ -164,5 +167,7 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
             this.$el.children('footer').html(facade.getNavBarModule().create(options));
 
         }
-    });
-})(Backbone, jQuery, optionsModule, mediator, location);
+    })
+        ;
+})
+(Backbone, jQuery, optionsModule, mediator, location);

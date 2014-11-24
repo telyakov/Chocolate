@@ -113,6 +113,9 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 });
             }
             return this._card_collection;
+        },
+        getCaption: function(){
+            return this.getDataFormProperties().getWindowCaption();
         }
 
     });

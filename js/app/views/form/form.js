@@ -1,9 +1,9 @@
-var FormView = (function (Backbone, $, optionsModule, mediator) {
+var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
     'use strict';
     return Backbone.View.extend({
         initialize: function (options) {
             _.bindAll(this, 'render');
-            //this.$el = options.el;
+            this.$el = options.$el;
             this.model = options.model;
             this.render();
         },
@@ -11,10 +11,16 @@ var FormView = (function (Backbone, $, optionsModule, mediator) {
         },
 
         render: function () {
-            //console.log(this.model.getActionProperties());
-            //console.log(this.model.getActionProperties());
-            console.log(this.model.getDataFormProperties());
-            console.log('render');
+            this.createPanel();
+        },
+        createPanel: function(){
+            var id = helpersModule.uniqueID(),
+                $div = $('<div>',{
+                id: id
+            });
+            this.$el.append($div);
+            facade.getTabsModule().addAndSetActive(id, this.model.getCaption());
+
         }
     });
-})(Backbone, jQuery, optionsModule, mediator);
+})(Backbone, jQuery, optionsModule, mediator, helpersModule);
