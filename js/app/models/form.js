@@ -1,29 +1,54 @@
-var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections) {
+var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties) {
     'use strict';
     return Backbone.Model.extend({
-        _columnProperties: null,
+        _columnsCollection: null,
         _dataFormProperties: null,
         _agileFilters: null,
-        _gridProperties: null,
         _actionProperties: null,
-        _dataFormModel: null,
         _card_collection: null,
         defaults: {
             $xml: null,
             parentModel: null,
             parentId: null
         },
-        getColumnProperties: function () {
-            if (this._columnProperties) {
-                return this._columnProperties;
+        getColumnsCollection: function () {
+            if (this._columnsCollection) {
+                return this._columnsCollection;
+            }
+            var columns = [],
+                $xml =  this.get('$xml');
+            if ($xml) {
+                var $gridLayout = $xml.find('GridLayoutXml'),
+                    $columns;
+                $columns = $($.parseXML($.trim($gridLayout.text())));
+                var $gridProperties = $columns.find('GridProperties');
+                $columns.find('Column').each(function () {
+                    columns.push(new ColumnProperties({
+                            $obj: $(this)
+                        }
+                    ));
+                });
+                this._columnsCollection = new ColumnsPropertiesCollection(columns, {
+                    $obj: $gridProperties
+                });
             }
 
-            return this._columnProperties;
+
+            return this._columnsCollection;
         },
         getDataFormProperties: function () {
             if (this._dataFormProperties) {
                 return this._dataFormProperties;
             }
+
+
+            var $xml =  this.get('$xml');
+            if ($xml) {
+                this._dataFormProperties = new DataFormProperties({
+                    $obj: $xml.find('DataFormProperties')
+                });
+            }
+            return this._dataFormProperties;
         },
         getAgileFilters: function () {
             if (this._agileFilters) {
@@ -49,11 +74,6 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return this._agileFilters;
 
         },
-        getGridProperties: function () {
-            if (this._gridProperties) {
-                return this._gridProperties;
-            }
-        },
         getActionProperties: function () {
             if (this._actionProperties) {
                 return this._actionProperties;
@@ -72,11 +92,6 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 this._actionProperties = new ActionsPropertiesCollection(actions);
             }
             return this._actionProperties;
-        },
-        getDataFormModel: function () {
-            if (this._dataFormModel) {
-                return this._dataFormModel;
-            }
         },
         getCardCollection: function () {
             if (this._card_collection) {
@@ -101,4 +116,4 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         }
 
     });
-})(jQuery, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections);
+})(jQuery, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties);
