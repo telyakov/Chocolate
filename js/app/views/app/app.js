@@ -137,12 +137,12 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
             var host =location.host.toLowerCase(),
                 path = location.pathname.toLowerCase(),
                 tasksUrl;
-            if(host === 'bp.78stroy.ru'){
+            if(host === optionsModule.getUrl('bp')){
                 tasksUrl = optionsModule.getUrl('tasksForTops');
             }else{
                 tasksUrl = optionsModule.getUrl('tasks');
             }
-            if(host !== '10.0.5.2' && path !=='/grid/searchbyid'){
+            if(host !== '10.0.5.2' && path !== optionsModule.getUrl('openFromEmail')){
                 mediator.publish(optionsModule.getChannel('openForm'), tasksUrl);
             }
 

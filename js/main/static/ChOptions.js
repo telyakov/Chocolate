@@ -78,6 +78,8 @@ var ChOptions = {
         discussionForm: 'discussion-form'
     },
     urls: {
+        bp: 'bp.78stroy.ru',
+        openFromEmail: '/grid/searchbyid',
         webSocketServer: 'http://crm.78stroy.ru',
         addRow: '/grid/insertRow',
         imagesUrls: '/majestic/images',
