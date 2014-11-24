@@ -13,7 +13,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator) {
         render: function () {
             //console.log(this.model.getActionProperties());
             //console.log(this.model.getActionProperties());
-            console.log(this.model.getAgileFilters());
+            console.log(this.model.getCardCollection());
             console.log('render');
         }
     });

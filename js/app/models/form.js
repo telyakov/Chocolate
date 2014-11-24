@@ -1,4 +1,4 @@
-var FormModel = (function (Backbone, ActionsPropertiesCollection) {
+var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections) {
     'use strict';
     return Backbone.Model.extend({
         _columnProperties: null,
@@ -7,7 +7,7 @@ var FormModel = (function (Backbone, ActionsPropertiesCollection) {
         _gridProperties: null,
         _actionProperties: null,
         _dataFormModel: null,
-        _card: null,
+        _card_collection: null,
         defaults: {
             $xml: null,
             parentModel: null,
@@ -61,8 +61,6 @@ var FormModel = (function (Backbone, ActionsPropertiesCollection) {
             var actions = [],
                 $xml = this.get('$xml');
             if ($xml) {
-                console.log($xml, $xml.html())
-
                 var $actions = $xml.find('ActionsXml');
                 $actions = $.parseXML($.trim($actions.text()));
                 $($actions).find('MenuAction').each(function () {
@@ -80,11 +78,27 @@ var FormModel = (function (Backbone, ActionsPropertiesCollection) {
                 return this._dataFormModel;
             }
         },
-        getCard: function () {
-            if (this._card) {
-                return this._card;
+        getCardCollection: function () {
+            if (this._card_collection) {
+                return this._card_collection;
             }
+            var cards = [],
+                $xml = this.get('$xml');
+            if ($xml) {
+                var $cards = $xml.find('Cards');
+                $cards = $($.parseXML($.trim($cards.text())));
+                $cards.find('Card').each(function () {
+                    cards.push(new Card({
+                            $obj: $(this)
+                        }
+                    ));
+                });
+                this._card_collection = new CardCollections(cards, {
+                    $obj: $cards
+                });
+            }
+            return this._card_collection;
         }
 
     });
-})(Backbone, ActionsPropertiesCollection);
+})(jQuery, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections);
