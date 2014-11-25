@@ -1,8 +1,12 @@
-var TextFilter = (function (Backbone) {
+var TextFilterRO = (function (FilterRO, helpersModule) {
     'use strict';
-    return Backbone.Model.extend({
-        defaults: {
-            filter: null
+    return FilterRO.extend({
+        render: function(){
+            var view = new TextFilterView({
+                model: this,
+                id: helpersModule.uniqueID()
+            });
+            return view.render();
         }
     });
-})(Backbone);
+})(FilterRO, helpersModule);

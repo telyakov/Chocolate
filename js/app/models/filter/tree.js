@@ -1,8 +1,8 @@
-var TreeFilter = (function (Backbone) {
+var TreeFilterRO = (function (FilterRO) {
     'use strict';
-    return Backbone.Model.extend({
-        defaults: {
-            filter: null
+    return FilterRO.extend({
+        render: function(){
+
         }
     });
-})(Backbone);
+})(FilterRO);

@@ -1,8 +1,8 @@
-var SelectFilter = (function (Backbone) {
+var SelectFilterRO = (function (FilterRO) {
     'use strict';
-    return Backbone.Model.extend({
-        defaults: {
-            filter: null
+    return FilterRO.extend({
+        render: function(){
+
         }
     });
-})(Backbone);
+})(FilterRO);

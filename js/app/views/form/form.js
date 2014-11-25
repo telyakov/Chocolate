@@ -67,7 +67,11 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
         },
         layoutFilters: function ($panel) {
             if(this.model.hasFilters()){
-                console.log(this.model.getFiltersROCollection());
+                var html = [];
+                this.model.getFiltersROCollection().each(function(item){
+                    html.push(item.render());
+                });
+                $panel.append(html.join(''));
             }
 
         },

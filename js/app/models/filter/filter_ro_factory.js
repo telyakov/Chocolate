@@ -32,19 +32,19 @@ var FilterRoFactory = (function () {
                     type = _private.prepareType(filter);
                 switch(type){
                     case fast:
-                        return new FastFilter(options);
+                        return new FastFilterRO(options);
                     case dateBetween:
-                        return new DateRangeFilter(options);
+                        return new DateRangeFilterRO(options);
                     case checkBox:
-                        return new CheckBoxFilter(options);
+                        return new CheckBoxFilterRO(options);
                     case tree:
-                        return new TreeFilter(options);
+                        return new TreeFilterRO(options);
                     case custom:
-                        return new SelectFilter(options);
+                        return new SelectFilterRO(options);
                     case customFilterWithMultiselect:
-                        return new TreeFilter(options);
+                        return new TreeFilterRO(options);
                     default:
-                        return new TextFilter(options);
+                        return new TextFilterRO(options);
                 }
             }
         };

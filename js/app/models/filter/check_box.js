@@ -1,8 +1,8 @@
-var CheckBoxFilter = (function (Backbone) {
+var CheckBoxFilterRO = (function (FilterRO) {
     'use strict';
-    return Backbone.Model.extend({
-        defaults: {
-            filter: null
+    return FilterRO.extend({
+        render: function(){
+
         }
     });
-})(Backbone);
+})(FilterRO);
