@@ -66,6 +66,9 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
 
         },
         layoutFilters: function ($panel) {
+            if(this.model.hasFilters()){
+                console.log(this.model.getFiltersROCollection());
+            }
 
         },
         layoutForm: function ($panel) {

@@ -1,4 +1,4 @@
-var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties) {
+var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory) {
     'use strict';
     return Backbone.Model.extend({
         _columnsCollection: null,
@@ -6,6 +6,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         _agileFilters: null,
         _actionProperties: null,
         _card_collection: null,
+        _filter_ro_collection: null,
         defaults: {
             $xml: null,
             parentModel: null,
@@ -50,7 +51,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             }
             return this._dataFormProperties;
         },
-        getAgileFilters: function () {
+        getFiltersCollections: function () {
             if (this._agileFilters) {
                 return this._agileFilters;
             }
@@ -131,7 +132,22 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         },
         getStateProc: function () {
             return this.getDataFormProperties().getStateProc();
+        },
+        hasFilters: function(){
+            return this.getFiltersCollections().length !== 0;
+        },
+        getFiltersROCollection: function(){
+            if(this._filter_ro_collection !== null){
+                return this._filter_ro_collection;
+            }
+            var filtersCollection = this.getFiltersCollections(),
+                filtersROCollection  = new FiltersROCollection();
+            filtersCollection.each(function(item){
+                filtersROCollection.push(FilterRoFactory.make(item));
+            });
+            this._filter_ro_collection = filtersROCollection;
+            return this._filter_ro_collection;
         }
 
     });
-})(jQuery, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties);
+})(jQuery, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory);

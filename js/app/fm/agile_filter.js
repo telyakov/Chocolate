@@ -5,59 +5,59 @@ var AgileFilter = (function (Backbone) {
             $obj: null
         },
         getCaption: function () {
-            this.$obj.children('caption').html();
+            return this.get('$obj').children('caption').text();
         },
         getName: function () {
-            var key = this.$obj.children('key').html();
+            var key = this.get('$obj').children('key').text();
             if (key) {
                 return key;
             }
-            return this.$obj.children('name').html();
+            return this.get('$obj').children('name').text();
         },
         getReadProc: function () {
-            return this.$obj.children('readProc').html();
+            return this.get('$obj').children('readProc').text();
         },
         getFilterType: function () {
-            this.$obj.children('filterType').html();
+            return this.get('$obj').children('filterType').text();
         },
         getMultiSelect: function () {
-            this.$obj.children('multiSelect').html();
+            return this.get('$obj').children('multiSelect').text();
         },
         getStandartType: function () {
-            return this.$obj.children('standartType').html();
+            return this.get('$obj').children('standartType').text();
         },
         getTooltipText: function () {
-            this.$obj.children('tooltipText').html();
+            return this.get('$obj').children('tooltipText').text();
         },
         getToNextRow: function () {
-            this.$obj.children('toNextRow').html();
+            return this.get('$obj').children('toNextRow').text();
         },
         getVisible: function () {
-            this.$obj.children('visible').html();
+            return this.get('$obj').children('visible').text();
         },
         getEnabled: function () {
-            return this.$obj.children('enabled').html();
+            return this.get('$obj').children('enabled').text();
         },
         getDialogType: function () {
-            this.$obj.children('dialogType').html();
+            return this.get('$obj').children('dialogType').text();
         },
         getDialogCaption: function () {
-            this.$obj.children('dialogCaption').html();
+            return this.get('$obj').children('dialogCaption').text();
         },
         getProperties: function () {
-            this.$obj.children('properties').html();
+            return this.get('$obj').children('properties').text();
         },
         getEvent_change: function () {
-            return this.$obj.children('event_change').html();
+            return this.get('$obj').children('event_change').text();
         },
         getWidth: function () {
-            this.$obj.children('width').html();
+            return this.get('$obj').children('width').text();
         },
         getValueFormat: function () {
-            this.$obj.children('valueFormat').html();
+            return this.get('$obj').children('valueFormat').text();
         },
         getDefaultValue: function () {
-            this.$obj.children('defaultValue').html();
+            return this.get('$obj').children('defaultValue').text();
         }
 
     });
