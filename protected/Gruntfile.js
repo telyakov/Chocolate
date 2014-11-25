@@ -105,6 +105,7 @@ module.exports = function (grunt) {
                     '../js/app/views/app/app.js',
                     '../js/app/views/form/form.js',
                     '../js/app/modules/nav_bar.js',
+                    '../js/app/modules/image_adapter.js',
                     '../js/main/settings.js',
                     '../js/main/modules/facade.js' //latest loading module
 

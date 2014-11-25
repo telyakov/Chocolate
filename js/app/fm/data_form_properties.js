@@ -5,58 +5,58 @@ var DataFormProperties = (function (Backbone) {
             $obj: null
         },
         getReadProc: function () {
-            this.get('$obj').children('readProc').html();
+            return this.get('$obj').children('readProc').text();
         },
         getDeleteProc: function () {
-            this.get('$obj').children('deleteProc').html();
+            return this.get('$obj').children('deleteProc').text();
         },
         getUpdateProc: function () {
-            this.get('$obj').children('updateProc').html();
+            return this.get('$obj').children('updateProc').text();
         },
         getCreateProc: function () {
-            this.get('$obj').children('createProc').html();
+            return this.get('$obj').children('createProc').text();
         },
         getCreateEmptyProc: function () {
-            this.get('$obj').children('createEmptyProc').html();
+            return this.get('$obj').children('createEmptyProc').text();
         },
         getValidationProc: function () {
-            this.get('$obj').children('validationProc').html();
+            return this.get('$obj').children('validationProc').text();
         },
         getAttachmentsSupport: function () {
-            this.get('$obj').children('attachmentsSupport').html();
+            return this.get('$obj').children('attachmentsSupport').text();
         },
         getAttachmentsEntityType: function () {
-            this.get('$obj').children('attachmentsEntityType').html();
+            return this.get('$obj').children('attachmentsEntityType').text();
         },
         getHeaderText: function () {
-            this.get('$obj').children('headerText').html();
+            return this.get('$obj').children('headerText').text();
         },
         getStateProc: function () {
-            this.get('$obj').children('stateProc').html();
+            return this.get('$obj').children('StateProc').text();
         },
         getHeaderImage: function () {
-            this.get('$obj').children('headerImage').html();
+            return this.get('$obj').children('HeaderImage').text();
         },
         getWindowCaption: function () {
             return this.get('$obj').children('WindowCaption').text();
         },
         getAllowAddNew: function () {
-            this.get('$obj').children('allowAddNew').html();
+            return this.get('$obj').children('allowAddNew').text();
         },
         getSaveButtonVisible: function () {
-            this.get('$obj').children('saveButtonVisible').html();
+            return this.get('$obj').children('saveButtonVisible').text();
         },
         getAllowRemove: function () {
-            this.get('$obj').children('allowRemove').html();
+            return this.get('$obj').children('allowRemove').text();
         },
         getPrintActionsXml: function () {
-            this.get('$obj').children('printActionsXml').html();
+            return this.get('$obj').children('printActionsXml').text();
         },
         getRefreshButtonVisible: function () {
-            this.get('$obj').children('refreshButtonVisible').html();
+            return this.get('$obj').children('refreshButtonVisible').text();
         },
         getAllowAuditButton: function () {
-            this.get('$obj').children('allowAuditButton').html();
+            return this.get('$obj').children('allowAuditButton').text();
         }
     });
 })(Backbone);

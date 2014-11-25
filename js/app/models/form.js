@@ -16,7 +16,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 return this._columnsCollection;
             }
             var columns = [],
-                $xml =  this.get('$xml');
+                $xml = this.get('$xml');
             if ($xml) {
                 var $gridLayout = $xml.find('GridLayoutXml'),
                     $columns;
@@ -42,7 +42,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             }
 
 
-            var $xml =  this.get('$xml');
+            var $xml = this.get('$xml');
             if ($xml) {
                 this._dataFormProperties = new DataFormProperties({
                     $obj: $xml.find('DataFormProperties')
@@ -55,7 +55,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 return this._agileFilters;
             }
             var filters = [],
-                $xml =  this.get('$xml');
+                $xml = this.get('$xml');
             if ($xml) {
                 var $filtersPanel = $xml.find('FiltersPanelXml'),
                     $filters;
@@ -114,8 +114,23 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             }
             return this._card_collection;
         },
-        getCaption: function(){
+        getCaption: function () {
             return this.getDataFormProperties().getWindowCaption();
+        },
+        hasHeader: function () {
+            var dataFormProperties = this.getDataFormProperties();
+            return dataFormProperties.getHeaderText() ||
+            dataFormProperties.getHeaderImage() ||
+            dataFormProperties.getStateProc();
+        },
+        getImage: function(){
+            return this.getDataFormProperties().getHeaderImage();
+        },
+        getHeaderText: function () {
+            return this.getDataFormProperties().getHeaderText();
+        },
+        getStateProc: function () {
+            return this.getDataFormProperties().getStateProc();
         }
 
     });
