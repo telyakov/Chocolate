@@ -101,6 +101,7 @@ module.exports = function (grunt) {
                     '../js/app/fm/*.js',
                     '../js/app/models/filter/filter_ro.js',
                     '../js/app/models/filter/*.js',
+                    '../js/app/views/filter/filter.js',
                     '../js/app/views/filter/*.js',
                     '../js/app/models/app.js',
                     '../js/app/models/form.js',

@@ -1,6 +1,6 @@
-var TextFilterView = (function (Backbone, $, helpersModule) {
+var TextFilterView = (function (Backbone, $, helpersModule, FilterView) {
     'use strict';
-    return Backbone.View.extend({
+    return FilterView.extend({
         template: _.template([
             '<li class="filter-item" data-format="<%= valueFormat %>" id="<%= containerID %>">',
             '<div class="text-filter" title="<%= tooltip %>">',
@@ -9,25 +9,21 @@ var TextFilterView = (function (Backbone, $, helpersModule) {
             ' placeholder="<%= tooltip %>)" class="filter" id="<%= id %>" type="search" value="<%= value %>">',
             '</div>'
         ].join('')),
-        initialize: function (options) {
-            _.bindAll(this, 'render');
-            this.model = options.model;
-            this.id = options.id;
-        },
-        events: {},
-
-        render: function () {
+        render: function (event, i) {
             var model = this.model;
-            return this.template({
-                id: helpersModule.uniqueID(),
-                caption: model.getCaption(),
-                attribute:  model.getAttribute(),
-                tooltip: model.getTooltip(),
-                disabled: model.isDisabled(),
-                value: model.getDefaultValue(),
-                valueFormat: model.getValueFormat(),
-                containerID: this.id
+            $.publish(event, {
+                text: this.template({
+                    id: helpersModule.uniqueID(),
+                    caption: model.getCaption(),
+                    attribute: model.getAttribute(),
+                    tooltip: model.getTooltip(),
+                    disabled: model.isDisabled(),
+                    value: model.getDefaultValue(),
+                    valueFormat: model.getValueFormat(),
+                    containerID: this.id
+                }),
+                counter: i
             });
         }
     });
-})(Backbone, jQuery, helpersModule);
+})(Backbone, jQuery, helpersModule, FilterView);

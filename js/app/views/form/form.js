@@ -16,6 +16,13 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             '</div>',
             '</section>'
         ].join('')),
+        filterTemplate: _.template([
+            '<section class="section-filters" data-id="filters">',
+            '<div class="filters-content">',
+            '<%= html %>',
+            '</div>',
+            '</section>'
+        ].join('')),
         initialize: function (options) {
             _.bindAll(this, 'render');
             this.$el = options.$el;
@@ -66,12 +73,30 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
 
         },
         layoutFilters: function ($panel) {
-            if(this.model.hasFilters()){
-                var html = [];
-                this.model.getFiltersROCollection().each(function(item){
-                    html.push(item.render());
+            var _this = this;
+            if (this.model.hasFilters()) {
+                var html = [],
+                    event = 'render_' + helpersModule.uniqueID(),
+                    ROCollections = this.model.getFiltersROCollection(),
+                    length = ROCollections.length,
+                    asyncTaskCompleted = 0;
+                $.subscribe(event, function (e, data) {
+                    html[data.counter] = data.text;
+                    asyncTaskCompleted++;
+                    if (asyncTaskCompleted === length|| asyncTaskCompleted === 4) {
+                        $.unsubscribe(event);
+                        $panel.append(
+                            _this.filterTemplate({
+                                html: html.join('')
+                            })
+                        );
+
+                    }
                 });
-                $panel.append(html.join(''));
+                ROCollections.each(function (item, i) {
+                    item.render(event, i);
+                });
+
             }
 
         },

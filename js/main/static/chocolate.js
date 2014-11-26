@@ -169,7 +169,8 @@ var Chocolate = {
     }
 };
 
-var helpersModule = (function () {
+var helpersModule = (function ($) {
+
     var context = Chocolate;
     return {
         engToRus: function (s) {
@@ -239,9 +240,62 @@ var helpersModule = (function () {
         openForm: function (url) {
             context.openForm(url);
         },
+        boolExpressionEval: function(expr, def){
+            var prepareExpr = $.trim(expr.toLowerCase());
+
+
+            switch(true){
+                case prepareExpr === 'true':
+                    return true;
+                case prepareExpr === 'false':
+                    return false;
+                case prepareExpr.indexOf('sql') === 0:
+                    var posEqualSign = prepareExpr.indexOf('=');
+                    if(posEqualSign === -1){
+                        return false;
+                    }else{
+                        var posSql = posEqualSign + 1,
+                            sql = $.trim(prepareExpr.substr(posSql));
+                    }
+            }
+            //switch(true){
+            //      case strpos($prepareExpr, 'sql') === 0:
+            //        $posEqualSign = strpos($prepareExpr, '=');
+            //        if($posEqualSign !== false){
+            //            $posSql = $posEqualSign +1;
+            //            $sql = trim(substr($prepareExpr, $posSql));
+            //            $sql = \Yii::app()->bind->bindRawSql($sql);
+            //            $routine = \Yii::app()->bind->bindProcedureFromModel(new DataBaseRoutine($sql));
+            //            try{
+            //                $recordset = \Yii::app()->erp->execFromCache($routine);
+            //                /**
+            //                 * @var $row RecordsetRow
+            //                 */
+            //                $row = array_shift($recordset->toArray());
+            //                $access = array_shift($row->data);
+            //                if($access =='1'){
+            //                    return true;
+            //                }else{
+            //                    return false;
+            //                }
+            //            }catch (\Exception $e){
+            //                return false;
+            //            }
+            //        }else{
+            //            return false;
+            //        }
+            //        break;
+            //    case strpos($prepareExpr, 'role') === 0:
+            //        //todo: реализовать поддержку кисовских ролей
+            //        return false;
+            //    default:
+            //        return $default;
+            //
+            //}
+        },
         init: function () {
             context.init();
         }
 
     };
-})();
+})(jQuery);

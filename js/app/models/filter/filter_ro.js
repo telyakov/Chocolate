@@ -22,6 +22,12 @@ var FilterRO = (function (Backbone) {
         },
         getValueFormat: function(){
             return this.get('filter').getValueFormat();
+        },
+        isMultiSelect: function(){
+            return this.get('filter').getMultiSelect();
+        },
+        getReadProc: function(){
+            return this.get('filter').getReadProc();
         }
     });
 })(Backbone);
