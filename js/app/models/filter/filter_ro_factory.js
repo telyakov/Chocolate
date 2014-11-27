@@ -4,30 +4,29 @@ var FilterRoFactory = (function () {
         fast = 'fastfilter',
         checkBox = 'checkbox',
         tree = 'checkbox_tree',
-        customFilterWithMultiselect = 'customfilter_with_multiselect',
         dateBetween = 'datebetween',
-        _private = {
-            isCustomFilter: function (type) {
-                return type.indexOf(custom) !== -1;
-            },
-            isFastFilter: function (type) {
-                return type.indexOf(fast) !== -1;
-            },
-            prepareType: function (filter) {
-                var type = $.trim( filter.getFilterType().toLowerCase());
-                if (_private.isCustomFilter(type)) {
-                    var standartType = filter.getStandartType().toLowerCase();
-                    if (standartType === '20') {
-                        return checkBox;
-                    } else {
-                        return tree;
+                _private = {
+                isCustomFilter: function (type) {
+                    return type.indexOf(custom) !== -1;
+                },
+                isFastFilter: function (type) {
+                    return type.indexOf(fast) !== -1;
+                },
+                prepareType: function (filter) {
+                    var type = $.trim( filter.getFilterType().toLowerCase());
+                    if (_private.isCustomFilter(type)) {
+                        var standartType = filter.getStandartType().toLowerCase();
+                        if (standartType === '20') {
+                            return checkBox;
+                        } else {
+                            return tree;
+                        }
+                    } else if (_private.isFastFilter(type)) {
+                        return fast;
                     }
-                } else if (_private.isFastFilter(type)) {
-                    return fast;
-                }
-                return type;
-            },
-            make: function (filter) {
+                    return type;
+                },
+                make: function (filter) {
                 var options = {filter: filter},
                     type = _private.prepareType(filter);
                 switch(type){
@@ -38,10 +37,6 @@ var FilterRoFactory = (function () {
                     case checkBox:
                         return new CheckBoxFilterRO(options);
                     case tree:
-                        return new TreeFilterRO(options);
-                    case custom:
-                        return new SelectFilterRO(options);
-                    case customFilterWithMultiselect:
                         return new TreeFilterRO(options);
                     default:
                         return new TextFilterRO(options);

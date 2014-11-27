@@ -147,7 +147,8 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
                     defer = deferredModule.pop(data.id);
                     var isAllow = !!parseInt(socketModule.getFirstValue(resData), 10);
                     defer.resolve({
-                        value:isAllow
+                        value:isAllow,
+                        data:  resData
                     });
                     break;
                 default:

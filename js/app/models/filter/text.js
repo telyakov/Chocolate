@@ -6,7 +6,7 @@ var TextFilterRO = (function (FilterRO, helpersModule) {
                 model: this,
                 id: helpersModule.uniqueID()
             });
-            return view.render(event, i);
+            view.render(event, i);
         }
     });
 })(FilterRO, helpersModule);
