@@ -262,7 +262,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                     } else {
                         var posSql = posEqualSign + 1,
                             sql = $.trim(prepareExpr.substr(posSql));
-                         sql = bindModule.bindSql(sql);
+                        sql = bindModule.bindSql(sql);
                         console.log(sql)
                         mediator.publish(optionsModule.getChannel('socketRequest'), {
                             query: sql,
@@ -272,13 +272,54 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                     }
                     break;
                 default:
-                    return defaultValue;
+                    deferredModule.pop(deferId).resolve({
+                        value: defaultValue
+                    });
 
             }
             //    case strpos($prepareExpr, 'role') === 0:
             //        //todo: реализовать поддержку кисовских ролей
             //        return false;
             //    default:
+
+        },
+        scriptExpressionEval: function (expr, e) {
+            var exprInLowerCase = expr.toLowerCase();
+            if (exprInLowerCase.indexOf('script') === 0) {
+                var script = expr.substr(6),
+                    $this = $(e.target),
+                    filter = facade.getFactoryModule().makeChFilter($this),
+                    commands = script.split(';');
+                commands.forEach(function (cmd) {
+                    var prepareCmd = $.trim(cmd).toLowerCase(),
+                        defaultKey = 'dataform.defvalues';
+                    switch (true) {
+                        case prepareCmd === 'dataform.refreshdata':
+                            filter.getChForm().LazyRefresh();
+                            break;
+                        case prepareCmd.indexOf(defaultKey) === 0:
+                            var args = prepareCmd.substr(defaultKey.length + 1),
+                                tokens = args.split('='),
+                                key = $.trim(tokens[0]),
+                                filterForm,
+                                value = $.trim(tokens[1]);
+                            if (value === 'this.val') {
+                                filterForm = filter.getChFilterForm();
+                                var val = filterForm.getValueByKey(filter.getKey());
+                                filter.getChForm().setDefaultValue(key, val);
+                            } else if (value === 'this.caption') {
+                                filterForm = filter.getChFilterForm();
+                                var caption = filterForm.getCaptionByKey(filter.getKey());
+                                filter.getChForm().setDefaultValue(key, caption);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                });
+
+            }
+
 
         },
         init: function () {

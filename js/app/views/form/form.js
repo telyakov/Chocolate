@@ -104,7 +104,15 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
 
         },
         layoutForm: function ($panel) {
-
+            //view = encodeURI(_private.toXmlExtensionFormat(view));
+            //if (view.indexOf('map.xml') !== -1) {
+            //    url = '/map/index?view=' + view;
+            //}
+            //else if (view.indexOf('flatsgramm.xml') !== -1) {
+            //    url = '/canvas/index?view=' + view;
+            //} else {
+            //    url = '/grid/index?view=' + view;
+            //}
         }
     });
 })(Backbone, jQuery, optionsModule, mediator, helpersModule);

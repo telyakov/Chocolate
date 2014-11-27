@@ -18,13 +18,17 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
             });
             return false;
         },
+
         openFormFromMenu: function (e) {
             var $this = $(e.target),
                 $subMenu = $this.siblings('.gn-submenu');
             if ($subMenu.length) {
                 $subMenu.toggle();
             } else {
-                mediator.publish(optionsModule.getChannel('openForm'), $this.attr('href'));
+                mediator.publish(optionsModule.getChannel('xmlRequest'), {
+                    name: $this.attr('href'),
+                    type: optionsModule.getRequestType('mainForm')
+                });
                 $this
                     .closest('.gn-menu-wrapper')
                     .removeClass('gn-open-all')

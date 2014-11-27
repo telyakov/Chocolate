@@ -18,15 +18,7 @@ var menuModule = (function (GnMenu, $) {
                         view = row.viewname,
                         url;
                     if (view) {
-                        view = encodeURI(_private.toXmlExtensionFormat(view));
-                        if (view.indexOf('map.xml') !== -1) {
-                            url = '/map/index?view=' + view;
-                        }
-                        else if (view.indexOf('flatsgramm.xml') !== -1) {
-                            url = '/canvas/index?view=' + view;
-                        } else {
-                            url = '/grid/index?view=' + view;
-                        }
+                        url = view.replace(/\\/g, '/') + '.xml';
                     } else {
                         url = '#';
                     }

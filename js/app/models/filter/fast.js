@@ -12,7 +12,9 @@ var FastFilterRO = (function (FilterRO, helpersModule, optionsModule) {
         render: function(event, i){
             var view = new FastFilterView({
                 model: this,
-                id: helpersModule.uniqueID()
+                id: helpersModule.uniqueID(),
+                $el: $('body')
+
             });
             view.render(event, i);
         }

@@ -39,6 +39,9 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             return new FilterProperties({
                 expression: this.get('filter').getProperties()
             });
+        },
+        getEventChange: function(){
+            return this.get('filter').getEvent_change();
         }
     });
 })(Backbone, helpersModule, FilterProperties, bindModule);

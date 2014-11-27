@@ -27,6 +27,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             '<% } %>',
             '</li>'
         ].join('')),
+        events: {},
         render: function (event, i) {
             var _this = this,
                 model = this.model,
@@ -38,7 +39,16 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 dataId = deferredModule.save(dataDf),
                 visibleId = deferredModule.save(visibleDf),
                 nextRowId = deferredModule.save(nextRowDf);
+            var changeHandler = model.getEventChange();
+            if (changeHandler) {
+                var selector = 'change ' + '#' + _this.id + ' input';
+                this.events[selector] = function (e) {
+                    helpersModule.scriptExpressionEval(changeHandler, e);
+                    e.stopImmediatePropagation();
+                };
+                this.delegateEvents();
 
+            }
             model.isVisibleEval(visibleId);
             model.isNextRowEval(nextRowId);
             model.isMultiSelectEval(multiSelectId);
