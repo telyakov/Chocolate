@@ -3,7 +3,7 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
     return Backbone.View.extend({
         initialize: function (options) {
             _.bindAll(this, 'render', '_renderAnimateIndicator', '_renderNavBar');
-            this.$el = options.el;
+            this.$el = options.$el;
             this.model = options.model;
             this.render();
         },

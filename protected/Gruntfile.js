@@ -53,6 +53,8 @@ module.exports = function (grunt) {
                     '../js/main/modules/mediator.js', //first loading module
                     '../js/main/modules/table.js',
                     '../js/main/modules/form.js',
+                    '../js/app/modules/deferred.js',
+
                     '../js/main/static/ChResponseStatus.js',
                     '../js/main/classes/ch.dynatree.js',
                     '../js/main/classes/ch.map.js',
@@ -79,6 +81,9 @@ module.exports = function (grunt) {
                     '../js/main/classes/elements/ch.text.area.editable.card.js',
                     '../js/main/framework/fm.cardsCollection.js',
                     '../js/main/framework/fm.ChildGridCollection.js',
+                    '../js/main/modules/storage.js',
+                    '../js/main/modules/user.js',
+                    '../js/main/modules/bind.js',
                     '../js/main/static/chocolate.js',
                     '../js/main/static/ChocolateEvents.js',
                     '../js/main/functions/ch.cardFunctions.js',
@@ -87,10 +92,8 @@ module.exports = function (grunt) {
                     '../js/main/plugins/wizard.js',
                     '../js/main/modules/log.js',
                     '../js/main/modules/socket.js',
-                    '../js/main/modules/storage.js',
+
                     '../js/main/modules/menu.js',
-                    '../js/main/modules/user.js',
-                    '../js/main/modules/bind.js',
                     '../js/main/modules/factory.js',
                     '../js/main/modules/repaint.js',
                     '../js/main/modules/card.js',

@@ -17,11 +17,9 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             '</section>'
         ].join('')),
         filterTemplate: _.template([
-            '<section class="section-filters" data-id="filters">',
             '<div class="filters-content">',
             '<%= html %>',
-            '</div>',
-            '</section>'
+            '</div>'
         ].join('')),
         initialize: function (options) {
             _.bindAll(this, 'render');
@@ -75,6 +73,11 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
         layoutFilters: function ($panel) {
             var _this = this;
             if (this.model.hasFilters()) {
+                var $filterSection = $('<section>',{
+                    'class': 'section-filters',
+                    'data-id': 'filters'
+                });
+                $panel.append($filterSection);
                 var html = [],
                     event = 'render_' + helpersModule.uniqueID(),
                     ROCollections = this.model.getFiltersROCollection(),
@@ -83,11 +86,11 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 $.subscribe(event, function (e, data) {
                     html[data.counter] = data.text;
                     asyncTaskCompleted++;
-                    if (asyncTaskCompleted === length|| asyncTaskCompleted === 4) {
+                    if (asyncTaskCompleted === length|| asyncTaskCompleted === 6) {
                         $.unsubscribe(event);
-                        $panel.append(
+                        $filterSection.append(
                             _this.filterTemplate({
-                                html: html.join('')
+                                html: '<div><ul class="filters-list">' + html.join('') + '</div></ul></div>'
                             })
                         );
 

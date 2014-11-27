@@ -1,4 +1,4 @@
-var FilterRO = (function (Backbone) {
+var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
     'use strict';
     return Backbone.Model.extend({
         defaults: {
@@ -14,8 +14,8 @@ var FilterRO = (function (Backbone) {
         getTooltip: function(){
             return this.get('filter').getTooltipText();
         },
-        isDisabled: function(){
-            return !this.get('filter').getEnabled();
+        isEnabledEval: function(deferID){
+            return helpersModule.boolExpressionEval(this.get('filter').getEnabled(), deferID,  true);
         },
         getDefaultValue: function(){
             return this.get('filter').getDefaultValue();
@@ -23,11 +23,22 @@ var FilterRO = (function (Backbone) {
         getValueFormat: function(){
             return this.get('filter').getValueFormat();
         },
-        isMultiSelect: function(){
-            return this.get('filter').getMultiSelect();
+        isMultiSelectEval: function(deferID){
+            return  helpersModule.boolExpressionEval(this.get('filter').getMultiSelect(), deferID, false);
         },
         getReadProc: function(){
-            return this.get('filter').getReadProc();
+            return bindModule.bindSql(this.get('filter').getReadProc());
+        },
+        isVisibleEval: function(deferID){
+            return helpersModule.boolExpressionEval(this.get('filter').getVisible(), deferID, true);
+        },
+        isNextRowEval: function(deferID){
+            return helpersModule.boolExpressionEval( this.get('filter').getToNextRow(), deferID, false);
+        },
+        getProperties: function(){
+            return new FilterProperties({
+                expression: this.get('filter').getProperties()
+            });
         }
     });
-})(Backbone);
+})(Backbone, helpersModule, FilterProperties, bindModule);

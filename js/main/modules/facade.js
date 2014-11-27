@@ -1,7 +1,7 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
  */
-var facade = (function (imageAdapter, navBarModule, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule) {
+var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule) {
     'use strict';
     var showErrorsChannel = optionsModule.getChannel('showError'),
         setRolesChannel = optionsModule.getChannel('setRoles'),
@@ -95,15 +95,22 @@ var facade = (function (imageAdapter, navBarModule, AppModel, AppView, Blob, sav
     });
     var responseChannel = optionsModule.getChannel('socketResponse');
     mediator.subscribe(responseChannel, function (data) {
-        var error = data.error;
+        var error = data.error,
+            deferredType = optionsModule.getRequestType('deferred'),
+            type = data.type,
+            defer;
         if (error) {
             mediator.publish(
                 logErrorChannel,
                 error
             );
+            if (type === deferredType) {
+                defer = deferredModule.pop(data.id);
+                defer.resolve();
+            }
+
         } else {
-            var type = data.type,
-                resData = json_parse(data.data);
+            var resData = json_parse(data.data);
             switch (type) {
                 case optionsModule.getRequestType('roles'):
                     mediator.publish(setRolesChannel, resData);
@@ -135,6 +142,13 @@ var facade = (function (imageAdapter, navBarModule, AppModel, AppView, Blob, sav
                         order.push(matches[1]);
                     }
                     form.updateData(resData, order);
+                    break;
+                case deferredType:
+                    defer = deferredModule.pop(data.id);
+                    var isAllow = !!parseInt(socketModule.getFirstValue(resData), 10);
+                    defer.resolve({
+                        value:isAllow
+                    });
                     break;
                 default:
                     console.log(data);
@@ -209,7 +223,7 @@ var facade = (function (imageAdapter, navBarModule, AppModel, AppView, Blob, sav
         getNavBarModule: function () {
             return navBarModule;
         },
-        getImageAdapter: function(){
+        getImageAdapter: function () {
             return imageAdapter;
         },
         startApp: function (userID, userName) {
@@ -220,10 +234,10 @@ var facade = (function (imageAdapter, navBarModule, AppModel, AppView, Blob, sav
                 }),
                 view = new AppView({
                     model: appModel,
-                    el: $('body')
+                   $el: $('body')
                 });
             ChocolateEvents.createEventsHandlers();
         }
     };
 
-}(imageAdapter, navBarModule, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule));
+}(deferredModule, imageAdapter, navBarModule, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule));

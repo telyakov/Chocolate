@@ -2,11 +2,13 @@ var TreeFilterRO = (function (FilterRO) {
     'use strict';
     return FilterRO.extend({
         render: function(event, i){
-            var view = new TreeFilterView({
+            var id = helpersModule.uniqueID(),
+               view = new TreeFilterView({
                 model: this,
-                id: helpersModule.uniqueID()
+                id: id,
+                $el: $('body')
             });
-            return view.render(event, i);
+            view.render(event, i);
         }
     });
 })(FilterRO);

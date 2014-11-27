@@ -1,42 +1,114 @@
-var TreeFilterView = (function (Backbone, $, helpersModule, FilterView) {
+var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferredModule) {
     'use strict';
     return FilterView.extend({
         template: _.template([
-            //'<li class="filter-item" data-format="<%= valueFormat %>" id="<%= containerID %>">',
-            //'<div class="text-filter" title="<%= tooltip %>">',
-            //'<label for="<%= id %>"><%= caption %></label>',
-            //'<input <% if (disabled) { %> disabled  <% } %> attribute="filters[<%= attribute %>]" name="GridForm[filters][<%= attribute %>]"',
-            //' placeholder="<%= tooltip %>)" class="filter" id="<%= id %>" type="search" value="<%= value %>">',
-            //'</div>'
+            '<% if (isNextRow) { %> </div><div class="filter-row"><% } %>',
+            '<li class="filter-item" id="<%= containerID %>">',
+            '<% if (disabled) { %> <div class="filter-mock-no-edit"></div>  <% } %>',
+            '<div class="tree-container" title="<%= tooltip %>">',
+            '<label for="<%= id %>"><%= caption %></label>',
+            '<select <% if (disabled) { %> disabled  <% } %> >',
+            '</select>',
+            '<input <% if (disabled) { %> disabled  <% } %> class="tree-button" id="<%= buttonId %>" title="Кликните, чтобы выбрать фильтр" type="button">',
+            '<input name="GridForm[filters][<%= attribute %>]" id="<%= id %>" type="hidden">',
+            '</div>',
+            '</li>'
         ].join('')),
+        events: {},
+        getSelectMode: function(isMultiSelect){
+            return (isMultiSelect) ? 2: 1;
+        },
         render: function (event, i) {
-            var model = this.model;
-            //console.log(model.getReadProc())
-            //console.log(model.isMultiSelect())
-            $.publish(event,{
-                text: 'semen',
-                counter: i
-            });
-            //var defer = $.Deferred();
-            //var filtered = defer.then(function( value ) {
-            //    console.log(model)
-            //    return value * 2;
-            //}).then(function(val){console.log(val); return val*5;});
-            //defer.resolve(5);
-            //filtered.done(function( value ) {
-            //    console.log(value);
-            //});
-            //return '';
-            //return this.template({
-            //    id: helpersModule.uniqueID(),
-            //    caption: model.getCaption(),
-            //    attribute:  model.getAttribute(),
-            //    tooltip: model.getTooltip(),
-            //    disabled: model.isDisabled(),
-            //    value: model.getDefaultValue(),
-            //    valueFormat: model.getValueFormat(),
-            //    containerID: this.id
-            //});
+            var _this = this,
+                model = this.model,
+                visibleDf = deferredModule.create(),
+                enabledDf = deferredModule.create(),
+                nextRowDf = deferredModule.create(),
+                multiSelectDf = deferredModule.create(),
+                visibleId = deferredModule.save(visibleDf),
+                nextRowId = deferredModule.save(nextRowDf),
+                multiSelectId = deferredModule.save(multiSelectDf),
+                enabledId = deferredModule.save(enabledDf);
+
+            model.isVisibleEval(visibleId);
+            model.isEnabledEval(enabledId);
+            model.isMultiSelectEval(multiSelectId);
+            model.isNextRowEval(nextRowId);
+            $.when(visibleDf, enabledDf, nextRowDf, multiSelectDf)
+                .done(function (visible, enabled, nextRow, multiSelect) {
+                    var isDisabled = !enabled.value,
+                        isVisible = visible.value,
+                        isNextRow = nextRow.value,
+                        isMultiSelect = multiSelect.value,
+                        text = '',
+                        filterProperties = model.getProperties();
+                    if (isVisible) {
+                        var buttonId = helpersModule.uniqueID();
+                        text = _this.template({
+                            isNextRow: isNextRow,
+                            disabled: isDisabled,
+                            containerID: _this.id,
+                            tooltip: model.getTooltip(),
+                            id: helpersModule.uniqueID(),
+                            caption: model.getCaption(),
+                            attribute: model.getAttribute(),
+                            buttonId: buttonId
+                        });
+                        var selector = 'click #' + buttonId,
+                            defaultOpts = {
+                                debugLevel: 0,
+                                checkbox: true,
+                                selectMode: _this.getSelectMode(isMultiSelect),
+                                onQuerySelect: function (flag, node) {
+                                    chFunctions.treeOnQuerySelect(flag, node);
+                                }
+                            },
+                            opts = $.extend({}, defaultOpts, {
+                               children: [],
+                                sql: model.getReadProc(),
+                                expand_nodes: filterProperties.get('expandNodes'),
+                                select_all: filterProperties.get('selectAllNodes'),
+                                restore_state: filterProperties.get('restoreState'),
+                                separator: filterProperties.get('delimiter'),
+                                root_id: filterProperties.get('rootID'),
+                                title: model.getCaption(),
+                                column_title: filterProperties.get('columnTitle'),
+                                column_id: filterProperties.get('columnID'),
+                                column_parent_id: filterProperties.get('columnParentID'),
+                                infoPanel: true
+                            });
+                        _this.events[selector] = function (e) {
+                            e.stopImmediatePropagation();
+                            var dnt = facade.getFactoryModule().makeChDynatree($(e.target));
+                                    dnt.buildFromSql(opts);
+                        };
+                        //protected function createTreeScript($options)
+                        //{
+                        //    if ($this->sql) {
+                        //
+                        //        $script = <<<JS
+                        //        var dnt = facade.getFactoryModule().makeChDynatree($(this));
+                        //        dnt.buildFromSql($options);
+                        //        JS;
+                        //    } else {
+                        //        $script = <<<JS
+                        //        var dnt = facade.getFactoryModule().makeChDynatree($(this));
+                        //        dnt.buildFromData($options);
+                        //        JS;
+                        //    }
+                        //    return $script;
+                        //}
+
+
+                    }
+
+
+                    $.publish(event, {
+                        text: text,
+                        counter: i
+                    });
+                });
+
         }
     });
-})(Backbone, jQuery, helpersModule, FilterView);
+})(Backbone, jQuery, helpersModule, FilterView, deferredModule);
