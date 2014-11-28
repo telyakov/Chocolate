@@ -15,8 +15,8 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             '</li>'
         ].join('')),
         events: {},
-        getSelectMode: function(isMultiSelect){
-            return (isMultiSelect) ? 2: 1;
+        getSelectMode: function (isMultiSelect) {
+            return (isMultiSelect) ? 2 : 1;
         },
         render: function (event, i) {
             var _this = this,
@@ -64,7 +64,7 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                                 }
                             },
                             opts = $.extend({}, defaultOpts, {
-                               children: [],
+                                children: [],
                                 sql: model.getReadProc(),
                                 expand_nodes: filterProperties.get('expandNodes'),
                                 select_all: filterProperties.get('selectAllNodes'),
@@ -78,31 +78,12 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                                 infoPanel: true
                             });
                         _this.events[selector] = function (e) {
-                            e.stopImmediatePropagation();
                             var dnt = facade.getFactoryModule().makeChDynatree($(e.target));
-                                    dnt.buildFromSql(opts);
+                            dnt.buildFromSql(opts);
+                            e.stopImmediatePropagation();
                         };
-                        //protected function createTreeScript($options)
-                        //{
-                        //    if ($this->sql) {
-                        //
-                        //        $script = <<<JS
-                        //        var dnt = facade.getFactoryModule().makeChDynatree($(this));
-                        //        dnt.buildFromSql($options);
-                        //        JS;
-                        //    } else {
-                        //        $script = <<<JS
-                        //        var dnt = facade.getFactoryModule().makeChDynatree($(this));
-                        //        dnt.buildFromData($options);
-                        //        JS;
-                        //    }
-                        //    return $script;
-                        //}
-
-
+                        _this.delegateEvents();
                     }
-
-
                     $.publish(event, {
                         text: text,
                         counter: i

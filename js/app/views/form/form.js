@@ -90,7 +90,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         callbacks.push(data.callback);
                     }
                     asyncTaskCompleted++;
-                    if (asyncTaskCompleted === length|| asyncTaskCompleted === 8) {
+                    if (asyncTaskCompleted === length) {
                         $.unsubscribe(event);
                         $filterSection.append(
                             _this.filterTemplate({
