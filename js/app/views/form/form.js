@@ -79,20 +79,27 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 });
                 $panel.append($filterSection);
                 var html = [],
+                    callbacks= [],
                     event = 'render_' + helpersModule.uniqueID(),
                     ROCollections = this.model.getFiltersROCollection(),
                     length = ROCollections.length,
                     asyncTaskCompleted = 0;
                 $.subscribe(event, function (e, data) {
                     html[data.counter] = data.text;
+                    if(data.callback){
+                        callbacks.push(data.callback);
+                    }
                     asyncTaskCompleted++;
-                    if (asyncTaskCompleted === length|| asyncTaskCompleted === 6) {
+                    if (asyncTaskCompleted === length|| asyncTaskCompleted === 8) {
                         $.unsubscribe(event);
                         $filterSection.append(
                             _this.filterTemplate({
                                 html: '<div><ul class="filters-list">' + html.join('') + '</div></ul></div>'
                             })
                         );
+                        callbacks.forEach(function(fn){
+                            fn();
+                        });
 
                     }
                 });
