@@ -3,7 +3,11 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
     return Backbone.Model.extend({
         defaults: {
             filter: null,
-            id: null
+            id: null,
+            key: null
+        },
+        initialize: function() {
+            this.set('key', this.get('filter').getName());
         },
         getAttribute: function(){
             return this.get('filter').getName();
@@ -26,8 +30,8 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         isMultiSelectEval: function(deferID){
             return  helpersModule.boolExpressionEval(this.get('filter').getMultiSelect(), deferID, false);
         },
-        getReadProc: function(){
-            return bindModule.bindSql(this.get('filter').getReadProc());
+        getReadProc: function(data){
+            return bindModule.bindSql(this.get('filter').getReadProc(), data);
         },
         isVisibleEval: function(deferID){
             return helpersModule.boolExpressionEval(this.get('filter').getVisible(), deferID, true);

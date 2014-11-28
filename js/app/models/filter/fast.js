@@ -9,14 +9,14 @@ var FastFilterRO = (function (FilterRO, helpersModule, optionsModule) {
                 id: deferId
             });
         },
-        render: function(event, i){
+        render: function(event, i, collection){
             var view = new FastFilterView({
                 model: this,
                 id: helpersModule.uniqueID(),
                 $el: $('body')
 
             });
-            view.render(event, i);
+            view.render(event, i, collection);
         }
     });
 })(FilterRO, helpersModule, optionsModule);

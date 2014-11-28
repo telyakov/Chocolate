@@ -10,9 +10,9 @@ var AgileFilter = (function (Backbone) {
         getName: function () {
             var key = this.get('$obj').children('key').text();
             if (key) {
-                return key;
+                return key.toLowerCase();
             }
-            return this.get('$obj').children('name').text();
+            return this.get('$obj').children('name').text().toLowerCase();
         },
         getReadProc: function () {
             return this.get('$obj').children('readProc').text();

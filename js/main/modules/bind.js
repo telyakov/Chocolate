@@ -33,7 +33,7 @@ var bindModule = (function (userModule, undefined) {
                 return sql.replace(search, function (param) {
                     var prop = param.substring(1, param.length - 1).toLowerCase();
                     if (data.hasOwnProperty(prop)) {
-                        return data[prop];
+                        return "'"+ data[prop] + "'";
                     }
                     return param;
                 });

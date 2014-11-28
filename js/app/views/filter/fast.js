@@ -1,4 +1,4 @@
-var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferredModule) {
+var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferredModule, optionsModule) {
     'use strict';
     return FilterView.extend({
         template: _.template([
@@ -8,7 +8,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             ' <% if (parentFilterKey) { %> rel="<%= parentFilterKey %>"  <% } %> >',
             '<input type="hidden" name="GridForm[filters][<%= attribute %>]">',
 
-            '<% if (!parentFilterKey) { %>',
+            '<% if (!parentFilterKey || force) { %>',
             '<% if (isMultiSelect) { %>',
             '<% _.each(data, function(item) { %>',
             '<span class="checkbox inline">',
@@ -28,7 +28,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             '</li>'
         ].join('')),
         events: {},
-        render: function (event, i) {
+        render: function (event, i, collection) {
             var _this = this,
                 model = this.model,
                 visibleDf = deferredModule.create(),
@@ -40,20 +40,21 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 visibleId = deferredModule.save(visibleDf),
                 nextRowId = deferredModule.save(nextRowDf);
             var changeHandler = model.getEventChange();
-            if (changeHandler) {
-                var selector = 'change ' + '#' + _this.id + ' input';
-                this.events[selector] = function (e) {
+            //if (changeHandler) {
+            var selector = 'change ' + '#' + _this.id + ' input';
+            this.events[selector] = function (e) {
+                if (changeHandler) {
                     helpersModule.scriptExpressionEval(changeHandler, e);
-                    e.stopImmediatePropagation();
-                };
-                this.delegateEvents();
+                }
+                this.model.trigger('change:value', $(e.target).val());
+                e.stopImmediatePropagation();
+            };
+            this.delegateEvents();
 
-            }
             model.isVisibleEval(visibleId);
             model.isNextRowEval(nextRowId);
             model.isMultiSelectEval(multiSelectId);
             model.dataEval(dataId);
-
             $.when(visibleDf, nextRowDf, multiSelectDf, dataDf).done(function (visible, nextRow, multiSelect, dataRes) {
                 var isVisible = visible.value,
                     isNextRow = nextRow.value,
@@ -76,13 +77,64 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                     text = _this.template({
                         attribute: model.getAttribute(),
                         isNextRow: isNextRow,
-                        parentFilterKey: model.getProperties().get('parentFilter'),
+                        parentFilterKey: parentFilter,
                         isMultiSelect: isMultiSelect,
                         isAutoRefresh: model.getProperties().get('isAutoRefresh'),
                         data: prepareData,
                         containerID: _this.id
                     });
                 }
+
+                var parentFilter = model.getProperties().get('parentFilter');
+                if (parentFilter) {
+                    var parentModel = collection.findWhere({
+                        key: parentFilter
+                    });
+
+                    _this.listenTo(parentModel, 'change:value', function (value) {
+                            if (value) {
+                                //this.model.set('value', value);
+                                var refreshDf = deferredModule.create(),
+                                    refreshDeferId = deferredModule.save(refreshDf),
+                                    query = _this.model.getReadProc({'parentfilter.id': value});
+                                mediator.publish(optionsModule.getChannel('socketRequest'),{
+                                    query: query,
+                                    type: optionsModule.getRequestType('deferred'),
+                                    id: refreshDeferId
+                                });
+                                $.when(refreshDf).done(function(res){
+                                    var data = res.data;
+                                    var prepareData2 = [],
+                                        j,
+                                        hasOwnProperty = Object.prototype.hasOwnProperty;
+                                    for (j in data) {
+                                        if (hasOwnProperty.call(data, j)) {
+                                            prepareData2.push({
+                                                id: helpersModule.uniqueID(),
+                                                val: data[j].id,
+                                                name: data[j].name
+                                            });
+                                        }
+                                    }
+                                    if (isVisible) {
+                                        text = _this.template({
+                                            attribute: model.getAttribute(),
+                                            isNextRow: isNextRow,
+                                            parentFilterKey: parentFilter,
+                                            isMultiSelect: isMultiSelect,
+                                            isAutoRefresh: model.getProperties().get('isAutoRefresh'),
+                                            data: prepareData2,
+                                            containerID: _this.id,
+                                            force: true
+                                        });
+                                        $('#' + _this.id).replaceWith(text);
+                                    }
+                                });
+                            }
+                        }
+                    );
+                }
+
                 $.publish(event, {
                     text: text,
                     counter: i
@@ -91,4 +143,4 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
 
         }
     });
-})(Backbone, jQuery, helpersModule, FilterView, deferredModule);
+})(Backbone, jQuery, helpersModule, FilterView, deferredModule, optionsModule);

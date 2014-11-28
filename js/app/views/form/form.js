@@ -97,7 +97,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     }
                 });
                 ROCollections.each(function (item, i) {
-                    item.render(event, i);
+                    item.render(event, i, ROCollections);
                 });
 
             }
