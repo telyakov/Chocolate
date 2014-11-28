@@ -5,6 +5,9 @@ var CanvasView = (function (Backbone) {
             _.bindAll(this, 'render');
             this.$el = options.$el;
             this.model = options.model;
+            if (options.dataParentId) {
+                this.dataParentId = options.dataParentId;
+            }
             this.render();
         },
         events: {},

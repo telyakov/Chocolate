@@ -124,7 +124,8 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             var ViewClass = this.model.getFormView(),
                 view = new ViewClass({
                     $el:$formSection,
-                    model: this.model
+                    model: this.model,
+                    dataParentId: this.dataParentId
                 });
 
 

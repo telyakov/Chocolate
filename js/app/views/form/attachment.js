@@ -1,4 +1,4 @@
-var MapView = (function (Backbone) {
+var AttachmentView = (function (Backbone) {
     'use strict';
     return Backbone.View.extend({
         initialize: function (options) {
@@ -13,7 +13,7 @@ var MapView = (function (Backbone) {
         events: {},
 
         render: function () {
-            console.log('рендерю map');
+            console.log('рендерю канвас');
         }
     });
 })(Backbone);

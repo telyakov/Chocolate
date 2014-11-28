@@ -12,6 +12,24 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             parentModel: null,
             parentId: null
         },
+        hasCard: function(){
+          return this.getCardCollection()._length > 0;
+        },
+        isSupportCreateEmpty: function(){
+            return this.getDataFormProperties().getCreateEmptyProc() ? true : false;
+        },
+        isAllowCreate: function(){
+            return helpersModule.boolEval(this.getDataFormProperties().getAllowAddNew(), false);
+        },
+        isAllowSave: function(){
+            return helpersModule.boolEval(this.getDataFormProperties().getSaveButtonVisible(), false);
+        },
+        isAllowRefresh: function(){
+            return helpersModule.boolEval(this.getDataFormProperties().getRefreshButtonVisible(), false);
+        },
+        isAllowPrintActions: function(){
+            return helpersModule.boolEval(this.getDataFormProperties().getPrintActionsXml(), false);
+        },
         getKey: function () {
             return this.getDataFormProperties().getKey();
         },
@@ -25,6 +43,8 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                     return MapView;
                 case 'sales\\flatsgramm':
                     return CanvasView;
+                case 'atachments':
+                    return AttachmentView;
                 default :
                     return GridView;
             }

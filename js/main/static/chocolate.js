@@ -240,6 +240,18 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
         openForm: function (url) {
             context.openForm(url);
         },
+        boolEval: function(val, def){
+            var prepareVal = $.trim(val.toLowerCase());
+            switch (true) {
+                case prepareVal === 'true':
+                    return true;
+                case prepareExpr === 'false':
+                    return false;
+                default:
+                    return def;
+
+            }
+        },
         boolExpressionEval: function (expr, deferId, defaultValue) {
             var prepareExpr = $.trim(expr.toLowerCase());
             switch (true) {

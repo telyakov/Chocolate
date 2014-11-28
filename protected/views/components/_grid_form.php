@@ -16,7 +16,7 @@ $form = $this->beginWidget('CActiveForm', [
         'data-ajax-add' => $model->isSupportCreateEmpty(),
         'data-tab-caption' => $model->getCardCollection()->getCaption(),
         'data-parent-pk' => $model->getParentID(),
-        'data-card-support' => $model->isCardAllow()
+        'data-card-support' => $model->iscardallow()
     ]
 ]);
 $this->renderPartial('//components/_menu', ['model' => $model])
