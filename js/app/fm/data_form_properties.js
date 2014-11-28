@@ -4,6 +4,9 @@ var DataFormProperties = (function (Backbone) {
         defaults: {
             $obj: null
         },
+        getKey: function(){
+            return this.get('$obj').children('Key').text();
+        },
         getReadProc: function () {
             return this.get('$obj').children('readProc').text();
         },

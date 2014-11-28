@@ -6,7 +6,6 @@
  */
 
 $formID = $model->getParentView() ?\Chocolate\HTML\ChHtml::generateUniqueID('ff'): uniqid('ff');
-
 $view = $model->getView();
 $form = $this->beginWidget('CActiveForm', [
     'action' => Yii::app()->createUrl('grid/save', ['view' => $view]),

@@ -8,7 +8,7 @@ var TextFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             '<div class="text-filter" title="<%= tooltip %>">',
             '<label for="<%= id %>"><%= caption %></label>',
             '<input <% if (disabled) { %> disabled  <% } %> attribute="filters[<%= attribute %>]" name="GridForm[filters][<%= attribute %>]"',
-            ' placeholder="<%= tooltip %>)" class="filter" id="<%= id %>" type="search" value="<%= value %>">',
+            ' placeholder="<%= tooltip %>" class="filter" id="<%= id %>" type="search" value="<%= value %>">',
             '</div>',
             '</li>'
         ].join('')),

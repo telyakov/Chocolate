@@ -110,7 +110,7 @@ module.exports = function (grunt) {
                     '../js/app/models/form.js',
                     '../js/app/router.js',
                     '../js/app/views/app/app.js',
-                    '../js/app/views/form/form.js',
+                    '../js/app/views/form/*.js',
                     '../js/app/modules/nav_bar.js',
                     '../js/app/modules/image_adapter.js',
                     '../js/main/settings.js',

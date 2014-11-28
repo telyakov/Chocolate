@@ -21,6 +21,11 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             '<%= html %>',
             '</div>'
         ].join('')),
+        //filterTemplate: _.template([
+        //    '<div class="filters-content">',
+        //    '<%= html %>',
+        //    '</div>'
+        //].join('')),
         initialize: function (options) {
             _.bindAll(this, 'render');
             this.$el = options.$el;
@@ -36,7 +41,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             var $panel = this.createPanel();
             this.layoutHeader($panel);
             this.layoutFilters($panel);
-            this.layoutForm($panel);
+            this.layoutFormSection($panel);
         },
         createPanel: function () {
             var id = helpersModule.uniqueID(),
@@ -110,16 +115,19 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             }
 
         },
-        layoutForm: function ($panel) {
-            //view = encodeURI(_private.toXmlExtensionFormat(view));
-            //if (view.indexOf('map.xml') !== -1) {
-            //    url = '/map/index?view=' + view;
-            //}
-            //else if (view.indexOf('flatsgramm.xml') !== -1) {
-            //    url = '/canvas/index?view=' + view;
-            //} else {
-            //    url = '/grid/index?view=' + view;
-            //}
+        layoutFormSection: function ($panel) {
+            var $formSection = $('<section>', {
+                'class': 'section-grid',
+                'data-id': 'grid-form'
+            });
+            $panel.append($formSection);
+            var ViewClass = this.model.getFormView(),
+                view = new ViewClass({
+                    $el:$formSection,
+                    model: this.model
+                });
+
+
         }
     });
 })(Backbone, jQuery, optionsModule, mediator, helpersModule);

@@ -12,6 +12,23 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             parentModel: null,
             parentId: null
         },
+        getKey: function () {
+            return this.getDataFormProperties().getKey();
+        },
+        getView: function () {
+            return this.getKey() + '.xml';
+        },
+        getFormView: function () {
+            var key = this.getKey().toLowerCase();
+            switch (key) {
+                case 'crm\\map':
+                    return MapView;
+                case 'sales\\flatsgramm':
+                    return CanvasView;
+                default :
+                    return GridView;
+            }
+        },
         getColumnsCollection: function () {
             if (this._columnsCollection) {
                 return this._columnsCollection;
@@ -41,7 +58,6 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             if (this._dataFormProperties) {
                 return this._dataFormProperties;
             }
-
 
             var $xml = this.get('$xml');
             if ($xml) {
@@ -124,7 +140,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             dataFormProperties.getHeaderImage() ||
             dataFormProperties.getStateProc();
         },
-        getImage: function(){
+        getImage: function () {
             return this.getDataFormProperties().getHeaderImage();
         },
         getHeaderText: function () {
@@ -133,16 +149,16 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         getStateProc: function () {
             return this.getDataFormProperties().getStateProc();
         },
-        hasFilters: function(){
+        hasFilters: function () {
             return this.getFiltersCollections().length !== 0;
         },
-        getFiltersROCollection: function(){
-            if(this._filter_ro_collection !== null){
+        getFiltersROCollection: function () {
+            if (this._filter_ro_collection !== null) {
                 return this._filter_ro_collection;
             }
             var filtersCollection = this.getFiltersCollections(),
-                filtersROCollection  = new FiltersROCollection();
-            filtersCollection.each(function(item){
+                filtersROCollection = new FiltersROCollection();
+            filtersCollection.each(function (item) {
                 filtersROCollection.push(FilterRoFactory.make(item));
             });
             this._filter_ro_collection = filtersROCollection;
