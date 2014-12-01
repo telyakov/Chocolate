@@ -7,6 +7,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         _actionProperties: null,
         _card_collection: null,
         _filter_ro_collection: null,
+        _print_actions: null,
         defaults: {
             $xml: null,
             parentModel: null,
@@ -14,6 +15,23 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         },
         hasCard: function(){
           return this.getCardCollection()._length > 0;
+        },
+        getPrintActions: function(){
+            if(this._print_actions !== null){
+                return this._print_actions;
+            }
+
+            var printActions = new PrintActions({
+                printActionsXml: this.getDataFormProperties().getPrintActionsXml()
+            });
+            this._print_actions = printActions.getActions();
+            return this._print_actions;
+        },
+        isAllowAudit: function(){
+            return helpersModule.boolEval(this.getDataFormProperties().getAllowAuditButton(), false);
+        },
+        isSearchColumnVisible: function(){
+          return this.getColumnsCollection().length > 10;
         },
         isSupportCreateEmpty: function(){
             return this.getDataFormProperties().getCreateEmptyProc() ? true : false;
@@ -28,7 +46,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return helpersModule.boolEval(this.getDataFormProperties().getRefreshButtonVisible(), false);
         },
         isAllowPrintActions: function(){
-            return helpersModule.boolEval(this.getDataFormProperties().getPrintActionsXml(), false);
+            return this.getPrintActions().length > 0;
         },
         getKey: function () {
             return this.getDataFormProperties().getKey();

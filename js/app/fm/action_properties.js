@@ -5,13 +5,13 @@ var ActionProperties = (function (Backbone) {
             $obj: null
         },
         getCaption: function () {
-            this.$obj.children('caption').html();
+            return this.get('$obj').children('caption').text();
         },
         getAction: function () {
-            this.$obj.children('action').html();
+            return this.get('$obj').children('action').text();
         },
         getRequiredRole: function () {
-            this.$obj.children('requiredRole').html();
+            return this.get('$obj').children('requiredRole').text();
         }
     });
 })(Backbone);

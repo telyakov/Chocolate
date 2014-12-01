@@ -234,18 +234,14 @@ var chFunctions = {
         }
         return true;
     },
-    initPrintActions: function (id, jsonPrintActions) {
+    initPrintActions: function (id, printActions) {
         var $actionButton = $('#' + id);
-        /**
-         *
-         * @type {ChGridForm}
-         */
         var chForm =facade.getFactoryModule().makeChGridForm($actionButton.closest('form')),
             rexExp = new RegExp('\[IdList\]');
 
         $actionButton.contextmenu({
             show: { effect: "blind", duration: 0 },
-            menu: json_parse(jsonPrintActions),
+            menu: printActions,
             select: function (event, ui) {
                 var url = ui.cmd;
                 if (rexExp.test(url)) {
@@ -261,12 +257,13 @@ var chFunctions = {
             }
         });
     },
-    initActions: function (id, jsonActions) {
-        var $actionButton = $('#' + id);
+    initActions: function (id, actionsProperty) {
+        var $actionButton = $('#' + id),
+            data = actionsProperty.getData();
         var chForm = facade.getFactoryModule().makeChGridForm($actionButton.closest('form'));
         $actionButton.contextmenu({
             show: { effect: "blind", duration: 0 },
-            menu: json_parse(jsonActions, Chocolate.parse),
+            menu: data,
             select: function (event, ui) {
                 switch (ui.cmd) {
                     case 'window.print':
