@@ -88,6 +88,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 this._columnsCollection = new ColumnsPropertiesCollection(columns, {
                     $obj: $gridProperties
                 });
+
             }
 
 
@@ -213,9 +214,13 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 columnsROCollection.push(ColumnsRoFactory.make(item));
             });
             this._columns_ro_collection = columnsROCollection;
+            if(this.isAttachmentSupport()){
+                columnsROCollection.push( new AttachmentColumnRO());
+            }
             return this._columns_ro_collection;
-
-
+        },
+        isAttachmentSupport: function(){
+            return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);
         }
 
     });

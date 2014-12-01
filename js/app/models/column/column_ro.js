@@ -9,6 +9,19 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         initialize: function() {
             this.set('key', this.get('columnProperties').getVisibleKey());
         },
+        getHeaderCLass: function(){
+            if(this.isRequired()){
+                return 'fa-asterisk';
+            }
+            return '';
+        },
+        isRequired: function(){
+            return helpersModule.boolEval(this.get('columnProperties').getRequired(), false);
+        },
+
+        getCaption: function(){
+            return this.get('columnProperties').getCaption();
+        },
         isVisibleInAllField: function(){
           return helpersModule.boolEval(this.get('columnProperties').getAllFields(), false);
         },
@@ -22,24 +35,9 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             if(this.isVisibleInAllField()){
                 options['data-col-hide'] = 1;
             }
+            options['class'] = 'sorter-text';
             return options;
-            //$editType = $this->columnProperties->getGridEditType();
-            //if ($editType == GridColumnType::Attachments || $editType == GridColumnType::Button) {
-            //    $options['data-grid-button'] = 1;
-            //}
-            //if ($editType == GridColumnType::DateTime || $editType == GridColumnType::Date) {
-            //
-            //    $options['class'] = 'sorter-shortDate ';
-            //} elseif ($editType == GridColumnType::CheckBox) {
-            //    $options['class'] = 'sorter-checkbox';
-            //} else {
-            //    $options['class'] = 'sorter-text';
-            //}
-        },
-        getHeader: function(){
-
         }
-
 
 });
 })(Backbone, helpersModule, FilterProperties, bindModule);

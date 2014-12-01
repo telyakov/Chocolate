@@ -24,7 +24,7 @@ var GridView = (function (Backbone) {
                 '<%= value%>',
                 '" ',
                 ' <% }); %>',
-                '><%= item.html%></th>',
+                '><%= item.header%></th>',
                 ' <% }); %>',
                 '</tr></thead>',
                 '<tbody>',
@@ -32,6 +32,14 @@ var GridView = (function (Backbone) {
                 '</table>',
                 '</div>',
                 '</section>'
+            ].join('')
+        ),
+        columnHeaderTemplate: _.template([
+                '<div><a><span class="<%= class %>"></span>',
+                '<span class="grid-caption">',
+                '<%= caption%>',
+                '</span><span class="grid-sorting"></span>',
+                '</a></div>'
             ].join('')
         ),
         footerTemplate: _.template([
@@ -77,14 +85,20 @@ var GridView = (function (Backbone) {
             });
         },
         layoutForm: function ($form) {
-            var roCollection = this.model.getColumnsROCollection(),
-                rows = [],
+            var _this = this,
+                roCollection = this.model.getColumnsROCollection(),
+                rows = [{
+                    options: {'data-id': 'chocolate-control-column'},
+                    header: ''
+                }],
                 userGridID = helpersModule.uniqueID();
             roCollection.each(function (column) {
-                console.log(column.getHeaderOptions())
                 rows.push({
                     options: column.getHeaderOptions(),
-                    html: 'test'
+                    header: _this.columnHeaderTemplate({
+                        'class': column.getHeaderCLass(),
+                        caption: column.getCaption()
+                    })
                 });
             });
             $form.append(this.gridTemplate({
