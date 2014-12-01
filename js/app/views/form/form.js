@@ -21,11 +21,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             '<%= html %>',
             '</div>'
         ].join('')),
-        //filterTemplate: _.template([
-        //    '<div class="filters-content">',
-        //    '<%= html %>',
-        //    '</div>'
-        //].join('')),
         initialize: function (options) {
             _.bindAll(this, 'render');
             this.$el = options.$el;

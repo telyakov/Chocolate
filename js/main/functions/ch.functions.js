@@ -309,12 +309,6 @@ var chFunctions = {
         chForm.setFmCardsCollection(
             new FmCardsCollection(header, headerImg, json_parse(jsonCardCollection, Chocolate.parse))
         );
-        var params = {
-            sql: sql,
-            view: view,
-            parentView: parentView,
-            parentID: parentID
-        };
         var optionsModule = facade.getOptionsModule();
         mediator.publish(optionsModule.getChannel('socketRequest'), {
             query: sql,
