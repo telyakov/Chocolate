@@ -245,7 +245,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
             switch (true) {
                 case prepareVal === 'true':
                     return true;
-                case prepareExpr === 'false':
+                case prepareVal === 'false':
                     return false;
                 default:
                     return def;

@@ -17,7 +17,14 @@ var GridView = (function (Backbone) {
                 '<table tabindex=0 class="table-bordered items">',
                 '<thead><tr>',
                 '<% _.each(rows, function(item) { %>',
-                '<th>Заголовок</th>',
+                '<th ',
+                '<% _.each(item.options, function(value, name) { %>',
+                '<%= name%>',
+                '="',
+                '<%= value%>',
+                '" ',
+                ' <% }); %>',
+                '><%= item.html%></th>',
                 ' <% }); %>',
                 '</tr></thead>',
                 '<tbody>',
@@ -70,10 +77,19 @@ var GridView = (function (Backbone) {
             });
         },
         layoutForm: function ($form) {
-            var userGridID = helpersModule.uniqueID();
+            var roCollection = this.model.getColumnsROCollection(),
+                rows = [],
+                userGridID = helpersModule.uniqueID();
+            roCollection.each(function (column) {
+                console.log(column.getHeaderOptions())
+                rows.push({
+                    options: column.getHeaderOptions(),
+                    html: 'test'
+                });
+            });
             $form.append(this.gridTemplate({
                 userGridID: userGridID,
-                rows: [1,2,3,4]
+                rows: rows
             }));
 
         },

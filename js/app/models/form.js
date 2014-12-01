@@ -8,6 +8,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         _card_collection: null,
         _filter_ro_collection: null,
         _print_actions: null,
+        _columns_ro_collection: null,
         defaults: {
             $xml: null,
             parentModel: null,
@@ -201,6 +202,20 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             });
             this._filter_ro_collection = filtersROCollection;
             return this._filter_ro_collection;
+        },
+        getColumnsROCollection: function(){
+            if (this._columns_ro_collection !== null) {
+                return this._columns_ro_collection;
+            }
+            var columnsCollection = this.getColumnsCollection(),
+                columnsROCollection = new ColumnsROCollection();
+            columnsCollection.each(function (item) {
+                columnsROCollection.push(ColumnsRoFactory.make(item));
+            });
+            this._columns_ro_collection = columnsROCollection;
+            return this._columns_ro_collection;
+
+
         }
 
     });

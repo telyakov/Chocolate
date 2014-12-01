@@ -32,7 +32,7 @@ var ColumnProperties = (function (Backbone) {
             return this.get('$obj').children('fromId').text();
         },
         getKey: function () {
-            return this.get('$obj').children('key').text();
+            return this.get('$obj').children('key').text().toLowerCase();
         },
         getVisible: function () {
             return this.get('$obj').children('visible').text();
@@ -93,6 +93,14 @@ var ColumnProperties = (function (Backbone) {
         },
         getCardY: function () {
             return this.get('$obj').children('cardY').text();
+        },
+        getVisibleKey: function(){
+            var toID = this.getToId();
+            if(toID){
+                return toID;
+            }else{
+                return this.getKey();
+            }
         }
     });
 })(Backbone);
