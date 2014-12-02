@@ -211,7 +211,10 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             var columnsCollection = this.getColumnsCollection(),
                 columnsROCollection = new ColumnsROCollection();
             columnsCollection.each(function (item) {
-                columnsROCollection.push(ColumnsRoFactory.make(item));
+                var columnRO = ColumnsRoFactory.make(item);
+                if(columnRO.isVisible()){
+                    columnsROCollection.push(columnRO);
+                }
             });
             this._columns_ro_collection = columnsROCollection;
             if(this.isAttachmentSupport()){

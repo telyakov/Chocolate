@@ -20,6 +20,9 @@ var AttachmentColumnRO = (function (Backbone) {
         getCaption: function(){
             return 'Вложения';
         },
+        getEditType: function(){
+            return 'attachments_edit_type';
+        },
         isVisibleInAllField: function(){
             return  false;
         },

@@ -6,6 +6,9 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             id: null,
             key: null
         },
+        getEditType: function(){
+            return this.get('columnProperties').getEditType();
+        },
         initialize: function() {
             this.set('key', this.get('columnProperties').getVisibleKey());
         },
@@ -14,6 +17,9 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
                 return 'fa-asterisk';
             }
             return '';
+        },
+        isVisible: function(){
+            return this.isVisibleInAllField() ||  helpersModule.boolEval(this.get('columnProperties').getVisible(), false);
         },
         isRequired: function(){
             return helpersModule.boolEval(this.get('columnProperties').getRequired(), false);

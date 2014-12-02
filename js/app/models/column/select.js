@@ -1,3 +1,5 @@
-/**
- * Created by tselishchev on 01.12.2014.
- */
+var SelectColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
+    'use strict';
+    return ColumnRO.extend({
+    });
+})(Backbone, helpersModule, FilterProperties, bindModule);

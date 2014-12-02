@@ -38,7 +38,15 @@ var ColumnProperties = (function (Backbone) {
             return this.get('$obj').children('visible').text();
         },
         getEditType: function () {
-            return this.get('$obj').children('editType').text();
+            var type = $.trim(this.get('$obj').children('editType').text().toLowerCase());
+            if(type){
+                return type;
+            }else{
+                return this.getCardEditType();
+            }
+        },
+        getCardEditType: function () {
+            return  $.trim(this.get('$obj').children('cardEditType').text().toLowerCase());
         },
         getToId: function () {
             return this.get('$obj').children('toId').text();
@@ -64,9 +72,7 @@ var ColumnProperties = (function (Backbone) {
         getCardKey: function () {
             return this.get('$obj').children('cardKey').text();
         },
-        getCardEditType: function () {
-            return this.get('$obj').children('cardEditType').text();
-        },
+
         getCardVisible: function () {
             return this.get('$obj').children('cardVisible').text();
         },
