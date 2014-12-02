@@ -49,7 +49,7 @@ var ColumnProperties = (function (Backbone) {
             return  $.trim(this.get('$obj').children('cardEditType').text().toLowerCase());
         },
         getToId: function () {
-            return this.get('$obj').children('toId').text();
+            return this.get('$obj').children('toId').text().toLowerCase();
         },
         getRequired: function () {
             return this.get('$obj').children('required').text();

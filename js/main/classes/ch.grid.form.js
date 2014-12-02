@@ -160,7 +160,6 @@ ChGridForm.prototype.setDefaultSettings = function () {
             $tr_sorted = $('<tr></tr>');
 
         settings_obj = this.getSettingsObj();
-//        $
         var sorted_columns = settings_obj.sort(function (a, b) {
             if (a.key == ChOptions.keys.controlColumn) {
                 return -1
@@ -297,7 +296,7 @@ ChGridForm.prototype.changeSettings = function (start_index, end_index) {
 ChGridForm.prototype.getSettingsObj = function () {
     var storage = Chocolate.storage.local.settings,
         key = this.getView();
-    if (typeof(storage[key]) == 'undefined') {
+    if (typeof storage[key]  === 'undefined') {
         storage[key] = {};
     }
     return storage[key];

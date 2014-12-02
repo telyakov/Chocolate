@@ -14,7 +14,7 @@ var GridView = (function (Backbone) {
         gridTemplate: _.template([
                 '<section data-id="grid">',
                 '<div data-id="user-grid" id="<%= userGridID %>" class="grid-view">',
-                '<table tabindex=0 class="table-bordered items">',
+                '<table tabindex=0 class="table-bordered items" id="<%= tableID%>">',
                 '<thead><tr>',
                 '<% _.each(rows, function(item) { %>',
                 '<th ',
@@ -76,7 +76,6 @@ var GridView = (function (Backbone) {
             this.layoutMenu($form);
             this.layoutForm($form);
             this.layoutFooter($form);
-            mediator.publish(optionsModule.getChannel('reflowTab'));
         },
         layoutMenu: function ($form) {
             var menuView = new MenuView({
@@ -85,26 +84,58 @@ var GridView = (function (Backbone) {
             });
         },
         layoutForm: function ($form) {
-            var _this = this,
+            var form = factoryModule.makeChGridForm($form),
+                _this = this,
                 roCollection = this.model.getColumnsROCollection(),
+                hasSetting = form.hasSettings(),
                 rows = [{
                     options: {'data-id': 'chocolate-control-column'},
                     header: ''
                 }],
-                userGridID = helpersModule.uniqueID();
+                userGridID = helpersModule.uniqueID(),
+                setting = [],
+                iterator = 1;
+            if (!hasSetting) {
+                setting[0] = {
+                    key: 'chocolate-control-column',
+                    weight: 0,
+                    width: '28'
+                };
+            }
             roCollection.each(function (column) {
-                rows.push({
+                if (!hasSetting) {
+                    setting[iterator] = {
+                        key: column.get('key'),
+                        weight: iterator,
+                        width: ChOptions.settings.defaultColumnsWidth
+                    };
+                    iterator++;
+                }
+                var index = hasSetting ? form.getPositionColumn(column.get('key')) : iterator - 1;
+                rows[index] = {
                     options: column.getHeaderOptions(),
                     header: _this.columnHeaderTemplate({
                         'class': column.getHeaderCLass(),
                         caption: column.getCaption()
                     })
-                });
+                };
             });
+
+            if (!hasSetting) {
+                form.setSettingsObj(setting);
+            }
+            var tableID = helpersModule.uniqueID();
             $form.append(this.gridTemplate({
                 userGridID: userGridID,
-                rows: rows
+                rows: rows,
+                tableID: tableID
             }));
+            var $table = $('#' + tableID);
+            this.initTableScript($table);
+
+        },
+        initTableScript: function ($table) {
+            facade.getFactoryModule().makeChTable($table).initScript();
 
         },
         layoutFooter: function ($form) {

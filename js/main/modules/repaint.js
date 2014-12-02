@@ -35,7 +35,6 @@ var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math,
                         $container = $context.find('.' + optionsModule.getClass('gridSection')),
                         formSectionHeight = $context.height() - $header.outerHeight(true) - $filters.outerHeight(true);
                     $container.height(formSectionHeight);
-
                     var $form = $container.children('form'),
                         $footer = $container.children('footer'),
                         formHeight = formSectionHeight - $footer.outerHeight(true);

@@ -6,21 +6,7 @@ function ChTable($table) {
     this.ch_form = facade.getFactoryModule().makeChGridForm($table.closest('form'));
 }
 ChTable.prototype._initTableSorter = function () {
-    $.tablesorter.addParser({
-        id: 'checkbox',
-        is: function(s) {
-            return false;
-        },
-        format: function(s, table, cell, cellIndex) {
-            var $cell = $(cell).find('a');
-            return $cell.attr('data-value');
-        },
-        parsed: false,
-        type: 'text'
-    });
-
     var options = {
-
         headers: {
             0: { sorter: false}
         },
@@ -129,7 +115,7 @@ ChTable.prototype._initData = function () {
     this.ch_form.restoreData();
 };
 ChTable.prototype._initSettings = function () {
-    this.ch_form.setDefaultSettings();
+    //this.ch_form.setDefaultSettings();
     if (this.ch_form.chFormSettings.isAutoUpdate()) {
         this.ch_form.chFormSettings.startAutoUpdate();
     }
@@ -191,8 +177,6 @@ ChTable.prototype.initScript = function () {
     this._initContextMenu();
     this._initDragtable();
     var _this = this;
-    setTimeout(function(){
-    _this._initData();
     if(_this.ch_form.chFormSettings.isShortVisibleMode()){
         var $th = this.ch_form.getFixedTable().find('[' + ChOptions.classes.allowHideColumn + ']');
         _this.ch_form.toggleColls(false, $th);
@@ -203,7 +187,6 @@ ChTable.prototype.initScript = function () {
         });
         _this.ch_form.toggleColls(false, $th2);
     }
-    }, 5);
 };
 ChTable.prototype.initAttachmentScript = function () {
     this._initSettings();

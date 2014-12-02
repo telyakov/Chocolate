@@ -33,10 +33,19 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
         events: {},
 
         render: function () {
-            var $panel = this.createPanel();
+            var $panel = this.createPanel(),
+                _this = this,
+                panelDefer = $.Deferred();
             this.layoutHeader($panel);
-            this.layoutFilters($panel);
-            this.layoutFormSection($panel);
+            this.layoutFilters($panel, panelDefer);
+            $.when(panelDefer).done(function(){
+                setTimeout(function(){
+
+                _this.layoutFormSection($panel);
+                mediator.publish(optionsModule.getChannel('reflowTab'));
+                }, 17);
+
+            });
         },
         createPanel: function () {
             var id = helpersModule.uniqueID(),
@@ -70,7 +79,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             }
 
         },
-        layoutFilters: function ($panel) {
+        layoutFilters: function ($panel, panelDefer) {
             var _this = this;
             if (this.model.hasFilters()) {
                 var $filterSection = $('<section>',{
@@ -100,6 +109,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         callbacks.forEach(function(fn){
                             fn();
                         });
+                        panelDefer.resolve();
 
                     }
                 });

@@ -4,7 +4,6 @@ var DateColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
         getHeaderOptions: function(){
             var options = DateColumnRO.__super__.getHeaderOptions.apply(this, arguments);
             options['class'] = 'sorter-shortDate';
-            console.log(options)
             return options;
         }
 
