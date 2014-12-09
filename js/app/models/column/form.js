@@ -6,6 +6,14 @@ var FormColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
             options['data-grid-button'] = 1;
 
             return options;
+        },
+        getClass: function () {
+            var class_name = '';
+            if (!this.isEdit()) {
+                class_name += 'not-changed';
+            }
+            class_name += ' grid-button';
+            return class_name;
         }
 
     });

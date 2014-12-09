@@ -14,11 +14,11 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             parentModel: null,
             parentId: null
         },
-        hasCard: function(){
-          return this.getCardCollection()._length > 0;
+        hasCard: function () {
+            return this.getCardCollection()._length > 0;
         },
-        getPrintActions: function(){
-            if(this._print_actions !== null){
+        getPrintActions: function () {
+            if (this._print_actions !== null) {
                 return this._print_actions;
             }
 
@@ -28,25 +28,25 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             this._print_actions = printActions.getActions();
             return this._print_actions;
         },
-        isAllowAudit: function(){
+        isAllowAudit: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAllowAuditButton(), false);
         },
-        isSearchColumnVisible: function(){
-          return this.getColumnsCollection().length > 10;
+        isSearchColumnVisible: function () {
+            return this.getColumnsCollection().length > 10;
         },
-        isSupportCreateEmpty: function(){
+        isSupportCreateEmpty: function () {
             return this.getDataFormProperties().getCreateEmptyProc() ? true : false;
         },
-        isAllowCreate: function(){
+        isAllowCreate: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAllowAddNew(), false);
         },
-        isAllowSave: function(){
+        isAllowSave: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getSaveButtonVisible(), false);
         },
-        isAllowRefresh: function(){
+        isAllowRefresh: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getRefreshButtonVisible(), false);
         },
-        isAllowPrintActions: function(){
+        isAllowPrintActions: function () {
             return this.getPrintActions().length > 0;
         },
         getKey: function () {
@@ -204,7 +204,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             this._filter_ro_collection = filtersROCollection;
             return this._filter_ro_collection;
         },
-        getColumnsROCollection: function(){
+        getColumnsROCollection: function () {
             if (this._columns_ro_collection !== null) {
                 return this._columns_ro_collection;
             }
@@ -212,21 +212,27 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 columnsROCollection = new ColumnsROCollection();
             columnsCollection.each(function (item) {
                 var columnRO = ColumnsRoFactory.make(item);
-                if(columnRO.isVisible()){
+                if (columnRO.isVisible()) {
                     columnsROCollection.push(columnRO);
                 }
             });
             this._columns_ro_collection = columnsROCollection;
-            if(this.isAttachmentSupport()){
-                columnsROCollection.push( new AttachmentColumnRO());
+            if (this.isAttachmentSupport()) {
+                columnsROCollection.push(new AttachmentColumnRO());
             }
             return this._columns_ro_collection;
         },
-        isAttachmentSupport: function(){
+        isAttachmentSupport: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);
         },
-        readProcEval: function(deferID){
+        readProcEval: function (deferID) {
             bindModule.deferredBindSql(deferID, this.getDataFormProperties().getReadProc());
+        },
+        getKeyColorColumnName: function () {
+            return this.getColumnsCollection().getRowColorColumnName();
+        },
+        getColorColumnName: function () {
+            return this.getColumnsCollection().getRowColorColumnNameAlternate();
         }
 
     });

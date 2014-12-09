@@ -1,37 +1,48 @@
 var AttachmentColumnRO = (function (Backbone) {
     'use strict';
-    return Backbone.Model.extend({
+    return ColumnRO.extend({
         defaults: {
             id: null,
             key: null
         },
-        initialize: function() {
+        isEdit: function () {
+            return true;
+        },
+        initialize: function () {
             this.set('key', this.getKey());
         },
-        getHeaderCLass: function(){
+        getHeaderCLass: function () {
             return 'fa-paperclip';
         },
-        getKey: function(){
+        getKey: function () {
             return 'numattachments';
         },
-        isRequired: function(){
-                return false;
+        isRequired: function () {
+            return false;
         },
-        getCaption: function(){
+        getCaption: function () {
             return 'Вложения';
         },
-        getEditType: function(){
+        getEditType: function () {
             return 'attachments_edit_type';
         },
-        isVisibleInAllField: function(){
-            return  false;
+        isVisibleInAllField: function () {
+            return false;
         },
-        getHeaderOptions: function(){
+        getHeaderOptions: function () {
             return {
-                'data-id':this.getKey(),
+                'data-id': this.getKey(),
                 'data-grid-button': 1,
                 'class': 'sorter-text'
             };
+        },
+        getClass: function () {
+            var class_name = '';
+            if (!this.isEdit()) {
+                class_name += 'not-changed';
+            }
+            class_name += ' grid-button';
+            return class_name;
         }
 
     });

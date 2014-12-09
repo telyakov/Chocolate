@@ -7,10 +7,10 @@ var ColumnsPropertiesCollection = (function (Backbone, $) {
             this.$obj = opts.$obj;
         },
         getRowColorColumnName: function () {
-            this.$obj.children('rowColorColumnName').html();
+            return this.$obj.children('rowColorColumnName').text();
         },
         getRowColorColumnNameAlternate: function () {
-            this.$obj.children('rowColorColumnNameAlternate').html();
+            return this.$obj.children('rowColorColumnNameAlternate').text();
         }
     });
 })(Backbone, jQuery);
