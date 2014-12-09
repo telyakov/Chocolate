@@ -7,7 +7,6 @@ var FastFilterRO = (function (FilterRO, helpersModule, optionsModule) {
             this.readProcEval(deferID);
             defer.done(function (data) {
                 var sql = data.sql;
-                console.log(sql);
                 mediator.publish(optionsModule.getChannel('socketRequest'), {
                     query: sql,
                     type: optionsModule.getRequestType('deferred'),

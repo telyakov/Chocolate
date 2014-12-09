@@ -172,7 +172,6 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
         bindModule.deferredBindSql(formsDeferID,  optionsModule.getSql('getForms'));
         rolesDefer.done(function (data) {
             var rolesSql = data.sql;
-            console.log(rolesSql);
             mediator.publish(requestChannel, {
                 query: rolesSql,
                 type: optionsModule.getRequestType('roles')
@@ -180,7 +179,6 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
         });
         formsDefer.done(function (data) {
             var formsSql = data.sql;
-            console.log(formsSql);
             mediator.publish(requestChannel, {
                 query: formsSql,
                 type: optionsModule.getRequestType('forms')

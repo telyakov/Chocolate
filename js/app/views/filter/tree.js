@@ -47,7 +47,6 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                         sql = sqlDefer.sql,
                         text = '',
                         filterProperties = model.getProperties();
-                    console.log(sql)
                     if (isVisible) {
                         var buttonId = helpersModule.uniqueID();
                         text = _this.template({

@@ -13,7 +13,6 @@ var phoneModule = (function (optionsModule, userModule, bindModule, mediator) {
             bindModule.deferredBindSql(sqlDeferID, optionsModule.getSql('makeCall'), data);
             sqlDefer.done(function (data) {
                 var sql = data.sql;
-                console.log(sql);
                 mediator.publish(optionsModule.getChannel('socketRequest'), {
                     query: sql
                 });

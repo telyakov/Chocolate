@@ -280,7 +280,6 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                         bindModule.deferredBindSql(sqlDeferID, sql);
                         sqlDefer.done(function (data) {
                             var sql = data.sql;
-                            console.log(sql);
                             mediator.publish(optionsModule.getChannel('socketRequest'), {
                                 query: sql,
                                 type: optionsModule.getRequestType('deferred'),

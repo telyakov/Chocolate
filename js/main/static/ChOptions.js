@@ -48,6 +48,7 @@ var ChOptions = {
         getRoles: 'core.UserRolesGet [userid]',
         getServices: 'Tasks.ServicesGet',
         makeCall: 'crm.makeCall [userid], [phoneto]',
+        getProcParams: 'dbo.uspGetProcParameters [name], [schema]',
         getExecutors: 'tasks.uspGetUsersListForTasksUsers',
         types: {
             mainForm: 'main_form',

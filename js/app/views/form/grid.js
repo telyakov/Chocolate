@@ -140,19 +140,24 @@ var GridView = (function (Backbone) {
             facade.getFactoryModule().makeChTable($table).initScript();
         },
         initData: function(){
-            //var sql = bindModule.bindSql(this.model.getReadProc());
-            //var optionsModule = facade.getOptionsModule();
-            //var defer = deferredModule.create(),
-            //    deferID = deferredModule.save(defer);
-            //mediator.publish(optionsModule.getChannel('socketRequest'), {
-            //    query: sql,
-            //    type:  optionsModule.getRequestType('chFormRefresh'),
-            //    id: deferID
-            //});
-            //defer.done(function(res){
-            //    console.log(res)
-            //});
+            var defer = deferredModule.create(),
+                deferID = deferredModule.save(defer),
+                model = this.model;
+            model.readProcEval(deferID);
+            defer.done(function(data){
+                var sql = data.sql;
+                var deferRead = deferredModule.create(),
+                    deferReadID = deferredModule.save(deferRead);
+                mediator.publish(optionsModule.getChannel('socketRequest'), {
+                    query: sql,
+                    type:  optionsModule.getRequestType('chFormRefresh'),
+                    id: deferReadID
+                });
+                deferRead.done(function(data){
+                    console.log(data);
+                });
 
+            });
         },
         layoutFooter: function ($form) {
             $form.after(this.footerTemplate());
