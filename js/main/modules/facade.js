@@ -134,14 +134,19 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
                     dnt.generateContent($el.data().ChDynatree.options, resData);
                     break;
                 case optionsModule.getRequestType('chFormRefresh'):
-                    var form = factoryModule.makeChGridForm($('#' + data.id)),
-                        reg = /"(.*?)":\{.*?\}.?/gim,
+                    //todo: migrate ro defer
+                    var reg = /"(.*?)":\{.*?\}.?/gim,
                         matches,
                         order = [];
                     while ((matches = reg.exec(data.data)) !== null) {
                         order.push(matches[1]);
                     }
-                    form.updateData(resData, order);
+                    defer = deferredModule.pop(data.id);
+                    defer.resolve({
+                        order: order,
+                        data:  resData
+                    });
+                    //form.updateData(resData, order);
                     break;
                 case deferredType:
                     defer = deferredModule.pop(data.id);
@@ -159,15 +164,27 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
 
     mediator.subscribe(optionsModule.getChannel('setIdentity'), function (id, name) {
         storageModule.saveUser(id, name);
-        var rolesSql = bindModule.bindSql(optionsModule.getSql('getRoles')),
-            formsSql = bindModule.bindSql(optionsModule.getSql('getForms'));
-        mediator.publish(requestChannel, {
-            query: rolesSql,
-            type: optionsModule.getRequestType('roles')
+        var rolesDefer = deferredModule.create(),
+            rolesDeferID = deferredModule.save(rolesDefer),
+            formsDefer = deferredModule.create(),
+            formsDeferID = deferredModule.save(formsDefer);
+        bindModule.deferredBindSql(rolesDeferID,  optionsModule.getSql('getRoles'));
+        bindModule.deferredBindSql(formsDeferID,  optionsModule.getSql('getForms'));
+        rolesDefer.done(function (data) {
+            var rolesSql = data.sql;
+            console.log(rolesSql);
+            mediator.publish(requestChannel, {
+                query: rolesSql,
+                type: optionsModule.getRequestType('roles')
+            });
         });
-        mediator.publish(requestChannel, {
-            query: formsSql,
-            type: optionsModule.getRequestType('forms')
+        formsDefer.done(function (data) {
+            var formsSql = data.sql;
+            console.log(formsSql);
+            mediator.publish(requestChannel, {
+                query: formsSql,
+                type: optionsModule.getRequestType('forms')
+            });
         });
     });
     mediator.subscribe(setRolesChannel, function (roles) {

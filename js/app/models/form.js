@@ -224,6 +224,9 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         },
         isAttachmentSupport: function(){
             return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);
+        },
+        getReadProc: function(){
+            return this.getDataFormProperties().getReadProc();
         }
 
     });

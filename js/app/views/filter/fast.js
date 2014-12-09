@@ -95,13 +95,30 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                             if (value) {
                                 //this.model.set('value', value);
                                 var refreshDf = deferredModule.create(),
-                                    refreshDeferId = deferredModule.save(refreshDf),
-                                    query = _this.model.getReadProc({'parentfilter.id': value});
-                                mediator.publish(optionsModule.getChannel('socketRequest'),{
-                                    query: query,
-                                    type: optionsModule.getRequestType('deferred'),
-                                    id: refreshDeferId
+                                    refreshDeferId = deferredModule.save(refreshDf);
+                                //    query = _this.model.getReadProc({'parentfilter.id': value});
+                                //mediator.publish(optionsModule.getChannel('socketRequest'),{
+                                //    query: query,
+                                //    type: optionsModule.getRequestType('deferred'),
+                                //    id: refreshDeferId
+                                //});
+
+
+                                var defer = deferredModule.create(),
+                                    deferID = deferredModule.save(defer);
+                                this.readProcEval(deferID, {'parentfilter.id': value});
+                                defer.done(function (data) {
+                                    var sql = data.sql;
+                                    console.log(sql);
+                                    mediator.publish(optionsModule.getChannel('socketRequest'),{
+                                        query: sql,
+                                        type: optionsModule.getRequestType('deferred'),
+                                        id: refreshDeferId
+                                    });
                                 });
+
+
+
                                 $.when(refreshDf).done(function(res){
                                     var data = res.data;
                                     var prepareData2 = [],

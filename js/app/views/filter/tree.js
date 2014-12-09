@@ -30,18 +30,24 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 multiSelectId = deferredModule.save(multiSelectDf),
                 enabledId = deferredModule.save(enabledDf);
 
+            var defer = deferredModule.create(),
+                deferID = deferredModule.save(defer);
+            model.readProcEval(deferID);
+
             model.isVisibleEval(visibleId);
             model.isEnabledEval(enabledId);
             model.isMultiSelectEval(multiSelectId);
             model.isNextRowEval(nextRowId);
-            $.when(visibleDf, enabledDf, nextRowDf, multiSelectDf)
-                .done(function (visible, enabled, nextRow, multiSelect) {
+            $.when(visibleDf, enabledDf, nextRowDf, multiSelectDf, defer)
+                .done(function (visible, enabled, nextRow, multiSelect, sqlDefer) {
                     var isDisabled = !enabled.value,
                         isVisible = visible.value,
                         isNextRow = nextRow.value,
                         isMultiSelect = multiSelect.value,
+                        sql = sqlDefer.sql,
                         text = '',
                         filterProperties = model.getProperties();
+                    console.log(sql)
                     if (isVisible) {
                         var buttonId = helpersModule.uniqueID();
                         text = _this.template({
@@ -65,7 +71,7 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                             },
                             opts = $.extend({}, defaultOpts, {
                                 children: [],
-                                sql: model.getReadProc(),
+                                sql: sql,
                                 expand_nodes: filterProperties.get('expandNodes'),
                                 select_all: filterProperties.get('selectAllNodes'),
                                 restore_state: filterProperties.get('restoreState'),

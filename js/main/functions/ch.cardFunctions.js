@@ -109,21 +109,28 @@ var ch ={
                     $context.html(elemText);
                     $context.unbind('click');
                     if(isAllowEdit){
-                        sql = facade.getBindModule().bindSql(sql, cardElement.getCard().getActualDataObj());
-                        $context.uniqueId();
+                        var sqlDefer = deferredModule.create(),
+                            sqlDeferID = deferredModule.save(sqlDefer);
+                        bindModule.deferredBindSql(sqlDeferID, sql, cardElement.getCard().getActualDataObj());
+                        sqlDefer.done(function (data) {
+                            var sql = data.sql;
+                            $context.uniqueId();
                             //todo: leak memory
-                        $context.on('click', function(){
-                            var chEditable = new ChEditable($context),
-                                dynatreeElem = new ChDynatree($context),
-                                options = chFunctions.treeViewOptions($context, isSingle);
-                            options.children =  null;
-                            options.sql = sql;
-                            options.getTitleValue= function (node) {return node.name;};
-                            options.okButton = ch.card.treeView._okButton();
-                            options.title = chEditable.getTitle($context.attr('data-pk'), caption);
-                            options.defaultValues = function(){return this.data().editable.value};
-                            dynatreeElem.buildFromSql(options);
+                            $context.on('click', function(){
+                                var chEditable = new ChEditable($context),
+                                    dynatreeElem = new ChDynatree($context),
+                                    options = chFunctions.treeViewOptions($context, isSingle);
+                                options.children =  null;
+                                options.sql = sql;
+                                options.getTitleValue= function (node) {return node.name;};
+                                options.okButton = ch.card.treeView._okButton();
+                                options.title = chEditable.getTitle($context.attr('data-pk'), caption);
+                                options.defaultValues = function(){return this.data().editable.value;};
+                                dynatreeElem.buildFromSql(options);
+                            });
                         });
+
+
                     }else{
                         cardElement.markAsNoChanged();
                     }

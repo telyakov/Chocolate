@@ -274,12 +274,18 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                     } else {
                         var posSql = posEqualSign + 1,
                             sql = $.trim(prepareExpr.substr(posSql));
-                        sql = bindModule.bindSql(sql);
-                        console.log(sql)
-                        mediator.publish(optionsModule.getChannel('socketRequest'), {
-                            query: sql,
-                            type: optionsModule.getRequestType('deferred'),
-                            id: deferId
+
+                        var sqlDefer = deferredModule.create(),
+                            sqlDeferID = deferredModule.save(sqlDefer);
+                        bindModule.deferredBindSql(sqlDeferID, sql);
+                        sqlDefer.done(function (data) {
+                            var sql = data.sql;
+                            console.log(sql);
+                            mediator.publish(optionsModule.getChannel('socketRequest'), {
+                                query: sql,
+                                type: optionsModule.getRequestType('deferred'),
+                                id: deferId
+                            });
                         });
                     }
                     break;

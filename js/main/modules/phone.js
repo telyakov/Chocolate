@@ -4,13 +4,19 @@ var phoneModule = (function (optionsModule, userModule, bindModule, mediator) {
         makeCall: function (to) {
 
             var data = {
-                    userid: userModule.getID(),
-                    phoneto: to
-                },
-                sql = bindModule.bindSql(optionsModule.getSql('makeCall'), data);
+                userid: userModule.getID(),
+                phoneto: to
+            };
 
-            mediator.publish(optionsModule.getChannel('socketRequest'), {
-               query:  sql
+            var sqlDefer = deferredModule.create(),
+                sqlDeferID = deferredModule.save(sqlDefer);
+            bindModule.deferredBindSql(sqlDeferID, optionsModule.getSql('makeCall'), data);
+            sqlDefer.done(function (data) {
+                var sql = data.sql;
+                console.log(sql);
+                mediator.publish(optionsModule.getChannel('socketRequest'), {
+                    query: sql
+                });
             });
         }
     };

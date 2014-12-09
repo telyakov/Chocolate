@@ -30,8 +30,8 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         isMultiSelectEval: function(deferID){
             return  helpersModule.boolExpressionEval(this.get('filter').getMultiSelect(), deferID, false);
         },
-        getReadProc: function(data){
-            return bindModule.bindSql(this.get('filter').getReadProc(), data);
+        readProcEval: function(deferID, data){
+            bindModule.deferredBindSql(deferID, this.get('filter').getReadProc(), data);
         },
         isVisibleEval: function(deferID){
             return helpersModule.boolExpressionEval(this.get('filter').getVisible(), deferID, true);

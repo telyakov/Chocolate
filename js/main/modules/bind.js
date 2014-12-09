@@ -15,7 +15,7 @@ var bindModule = (function (userModule, undefined) {
                 var expr = '\\[' + key + '\\]';
                 return new RegExp(expr, 'gi');
             },
-            createDataSearch: function(){
+            createDataSearch: function () {
                 return (/\[.*?\]/g);
             },
             bindCardSql: function (sql, card) {
@@ -28,34 +28,30 @@ var bindModule = (function (userModule, undefined) {
                     .replace(search(keys.entityTypeID), entityTypeID)
                     .replace(search(keys.entityType), entityTypeID);
             },
-            bindFromData: function (sql, data) {
+            bindFromData: function (deferId, sql, data) {
                 var search = _private.createDataSearch();
-                return sql.replace(search, function (param) {
+                var prepareSql = sql.replace(search, function (param) {
                     var prop = param.substring(1, param.length - 1).toLowerCase();
                     if (data.hasOwnProperty(prop)) {
-                        return "'"+ data[prop] + "'";
+                        return "'" + data[prop] + "'";
                     }
                     return param;
                 });
+                deferredModule.pop(deferId).resolve({
+                    sql:prepareSql
+                });
             },
-            bindSql: function (sql) {
+            bindSql: function (deferId, sql) {
                 var search = _private.createKeySearch(keys.userID);
-                return sql
+                var prepareSql = sql
                     .replace(search, userModule.getID());
+
+                deferredModule.pop(deferId).resolve({
+                    sql:prepareSql
+                });
             }
         };
     return {
-        /**
-         * @param sql {string}
-         * @param data {Object}
-         * @returns {string}
-         */
-        bindSql: function (sql, data) {
-            if (data === undefined) {
-                return _private.bindSql(sql);
-            }
-            return _private.bindFromData(sql, data);
-        },
         /**
          * @param sql {string}
          * @param card {ChCard}
@@ -63,6 +59,12 @@ var bindModule = (function (userModule, undefined) {
          */
         bindCardSql: function (sql, card) {
             return _private.bindCardSql(sql, card);
+        },
+        deferredBindSql: function (deferId, sql, data) {
+            if (data === undefined) {
+                return _private.bindSql(deferId, sql);
+            }
+            return _private.bindFromData(deferId, sql, data);
         }
     };
 })(userModule, undefined);
