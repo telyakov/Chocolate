@@ -30,6 +30,9 @@ ChTextColumn.prototype.create = function (context, e, allowEdit, name, caption, 
         $(context).unbind('click');
         column.markAsNoChanged();
     }
+    if(isMarkupSupport === true){
+        isMarkupSupport = 1;
+    }
     var $modalBtn = $("<div class='grid-modal-open form-modal-button'></div>")
         .attr('data-edit', +isEdit)
         .attr('data-name', name)

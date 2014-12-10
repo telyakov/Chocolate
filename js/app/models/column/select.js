@@ -21,7 +21,7 @@ var SelectColumnRO = (function (Backbone, helpersModule, FilterProperties, bindM
                             });
                         }
                     }
-                    var $elements = $cnt.find('[rel$="' + _this.get('key') + '"]');
+                    var $elements = $cnt.find('[rel$="_' + _this.get('key') + '"]');
                     $elements
                         .on('init', function () {
                             chFunctions.selectColumnInitFunc($(this), allowEdit);
