@@ -19,17 +19,21 @@ var ColumnProperties = (function (Backbone) {
         getAllowEdit: function () {
             return this.get('$obj').children('allowEdit').text();
         },
-        getToName: function () {
-            return this.get('$obj').children('toName').text();
-        },
+
         getViewBind: function () {
             return this.get('$obj').children('viewBind').text();
         },
         getFromName: function () {
             return this.get('$obj').children('fromName').text();
         },
+        getToName: function () {
+            return this.get('$obj').children('toName').text();
+        },
         getFromId: function () {
             return this.get('$obj').children('fromId').text();
+        },
+        getToId: function () {
+            return this.get('$obj').children('toId').text().toLowerCase();
         },
         getKey: function () {
             return this.get('$obj').children('key').text().toLowerCase();
@@ -47,9 +51,6 @@ var ColumnProperties = (function (Backbone) {
         },
         getCardEditType: function () {
             return  $.trim(this.get('$obj').children('cardEditType').text().toLowerCase());
-        },
-        getToId: function () {
-            return this.get('$obj').children('toId').text().toLowerCase();
         },
         getRequired: function () {
             return this.get('$obj').children('required').text();

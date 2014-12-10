@@ -16,6 +16,44 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             }
             return this._column_custom_properties;
         },
+        evalReadProc: function(deferId){
+            var sql = this.get('columnProperties').getDataSource();
+            if(sql){
+                var dataDefer = deferredModule.create(),
+                    dateDeferID = deferredModule.save(dataDefer);
+                bindModule.deferredBindSql(dateDeferID, sql);
+                dataDefer.done(function(res){
+                    var prepareSql = res.sql;
+                    mediator.publish(optionsModule.getChannel('socketRequest'), {
+                        query: prepareSql,
+                        type: optionsModule.getRequestType('deferred'),
+                        id: deferId
+                    });
+                });
+            }else{
+                deferredModule.pop(deferId).resolve({data: {}});
+            }
+
+        },
+        getVisibleCaption: function () {
+            var caption = this.getCaption();
+            return caption || this.getHeaderImage() ? caption : this.get('key');
+        },
+        getView: function(){
+            return this.get('columnProperties').getViewName();
+        },
+        getFromName: function () {
+            return this.get('columnProperties').getFromName();
+        },
+        getToName: function () {
+            return this.get('columnProperties').getToName();
+        },
+        getFromId: function () {
+            return this.get('columnProperties').getFromId();
+        },
+        getToId: function () {
+            return this.get('columnProperties').getToId();
+        },
         getTemplate: function () {
             var template = ChGridForm.TEMPLATE_TD;
             //todo: видимость перенести в модель, пока что убрана
@@ -33,14 +71,15 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             }
             return class_name;
         },
-        getRawAllowEdit: function(){
+        getRawAllowEdit: function () {
             return this.get('columnProperties').getAllowEdit();
         },
         isEdit: function () {
             return helpersModule.boolEval(this.get('columnProperties').getAllowEdit(), true);
         },
         getJsFn: function ($cnt) {
-            return function () {};
+            return function () {
+            };
         },
         getEditType: function () {
             return this.get('columnProperties').getEditType();
