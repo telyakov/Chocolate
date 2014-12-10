@@ -163,6 +163,8 @@ var GridView = (function (Backbone) {
                 deferRead.done(function (data) {
                     var order = data.order,
                         recordset = data.data;
+                    form.saveInStorage(recordset, {}, {}, {}, {} , order);
+
                     var html = _this.generateRows(recordset, order, sortedColumnCollection, form);
 
                     var $table = form.getTable();
@@ -245,22 +247,12 @@ var GridView = (function (Backbone) {
                 keyColorCol = this.model.getKeyColorColumnName(),
                 rowClass = '';
             if (colorCol && data[colorCol]) {
-                var decColor = parseInt(data[colorCol], 10),
-                    hexColor = decColor.toString(16);
-                if (hexColor.length < 6) {
-                    while (hexColor.length < 6) {
-                        hexColor += '0' + hexColor;
-                    }
-                }
-                var R = [hexColor.charAt(4), hexColor.charAt(5)].join(''),
-                    G = [hexColor.charAt(2), hexColor.charAt(3)].join(''),
-                    B = [hexColor.charAt(0), hexColor.charAt(1)].join('');
-                style = ['style="background:#', R, G, B, '"'].join('');
+                var correctColor ; helpersModule.decToHeh(data[colorCol]);
+                style = ['style="background:#', correctColor,  '"'].join('');
             }
             if (keyColorCol && data[keyColorCol]) {
                 idClass = ' td-red';
             }
-            //
             if (form.chFormSettings.getGlobalStyle() === 2) {
                 rowClass = 'class="ch-mobile"';
             }
@@ -278,7 +270,7 @@ var GridView = (function (Backbone) {
 
             var key, _this = this;
             columns.forEach(function (item) {
-
+                key = item.get('key');
                 var value = '', class2 = '',
                     rel = [form.getUserGridID(), key].join('_');
                 if (data[key] !== undefined && (key !== 'id' || isNumericID )) {

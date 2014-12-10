@@ -8,6 +8,28 @@ var AttachmentColumnRO = (function (Backbone) {
         isEdit: function () {
             return true;
         },
+        getJsFn: function ($cnt) {
+            var _this = this;
+            return function () {
+                $cnt.find('[rel$="' + _this.getKey() + '"]').editable({
+                    type: 'text',
+                    mode: 'inline',
+                    name: _this.getKey(),
+                    showbuttons: false,
+                    disabled: true,
+                    title: _this.getCaption(),
+                    view: _this.getView(),
+                    fromID: null,
+                    fromName: null,
+                    toName: null,
+                    toID: null
+
+                });
+            };
+        },
+        getView: function () {
+            return 'attachments.xml';
+        },
         initialize: function () {
             this.set('key', this.getKey());
         },

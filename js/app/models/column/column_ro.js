@@ -6,11 +6,21 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             id: null,
             key: null
         },
+        _column_custom_properties: null,
+        getColumnCustomProperties: function () {
+            if (this._column_custom_properties === null) {
+                this._column_custom_properties = new ColumnCustomProperties({
+                        expression: this.get('columnProperties').getProperties()
+                    }
+                );
+            }
+            return this._column_custom_properties;
+        },
         getTemplate: function () {
             var template = ChGridForm.TEMPLATE_TD;
             //todo: видимость перенести в модель, пока что убрана
             //if ($cell.css('display') !== "none") {
-                template = template.replace('style', '');
+            template = template.replace('style', '');
             //} else {
             //    template = template.replace('style', 'style="display:none;"');
             //}
@@ -23,14 +33,14 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             }
             return class_name;
         },
-
+        getRawAllowEdit: function(){
+            return this.get('columnProperties').getAllowEdit();
+        },
         isEdit: function () {
             return helpersModule.boolEval(this.get('columnProperties').getAllowEdit(), true);
         },
         getJsFn: function ($cnt) {
-            return function () {
-                //console.log($cnt);
-            };
+            return function () {};
         },
         getEditType: function () {
             return this.get('columnProperties').getEditType();
@@ -57,6 +67,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         isVisibleInAllField: function () {
             return helpersModule.boolEval(this.get('columnProperties').getAllFields(), false);
         },
+
         getHeaderOptions: function () {
             var options = {};
             options['data-id'] = this.get('key');

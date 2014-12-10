@@ -336,8 +336,19 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                 });
 
             }
-
-
+        },
+        decToHeh: function(dec){
+            var decColor = parseInt(dec, 10),
+                hexColor = decColor.toString(16);
+            if (hexColor.length < 6) {
+                while (hexColor.length < 6) {
+                    hexColor += '0' + hexColor;
+                }
+            }
+            var R = [hexColor.charAt(4), hexColor.charAt(5)].join(''),
+                G = [hexColor.charAt(2), hexColor.charAt(3)].join(''),
+                B = [hexColor.charAt(0), hexColor.charAt(1)].join('');
+            return [R, G, B].join('');
         },
         init: function () {
             context.init();
