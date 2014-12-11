@@ -45,6 +45,12 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
                             $el: $('#tabs')
                         });
                         break;
+                    case optionsModule.getRequestType('deferred'):
+                        var defer = deferredModule.pop(data.id);
+                        defer.resolve({
+                            data: $xml
+                        });
+                        break;
                     default :
                         break;
 
@@ -57,8 +63,34 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
         socketModule.emit('fileRequest', data);
     });
 
-    mediator.subscribe(optionsModule.getChannel('openForm'), function (url) {
-        helpersModule.openForm(url);
+    mediator.subscribe(optionsModule.getChannel('openForm'), function (opts) {
+        var view = opts.view,
+            parentModel = opts.parentModel,
+            parentID = opts.parentID;
+        if(view.indexOf('.xml') === -1){
+            view = view + '.xml';
+        }
+        var defer = deferredModule.create(),
+            deferID = deferredModule.save(defer);
+        var data = {
+            key: optionsModule.getSetting('key'),
+            type: optionsModule.getRequestType('deferred'),
+            name: view,
+            id: deferID
+        };
+    socketModule.emit('xmlRequest', data);
+        defer.done(function(res){
+            var $xml = res.data;
+            var model = new FormModel({
+                $xml: $xml,
+                parentModel: parentModel,
+                parentId: parentID
+            });
+            var view = new FormView({
+                model: model,
+                $el: $('#tabs')
+            });
+        });
     });
 
     mediator.subscribe(optionsModule.getChannel('socketFileResponse'), function (data) {

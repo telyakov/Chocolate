@@ -30,19 +30,48 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             }
             this.render();
         },
-        events: {},
-
+        events: {
+            'click .grid-button .editable': 'openChildForm'
+        },
+        openChildForm: function (e) {
+            var main = chApp.namespace('main'),
+                $editable = $(e.target);
+            var options = $editable.data().editable.options,
+                view = options.view,
+                column = facade.getFactoryModule().makeChGridColumnBody($editable),
+                form = column.getChForm(),
+                parentID = column.getID(),
+                isNew = !$.isNumeric(parentID),
+                parentView = form.getView(),
+                tabID = ChGridColumn.createChildGridTabID(parentID, view, parentView),
+                $tabs = main.$tabs,
+                $currentTab = $tabs.find("[aria-controls='" + tabID + "']"),
+                toID = options.toID,
+                toName = options.toName,
+                fromID = options.fromID,
+                fromName = options.fromName,
+                isSelect = '';
+            if (toID && toName && fromName && fromID) {
+                isSelect = 1;
+            }
+            Chocolate.leaveFocus();
+            mediator.publish(optionsModule.getChannel('openForm'), {
+                view: view ,
+                parentModel: this.model,
+                parentID: parentID
+            });
+        },
         render: function () {
             var $panel = this.createPanel(),
                 _this = this,
                 panelDefer = $.Deferred();
             this.layoutHeader($panel);
             this.layoutFilters($panel, panelDefer);
-            $.when(panelDefer).done(function(){
-                setTimeout(function(){
+            $.when(panelDefer).done(function () {
+                setTimeout(function () {
 
-                _this.layoutFormSection($panel);
-                mediator.publish(optionsModule.getChannel('reflowTab'));
+                    _this.layoutFormSection($panel);
+                    mediator.publish(optionsModule.getChannel('reflowTab'));
                 }, 17);
 
             });
@@ -82,20 +111,20 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
         layoutFilters: function ($panel, panelDefer) {
             var _this = this;
             if (this.model.hasFilters()) {
-                var $filterSection = $('<section>',{
+                var $filterSection = $('<section>', {
                     'class': 'section-filters',
                     'data-id': 'filters'
                 });
                 $panel.append($filterSection);
                 var html = [],
-                    callbacks= [],
+                    callbacks = [],
                     event = 'render_' + helpersModule.uniqueID(),
                     ROCollections = this.model.getFiltersROCollection(),
                     length = ROCollections.length,
                     asyncTaskCompleted = 0;
                 $.subscribe(event, function (e, data) {
                     html[data.counter] = data.text;
-                    if(data.callback){
+                    if (data.callback) {
                         callbacks.push(data.callback);
                     }
                     asyncTaskCompleted++;
@@ -106,7 +135,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                                 html: '<div><ul class="filters-list">' + html.join('') + '</div></ul></div>'
                             })
                         );
-                        callbacks.forEach(function(fn){
+                        callbacks.forEach(function (fn) {
                             fn();
                         });
                         panelDefer.resolve();
@@ -128,11 +157,10 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             $panel.append($formSection);
             var ViewClass = this.model.getFormView(),
                 view = new ViewClass({
-                    $el:$formSection,
+                    $el: $formSection,
                     model: this.model,
                     dataParentId: this.dataParentId
                 });
-
 
         }
     });

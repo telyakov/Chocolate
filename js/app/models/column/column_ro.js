@@ -18,6 +18,9 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         },
         evalReadProc: function(deferId){
             var sql = this.get('columnProperties').getDataSource();
+            if(!sql){
+                sql = this.get('columnProperties').getFromDataSource();
+            }
             if(sql){
                 var dataDefer = deferredModule.create(),
                     dateDeferID = deferredModule.save(dataDefer);
@@ -99,7 +102,9 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         isRequired: function () {
             return helpersModule.boolEval(this.get('columnProperties').getRequired(), false);
         },
-
+        getFromKey: function(){
+            return this.get('columnProperties').getKey();
+        },
         getCaption: function () {
             return this.get('columnProperties').getCaption();
         },

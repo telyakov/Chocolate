@@ -62,8 +62,11 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                     return MapView;
                 case 'sales\\flatsgramm':
                     return CanvasView;
-                case 'atachments':
+                case 'attachments':
                     return AttachmentView;
+                case 'directory\\discussions':
+                    return DiscussionView;
+
                 default :
                     return GridView;
             }

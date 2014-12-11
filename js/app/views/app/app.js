@@ -143,14 +143,17 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
 
             var host = location.host.toLowerCase(),
                 path = location.pathname.toLowerCase(),
-                tasksUrl;
+                tasksName;
             if (host === optionsModule.getUrl('bp')) {
-                tasksUrl = optionsModule.getConstants('tasksForTopsXml');
+                tasksName = optionsModule.getConstants('tasksForTopsXml');
             } else {
-                tasksUrl = optionsModule.getConstants('tasksXml');
+                tasksName = optionsModule.getConstants('tasksXml');
             }
             if (host !== '10.0.5.2' && path !== optionsModule.getUrl('openFromEmail')) {
-                mediator.publish(optionsModule.getChannel('openForm'), tasksUrl);
+                mediator.publish(optionsModule.getChannel('xmlRequest'), {
+                    name:tasksName,
+                    type: optionsModule.getRequestType('childForm')
+                });
             }
 
             var options = {
@@ -159,7 +162,7 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
                 items: [
                     {
                         label: 'Поручения',
-                        url: tasksUrl,
+                        url: tasksName,
                         'class': 'link-form'
                     },
                     {

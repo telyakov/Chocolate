@@ -41,7 +41,6 @@ var ChocolateEvents = {
         this.formMenuButtonEvent($tabs);
         this.makeCallEvent($body);
         this.preventDefaultBrowserEvents($window);
-        this.openChildGridEvent($tabs);
         this.keyActionsCardEvent($tabs);
         this.deselectTreeElementEvent($body);
         this.modalFormElementEvent($content);
@@ -342,9 +341,6 @@ var ChocolateEvents = {
             return false;
         }
     },
-    openChildGridEvent: function ($context) {
-        $context.on('click', '.grid-button', this.openChildGridHandler);
-    },
     openChildGridHandler: function () {
         var main = chApp.namespace('main'),
             $editable = $(this).find('.editable'),
@@ -357,7 +353,7 @@ var ChocolateEvents = {
             parentView = form.getView(),
             tabID = ChGridColumn.createChildGridTabID(parentID, view, parentView),
             $tabs = main.$tabs,
-            template = form.getFmChildGridCollection().getCardTemplate(view, parentView, isNew),
+        template = form.getFmChildGridCollection().getCardTemplate(view, parentView, isNew),
             $currentTab = $tabs.find("[aria-controls='" + tabID + "']"),
             toID = options.toID,
             toName = options.toName,
@@ -373,8 +369,8 @@ var ChocolateEvents = {
         } else {
             var caption = [options.title, ' [', parentID, ']'].join('');
             facade.getTabsModule().addAndSetActive(tabID, caption);
-            if (template === null) {
-                var urls = chApp.getOptions().urls;
+        if (template === null) {
+            var urls = chApp.getOptions().urls;
                 $.get(urls.childGrid, {
                     view: view,
                     jsonFilters: JSON.stringify({filters: {ParentID: parentID}}),
@@ -432,12 +428,12 @@ var ChocolateEvents = {
                             er
                         );
                     });
-            } else {
-                $('<div></div>')
-                    .attr('id', tabID)
-                    .appendTo($tabs)
-                    .html(facade.getHelpersModule().layoutTemplate(template, parentID));
-            }
+        } else {
+            $('<div></div>')
+                .attr('id', tabID)
+                .appendTo($tabs)
+                .html(facade.getHelpersModule().layoutTemplate(template, parentID));
+        }
         }
         return false;
     },
