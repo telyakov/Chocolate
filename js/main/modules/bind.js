@@ -93,24 +93,23 @@ var bindModule = (function (userModule, undefined) {
                 return params === null || $.isEmptyObject(params);
             },
             bindFromSqlParams: function (sql, sqlParams, data, isFull) {
-                var i, param, paramName;
+                var i, param, paramName, newParams = [];
                 for (i in sqlParams) {
                     if (sqlParams.hasOwnProperty(i)) {
                         param = sqlParams[i];
                         if (param.parameter_mode === 'IN') {
                             paramName = param.parameter_name.substring(1).toLowerCase();
                             if (paramName === 'userid') {
-                                sql += ' @' + paramName + '=' + userModule.getID();
+                                newParams.push(' @' + paramName + '=' + userModule.getID());
                             } else {
-
                                 if (data && data[paramName]) {
-                                    sql += ' @' + paramName + '=' + data[paramName];
+                                    newParams.push(' @' + paramName + '=' + "'" + data[paramName] + "'");
                                 }
                             }
                         }
                     }
                 }
-                return sql;
+                return sql + newParams.join(',');
             },
             bindSql: function (deferId, sql) {
                 var defer = _private.evalProcedureParameters(sql);
@@ -146,7 +145,7 @@ var bindModule = (function (userModule, undefined) {
             if (isFull === undefined) {
                 isFull = false;
             }
-            return _private.bindFromData(deferId, sql, isFull);
+            return _private.bindFromData(deferId, sql, data, isFull);
         }
     };
 })(userModule, undefined);

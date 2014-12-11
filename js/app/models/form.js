@@ -52,21 +52,35 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         getKey: function () {
             return this.getDataFormProperties().getKey();
         },
+        getKeyInLowerCase: function(){
+            return this.getKey().toLowerCase();
+        },
         getView: function () {
             return this.getKey() + '.xml';
         },
-        getFormView: function () {
-            var key = this.getKey().toLowerCase();
-            switch (key) {
-                case 'crm\\map':
-                    return MapView;
-                case 'sales\\flatsgramm':
-                    return CanvasView;
-                case 'attachments':
-                    return AttachmentView;
-                case 'directory\\discussions':
-                    return DiscussionView;
+        isCanvasView: function(){
+            return this.getKeyInLowerCase() === 'sales\\flatsgramm';
+        },
+        isMapView: function() {
+            return this.getKeyInLowerCase() ==='crm\\map';
+        },
+        isAttachmentView: function(){
+            return this.getKeyInLowerCase() ==='attachments';
+        },
+        isDiscussionView: function(){
+            return this.getKeyInLowerCase() ==='directory\\discussions';
 
+        },
+        getFormView: function () {
+            switch (true) {
+                case this.isMapView():
+                    return MapView;
+                case this.isCanvasView():
+                    return CanvasView;
+                case this.isAttachmentView():
+                    return AttachmentView;
+                case this.isDiscussionView():
+                    return DiscussionView;
                 default :
                     return GridView;
             }
@@ -93,8 +107,6 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 });
 
             }
-
-
             return this._columnsCollection;
         },
         getDataFormProperties: function () {
@@ -193,7 +205,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return this.getDataFormProperties().getStateProc();
         },
         hasFilters: function () {
-            return this.getFiltersCollections().length !== 0;
+            return this.getFiltersCollections().length !== 0 && !this.isDiscussionView();
         },
         getFiltersROCollection: function () {
             if (this._filter_ro_collection !== null) {
@@ -228,8 +240,25 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         isAttachmentSupport: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);
         },
+        getEntityTypeID: function(){
+            return this.getDataFormProperties().getAttachmentsEntityType();
+        },
+        getParentEntityTypeID: function(){
+            var parentModel = this.get('parentModel');
+            if(parentModel){
+                return parentModel.getEntityTypeID();
+            }else{
+                return null;
+            }
+        },
         readProcEval: function (deferID) {
-            bindModule.deferredBindSql(deferID, this.getDataFormProperties().getReadProc());
+            var data ={
+                entityid: this.get('parentId'),
+                parentid: this.get('parentId'),
+                entitytype: this.getParentEntityTypeID(),
+                entitytypeid: this.getParentEntityTypeID()
+            };
+            bindModule.deferredBindSql(deferID, this.getDataFormProperties().getReadProc(), data);
         },
         getKeyColorColumnName: function () {
             return this.getColumnsCollection().getRowColorColumnName();

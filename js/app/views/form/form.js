@@ -60,6 +60,8 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 parentModel: this.model,
                 parentID: parentID
             });
+            e.stopImmediatePropagation();
+
         },
         render: function () {
             var $panel = this.createPanel(),
@@ -83,6 +85,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 });
             this.$el.append($panel);
             facade.getTabsModule().addAndSetActive(id, this.model.getCaption());
+            this.delegateEvents();
             return $panel;
 
         },
@@ -146,14 +149,22 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     item.render(event, i, ROCollections);
                 });
 
+            }else{
+                panelDefer.resolve();
             }
 
         },
         layoutFormSection: function ($panel) {
-            var $formSection = $('<section>', {
-                'class': 'section-grid',
-                'data-id': 'grid-form'
-            });
+            var $formSection;
+            if(this.model.isDiscussionView()){
+                $formSection = $('<section>');
+            }else{
+                $formSection = $('<section>', {
+                    'class': 'section-grid',
+                    'data-id': 'grid-form'
+                });
+            }
+
             $panel.append($formSection);
             var ViewClass = this.model.getFormView(),
                 view = new ViewClass({
