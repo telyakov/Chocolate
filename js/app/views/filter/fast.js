@@ -98,7 +98,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                                     refreshDeferId = deferredModule.save(refreshDf);
                                 var defer = deferredModule.create(),
                                     deferID = deferredModule.save(defer);
-                                this.readProcEval(deferID, {'parentfilter.id': value});
+                                _this.model.readProcEval(deferID, {'parentfilter.id': value});
                                 defer.done(function (data) {
                                     var sql = data.sql;
                                     mediator.publish(optionsModule.getChannel('socketRequest'),{

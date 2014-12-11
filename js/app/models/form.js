@@ -165,6 +165,10 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             }
             return this._actionProperties;
         },
+        isCardSupport: function(){
+            console.log(this.getCardCollection().length)
+          return  this.getCardCollection().length > 0;
+        },
         getCardCollection: function () {
             if (this._card_collection) {
                 return this._card_collection;
