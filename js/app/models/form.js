@@ -52,24 +52,24 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         getKey: function () {
             return this.getDataFormProperties().getKey();
         },
-        getKeyInLowerCase: function(){
-            return this.getKey().toLowerCase();
-        },
         getView: function () {
             return this.getKey() + '.xml';
         },
-        isCanvasView: function(){
-            return this.getKeyInLowerCase() === 'sales\\flatsgramm';
+        isCanvasView: function () {
+            return this.getKey() === 'sales\\flatsgramm';
         },
-        isMapView: function() {
-            return this.getKeyInLowerCase() ==='crm\\map';
+        isMapView: function () {
+            return this.getKey() === 'crm\\map';
         },
-        isAttachmentView: function(){
-            return this.getKeyInLowerCase() ==='attachments';
+        isAttachmentView: function () {
+            return this.getKey() === 'attachmentstasks';
         },
-        isDiscussionView: function(){
-            return this.getKeyInLowerCase() ==='directory\\discussions';
-
+        isDiscussionView: function () {
+            return this.getKey() === 'directory\\discussions';
+        },
+        isNotSaved: function () {
+            var parentID = this.get('parentId');
+            return parentID && !$.isNumeric(parentID);
         },
         getFormView: function () {
             switch (true) {
@@ -240,19 +240,27 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         isAttachmentSupport: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);
         },
-        getEntityTypeID: function(){
+        getEntityTypeID: function () {
             return this.getDataFormProperties().getAttachmentsEntityType();
         },
-        getParentEntityTypeID: function(){
+        getParentEntityTypeID: function () {
+            var parentModel = this.get('parentModel');
+            if (parentModel) {
+                return parentModel.getEntityTypeID();
+            } else {
+                return null;
+            }
+        },
+        getParentView: function(){
             var parentModel = this.get('parentModel');
             if(parentModel){
-                return parentModel.getEntityTypeID();
+                return parentModel.getView();
             }else{
                 return null;
             }
         },
         readProcEval: function (deferID) {
-            var data ={
+            var data = {
                 entityid: this.get('parentId'),
                 parentid: this.get('parentId'),
                 entitytype: this.getParentEntityTypeID(),

@@ -910,13 +910,12 @@ ChGridForm.prototype._clearChangedObj = function () {
     }
     this.getSaveButton().removeClass('active')
 };
-ChGridForm.prototype.refresh = function () {
+ChGridForm.prototype.refresh = function (parentView) {
     var url = this.getRefreshUrl(),
-        parentView = this.getParentView(),
+        parentView = parentView? parentView :this.getParentView(),
         searchData = this.getSearchData(),
         chMessagesContainer = this.getMessagesContainer(),
         _this = this;
-
     $.ajax({
         url: url + '&ParentView=' + parentView,
         type: "POST",

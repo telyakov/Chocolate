@@ -139,13 +139,13 @@ var ch ={
         }
     },
     attachments: {
-        initData: function(id, isNewRow){
+        initData: function(id, isNewRow, parentView){
             $(function(){
                 var main = chApp.namespace('main');
                 var chTable = facade.getFactoryModule().makeChTable($(main.idSel(id)).find('table'));
                 chTable.initAttachmentScript();
                 if(!isNewRow){
-                    chTable.ch_form.refresh();
+                    chTable.ch_form.refresh(parentView);
                 }
             });
         },

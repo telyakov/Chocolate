@@ -1,6 +1,6 @@
 var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
     'use strict';
-    return Backbone.View.extend({
+    return AbstractView.extend({
         dataParentId: null,
         headerTemplate: _.template([
             '<section class="section-header" data-id="header">',
@@ -21,15 +21,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             '<%= html %>',
             '</div>'
         ].join('')),
-        initialize: function (options) {
-            _.bindAll(this, 'render');
-            this.$el = options.$el;
-            this.model = options.model;
-            if (options.dataParentId) {
-                this.dataParentId = options.dataParentId;
-            }
-            this.render();
-        },
         events: {
             'click .grid-button .editable': 'openChildForm'
         },
@@ -56,7 +47,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             }
             Chocolate.leaveFocus();
             mediator.publish(optionsModule.getChannel('openForm'), {
-                view: view ,
+                view: view,
                 parentModel: this.model,
                 parentID: parentID
             });
@@ -67,11 +58,18 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             var $panel = this.createPanel(),
                 _this = this,
                 panelDefer = $.Deferred();
+            if (this.model.isAttachmentView()) {
+                var $section = $('<section>', {
+                    'class': 'attachment-grid',
+                    id: helpersModule.uniqueID()
+                });
+                $panel.append($section);
+                $panel = $section;
+            }
             this.layoutHeader($panel);
             this.layoutFilters($panel, panelDefer);
             $.when(panelDefer).done(function () {
                 setTimeout(function () {
-
                     _this.layoutFormSection($panel);
                     mediator.publish(optionsModule.getChannel('reflowTab'));
                 }, 17);
@@ -90,23 +88,39 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
 
         },
         layoutHeader: function ($panel) {
-            if (this.model.hasHeader()) {
-                var asyncId = helpersModule.uniqueID(),
-                    image = facade.getImageAdapter().convert(this.model.getImage()),
+            var title;
+            if (this.model.isAttachmentView()) {
+                title = this.model.isNotSaved() ?
+                    '<b>Сохраните строку, перед добавлением вложения</b>':
+                    [
+                        '<b>Прикрепить файл</b> можно простым способом:',
+                        '<li><b>Перенести файл мышкой</b> в область этой страницы</li>',
+                        '<li><b>Нажать</b> кнопку <b>сохранить</b></li>'
+                    ].join('');
+                $panel.append(this.headerTemplate({
+                    image: '<span class="fa-paperclip"></span>',
+                    'title': title,
+                    'asyncId': null
+                }));
+            } else {
+                if (this.model.hasHeader()) {
+                    var asyncId = helpersModule.uniqueID(),
+                        image = facade.getImageAdapter().convert(this.model.getImage());
                     title = this.model.getHeaderText();
 
-                $panel.append(this.headerTemplate({
-                    'image': image,
-                    'title': title,
-                    'asyncId': asyncId
-                }));
-                var stateProcedure = this.model.getStateProc();
-                if (stateProcedure) {
-                    mediator.publish(optionsModule.getChannel('socketRequest'), {
-                        query: stateProcedure,
-                        type: optionsModule.getRequestType('jquery'),
-                        id: asyncId
-                    });
+                    $panel.append(this.headerTemplate({
+                        'image': image,
+                        'title': title,
+                        'asyncId': asyncId
+                    }));
+                    var stateProcedure = this.model.getStateProc();
+                    if (stateProcedure) {
+                        mediator.publish(optionsModule.getChannel('socketRequest'), {
+                            query: stateProcedure,
+                            type: optionsModule.getRequestType('jquery'),
+                            id: asyncId
+                        });
+                    }
                 }
             }
 
@@ -149,16 +163,16 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     item.render(event, i, ROCollections);
                 });
 
-            }else{
+            } else {
                 panelDefer.resolve();
             }
 
         },
         layoutFormSection: function ($panel) {
             var $formSection;
-            if(this.model.isDiscussionView()){
+            if (this.model.isDiscussionView()) {
                 $formSection = $('<section>');
-            }else{
+            } else {
                 $formSection = $('<section>', {
                     'class': 'section-grid',
                     'data-id': 'grid-form'

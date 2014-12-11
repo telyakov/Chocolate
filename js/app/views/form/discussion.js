@@ -1,6 +1,6 @@
 var DiscussionView = (function (Backbone) {
     'use strict';
-    return Backbone.View.extend({
+    return AbstractView.extend({
         template: _.template(
           [
               '<form id="<%= formID%>" class="discussion-form" data-parent-view="<%= parentView %>" data-parent-id="<%= parentID %>">',
@@ -13,17 +13,6 @@ var DiscussionView = (function (Backbone) {
               '</section>'
           ].join('')
         ),
-        initialize: function (options) {
-            _.bindAll(this, 'render');
-            this.$el = options.$el;
-            this.model = options.model;
-            if (options.dataParentId) {
-                this.dataParentId = options.dataParentId;
-            }
-            this.render();
-        },
-        events: {},
-
         render: function () {
             var parentModel = this.model.get('parentModel'),
                 parentID = this.model.get('parentId'),

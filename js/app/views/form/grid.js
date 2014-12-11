@@ -1,6 +1,6 @@
 var GridView = (function (Backbone) {
     'use strict';
-    return Backbone.View.extend({
+    return AbstractView.extend({
         template: _.template([
                 '<form action="/grid/save?view=<%=view %>" data-id="<%= view %>" id="<%= id%>"',
                 'data-parent-id="<%= parentID%>" ',
@@ -42,24 +42,6 @@ var GridView = (function (Backbone) {
                 '</a></div>'
             ].join('')
         ),
-        footerTemplate: _.template([
-                '<footer class="grid-footer" data-id="grid-footer">',
-                '<div class="footer-info" data-id="info"></div>',
-                '<div class="footer-counter"></div>',
-                '</footer>'
-            ].join('')
-        ),
-        initialize: function (options) {
-            _.bindAll(this, 'render');
-            this.$el = options.$el;
-            this.model = options.model;
-            if (options.dataParentId) {
-                this.dataParentId = options.dataParentId;
-            }
-            this.render();
-        },
-        events: {},
-
         render: function () {
             var formId = helpersModule.uniqueID(),
                 html = this.template({
