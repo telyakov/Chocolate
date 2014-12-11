@@ -71,7 +71,9 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             $.when(panelDefer).done(function () {
                 setTimeout(function () {
                     _this.layoutFormSection($panel);
-                    mediator.publish(optionsModule.getChannel('reflowTab'));
+                    if (!_this.model.isMapView()) {
+                        mediator.publish(optionsModule.getChannel('reflowTab'));
+                    }
                 }, 17);
 
             });
@@ -91,7 +93,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             var title;
             if (this.model.isAttachmentView()) {
                 title = this.model.isNotSaved() ?
-                    '<b>Сохраните строку, перед добавлением вложения</b>':
+                    '<b>Сохраните строку, перед добавлением вложения</b>' :
                     [
                         '<b>Прикрепить файл</b> можно простым способом:',
                         '<li><b>Перенести файл мышкой</b> в область этой страницы</li>',
