@@ -312,7 +312,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                         defaultKey = 'dataform.defvalues';
                     switch (true) {
                         case prepareCmd === 'dataform.refreshdata':
-                            model.trigger('refresh:form', {lazy: true});
+                            model.trigger('refresh:form', {isLazy: true});
                             break;
                         case prepareCmd.indexOf(defaultKey) === 0:
                             var args = prepareCmd.substr(defaultKey.length + 1),

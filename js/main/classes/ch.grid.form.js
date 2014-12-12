@@ -53,15 +53,15 @@ ChGridForm.prototype.getExitMessage = function () {
 ChGridForm.prototype.removeSelectedRows = function () {
     this.removeRows(this.getSelectedRows());
 };
-ChGridForm.prototype.LazyRefresh = function (model) {
-    if (this.refreshTimerID) {
-        clearTimeout(this.refreshTimerID);
-    }
-    var _this = this;
-    this.refreshTimerID = setTimeout(function () {
-        _this.refresh();
-    }, 900);
-};
+//ChGridForm.prototype.LazyRefresh = function (model) {
+//    if (this.refreshTimerID) {
+//        clearTimeout(this.refreshTimerID);
+//    }
+//    var _this = this;
+//    this.refreshTimerID = setTimeout(function () {
+//        _this.refresh();
+//    }, 900);
+//};
 ChGridForm.prototype.addPriorityColorAndApply = function (id, priority, color) {
     var priorities = this.priorityColorCol[id];
     if (typeof priorities == 'undefined') {

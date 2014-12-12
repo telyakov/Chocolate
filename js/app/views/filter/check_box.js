@@ -7,8 +7,8 @@ var CheckBoxView = (function (Backbone, $, helpersModule, FilterView, deferredMo
             '<div class="checkbox-filter" title="<%= tooltip %>">',
             '<label for="<%= id %>"><%= caption %></label>',
             '<div id="<%= id %>">',
-            '<input type="hidden" value="0" name="GridForm[filters][<%= attribute %>]"/>',
-            '<input name="GridForm[filters][<%= attribute %>]" value="1" type="checkbox"/>',
+            '<input type="hidden" value="" name="<%= attribute %>"/>',
+            '<input name="<%= attribute %>" value="1" type="checkbox"/>',
             '</div>',
             '</div>',
             '</li>'

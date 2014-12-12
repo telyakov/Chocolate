@@ -244,6 +244,10 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         isAttachmentSupport: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);
         },
+        hasChange: function(){
+            //todo: реализовать
+            return false;
+        },
         getEntityTypeID: function () {
             return this.getDataFormProperties().getAttachmentsEntityType();
         },
@@ -263,13 +267,16 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 return null;
             }
         },
-        readProcEval: function (deferID) {
+        readProcEval: function (deferID, filterData) {
             var data = {
                 entityid: this.get('parentId'),
                 parentid: this.get('parentId'),
                 entitytype: this.getParentEntityTypeID(),
                 entitytypeid: this.getParentEntityTypeID()
             };
+            if(filterData){
+                data = $.extend(data, filterData);
+            }
             bindModule.deferredBindSql(deferID, this.getDataFormProperties().getReadProc(), data);
         },
         getKeyColorColumnName: function () {

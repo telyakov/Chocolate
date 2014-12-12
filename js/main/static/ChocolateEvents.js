@@ -26,7 +26,6 @@ var ChocolateEvents = {
         this.cardCancelEvent($tabs);
         this.addRowToForm($tabs);
         this.saveFormEvent($tabs);
-        this.refreshFormEvent($tabs);
         this.cardSaveEvent($tabs);
         this.reflowTabEvent($tabs);
         this.tabHistoryLogEvent($content);
@@ -706,46 +705,6 @@ var ChocolateEvents = {
             card = facade.getFactoryModule().makeChCard($(this).closest('[data-id=grid-tabs]'));
         main.leaveFocus();
         card.save();
-    },
-    refreshFormEvent: function ($context) {
-        $context.on('click', '.menu-button-refresh', this.refreshFormHandler);
-    },
-    refreshFormHandler: function () {
-        var main = chApp.namespace('main'),
-            messages = chApp.getMessages(),
-            form = facade.getFactoryModule().makeChGridForm($(this).closest('form'));
-        if (form.isHasChange()) {
-            var $dialog = $('<div>' + messages.refreshForm + '</div>');
-            $dialog.dialog({
-                title: messages.projectName,
-                dialogClass: 'wizard-dialog refresh-dialog',
-                resizable: false,
-                height: 140,
-                modal: true,
-                buttons: {
-                    'Да': function () {
-                        $(this).dialog("close");
-                        form.save(true);
-                    },
-                    'Нет': function () {
-                        $(this).dialog("close");
-                        form.refresh();
-                    },
-                    'Отмена': function () {
-                        $(this).dialog("close");
-                    }
-                },
-                create: function () {
-                    var $buttons = $(this).siblings('div').find("button");
-                    $buttons.first()
-                        .addClass("wizard-next-button")
-                        .nextAll().
-                        addClass('wizard-cancel-button');
-                }
-            });
-        } else {
-            form.refresh();
-        }
     },
     openTaskWizardEvent: function ($context) {
         $context.on('click', '.fm-wizard-task', this.openTaskWizardHandler);

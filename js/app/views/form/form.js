@@ -23,11 +23,52 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
         ].join('')),
         filterTemplate: _.template([
             '<div class="filters-content">',
+            '<form class="form-vertical filter-form" id="<%= formID %>">',
             '<%= html %>',
+            '</form>',
             '</div>'
         ].join('')),
         events: {
-            'click .grid-button .editable': 'openChildForm'
+            'click .grid-button .editable': 'openChildForm',
+            'click .menu-button-refresh': function(e){
+                var _this = this;
+                if (_this.model.hasChange()) {
+                    var $dialog = $('<div>' + optionsModule.getMessage('refreshForm') + '</div>');
+                    $dialog.dialog({
+                        title: optionsModule.getMessage('projectName'),
+                        dialogClass: 'wizard-dialog refresh-dialog',
+                        resizable: false,
+                        height: 140,
+                        modal: true,
+                        buttons: {
+                            'Да': function () {
+                                $(this).dialog("close");
+                                _this.model.trigger('save:form', {
+                                    isRefresh: true
+                                });
+                            },
+                            'Нет': function () {
+                                $(this).dialog("close");
+                                _this.model.trigger('refresh:form', {});
+                            },
+                            'Отмена': function () {
+                                $(this).dialog("close");
+                            }
+                        },
+                        create: function () {
+                            var $buttons = $(this).siblings('div').find("button");
+                            $buttons.first()
+                                .addClass("wizard-next-button")
+                                .nextAll().
+                                addClass('wizard-cancel-button');
+                        }
+                    });
+                } else {
+                    _this.model.trigger('refresh:form', {});
+                }
+                e.stopImmediatePropagation();
+
+            }
         },
         openChildForm: function (e) {
             var main = chApp.namespace('main'),
@@ -59,6 +100,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             e.stopImmediatePropagation();
 
         },
+
         render: function () {
             var $panel = this.createPanel(),
                 _this = this,
@@ -82,6 +124,50 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 }, 17);
 
             });
+        },
+        getFilterData: function(){
+            //todo: support idlist
+            if(this.model.hasFilters()){
+                var rawData = this.$el.find('.filter-form').serializeArray(),
+                    value,
+                    name,
+                    separator,
+                    result = [];
+                rawData.forEach(function(item){
+                    value = item.value;
+                    name = item.name;
+                    if(value){
+                        if(name.slice(-2) === '[]'){
+                            separator = '|';
+                            name = name.slice(0, name.length - 2);
+                        }else{
+                            separator = '';
+                        }
+
+                        if(result.hasOwnProperty(name)){
+                            result[name] += value + separator;
+                        }else{
+                            result[name] = value + separator;
+                        }
+                    }
+                });
+                return result;
+                //        if (value != '') {
+                //            if (_this.$form.find('[name="' + name + '"]').closest('li').attr('data-format') == 'idlist') {
+                //                // Convert "18 19     22" to "18|20|"
+                //                var numericArray = value.split(' ');
+                //                numericArray = numericArray.filter(function (val) {
+                //                    return val !== '';
+                //                });
+                //                result[name] = numericArray.join('|') + '|';
+                //            } else {
+                //                result[name] = value;
+                //            }
+                //        }
+
+            }else{
+                return {};
+            }
         },
         createPanel: function () {
             var id = helpersModule.uniqueID(),
@@ -156,7 +242,8 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         $.unsubscribe(event);
                         $filterSection.append(
                             _this.filterTemplate({
-                                html: '<div><ul class="filters-list">' + html.join('') + '</div></ul></div>'
+                                html: '<div><ul class="filters-list">' + html.join('') + '</div></ul></div>',
+                                formID: helpersModule.uniqueID()
                             })
                         );
                         callbacks.forEach(function (fn) {
@@ -191,7 +278,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 view = new ViewClass({
                     $el: $formSection,
                     model: this.model,
-                    dataParentId: this.dataParentId
+                    view: this
                 });
 
         }

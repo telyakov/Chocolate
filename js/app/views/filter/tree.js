@@ -10,7 +10,7 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             '<select <% if (disabled) { %> disabled  <% } %> >',
             '</select>',
             '<input <% if (disabled) { %> disabled  <% } %> class="tree-button" id="<%= buttonId %>" title="Кликните, чтобы выбрать фильтр" type="button">',
-            '<input name="GridForm[filters][<%= attribute %>]" id="<%= id %>" type="hidden">',
+            '<input name="<%= attribute %>" id="<%= id %>" type="hidden">',
             '</div>',
             '</li>'
         ].join('')),

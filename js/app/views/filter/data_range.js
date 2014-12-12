@@ -7,8 +7,8 @@ var DateRangeView = (function (Backbone, $, helpersModule, FilterView, deferredM
             '<% if (disabled) { %> <div class="filter-mock-no-edit"></div>  <% } %>',
             '<div>',
             '<label for="<%= idFrom %>"><%= caption %></label>',
-            '<input <% if (disabled) { %> disabled  <% } %>  class="filter-date" id="<%= idFrom %>" name="GridForm[filters][<%= attributeFrom %>]" type="text" value="<%= from %>">',
-            '<input <% if (disabled) { %> disabled  <% } %>  class="filter-date" id="<%= idTo %>" name="GridForm[filters][<%= attributeTo %>]" type="text" value="<%= to %>">',
+            '<input <% if (disabled) { %> disabled  <% } %>  class="filter-date" id="<%= idFrom %>" name="<%= attributeFrom %>" type="text" value="<%= from %>">',
+            '<input <% if (disabled) { %> disabled  <% } %>  class="filter-date" id="<%= idTo %>" name="<%= attributeTo %>" type="text" value="<%= to %>">',
             '</div>',
             '</li>'
         ].join('')),

@@ -8,21 +8,38 @@ var AbstractView = (function (Backbone) {
                 '</footer>'
             ].join('')
         ),
+        _refresh_timer_id: null,
         initialize: function (options) {
             _.bindAll(this, 'render');
             this.$el = options.$el;
             this.model = options.model;
-            console.log(this, this.model.getView());
-            this.listenTo(this.model, 'refresh:form', function(data){
-                console.log(data);
+            this.view = options.view;
+            this.listenTo(this.model, 'refresh:form', function (opts) {
+                var isLazy = opts.isLazy;
+                if (isLazy) {
+                    if (this._refresh_timer_id) {
+                        clearTimeout(this._refresh_timer_id);
+                    }
+                    var _this = this;
+                    this._refresh_timer_id = setTimeout(function () {
+                        _this.refresh();
+                    }, 900);
+                } else {
+                    this.refresh();
+                }
             });
             this.render();
 
 
         },
         events: {},
-        render:function(){
-
+        refresh: function(){
+            console.log('refresh');
+        },
+        showMessage: function(){
+          console.log('show message');
+        },
+        render: function () {
         }
     });
 })(Backbone);

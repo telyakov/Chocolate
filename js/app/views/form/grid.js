@@ -1,9 +1,9 @@
 var GridView = (function (Backbone) {
     'use strict';
     return AbstractView.extend({
+        _formID: null,
         template: _.template([
                 '<form action="/grid/save?view=<%=view %>" data-id="<%= view %>" id="<%= id%>"',
-                'data-parent-id="<%= parentID%>" ',
                 'data-ajax-add="<%= ajaxAdd%>" ',
                 'data-parent-pk="<%= parentPk%>" ',
                 'data-card-support="<%= cardSupport%>" ',
@@ -42,18 +42,23 @@ var GridView = (function (Backbone) {
                 '</a></div>'
             ].join('')
         ),
+        getFormID: function(){
+            if(this._formID === null){
+                this._formID =helpersModule.uniqueID();
+            }
+            return this._formID;
+        },
         render: function () {
-            var formId = helpersModule.uniqueID(),
+            var formId = this.getFormID(),
                 html = this.template({
                     id: formId,
                     view: this.model.getView(),
-                    parentID: this.dataParentId,
                     ajaxAdd: this.model.isSupportCreateEmpty(),
                     parentPk: this.model.get('parentId'),
                     cardSupport: this.model.hasCard()
 
                 });
-            this.$el.append(html);
+            this.$el.html(html);
             var $form = $('#' + formId);
             this.layoutMenu($form);
             this.layoutForm($form);
@@ -64,6 +69,115 @@ var GridView = (function (Backbone) {
                 model: this.model,
                 $el: $form
             });
+        },
+        refresh: function(){
+           this.initData();
+
+            //var url = this.getRefreshUrl(),
+            //    parentView = parentView? parentView :this.getParentView(),
+            //    searchData = this.getSearchData(),
+            //    chMessagesContainer = this.getMessagesContainer(),
+            //    _this = this;
+            //console.log(parentView, searchData)
+            //$.ajax({
+            //    url: url + '&ParentView=' + parentView,
+            //    type: "POST",
+            //    data: searchData,
+            //    success: function (response, st, xhr) {
+            //        var chResponse = new ChSearchResponse(response);
+            //        var type = _this.getType();
+            //        if (chResponse.isSuccess()) {
+            //            if (type == 'map') {
+            //                var $map = _this.$form.children('section').children('.map');
+            //                var ch_map = facade.getFactoryModule().makeChMap($map);
+            //                ch_map.refreshPoints(chResponse.getData(), chMessagesContainer);
+            //
+            //            } else if (type == 'canvas') {
+            //                var $canvas = _this.$form.find('canvas');
+            //                var ch_canvas = facade.getFactoryModule().makeChCanvas($canvas);
+            //                var data = chResponse.getData();
+            //                _this.updateStorage(data, {});
+            //                var options = new ChCanvasOptions();
+            //                ch_canvas.refreshData(data, options);
+            //            }
+            //            else {
+            //                _this.updateData(chResponse.getData(), chResponse.getOrder());
+            //                _this._clearDeletedObj();
+            //                _this._clearChangedObj();
+            //                _this.clearSelectedArea();
+            //
+            //            }
+            //            var filterForm = _this.getFilterForm();
+            //            if (filterForm && typeof filterForm != 'undefined' && filterForm.$form.length) {
+            //
+            //                var filters = filterForm.getAutoRefreshFiltersCol();
+            //                if (filters.length) {
+            //                    //todo: сделать один общий ajax
+            //                    filters.forEach(
+            //                        /**
+            //                         * @param chFilter {ChFilter}
+            //                         */
+            //                            function (chFilter) {
+            //                            $.get('/majestic/filterLayout', {'name': chFilter.getKey(), view: _this.getView(), 'parentID': _this.getParentPK()}).done(function (response, st, xhr) {
+            //                                var $filter = $('<li>' + response + '</li>');
+            //                                var selValues = chFilter.getNamesSelectedValues();
+            //                                chFilter.$elem.html($filter.html());
+            //                                selValues.forEach(function (value) {
+            //                                    chFilter.$elem.find('[value="' + value + '"]').prop("checked", true);
+            //                                })
+            //                                delete xhr.responseText;
+            //                                delete xhr;
+            //                                delete response;
+            //
+            //                            }).fail(function () {
+            //                                console.log('error')
+            //                            })
+            //                        })
+            //                }
+            //
+            //            }
+            //        }
+            //        chResponse.destroy();
+            //        delete chResponse;
+            //        delete response;
+            //        delete xhr.responseText;
+            //        delete xhr;
+            //        facade.getFactoryModule().garbageCollection();
+            //
+            //    },
+            //    error: function (xhr, st, er) {
+            //        chMessagesContainer.sendMessage(er, ChResponseStatus.ERROR)
+            //    }
+            //})
+
+
+        },
+        _callbacks: null,
+        getCallbacks: function(){
+            if(this._callbacks === null){
+                var callbacks = [],
+                    $cnt = this.$el;
+                this.model.getColumnsROCollection().each(function (column) {
+                    callbacks.push(column.getJsFn($cnt));
+                });
+                this._callbacks = callbacks;
+            }
+            return this._callbacks;
+
+        },
+        getSortedColumns: function(){
+            var sortedColumnCollection = [],
+                form = factoryModule.makeChGridForm($('#' + this.getFormID())),
+                hasSetting = form.hasSettings(),
+                iterator = 1;
+            this.model.getColumnsROCollection().each(function (column) {
+                if (!hasSetting) {
+                    iterator++;
+                }
+                var index = hasSetting ? form.getPositionColumn(column.get('key')) : iterator - 1;
+                sortedColumnCollection[index] = column;
+            });
+            return sortedColumnCollection;
         },
         layoutForm: function ($form) {
             var form = factoryModule.makeChGridForm($form),
@@ -84,11 +198,7 @@ var GridView = (function (Backbone) {
                     width: '28'
                 };
             }
-            var callbacks = [],
-                $cnt = this.$el,
-                sortedColumnCollection = [];
             roCollection.each(function (column) {
-                callbacks.push(column.getJsFn($cnt));
                 if (!hasSetting) {
                     setting[iterator] = {
                         key: column.get('key'),
@@ -105,7 +215,6 @@ var GridView = (function (Backbone) {
                         caption: column.getCaption()
                     })
                 };
-                sortedColumnCollection[index] = column;
             });
 
             if (!hasSetting) {
@@ -119,20 +228,23 @@ var GridView = (function (Backbone) {
             }));
             var $table = $('#' + tableID);
             this.initTableScript($table);
-            this.initData(callbacks, sortedColumnCollection, form);
+            this.initData();
 
 
         },
         initTableScript: function ($table) {
             facade.getFactoryModule().makeChTable($table).initScript();
         },
-        initData: function (callbacks, sortedColumnCollection, form) {
-            var defer = deferredModule.create(),
+        initData: function () {
+            var form = factoryModule.makeChGridForm($('#' + this.getFormID())),
+                sortedColumnCollection = this.getSortedColumns(),
+                callbacks = this.getCallbacks(),
+                defer = deferredModule.create(),
                 deferID = deferredModule.save(defer),
                 model = this.model,
                 _this = this;
-
-            model.readProcEval(deferID);
+            var data = this.view.getFilterData();
+            model.readProcEval(deferID, data);
             defer.done(function (data) {
                 var sql = data.sql;
                 var deferRead = deferredModule.create(),
@@ -143,84 +255,86 @@ var GridView = (function (Backbone) {
                     id: deferReadID
                 });
                 deferRead.done(function (data) {
-                    var order = data.order,
-                        recordset = data.data;
-                    form.saveInStorage(recordset, {}, {}, {}, {} , order);
-
-                    var html = _this.generateRows(recordset, order, sortedColumnCollection, form);
-
-                    var $table = form.getTable();
-                    var $tbody = $table.find('tbody'), $tr, cacheVisible = [],
-                        $userGrid = form._getUserGrid(), subscribeName = form.getLayoutSubscribeName();
-                    $.unsubscribe(subscribeName);
-                    $.subscribe(subscribeName, function (e, refreshCache) {
-                        var scrollTop = $userGrid.scrollTop();
-                        if (refreshCache || !$tr) {
-                            $tr = $tbody.children('tr').filter(':not(.filtered)');
-                            cacheVisible = [];
-                        }
-                        var trHeight = $tr.eq(2).height();
-                        if (!trHeight) {
-                            if ($tr.hasClass('ch-mobile')) {
-                                trHeight = 67;
-                            } else {
-                                trHeight = 23;
-                            }
-                        }
-                        var visibleHeight = $userGrid.height(),
-                            startIndex = Math.max((scrollTop / trHeight ^ 0 ) - 7, 0),
-                            endIndex = Math.min(((scrollTop + visibleHeight) / trHeight ^ 0) + 7, $tr.length);
-                        $tr.filter(function (i) {
-                            if (i >= startIndex && i <= endIndex) {
-                                if (cacheVisible[i]) {
-                                    return false;
-                                }
-                                cacheVisible[i] = 1;
-                                return true;
-                            }
-                            return false;
-                        })
-                            .find('.table-td')
-                            .css({display: 'block'});
-                        $tr.filter(function (i) {
-                            if (i < startIndex || i > endIndex) {
-                                if (cacheVisible[i]) {
-                                    delete cacheVisible[i];
-                                    return true;
-                                }
-                                if (refreshCache) {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        })
-                            .find('.table-td')
-                            .css({display: 'none'});
-                    });
-
-                    var prevScrollTop = 0;
-                    $userGrid.unbind('scroll.chocolate').on('scroll.chocolate', $.debounce(150, false, function () {
-                        var curScrollTop = $(this).scrollTop();
-                        if (curScrollTop !== prevScrollTop) {
-                            $.publish(subscribeName, false);
-                        }
-                        prevScrollTop = curScrollTop;
-                    }));
-
-                    $tbody.html(html);
-                    callbacks.forEach(function (fn) {
-                        fn();
-                    });
-                    $table.trigger("update");
-                    $table.unbind('sortEnd').unbind('filterEnd').bind('sortEnd filterEnd', function () {
-                        form.clearSelectedArea();
-                        $.publish(subscribeName, true);
-                    });
-                    $.publish(subscribeName, true);
-                    form.setRowCount(Object.keys(data).length);
+                    _this.refreshDone(data, callbacks, sortedColumnCollection, form);
                 });
-
             });
+        },
+        refreshDone: function (data, callbacks, sortedColumnCollection, form) {
+            var order = data.order,
+                recordset = data.data;
+            form.saveInStorage(recordset, {}, {}, {}, {} , order);
+
+            var html = this.generateRows(recordset, order, sortedColumnCollection, form);
+
+            var $table = form.getTable();
+            var $tbody = $table.find('tbody'), $tr, cacheVisible = [],
+                $userGrid = form._getUserGrid(), subscribeName = form.getLayoutSubscribeName();
+            $.unsubscribe(subscribeName);
+            $.subscribe(subscribeName, function (e, refreshCache) {
+                var scrollTop = $userGrid.scrollTop();
+                if (refreshCache || !$tr) {
+                    $tr = $tbody.children('tr').filter(':not(.filtered)');
+                    cacheVisible = [];
+                }
+                var trHeight = $tr.eq(2).height();
+                if (!trHeight) {
+                    if ($tr.hasClass('ch-mobile')) {
+                        trHeight = 67;
+                    } else {
+                        trHeight = 23;
+                    }
+                }
+                var visibleHeight = $userGrid.height(),
+                    startIndex = Math.max((scrollTop / trHeight ^ 0 ) - 7, 0),
+                    endIndex = Math.min(((scrollTop + visibleHeight) / trHeight ^ 0) + 7, $tr.length);
+                $tr.filter(function (i) {
+                    if (i >= startIndex && i <= endIndex) {
+                        if (cacheVisible[i]) {
+                            return false;
+                        }
+                        cacheVisible[i] = 1;
+                        return true;
+                    }
+                    return false;
+                })
+                    .find('.table-td')
+                    .css({display: 'block'});
+                $tr.filter(function (i) {
+                    if (i < startIndex || i > endIndex) {
+                        if (cacheVisible[i]) {
+                            delete cacheVisible[i];
+                            return true;
+                        }
+                        if (refreshCache) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                    .find('.table-td')
+                    .css({display: 'none'});
+            });
+
+            var prevScrollTop = 0;
+            $userGrid.unbind('scroll.chocolate').on('scroll.chocolate', $.debounce(150, false, function () {
+                var curScrollTop = $(this).scrollTop();
+                if (curScrollTop !== prevScrollTop) {
+                    $.publish(subscribeName, false);
+                }
+                prevScrollTop = curScrollTop;
+            }));
+
+            $tbody.html(html);
+            callbacks.forEach(function (fn) {
+                fn();
+            });
+            $table.trigger("update");
+            $table.unbind('sortEnd').unbind('filterEnd').bind('sortEnd filterEnd', function () {
+                form.clearSelectedArea();
+                $.publish(subscribeName, true);
+            });
+            $.publish(subscribeName, true);
+            form.setRowCount(Object.keys(data).length);
         },
         generateRow: function (data, columns, form) {
             var style = '',
