@@ -53,14 +53,14 @@ ChGridForm.prototype.getExitMessage = function () {
 ChGridForm.prototype.removeSelectedRows = function () {
     this.removeRows(this.getSelectedRows());
 };
-ChGridForm.prototype.LazyRefresh = function () {
+ChGridForm.prototype.LazyRefresh = function (model) {
     if (this.refreshTimerID) {
         clearTimeout(this.refreshTimerID);
     }
     var _this = this;
     this.refreshTimerID = setTimeout(function () {
-        _this.refresh()
-    }, 900)
+        _this.refresh();
+    }, 900);
 };
 ChGridForm.prototype.addPriorityColorAndApply = function (id, priority, color) {
     var priorities = this.priorityColorCol[id];
@@ -916,6 +916,7 @@ ChGridForm.prototype.refresh = function (parentView) {
         searchData = this.getSearchData(),
         chMessagesContainer = this.getMessagesContainer(),
         _this = this;
+    console.log(parentView, searchData)
     $.ajax({
         url: url + '&ParentView=' + parentView,
         type: "POST",

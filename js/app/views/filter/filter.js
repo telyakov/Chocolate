@@ -4,6 +4,7 @@ var FilterView = (function (Backbone, $) {
         initialize: function (options) {
             _.bindAll(this, 'render');
             this.model = options.model;
+            this.form = options.form;
             this.id = options.id;
             if(options.$el){
                 this.$el = options.$el;

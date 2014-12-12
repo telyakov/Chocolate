@@ -44,7 +44,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             var selector = 'change ' + '#' + _this.id + ' input';
             this.events[selector] = function (e) {
                 if (changeHandler) {
-                    helpersModule.scriptExpressionEval(changeHandler, e);
+                    helpersModule.scriptExpressionEval(changeHandler, e, _this.form);
                 }
                 this.model.trigger('change:value', $(e.target).val());
                 e.stopImmediatePropagation();

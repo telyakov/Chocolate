@@ -2,6 +2,7 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
     'use strict';
     return Backbone.Model.extend({
         defaults: {
+            model: null,
             filter: null,
             id: null,
             key: null

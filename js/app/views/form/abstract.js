@@ -12,8 +12,17 @@ var AbstractView = (function (Backbone) {
             _.bindAll(this, 'render');
             this.$el = options.$el;
             this.model = options.model;
+            console.log(this, this.model.getView());
+            this.listenTo(this.model, 'refresh:form', function(data){
+                console.log(data);
+            });
             this.render();
+
+
         },
-        events: {}
+        events: {},
+        render:function(){
+
+        }
     });
 })(Backbone);

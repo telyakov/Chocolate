@@ -300,7 +300,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
             //    default:
 
         },
-        scriptExpressionEval: function (expr, e) {
+        scriptExpressionEval: function (expr, e, model) {
             var exprInLowerCase = expr.toLowerCase();
             if (exprInLowerCase.indexOf('script') === 0) {
                 var script = expr.substr(6),
@@ -312,7 +312,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                         defaultKey = 'dataform.defvalues';
                     switch (true) {
                         case prepareCmd === 'dataform.refreshdata':
-                            filter.getChForm().LazyRefresh();
+                            model.trigger('refresh:form', {lazy: true});
                             break;
                         case prepareCmd.indexOf(defaultKey) === 0:
                             var args = prepareCmd.substr(defaultKey.length + 1),

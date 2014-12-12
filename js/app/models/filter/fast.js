@@ -17,6 +17,7 @@ var FastFilterRO = (function (FilterRO, helpersModule, optionsModule) {
         render: function (event, i, collection) {
             var view = new FastFilterView({
                 model: this,
+                form: this.get('model'),
                 id: helpersModule.uniqueID(),
                 $el: $('body')
 

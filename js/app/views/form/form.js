@@ -1,7 +1,12 @@
 var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
     'use strict';
-    return AbstractView.extend({
-        dataParentId: null,
+    return Backbone.View.extend({
+        initialize: function (options) {
+            _.bindAll(this, 'render');
+            this.$el = options.$el;
+            this.model = options.model;
+            this.render();
+        },
         headerTemplate: _.template([
             '<section class="section-header" data-id="header">',
             '<div class="top-header">',

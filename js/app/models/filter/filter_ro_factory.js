@@ -5,31 +5,31 @@ var FilterRoFactory = (function () {
         checkBox = 'checkbox',
         tree = 'checkbox_tree',
         dateBetween = 'datebetween',
-                _private = {
-                isCustomFilter: function (type) {
-                    return type.indexOf(custom) !== -1;
-                },
-                isFastFilter: function (type) {
-                    return type.indexOf(fast) !== -1;
-                },
-                prepareType: function (filter) {
-                    var type = $.trim( filter.getFilterType().toLowerCase());
-                    if (_private.isCustomFilter(type)) {
-                        var standartType = filter.getStandartType().toLowerCase();
-                        if (standartType === '20') {
-                            return checkBox;
-                        } else {
-                            return tree;
-                        }
-                    } else if (_private.isFastFilter(type)) {
-                        return fast;
+        _private = {
+            isCustomFilter: function (type) {
+                return type.indexOf(custom) !== -1;
+            },
+            isFastFilter: function (type) {
+                return type.indexOf(fast) !== -1;
+            },
+            prepareType: function (filter) {
+                var type = $.trim(filter.getFilterType().toLowerCase());
+                if (_private.isCustomFilter(type)) {
+                    var standartType = filter.getStandartType().toLowerCase();
+                    if (standartType === '20') {
+                        return checkBox;
+                    } else {
+                        return tree;
                     }
-                    return type;
-                },
-                make: function (filter) {
-                var options = {filter: filter},
+                } else if (_private.isFastFilter(type)) {
+                    return fast;
+                }
+                return type;
+            },
+            make: function (filter, model) {
+                var options = {filter: filter, model: model},
                     type = _private.prepareType(filter);
-                switch(type){
+                switch (type) {
                     case fast:
                         return new FastFilterRO(options);
                     case dateBetween:
@@ -44,8 +44,8 @@ var FilterRoFactory = (function () {
             }
         };
     return {
-        make: function (filter) {
-            return _private.make(filter);
+        make: function (filter, model) {
+            return _private.make(filter, model);
         }
     };
 })();

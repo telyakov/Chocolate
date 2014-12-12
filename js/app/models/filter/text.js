@@ -3,6 +3,7 @@ var TextFilterRO = (function (FilterRO, helpersModule) {
     return FilterRO.extend({
         render: function(event, i){
             var view = new TextFilterView({
+                form: this.get('model'),
                 model: this,
                 id: helpersModule.uniqueID()
             });

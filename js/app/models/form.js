@@ -166,7 +166,6 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return this._actionProperties;
         },
         isCardSupport: function(){
-            console.log(this.getCardCollection().length)
           return  this.getCardCollection().length > 0;
         },
         getCardCollection: function () {
@@ -215,10 +214,11 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             if (this._filter_ro_collection !== null) {
                 return this._filter_ro_collection;
             }
+            var _this = this;
             var filtersCollection = this.getFiltersCollections(),
                 filtersROCollection = new FiltersROCollection();
             filtersCollection.each(function (item) {
-                filtersROCollection.push(FilterRoFactory.make(item));
+                filtersROCollection.push(FilterRoFactory.make(item, _this));
             });
             this._filter_ro_collection = filtersROCollection;
             return this._filter_ro_collection;
