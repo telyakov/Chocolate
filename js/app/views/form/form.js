@@ -68,6 +68,11 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 }
                 e.stopImmediatePropagation();
 
+            },
+            'keydown input.filter': function(e){
+                if (e.keyCode === optionsModule.getKeyCode('enter')) {
+                  this.model.trigger('refresh:form', {});
+                }
             }
         },
         openChildForm: function (e) {

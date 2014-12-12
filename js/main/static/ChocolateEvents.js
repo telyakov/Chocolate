@@ -33,7 +33,7 @@ var ChocolateEvents = {
         this.openTaskWizardEvent($content);
         this.signInTextEvents($content);
         this.disableFiltersEvent($content);
-        this.searchInFilterEvent($content);
+        //this.searchInFilterEvent($content);
         this.downloadAttachmentEvent($content);
         this.toggleSystemColsEvent($tabs);
         this.warningMessageEvent($window);
@@ -491,9 +491,9 @@ var ChocolateEvents = {
         var id = $(this).attr('data-id');
         mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
     },
-    searchInFilterEvent: function ($context) {
-        $context.on('keydown', 'input.filter', this.searchInFilterHandler);
-    },
+    //searchInFilterEvent: function ($context) {
+    //    $context.on('keydown', 'input.filter', this.searchInFilterHandler);
+    //},
     /**
      * #tips 2
      * @param e {Event}

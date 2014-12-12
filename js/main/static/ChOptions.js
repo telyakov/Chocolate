@@ -173,6 +173,9 @@ var optionsModule = (function () {
         },
         getConstants: function(key){
             return _private.getConstants(key);
+        },
+        getKeyCode: function(key){
+            return chApp.namespace('events.KEY')[key.toUpperCase()];
         }
     };
 }());
