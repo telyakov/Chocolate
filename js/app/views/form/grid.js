@@ -343,7 +343,7 @@ var GridView = (function (Backbone) {
                 keyColorCol = this.model.getKeyColorColumnName(),
                 rowClass = '';
             if (colorCol && data[colorCol]) {
-                var correctColor ; helpersModule.decToHeh(data[colorCol]);
+                var correctColor = helpersModule.decToHeh(data[colorCol]);
                 style = ['style="background:#', correctColor,  '"'].join('');
             }
             if (keyColorCol && data[keyColorCol]) {
