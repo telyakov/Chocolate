@@ -491,22 +491,6 @@ var ChocolateEvents = {
         var id = $(this).attr('data-id');
         mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
     },
-    //searchInFilterEvent: function ($context) {
-    //    $context.on('keydown', 'input.filter', this.searchInFilterHandler);
-    //},
-    /**
-     * #tips 2
-     * @param e {Event}
-     * @return {boolean|undefined}
-     */
-    searchInFilterHandler: function (e) {
-        var keys = chApp.namespace('events.KEY');
-        if (e.keyCode === keys.ENTER) {
-            var form = facade.getFactoryModule().makeChGridForm($(this).closest('.section-filters').next('.section-grid').children('form'));
-            form.refresh();
-            return false;
-        }
-    },
     reflowWindowEvent: function ($context) {
         $context.on('resize', $.debounce(300, false, this.reflowWindowHandler));
     },

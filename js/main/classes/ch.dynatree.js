@@ -160,6 +160,7 @@ ChDynatree.prototype.generateContent = function (options, rawData) {
         $panel;
     var defaultValues = this._getDefaultValues(), node;
     for (var i in rawData) {
+
         if (rawData.hasOwnProperty(i)) {
             node = rawData[i];
             node.title = this.getTitleValue(node);

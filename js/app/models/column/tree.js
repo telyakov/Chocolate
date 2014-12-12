@@ -20,7 +20,7 @@ var TreeColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
                         if (rawData.hasOwnProperty(iterator)) {
                             data.push({
                                 text: rawData[iterator].name,
-                                value: rawData[iterator].id,
+                                id: rawData[iterator].id,
                                 description:  rawData[iterator].description ?
                                     rawData[iterator].description:
                                     ''
