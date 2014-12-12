@@ -20,8 +20,6 @@ var ChocolateEvents = {
         this.closeTabEvent($content);
         this.menuContextEvent($tabs);
         this.openCardEvent($tabs);
-        this.keyActionsFormEvent($tabs);
-        this.selectFormRowEvent($tabs);
         this.contextFormMenuEvent($tabs);
         this.cardCancelEvent($tabs);
         this.addRowToForm($tabs);
@@ -33,7 +31,6 @@ var ChocolateEvents = {
         this.openTaskWizardEvent($content);
         this.signInTextEvents($content);
         this.disableFiltersEvent($content);
-        //this.searchInFilterEvent($content);
         this.downloadAttachmentEvent($content);
         this.toggleSystemColsEvent($tabs);
         this.warningMessageEvent($window);
@@ -542,64 +539,6 @@ var ChocolateEvents = {
             form = facade.getFactoryModule().makeChGridForm($cell.closest('form')),
             column = facade.getFactoryModule().makeChGridColumnBody($cell);
         form.openCard(column.getID());
-    },
-    keyActionsFormEvent: function ($context) {
-        $context.on('keydown', '.tablesorter', this.keyActionsFormHandler);
-    },
-    keyActionsFormHandler: function (e) {
-        if (['TABLE', 'SPAN'].indexOf(e.target.tagName) !== -1) {
-            //span for ie fix
-            var keys = chApp.namespace('events.KEY'),
-                keyCode = e.keyCode,
-                catchKeys = [keys.UP, keys.DOWN, keys.DEL];
-            /**
-             * #tips 1
-             */
-            if (catchKeys.indexOf(keyCode) !== -1) {
-                var form = facade.getFactoryModule().makeChGridForm($(this).closest('form')),
-                    $activeRow,
-                    $nextRow;
-
-                if (keyCode === keys.DEL) {
-                    form.removeRows(form.getSelectedRows());
-                } else if ((e.ctrlKey || e.shiftKey) && [keys.UP, keys.DOWN].indexOf(keyCode) !== -1) {
-                    $activeRow = form.getActiveRow();
-                    if (keyCode === keys.DOWN) {
-                        $nextRow = $activeRow.next('tr');
-                    } else {
-                        $nextRow = $activeRow.prev('tr');
-                    }
-                    if ($nextRow.length) {
-                        form.setCorrectScroll($nextRow);
-                        form.selectRow($nextRow, true, false);
-                    }
-                } else if ([keys.UP, keys.DOWN].indexOf(keyCode) !== -1) {
-                    $activeRow = form.getActiveRow();
-                    if (keyCode === keys.UP) {
-                        $nextRow = $activeRow.prev('tr');
-                    } else {
-                        $nextRow = $activeRow.next('tr');
-                    }
-                    if ($nextRow.length) {
-                        form.setCorrectScroll($nextRow);
-                        form.selectRow($nextRow, false, false);
-                    }
-                }
-                return false;
-            }
-        }
-        return true;
-    },
-    selectFormRowEvent: function ($context) {
-        $context.on('click', 'tbody > tr', this.selectFormRowHandler);
-    },
-    /**
-     * @param e {Event}
-     */
-    selectFormRowHandler: function (e) {
-        var $this = $(this),
-            form = facade.getFactoryModule().makeChGridForm($this.closest('form'));
-        form.selectRow($this, e.ctrlKey || e.shiftKey, true);
     },
     contextFormMenuEvent: function ($context) {
         var main = chApp.namespace('main'),

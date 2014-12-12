@@ -165,8 +165,8 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             }
             return this._actionProperties;
         },
-        isCardSupport: function(){
-          return  this.getCardCollection().length > 0;
+        isCardSupport: function () {
+            return this.getCardCollection().length > 0;
         },
         getCardCollection: function () {
             if (this._card_collection) {
@@ -244,7 +244,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         isAttachmentSupport: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);
         },
-        hasChange: function(){
+        hasChange: function () {
             //todo: реализовать
             return false;
         },
@@ -259,11 +259,11 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 return null;
             }
         },
-        getParentView: function(){
+        getParentView: function () {
             var parentModel = this.get('parentModel');
-            if(parentModel){
+            if (parentModel) {
                 return parentModel.getView();
-            }else{
+            } else {
                 return null;
             }
         },
@@ -274,10 +274,29 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 entitytype: this.getParentEntityTypeID(),
                 entitytypeid: this.getParentEntityTypeID()
             };
-            if(filterData){
+            if (filterData) {
                 data = $.extend(data, filterData);
             }
             bindModule.deferredBindSql(deferID, this.getDataFormProperties().getReadProc(), data);
+        },
+        _preview: null,
+        getPreview: function () {
+            if (this._preview === null) {
+                var preview = {};
+                this.getColumnsCollection().each(function (column) {
+                    if (helpersModule.boolEval(column.getShowInRowDisplay())) {
+                        preview[column.getKey()] = {
+                            caption: column.getCaption(),
+                            type: ['date', 'datetime'].indexOf(column.getEditType()) === -1 ?
+                                's' :
+                                'dt'
+                        };
+                    }
+                });
+                this._preview = preview;
+            }
+            return this._preview;
+
         },
         getKeyColorColumnName: function () {
             return this.getColumnsCollection().getRowColorColumnName();

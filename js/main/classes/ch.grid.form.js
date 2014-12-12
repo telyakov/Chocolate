@@ -1,7 +1,6 @@
 function ChGridForm($form) {
     this.previewTimerID = null;
     this.selectedTimerID = null;
-    this.refreshTimerID = null;
     this.$form = $form;
     this.chFormSettings = new ChFormSettings(this);
     this._$table = null;
@@ -53,15 +52,6 @@ ChGridForm.prototype.getExitMessage = function () {
 ChGridForm.prototype.removeSelectedRows = function () {
     this.removeRows(this.getSelectedRows());
 };
-//ChGridForm.prototype.LazyRefresh = function (model) {
-//    if (this.refreshTimerID) {
-//        clearTimeout(this.refreshTimerID);
-//    }
-//    var _this = this;
-//    this.refreshTimerID = setTimeout(function () {
-//        _this.refresh();
-//    }, 900);
-//};
 ChGridForm.prototype.addPriorityColorAndApply = function (id, priority, color) {
     var priorities = this.priorityColorCol[id];
     if (typeof priorities == 'undefined') {
@@ -490,8 +480,6 @@ ChGridForm.prototype.layoutSelectedArea = function ($row, isMouse, $activeRow) {
         this.previewTimerID = setTimeout(function () {
             var preview_data = _this.getPreviewObj(),
                 data = Chocolate.mergeObj(_this.getDataObj()[id], _this.getChangedObj()[id]);
-
-
             if (typeof(preview_data) != 'undefined') {
                 var html = '';
                 for (var key in preview_data) {

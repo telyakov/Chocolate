@@ -34,6 +34,60 @@ var GridView = (function (Backbone) {
                 '</section>'
             ].join('')
         ),
+        events: {
+            'keydown .tablesorter': function (e) {
+                if (['TABLE', 'SPAN'].indexOf(e.target.tagName) !== -1) {
+                    //span for ie fix
+                    var op = optionsModule,
+                        keyCode = e.keyCode,
+                        catchKeys = [
+                            op.getKeyCode('up'),
+                            op.getKeyCode('down'),
+                            op.getKeyCode('del')
+                        ];
+                    if (catchKeys.indexOf(keyCode) !== -1) {
+                        var form = facade.getFactoryModule().makeChGridForm($(e.target).closest('form')),
+                            $activeRow,
+                            $nextRow;
+
+                        if (keyCode === op.getKeyCode('del')) {
+                            form.removeRows(form.getSelectedRows());
+                        } else if ((e.ctrlKey || e.shiftKey) && [op.getKeyCode('up'), op.getKeyCode('down')].indexOf(keyCode) !== -1) {
+                            $activeRow = form.getActiveRow();
+                            if (keyCode === op.getKeyCode('down')) {
+                                $nextRow = $activeRow.next('tr');
+                            } else {
+                                $nextRow = $activeRow.prev('tr');
+                            }
+                            if ($nextRow.length) {
+                                form.setCorrectScroll($nextRow);
+                                form.selectRow($nextRow, true, false);
+                            }
+                        } else if ([op.getKeyCode('up'), op.getKeyCode('down')].indexOf(keyCode) !== -1) {
+                            $activeRow = form.getActiveRow();
+                            if (keyCode === op.getKeyCode('up')) {
+                                $nextRow = $activeRow.prev('tr');
+                            } else {
+                                $nextRow = $activeRow.next('tr');
+                            }
+                            if ($nextRow.length) {
+                                form.setCorrectScroll($nextRow);
+                                form.selectRow($nextRow, false, false);
+                            }
+                        }
+                        return false;
+                    }
+                }
+                return true;
+
+
+            },
+            'click tbody > tr': function(e){
+                var $this = $(e.target).closest('tr'),
+                    form = facade.getFactoryModule().makeChGridForm($this.closest('form'));
+                form.selectRow($this, e.ctrlKey || e.shiftKey, true);
+            }
+        },
         columnHeaderTemplate: _.template([
                 '<div><a><span class="<%= class %>"></span>',
                 '<span class="grid-caption">',
@@ -42,9 +96,9 @@ var GridView = (function (Backbone) {
                 '</a></div>'
             ].join('')
         ),
-        getFormID: function(){
-            if(this._formID === null){
-                this._formID =helpersModule.uniqueID();
+        getFormID: function () {
+            if (this._formID === null) {
+                this._formID = helpersModule.uniqueID();
             }
             return this._formID;
         },
@@ -70,8 +124,8 @@ var GridView = (function (Backbone) {
                 $el: $form
             });
         },
-        refresh: function(){
-           this.initData();
+        refresh: function () {
+            this.initData();
 
             //var url = this.getRefreshUrl(),
             //    parentView = parentView? parentView :this.getParentView(),
@@ -153,8 +207,8 @@ var GridView = (function (Backbone) {
 
         },
         _callbacks: null,
-        getCallbacks: function(){
-            if(this._callbacks === null){
+        getCallbacks: function () {
+            if (this._callbacks === null) {
                 var callbacks = [],
                     $cnt = this.$el;
                 this.model.getColumnsROCollection().each(function (column) {
@@ -165,7 +219,7 @@ var GridView = (function (Backbone) {
             return this._callbacks;
 
         },
-        getSortedColumns: function(){
+        getSortedColumns: function () {
             var sortedColumnCollection = [],
                 form = factoryModule.makeChGridForm($('#' + this.getFormID())),
                 hasSetting = form.hasSettings(),
@@ -262,7 +316,7 @@ var GridView = (function (Backbone) {
         refreshDone: function (data, callbacks, sortedColumnCollection, form) {
             var order = data.order,
                 recordset = data.data;
-            form.saveInStorage(recordset, {}, {}, {}, {} , order);
+            form.saveInStorage(recordset,this.model.getPreview(), {}, {}, {}, order);
 
             var html = this.generateRows(recordset, order, sortedColumnCollection, form);
 
@@ -344,7 +398,7 @@ var GridView = (function (Backbone) {
                 rowClass = '';
             if (colorCol && data[colorCol]) {
                 var correctColor = helpersModule.decToHeh(data[colorCol]);
-                style = ['style="background:#', correctColor,  '"'].join('');
+                style = ['style="background:#', correctColor, '"'].join('');
             }
             if (keyColorCol && data[keyColorCol]) {
                 idClass = ' td-red';
