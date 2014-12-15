@@ -114,6 +114,7 @@ module.exports = function (grunt) {
                     '../js/app/router.js',
                     '../js/app/views/app/app.js',
                     '../js/app/views/form/*.js',
+                    '../js/app/views/card/*.js',
                     '../js/app/modules/nav_bar.js',
                     '../js/app/modules/image_adapter.js',
                     '../js/main/settings.js',

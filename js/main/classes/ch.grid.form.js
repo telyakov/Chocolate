@@ -321,7 +321,7 @@ ChGridForm.prototype.openCard = function (pk) {
             $a = $tabs.find("li[data-tab-id='" + cardID + "']").children('a'),
             tab;
         if ($a.length === 0) {
-            var viewID = this.getID(),
+            var viewID = this.getFormID(),
                 caption = this.getTabCaption();
             if ($.isNumeric(pk)) {
                 caption += ' [' + pk + ']';

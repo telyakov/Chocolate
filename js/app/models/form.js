@@ -14,8 +14,14 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             parentModel: null,
             parentId: null
         },
-        hasCard: function () {
-            return this.getCardCollection()._length > 0;
+        hasCardHeader: function () {
+            return this.getCardHeaderText() || this.getCardHeaderImage();
+        },
+        getCardHeaderImage: function(){
+            return this.getCardCollection().getHeaderImage();
+        },
+        getCardHeaderText: function(){
+            return this.getCardCollection().getHeader();
         },
         getPrintActions: function () {
             if (this._print_actions !== null) {
@@ -165,7 +171,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             }
             return this._actionProperties;
         },
-        isCardSupport: function () {
+        hasCard: function () {
             return this.getCardCollection().length > 0;
         },
         getCardCollection: function () {
@@ -184,10 +190,13 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                     ));
                 });
                 this._card_collection = new CardCollections(cards, {
-                    $obj: $cards
+                    $obj: $cards.children('Cards').children('Style')
                 });
             }
             return this._card_collection;
+        },
+        getCardTabCaption: function () {
+            return this.getCardCollection().getCaption();
         },
         getCaption: function () {
             return this.getDataFormProperties().getWindowCaption();

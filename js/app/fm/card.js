@@ -5,40 +5,40 @@ var Card = (function (Backbone) {
             $obj: null
         },
         getCaption: function () {
-            this.$obj.children('caption').html();
+            return this.get('$obj').children('caption').text();
         },
         getKey: function () {
-            this.$obj.children('key').html();
+            return this.get('$obj').children('key').text();
         },
         getCols: function () {
-            this.$obj.children('cols').html();
+            return this.get('$obj').children('cols').text();
         },
         getRows: function () {
-            this.$obj.children('rows').html();
+            return this.get('$obj').children('rows').text();
         },
         getCol: function () {
-            this.$obj.children('col').html();
+            return this.get('$obj').children('col').text();
         },
         getRow: function () {
-            this.$obj.children('row').html();
+            return this.get('$obj').children('row').text();
         },
         getCellWidth: function () {
-            this.$obj.children('cellWidth').html();
+            return this.get('$obj').children('cellWidth').text();
         },
         getCellHeight: function () {
-            this.$obj.children('cellHeight').html();
+            return this.get('$obj').children('cellHeight').text();
         },
         getFixedWidth: function () {
-            this.$obj.children('fixedWidth').html();
+            return this.get('$obj').children('fixedWidth').text();
         },
         getFixedHeight: function () {
-            this.$obj.children('fixedHeight').html();
+            return this.get('$obj').children('fixedHeight').text();
         },
         getCaptionReadProc: function () {
-            this.$obj.children('captionReadProc').html();
+            return this.get('$obj').children('captionReadProc').text();
         },
         getVisible: function () {
-            this.$obj.children('visible').html();
+            return this.get('$obj').children('visible').text();
         }
     });
 })(Backbone);

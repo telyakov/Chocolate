@@ -19,7 +19,7 @@ var ChocolateEvents = {
         this.ajaxIndicatorEvent();
         this.closeTabEvent($content);
         this.menuContextEvent($tabs);
-        this.openCardEvent($tabs);
+        //this.openCardEvent($tabs);
         this.contextFormMenuEvent($tabs);
         this.cardCancelEvent($tabs);
         this.addRowToForm($tabs);
@@ -531,15 +531,7 @@ var ChocolateEvents = {
         var $this = $(this);
         $this.contextmenu('open', $this);
     },
-    openCardEvent: function ($context) {
-        $context.on('touchmove dblclick', '.card-button', this.openCardHandler);
-    },
-    openCardHandler: function () {
-        var $cell = $(this),
-            form = facade.getFactoryModule().makeChGridForm($cell.closest('form')),
-            column = facade.getFactoryModule().makeChGridColumnBody($cell);
-        form.openCard(column.getID());
-    },
+
     contextFormMenuEvent: function ($context) {
         var main = chApp.namespace('main'),
             messages = chApp.getMessages();

@@ -7,37 +7,37 @@ var CardCollections = (function (Backbone) {
             this.$obj = opts.$obj;
         },
         getCaption: function () {
-            this.$obj.children('caption').html();
+            return this.$obj.children('Caption').text();
         },
         getHeader: function () {
-            this.$obj.children('header').html();
+            return this.$obj.children('Header').text();
         },
         getButtonWidth: function () {
-            this.$obj.children('buttonWidth').html();
+            return this.$obj.children('uttonWidth').text();
         },
         getButtonHeight: function () {
-            this.$obj.children('buttonHeight').html();
+            return this.$obj.children('buttonHeight').text();
         },
         getAfterEdit: function () {
-            this.$obj.children('afterEdit').html();
+            return this.$obj.children('afterEdit').text();
         },
         getHeaderImage: function () {
-            this.$obj.children('headerImage').html();
+            return this.$obj.children('headerImage').text();
         },
         getSmallHeader: function () {
-            this.$obj.children('smallHeader').html();
+            return this.$obj.children('smallHeader').text();
         },
         getHeaderHeight: function () {
-            this.$obj.children('headerHeight').html();
+            return this.$obj.children('headerHeight').text();
         },
         getCols: function () {
-            this.$obj.children('cols').html();
+            return this.$obj.children('cols').text();
         },
         getRows: function () {
-            this.$obj.children('rows').html();
+            return this.$obj.children('rows').text();
         },
         getAutoOpen: function () {
-            this.$obj.children('autoopen').html();
+            return this.$obj.children('autoopen').text();
         }
     });
 })(Backbone);

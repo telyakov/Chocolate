@@ -86,6 +86,65 @@ var GridView = (function (Backbone) {
                 var $this = $(e.target).closest('tr'),
                     form = facade.getFactoryModule().makeChGridForm($this.closest('form'));
                 form.selectRow($this, e.ctrlKey || e.shiftKey, true);
+            },
+            'touchmove .card-button': 'openCard',
+            'dblclick .card-button': 'openCard'
+        },
+        generateCardID: function(id){
+            return [ 'card_', this.model.getView(), id ].join('');
+        },
+        openCard: function(e){
+            if(this.model.hasCard()){
+                var $this = $(e.target),
+                    pk = $this.closest('tr').attr("data-id"),
+                    view = this.model.getView(),
+                    $tabs = $('#tabs'),
+                    cardID = this.generateCardID(pk),
+                    $a = $tabs.find("li[data-tab-id='" + cardID + "']").children('a'),
+                    tab;
+                if ($a.length === 0) {
+                    var viewID = this.getFormID(),
+                        caption = this.model.getCardTabCaption();
+                    if ($.isNumeric(pk)) {
+                        caption += ' [' + pk + ']';
+                    } else {
+                        caption += '[новая запись]';
+                    }
+                    var $li = $('<li/>', {
+                        'data-tab-id': cardID,
+                        'data-id': pk,
+                        'data-view': view,
+                        'html': facade.getTabsModule().createTabLink('', caption)
+                    });
+                    facade.getTabsModule().push($li);
+                    $tabs.children('ul').append($li);
+                    $tabs.tabs("refresh");
+                    var _this = this;
+                    var cardView =  new CardView({
+                        model: _this.model,
+                        id: pk
+                    });
+                    $tabs.tabs({
+                        beforeLoad: function (event, ui) {
+                            ui.jqXHR.abort();
+                             cardView.render(view, pk, viewID, ui.panel);
+                        }
+                    });
+
+                    $a = $li.children('a');
+                    tab = facade.getFactoryModule().makeChTab($a);
+                    $tabs.tabs({ active: tab.getIndex()});
+                    var href = '#' + tab.getPanelID(),
+                        $context = $(href);
+                    facade.getRepaintModule().reflowCard($context);
+                    cardView.initScripts($context);
+                    //facade.getCardModule().initCard($context);
+                    $a.attr('href', href);
+                } else {
+                    tab = facade.getFactoryModule().makeChTab($a);
+                    $tabs.tabs({ active: tab.getIndex() });
+                }
+
             }
         },
         columnHeaderTemplate: _.template([

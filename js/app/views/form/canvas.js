@@ -12,7 +12,7 @@ var CanvasView = (function (Backbone) {
                 $form = $(this.template({
                     id: formID,
                     view: this.model.getView(),
-                    isCardSupport: this.model.isCardSupport()
+                    isCardSupport: this.model.hasCard()
                 }));
             this.$el.html($form);
             var menuView = new MenuView({
