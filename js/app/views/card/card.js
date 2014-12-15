@@ -36,27 +36,35 @@ var CardView = (function (Backbone, $) {
             html.push('</header>');
             return html.join('');
         },
-        createSqlTasks: function (card, idList) {
-            if (this.isVisibleCaptions()) {
-                for (var key in this.cards) {
-                    if (this.cards.hasOwnProperty(key)) {
-                        var sql = jQuery.trim(this.cards[key].captionReadProc);
-                        if (sql) {
-                            sql = facade.getBindModule().bindCardSql(sql, card);
-
-                            var channel = facade.getOptionsModule().getChannel('socketRequest');
-                            mediator.publish(channel, {
+        createSqlTasks: function (cards, idList, pk) {
+            if (this.isVisibleCaption(cards)) {
+                var entityTypeID = this.model.getEntityTypeID();
+                cards.each(function (card) {
+                    var defer = deferredModule.create(),
+                        deferID = deferredModule.save(defer),
+                        sql = card.getCaptionReadProc(),
+                        data = {
+                            parentid: pk,
+                            entityid: pk,
+                            entitytypeid: entityTypeID,
+                            entitytype: entityTypeID
+                        };
+                    if (sql) {
+                        bindModule.deferredBindSql(deferID, sql, data);
+                        defer.done(function (res) {
+                            var prepareSql = res.sql;
+                            mediator.publish(facade.getOptionsModule().getChannel('socketRequest'), {
                                 type: 'jquery',
-                                query: sql,
-                                id: idList[key]
+                                query: prepareSql,
+                                id: idList[card.getKey()]
                             });
-                        }
+                        });
                     }
-                }
+                });
             }
         },
-        isVisibleCaptions: function () {
-            return Object.keys(this.model.getCardCollection()).length > 1;
+        isVisibleCaption: function (cards) {
+            return cards.length > 1;
         },
         generateList: function (view, pk, viewID, $panel) {
 
@@ -64,7 +72,8 @@ var CardView = (function (Backbone, $) {
                 'data-view="' + view + '"' +
                 'data-pk="' + pk + '"' + 'data-form-id="' + viewID + '"' +
                 'data-save-url="/grid/save?view=' + view + '">';
-            var isVisibleCaption = this.isVisibleCaptions();
+            var cards = this.model.getCardROCollection();
+            var isVisibleCaption = this.isVisibleCaption(cards);
             if (isVisibleCaption) {
                 html += '<ul>';
             } else {
@@ -72,17 +81,14 @@ var CardView = (function (Backbone, $) {
             }
             var tabs = [];
             var tabIdList = {};
-            var cards = this.model.getCardCollection();
             cards.each(function (card) {
-                if (helpersModule.boolEval(card.getVisible(), true)) {
-                    var key = card.getKey();
-                    html += ' <li class="card-tab" data-id="' + key + '"';
-                    var id = helpersModule.uniqueID();
-                    html += ' aria-controls="' + id + '">';
-                    var tabID = helpersModule.uniqueID();
-                    tabIdList[key] = tabID;
-                    html += '<a id="' + tabID + '" href="1" title="' + key + '">' + card.getCaption() + '</a>';
-                }
+                var key = card.getKey();
+                html += ' <li class="card-tab" data-id="' + key + '"';
+                var id = helpersModule.uniqueID();
+                html += ' aria-controls="' + id + '">';
+                var tabID = helpersModule.uniqueID();
+                tabIdList[key] = tabID;
+                html += '<a id="' + tabID + '" href="1" title="' + key + '">' + card.getCaption() + '</a>';
             });
             html += '</ul>';
             if (isVisibleCaption) {
@@ -91,9 +97,8 @@ var CardView = (function (Backbone, $) {
             html += '</div>';
             $panel.append(html);
 
-            var card = facade.getFactoryModule().makeChCard($panel.children('[data-id=grid-tabs]'));
             if ($.isNumeric(pk)) {
-                this.createSqlTasks(card, tabIdList);
+                this.createSqlTasks(cards, tabIdList, pk);
             }
 
         },
@@ -113,32 +118,49 @@ var CardView = (function (Backbone, $) {
                 var chCard = factoryModule.makeChCard($this),
                     tabID = $(ui.tab).attr('data-id'),
                     pk = chCard.getKey(),
-                    fmCardCollection = chCard.getFmCardCollection(),
                     isNumeric = $.isNumeric(pk);
-                console.log(e, ui, $tabPanel, $this);
-                $.get(chCard.getTabDataUrl(tabID))
-                    .done(function (template) {
-                        var $content = $(helpersModule.layoutTemplate(template, pk));
-                        try {
-                            _private.initScripts(ui, $content, $tabPanel);
-                            fmCardCollection.setCardTemplate(tabID, template, isNumeric);
-                        } catch (e) {
-                            $content.remove();
-                            mediator.publish(optionsModule.getChannel('logError'),
-                                'Возникла ошибка при инициализации шаблона',
-                                e
-                            );
-                        }
-                    })
-                    .fail(function (e) {
-                        mediator.publish(optionsModule.getChannel('logError'),
-                            'Ошибка при получении с сервера шаблон закладки для карточки',
-                            e
-                        );
-                    });
+                var card = this.model.getCardROCollection().findWhere({
+                    key: tabID
+                });
+                this.createPanel(card);
+                //console.log(e, ui, $tabPanel, $this, $(ui.tab));
+                //$.get(chCard.getTabDataUrl(tabID))
+                //    .done(function (template) {
+                //        var $content = $(helpersModule.layoutTemplate(template, pk));
+                //        try {
+                //            _private.initScripts(ui, $content, $tabPanel);
+                //            fmCardCollection.setCardTemplate(tabID, template, isNumeric);
+                //        } catch (e) {
+                //            $content.remove();
+                //            mediator.publish(optionsModule.getChannel('logError'),
+                //                'Возникла ошибка при инициализации шаблона',
+                //                e
+                //            );
+                //        }
+                //    })
+                //    .fail(function (e) {
+                //        mediator.publish(optionsModule.getChannel('logError'),
+                //            'Ошибка при получении с сервера шаблон закладки для карточки',
+                //            e
+                //        );
+                //    });
 
             }
             return false;
+        },
+        createPanel: function (card) {
+            var startYPos = 1,
+                maxPos = 'max',
+                tabIndex = 0,
+                cellWidth = parseInt(100/card.getCols(), 10),
+            html = [];
+            var elements =  this.model.getCardElements(card);
+            var sortedElements = _.sortBy(elements,function(model){
+                return model.getCardX();
+                //console.log(model.getCardX(), model.getCardY());
+            });
+            console.log(sortedElements)
+
         }
     });
 })(Backbone, jQuery);

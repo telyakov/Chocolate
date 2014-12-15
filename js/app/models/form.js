@@ -17,10 +17,10 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         hasCardHeader: function () {
             return this.getCardHeaderText() || this.getCardHeaderImage();
         },
-        getCardHeaderImage: function(){
+        getCardHeaderImage: function () {
             return this.getCardCollection().getHeaderImage();
         },
-        getCardHeaderText: function(){
+        getCardHeaderText: function () {
             return this.getCardCollection().getHeader();
         },
         getPrintActions: function () {
@@ -194,6 +194,29 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 });
             }
             return this._card_collection;
+        },
+        getCardROCollection: function () {
+            var collection = new CardROCollection();
+            this.getCardCollection().each(function (card) {
+                var cardRO = new CardRO({
+                    card: card,
+                    key: card.getKey()
+                });
+                if (cardRO.isVisible()) {
+                    collection.push(cardRO);
+                }
+            });
+            return collection;
+        },
+        getCardElements: function (card) {
+            var key = card.getKey();
+            var cardElements = [];
+            this.getColumnsCollection().each(function (model) {
+                if (model.getCardKey() === key) {
+                    cardElements.push(model);
+                }
+            });
+            return cardElements;
         },
         getCardTabCaption: function () {
             return this.getCardCollection().getCaption();

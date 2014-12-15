@@ -138,7 +138,6 @@ var GridView = (function (Backbone) {
                         $context = $(href);
                     facade.getRepaintModule().reflowCard($context);
                     cardView.initScripts($context);
-                    //facade.getCardModule().initCard($context);
                     $a.attr('href', href);
                 } else {
                     tab = facade.getFactoryModule().makeChTab($a);

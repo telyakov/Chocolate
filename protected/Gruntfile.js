@@ -104,6 +104,7 @@ module.exports = function (grunt) {
                     '../js/app/fm/*.js',
                     '../js/app/models/filter/filter_ro.js',
                     '../js/app/models/filter/*.js',
+                    '../js/app/models/card/*.js',
                     '../js/app/models/column/column_ro.js',
                     '../js/app/models/column/*.js',
                     '../js/app/views/filter/filter.js',
