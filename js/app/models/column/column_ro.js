@@ -38,6 +38,28 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             }
 
         },
+        isSingle: function(){
+            return helpersModule.boolEval(this.get('columnProperties').getSingleValueMode(), false);
+        },
+        getCardEditType: function(){
+            return this.get('columnProperties').getCardEditType();
+        },
+        getCardKey: function(){
+            return this.get('columnProperties').getCardKey();
+        },
+        getCardX: function(){
+            return this.get('columnProperties').getCardX();
+        },
+        getCardY: function(){
+            return this.get('columnProperties').getCardY();
+        },
+        getCardWidth: function(){
+            return helpersModule.intExpressionEval(this.get('columnProperties').getCardWidth(), 1);
+        },
+        getCardHeight: function(){
+            return helpersModule.intExpressionEval(this.get('columnProperties').getCardHeight(), 1);
+        },
+
         getVisibleCaption: function () {
             var caption = this.getCaption();
             return caption || this.getHeaderImage() ? caption : this.get('key');

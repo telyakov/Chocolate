@@ -39,6 +39,9 @@ var AttachmentColumnRO = (function (Backbone) {
         getKey: function () {
             return 'numattachments';
         },
+        getCardKey: function(){
+            return '';
+        },
         isRequired: function () {
             return false;
         },

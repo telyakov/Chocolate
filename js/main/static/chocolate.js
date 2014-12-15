@@ -252,6 +252,19 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
 
             }
         },
+        intExpressionEval: function(expr, def){
+
+                if(expr !== null){
+                    if($.isNumeric(expr)){
+                        return parseInt(expr, 10);
+                    }else{
+                        return expr;
+                    }
+                }else{
+                    return def;
+                }
+
+        },
         boolExpressionEval: function (expr, deferId, defaultValue) {
             var prepareExpr = $.trim(expr.toLowerCase());
             switch (true) {

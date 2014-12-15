@@ -122,8 +122,7 @@ var CardView = (function (Backbone, $) {
                 var card = this.model.getCardROCollection().findWhere({
                     key: tabID
                 });
-                this.createPanel(card);
-                //console.log(e, ui, $tabPanel, $this, $(ui.tab));
+                this.createPanel(card, $(ui.panel));
                 //$.get(chCard.getTabDataUrl(tabID))
                 //    .done(function (template) {
                 //        var $content = $(helpersModule.layoutTemplate(template, pk));
@@ -148,18 +147,68 @@ var CardView = (function (Backbone, $) {
             }
             return false;
         },
-        createPanel: function (card) {
+        buttonsTemplate : _.template([
+        '<div class="card-action-button" data-id="action-button-panel">',
+        '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
+        '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
+    ]. join('')),
+        createPanel: function (card, $panel) {
             var startYPos = 1,
                 maxPos = 'max',
                 tabIndex = 0,
-                cellWidth = parseInt(100/card.getCols(), 10),
-            html = [];
-            var elements =  this.model.getCardElements(card);
-            var sortedElements = _.sortBy(elements,function(model){
-                return model.getCardX();
-                //console.log(model.getCardX(), model.getCardY());
+                cellWidth = parseInt(100 / card.getCols(), 10),
+                html = {},
+                callbacks = [],
+                event = 'render_' + helpersModule.uniqueID(),
+                elements = this.model.getCardElements(card),
+                length = elements.length,
+                asyncTaskCompleted = 0,
+                $div = $('<div>', {
+                    'class': 'card-content',
+                    'data-id': 'card-control',
+                    'id': helpersModule.uniqueID(),
+                    'data-rows': card.getRows()
+                });
+            $div.after(this.buttonsTemplate());
+            $panel.html($div);
+
+           $.subscribe(event, function (e, data) {
+               var x = data.x,
+                   y = data.y,
+                   text = data.html;
+               if(!html.hasOwnProperty(x)){
+                   html[x]= {};
+               }
+               html[x][y] = text;
+
+                if (data.callback) {
+                    callbacks.push(data.callback);
+                }
+                asyncTaskCompleted++;
+                if (asyncTaskCompleted === length) {
+                    console.log('complete');
+                    $.unsubscribe(event);
+                //    $filterSection.append(
+                //        _this.filterTemplate({
+                //            html: '<div><ul class="filters-list">' + html.join('') + '</div></ul></div>',
+                //            formID: helpersModule.uniqueID()
+                //        })
+                //    );
+                    console.log(html);
+                    callbacks.forEach(function (fn) {
+                        fn();
+                    });
+                //    panelDefer.resolve();
+                //
+                }
             });
-            console.log(sortedElements)
+            elements.each(function(model){
+                model.render(event);
+            })
+            //var sortedElements = _.sortBy(elements, function (model) {
+                //return model.getCardX();
+                //console.log(model.getCardX(), model.getCardY());
+            //console.log(sortedElements)
 
         }
     });

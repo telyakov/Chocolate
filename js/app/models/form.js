@@ -210,13 +210,15 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         },
         getCardElements: function (card) {
             var key = card.getKey();
-            var cardElements = [];
-            this.getColumnsCollection().each(function (model) {
+            var cardElements = [],
+                collection =  this.getColumnsROCollection();
+            collection.each(function (model) {
                 if (model.getCardKey() === key) {
-                    cardElements.push(model);
+                    var elem = CardElementFactory.make(model,collection);
+                    cardElements.push(elem);
                 }
             });
-            return cardElements;
+            return new Backbone.Collection(cardElements);
         },
         getCardTabCaption: function () {
             return this.getCardCollection().getCaption();
