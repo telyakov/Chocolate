@@ -22,7 +22,7 @@ var CardElementFactory = (function () {
                 case 'combobox':
                     return new SelectCardElement(options);
                 case 'select':
-                    return new SelectCardElement(options);
+                    return new TreeCardElement(options);
                 case 'grid':
                     return new FormCardElement(options);
                 case 'multimedia':

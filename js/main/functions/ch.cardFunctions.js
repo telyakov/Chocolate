@@ -48,7 +48,7 @@ var ch ={
                     value = '';
                 }
                 var elemText = cardElement.getParentElement(attribute).html();
-                facade.getCardModule().addCallback(function () {
+                setTimeout(function () {
                     card.setElementValue($context, value, isAllowEdit, elemText);
                     $context.html(elemText);
                         $context.unbind('click');
@@ -61,7 +61,7 @@ var ch ={
                             dynatreeElem.buildFromData(options);
                         });
                     }
-                });
+                }, 0);
             },
             gridInit: function($context, attribute, allowEdit, titleKey, editable, caption, isSingle){
                 var cardElement = facade.getFactoryModule().makeChCardElement($context),
