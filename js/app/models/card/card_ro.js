@@ -18,10 +18,10 @@ var CardRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
             return this.get('card').getCaptionReadProc();
         },
         getCols: function(){
-            return this.get('card').getCols();
+            return parseInt(this.get('card').getCols(), 10);
         },
         getRows: function(){
-            return this.get('card').getRows();
+            return parseInt(this.get('card').getRows(), 10);
         }
     });
 })(Backbone, helpersModule, FilterProperties, bindModule);

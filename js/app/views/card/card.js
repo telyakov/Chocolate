@@ -123,26 +123,6 @@ var CardView = (function (Backbone, $) {
                     key: tabID
                 });
                 this.createPanel(card, $(ui.panel));
-                //$.get(chCard.getTabDataUrl(tabID))
-                //    .done(function (template) {
-                //        var $content = $(helpersModule.layoutTemplate(template, pk));
-                //        try {
-                //            _private.initScripts(ui, $content, $tabPanel);
-                //            fmCardCollection.setCardTemplate(tabID, template, isNumeric);
-                //        } catch (e) {
-                //            $content.remove();
-                //            mediator.publish(optionsModule.getChannel('logError'),
-                //                'Возникла ошибка при инициализации шаблона',
-                //                e
-                //            );
-                //        }
-                //    })
-                //    .fail(function (e) {
-                //        mediator.publish(optionsModule.getChannel('logError'),
-                //            'Ошибка при получении с сервера шаблон закладки для карточки',
-                //            e
-                //        );
-                //    });
 
             }
             return false;
@@ -169,42 +149,49 @@ var CardView = (function (Backbone, $) {
                     'id': helpersModule.uniqueID(),
                     'data-rows': card.getRows()
                 });
-            $div.after(this.buttonsTemplate());
             $panel.html($div);
+            $panel.append(this.buttonsTemplate());
 
            $.subscribe(event, function (e, data) {
                var x = data.x,
                    y = data.y,
                    text = data.html;
-               if(!html.hasOwnProperty(x)){
-                   html[x]= {};
+               if(!html.hasOwnProperty(y)){
+                   html[y]= {};
                }
-               html[x][y] = text;
+               html[y][x] = text;
 
                 if (data.callback) {
                     callbacks.push(data.callback);
                 }
                 asyncTaskCompleted++;
                 if (asyncTaskCompleted === length) {
-                    console.log('complete');
                     $.unsubscribe(event);
-                //    $filterSection.append(
-                //        _this.filterTemplate({
-                //            html: '<div><ul class="filters-list">' + html.join('') + '</div></ul></div>',
-                //            formID: helpersModule.uniqueID()
-                //        })
-                //    );
-                    console.log(html);
+                    var cardHtml = '';
+                    var i,
+                        j,
+                        hasOwn = Object.hasOwnProperty;
+                    for(i in html){
+                        if(hasOwn.call(html, i)){
+                            for(j in html[i]){
+                                if(hasOwn.call(html[i], j)){
+                                    cardHtml += html[i][j];
+                                }
+                            }
+                        }
+                    }
+                    $div.html(cardHtml)
                     callbacks.forEach(function (fn) {
                         fn();
                     });
-                //    panelDefer.resolve();
-                //
+                    mediator.publish(optionsModule.getChannel('reflowTab'));
                 }
             });
+            var i = 0;
             elements.each(function(model){
-                model.render(event);
-            })
+                model.render(event, i, card);
+                i++;
+            });
             //var sortedElements = _.sortBy(elements, function (model) {
                 //return model.getCardX();
                 //console.log(model.getCardX(), model.getCardY());

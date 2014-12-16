@@ -1,4 +1,4 @@
-var CardElement = (function (Backbone, helpersModule, FilterProperties, bindModule) {
+var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindModule) {
     'use strict';
     return Backbone.Model.extend({
         labelTemplate: _.template([
@@ -61,7 +61,7 @@ var CardElement = (function (Backbone, helpersModule, FilterProperties, bindModu
         },
 
         getX: function () {
-            return this.get('column').getCardX();
+            return parseInt(this.get('column').getCardX(), 10);
         },
         posY: null,
         getY: function () {
@@ -75,16 +75,16 @@ var CardElement = (function (Backbone, helpersModule, FilterProperties, bindModu
 
         getRecursiveY: function (curPosY, columnRO) {
             var posY = columnRO.getCardY();
-            if(posY.indexOf('+') !== -1){
+            if (posY.indexOf('+') !== -1) {
                 var matches = posY.split('+'),
                     parentKey = matches[0].toLowerCase(),
                     digit = matches[1],
                     parentColumnRO = this.get('collection').findWhere({
                         key: parentKey
                     });
-                return this.getRecursiveY(curPosY + digit, parentColumnRO);
-            }else{
-                return curPosY + posY;
+                return this.getRecursiveY(curPosY + parseInt(digit, 10), parentColumnRO);
+            } else {
+                return curPosY + parseInt(posY, 10);
             }
         },
 
@@ -95,21 +95,90 @@ var CardElement = (function (Backbone, helpersModule, FilterProperties, bindModu
         getWidth: function () {
             return this.get('column').getCardWidth();
         },
+        getCallback: function () {
+            return function () {
+                console.log('call');
+            };
+        },
+        getHtml: function (card, tabIndex){
+            var cellWidth = parseInt(100 / card.getCols(), 10),
+                data = '',
+                cols = card.getCols(),
+                rows = card.getRows();
+            return this.createCell(data, tabIndex, cellWidth, cols, rows);
+        },
 
-        render: function (event) {
-            var x = 111,
-                y = 11,
-                html = 'sdw',
-                callback = function () {
-                    console.log('call');
-                };
+
+        createCell: function (data, tabIndex, cellWidth, cols, rows) {
+            var html = [],
+                id = helpersModule.uniqueID();
+            html.push(this.renderTopCell(id, cellWidth, cols, rows));
+            html.push(this.processBeforeRender(id));
+            html.push(this.renderBeginData());
+            html.push(data);
+            html.push(this.renderEndData());
+            html.push('</div>');
+            return html.join('');
+        },
+
+        headerCellTemplate: _.template(
+            [
+                '<div id="<%= id%>" data-x="<%= x %>" data-y="<%= y %>" ',
+                'class="<%= class%>" data-rows="<%= rows%>" ',
+                'style="<%= style%>" data-min-height="<%= height %>"',
+                '>'
+            ].join('')
+        ),
+        renderTopCell: function (id, cellWidth, cols, rows) {
+            var posX = this.getX(),
+                style = [
+                    'left:',
+                    cellWidth * (posX - 1),
+                    '%;width:',
+                    this.getCellWidth(cellWidth, cols),
+                    '%;'
+                ].join('');
+            return this.headerCellTemplate({
+                id: id,
+                x: posX,
+                y: this.getY(),
+                'class': this.getCellClass(),
+                rows: this.countCellRows(rows),
+                style: style,
+                height: this.getMinHeight()
+            });
+        },
+
+        getCellWidth: function (cellWidth, cols) {
+            var width = ''+this.getWidth();
+            if (width.toLowerCase() === 'max') {
+                return (cols - this.getX() + 1) * cellWidth;
+            } else {
+                return cellWidth + parseInt(width, 10);
+            }
+        },
+
+        getCellClass: function () {
+            if (this.isStatic()) {
+                return 'card-col card-static';
+            }
+            return 'card-col card-dynamic';
+        },
+        countCellRows: function (rows) {
+            var countRows = ''+this.getHeight();
+            if (countRows.toLowerCase() === 'max') {
+                return rows + this.getY() + 1;
+            }
+            return parseInt(countRows, 10);
+        },
+        render: function (event, tabIndex, card) {
             var response = {
-                x: x,
-                y: y,
-                html: html,
-                callback: callback
+                x: this.getX(),
+                y: this.getY(),
+                html: this.getHtml(card, tabIndex),
+                callback: this.getCallback()
             };
             $.publish(event, response);
         }
     });
-})(Backbone, helpersModule, FilterProperties, bindModule);
+})(jQuery, Backbone, helpersModule, FilterProperties, bindModule);
