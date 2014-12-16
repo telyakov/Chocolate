@@ -2,9 +2,22 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
     'use strict';
     return Backbone.Model.extend({
         labelTemplate: _.template([
-                '<label for="<%= id%>" class="<%= class%>"><%= caption%></label>'
+                '<label for="<%= id%>"',
+                '<% if(isRequired){ %>',
+                ' class="required"><span class="required">*</span>',
+                '<% }else{ %>',
+                '>',
+                '<% }%>',
+                '<%= caption%></label>'
             ].join('')
         ),
+        id: null,
+        getControlID: function () {
+            if (this.id === null) {
+                this.id = helpersModule.uniqueID();
+            }
+            return this.id;
+        },
         defaults: {
             collection: null,
             column: null,
@@ -31,7 +44,7 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
             return this.labelTemplate({
                 id: id,
                 caption: this.getCaption(),
-                'class': this.isRequired() ? 'required' : null
+                'isRequired': this.isRequired()
             });
         },
         getCaption: function () {
@@ -95,32 +108,45 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
         getWidth: function () {
             return this.get('column').getCardWidth();
         },
-        getCallback: function () {
+        getCallback: function (controlID, pk) {
             return function () {
-                console.log('call');
             };
         },
-        getHtml: function (card, tabIndex){
+        getHtml: function (card, tabIndex, pk, controlID) {
             var cellWidth = parseInt(100 / card.getCols(), 10),
-                data = '',
                 cols = card.getCols(),
                 rows = card.getRows();
-            return this.createCell(data, tabIndex, cellWidth, cols, rows);
+            return this.createCell(tabIndex, cellWidth, cols, rows, pk, controlID);
         },
 
 
-        createCell: function (data, tabIndex, cellWidth, cols, rows) {
+        createCell: function (tabIndex, cellWidth, cols, rows, pk, controlID) {
             var html = [],
                 id = helpersModule.uniqueID();
             html.push(this.renderTopCell(id, cellWidth, cols, rows));
             html.push(this.processBeforeRender(id));
             html.push(this.renderBeginData());
-            html.push(data);
+            html.push(this.renderControl(pk, controlID, tabIndex));
             html.push(this.renderEndData());
             html.push('</div>');
             return html.join('');
         },
-
+        controlTemplate: _.template(
+            [
+                '<div class="table-td">',
+                '<a tabindex="<%=tabindex %>" id="<%=id %>" rel="<%=key+\'_\' +pk %>" data-pk="<%=pk %>"',
+                '></a>',
+                '</div>'
+            ].join('')
+        ),
+        renderControl: function (pk, controlID, tabindex) {
+            return this.controlTemplate({
+                tabindex: tabindex,
+                id: controlID,
+                key: this.get('column').get('key'),
+                pk: pk
+            });
+        },
         headerCellTemplate: _.template(
             [
                 '<div id="<%= id%>" data-x="<%= x %>" data-y="<%= y %>" ',
@@ -150,7 +176,7 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
         },
 
         getCellWidth: function (cellWidth, cols) {
-            var width = ''+this.getWidth();
+            var width = '' + this.getWidth();
             if (width.toLowerCase() === 'max') {
                 return (cols - this.getX() + 1) * cellWidth;
             } else {
@@ -165,18 +191,19 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
             return 'card-col card-dynamic';
         },
         countCellRows: function (rows) {
-            var countRows = ''+this.getHeight();
+            var countRows = '' + this.getHeight();
             if (countRows.toLowerCase() === 'max') {
                 return rows + this.getY() + 1;
             }
             return parseInt(countRows, 10);
         },
-        render: function (event, tabIndex, card) {
+        render: function (event, tabIndex, card, pk) {
+            var controlID = this.getControlID();
             var response = {
                 x: this.getX(),
                 y: this.getY(),
-                html: this.getHtml(card, tabIndex),
-                callback: this.getCallback()
+                html: this.getHtml(card, tabIndex, pk, controlID),
+                callback: this.getCallback(controlID, pk)
             };
             $.publish(event, response);
         }

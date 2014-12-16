@@ -64,6 +64,9 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             var caption = this.getCaption();
             return caption || this.getHeaderImage() ? caption : this.get('key');
         },
+        getFormat: function(){
+            return this.get('columnProperties').getFormat();
+        },
         getView: function(){
             return this.get('columnProperties').getViewName();
         },

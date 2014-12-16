@@ -297,11 +297,11 @@ var chCardFunction = {
         if (value === null) {
             value = '';
         }
-        facade.getCardModule().addCallback(function () {
+        setTimeout(function () {
             chCard.setElementValue(jCell, value, isAllowEdit);
             var ch_column = new ChTextAreaEditableCard(editable['$element']);
             ch_column.create(context, e, isAllowEdit, attribute, caption, isNeedFormat, isMarkupSupport);
-        });
+        }, 0);
     },
     checkBoxDisplayFunction: function (value, $context, label, color, priority) {
             var chForm;

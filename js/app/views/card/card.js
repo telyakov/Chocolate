@@ -180,16 +180,17 @@ var CardView = (function (Backbone, $) {
                             }
                         }
                     }
-                    $div.html(cardHtml)
+                    $div.html(cardHtml);
                     callbacks.forEach(function (fn) {
                         fn();
                     });
                     mediator.publish(optionsModule.getChannel('reflowTab'));
                 }
             });
-            var i = 0;
+            var i = 0,
+                pk = this.id;
             elements.each(function(model){
-                model.render(event, i, card);
+                model.render(event, i, card, pk);
                 i++;
             });
             //var sortedElements = _.sortBy(elements, function (model) {

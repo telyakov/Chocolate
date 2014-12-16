@@ -18,7 +18,12 @@
     font-weight: normal;
     font-style: normal;
 }
-
+.wysihtml5-toolbar{
+    display: none!important;
+}
+.editable-popup .wysihtml5-toolbar{
+    display: block!important;
+}
 .ui-tabs .ui-tabs-nav li a:hover {
     border-bottom: 0 !important;
 }
