@@ -123,6 +123,7 @@ var CardView = (function (Backbone, $) {
                     key: tabID
                 });
                 this.createPanel(card, $(ui.panel));
+                ui.tab.data('loaded', 1);
 
             }
             return false;
@@ -184,7 +185,9 @@ var CardView = (function (Backbone, $) {
                     callbacks.forEach(function (fn) {
                         fn();
                     });
-                    mediator.publish(optionsModule.getChannel('reflowTab'));
+                    setTimeout(function(){
+                        mediator.publish(optionsModule.getChannel('reflowTab'));
+                    }, 0);
                 }
             });
             var i = 0,

@@ -127,7 +127,7 @@ var GridView = (function (Backbone) {
                     $tabs.tabs({
                         beforeLoad: function (event, ui) {
                             ui.jqXHR.abort();
-                             cardView.render(view, pk, viewID, ui.panel);
+                            cardView.render(view, pk, viewID, ui.panel);
                         }
                     });
 
@@ -140,6 +140,7 @@ var GridView = (function (Backbone) {
                     cardView.initScripts($context);
                     $a.attr('href', href);
                 } else {
+                    console.log('elese')
                     tab = facade.getFactoryModule().makeChTab($a);
                     $tabs.tabs({ active: tab.getIndex() });
                 }

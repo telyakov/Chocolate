@@ -113,7 +113,7 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
             };
         },
         getHtml: function (card, tabIndex, pk, controlID) {
-            var cellWidth = parseInt(100 / card.getCols(), 10),
+            var cellWidth =  parseInt(100 / card.getCols(), 10),
                 cols = card.getCols(),
                 rows = card.getRows();
             return this.createCell(tabIndex, cellWidth, cols, rows, pk, controlID);
@@ -180,7 +180,7 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
             if (width.toLowerCase() === 'max') {
                 return (cols - this.getX() + 1) * cellWidth;
             } else {
-                return cellWidth + parseInt(width, 10);
+                return cellWidth * parseInt(width, 10);
             }
         },
 

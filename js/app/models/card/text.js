@@ -71,11 +71,7 @@ var TextCardElement = (function () {
                         chCardFunction.defaultSaveFunc(e, params, name);
                     })
                     .editable(options);
-                ////                $options['htmlOptions']['class'] = 'ch-card-iframe';
-
             };
-
-
         },
         isStatic: function () {
             return this.getHeight() === 1;
