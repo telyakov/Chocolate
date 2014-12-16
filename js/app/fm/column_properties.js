@@ -73,7 +73,6 @@ var ColumnProperties = (function (Backbone) {
         getCardKey: function () {
             return this.get('$obj').children('cardKey').text();
         },
-
         getCardVisible: function () {
             return this.get('$obj').children('cardVisible').text();
         },

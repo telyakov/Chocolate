@@ -117,6 +117,9 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         getRawAllowEdit: function () {
             return this.get('columnProperties').getAllowEdit();
         },
+        isVisibleInCard: function(){
+          return helpersModule.boolEval(this.get('columnProperties').getCardVisible(), false);
+        },
         isEdit: function () {
             return helpersModule.boolEval(this.get('columnProperties').getAllowEdit(), true);
         },

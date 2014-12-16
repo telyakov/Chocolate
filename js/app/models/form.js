@@ -211,7 +211,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         getCardElements: function (card) {
             var key = card.getKey();
             var cardElements = [],
-                collection =  this.getColumnsROCollection();
+                collection =  this.getColumnsCardROCollection();
             collection.each(function (model) {
                 if (model.getCardKey() === key) {
                     var elem = CardElementFactory.make(model,collection);
@@ -274,6 +274,22 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 columnsROCollection.push(new AttachmentColumnRO());
             }
             return this._columns_ro_collection;
+        },
+        _columns_card_ro_collection: null,
+        getColumnsCardROCollection: function () {
+            if (this._columns_card_ro_collection !== null) {
+                return this._columns_card_ro_collection;
+            }
+            var columnsCollection = this.getColumnsCollection(),
+                columnsROCollection = new ColumnsROCollection();
+            columnsCollection.each(function (item) {
+                var columnRO = ColumnsRoFactory.make(item);
+                if (columnRO.isVisibleInCard()) {
+                    columnsROCollection.push(columnRO);
+                }
+            });
+            this._columns_card_ro_collection = columnsROCollection;
+            return this._columns_card_ro_collection;
         },
         isAttachmentSupport: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);

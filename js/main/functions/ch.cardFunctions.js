@@ -358,10 +358,10 @@ var chCardFunction = {
         var chCard = chCardElement.getCard(),
             value = chCard.getActualDataObj()[attribute],
             dtValue;
-        var isAllowEdit = this._isAllowEdit(chCard.getActualDataObj(), allowEdit)
+        var isAllowEdit = this._isAllowEdit(chCard.getActualDataObj(), allowEdit);
 
-        if (value && typeof(value) == 'string') {
-            value = value.replace(/\./g, '/')
+        if (value && typeof(value) === 'string') {
+            value = value.replace(/\./g, '/');
             dtValue = new Date(value);
         } else {
             dtValue = value;
@@ -369,9 +369,9 @@ var chCardFunction = {
         if(!isAllowEdit){
             chCardElement.markAsNoChanged();
         }
-        facade.getCardModule().addCallback(function () {
+        setTimeout(function () {
             chCard.setElementValue($context, dtValue, isAllowEdit);
-        });
+        }, 0);
 
     },
     select2SaveFunction: function (e, params, attribute) {
