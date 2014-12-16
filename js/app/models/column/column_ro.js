@@ -16,47 +16,62 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             }
             return this._column_custom_properties;
         },
-        evalReadProc: function(deferId){
-            var sql = this.get('columnProperties').getDataSource();
-            if(!sql){
-                sql = this.get('columnProperties').getFromDataSource();
-            }
-            if(sql){
-                var dataDefer = deferredModule.create(),
-                    dateDeferID = deferredModule.save(dataDefer);
-                bindModule.deferredBindSql(dateDeferID, sql);
-                dataDefer.done(function(res){
-                    var prepareSql = res.sql;
-                    mediator.publish(optionsModule.getChannel('socketRequest'), {
-                        query: prepareSql,
-                        type: optionsModule.getRequestType('deferred'),
-                        id: deferId
+        readProcData: null,
+        evalReadProc: function () {
+            var mainDefer = deferredModule.create(),
+                deferId = deferredModule.save(mainDefer);
+            if (this.readProcData === null) {
+                var _this = this;
+                var sql = this.get('columnProperties').getDataSource();
+                if (!sql) {
+                    sql = this.get('columnProperties').getFromDataSource();
+                }
+                if (sql) {
+                    var dataDefer = deferredModule.create(),
+                        dateDeferID = deferredModule.save(dataDefer);
+                    bindModule.deferredBindSql(dateDeferID, sql);
+                    dataDefer.done(function (res) {
+                        var prepareSql = res.sql;
+                        var columnDefer = deferredModule.create(),
+                            columnDeferID = deferredModule.save(columnDefer);
+                        columnDefer.done(function (data) {
+                            _this.readProcData = data;
+                            deferredModule.pop(deferId).resolve(data);
+                        });
+                        mediator.publish(optionsModule.getChannel('socketRequest'), {
+                            query: prepareSql,
+                            type: optionsModule.getRequestType('deferred'),
+                            id: columnDeferID
+                        });
                     });
-                });
+                } else {
+                    deferredModule.pop(deferId).resolve({data: {}});
+                }
             }else{
-                deferredModule.pop(deferId).resolve({data: {}});
+                deferredModule.pop(deferId).resolve(this.readProcData);
             }
+            return mainDefer;
 
         },
-        isSingle: function(){
+        isSingle: function () {
             return helpersModule.boolEval(this.get('columnProperties').getSingleValueMode(), false);
         },
-        getCardEditType: function(){
+        getCardEditType: function () {
             return this.get('columnProperties').getCardEditType();
         },
-        getCardKey: function(){
+        getCardKey: function () {
             return this.get('columnProperties').getCardKey();
         },
-        getCardX: function(){
+        getCardX: function () {
             return this.get('columnProperties').getCardX();
         },
-        getCardY: function(){
+        getCardY: function () {
             return this.get('columnProperties').getCardY();
         },
-        getCardWidth: function(){
+        getCardWidth: function () {
             return helpersModule.intExpressionEval(this.get('columnProperties').getCardWidth(), 1);
         },
-        getCardHeight: function(){
+        getCardHeight: function () {
             return helpersModule.intExpressionEval(this.get('columnProperties').getCardHeight(), 1);
         },
 
@@ -64,10 +79,10 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             var caption = this.getCaption();
             return caption || this.getHeaderImage() ? caption : this.get('key');
         },
-        getFormat: function(){
+        getFormat: function () {
             return this.get('columnProperties').getFormat();
         },
-        getView: function(){
+        getView: function () {
             return this.get('columnProperties').getViewName();
         },
         getFromName: function () {
@@ -127,7 +142,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         isRequired: function () {
             return helpersModule.boolEval(this.get('columnProperties').getRequired(), false);
         },
-        getFromKey: function(){
+        getFromKey: function () {
             return this.get('columnProperties').getKey();
         },
         getCaption: function () {

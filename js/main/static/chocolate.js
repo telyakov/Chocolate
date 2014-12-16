@@ -363,6 +363,35 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                 B = [hexColor.charAt(0), hexColor.charAt(1)].join('');
             return [R, G, B].join('');
         },
+        prepareSelectSource: function(data){
+            var result = [],
+                iterator;
+            for (iterator in data) {
+                if (data.hasOwnProperty(iterator)) {
+                    result.push({
+                        text: data[iterator].name,
+                        value: data[iterator].id
+                    });
+                }
+            }
+            return result;
+        },
+        prepareTreeSource: function(data){
+            var result = [],
+                iterator;
+            for (iterator in data) {
+                if (data.hasOwnProperty(iterator)) {
+                    result.push({
+                        text: data[iterator].name,
+                        id: data[iterator].id,
+                        description: data[iterator].description ?
+                            data[iterator].description:
+                            ''
+                    });
+                }
+            }
+            return result;
+        },
         init: function () {
             context.init();
         }

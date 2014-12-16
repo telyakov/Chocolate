@@ -6,21 +6,9 @@ var SelectColumnRO = (function (Backbone, helpersModule, FilterProperties, bindM
                 allowEdit = this.getRawAllowEdit();
 
             return function () {
-                var defer = deferredModule.create(),
-                    deferId = deferredModule.save(defer);
-                _this.evalReadProc(deferId);
+                var defer =_this.evalReadProc();
                 defer.done(function (res) {
-                    var rawData = res.data;
-                    var data = [],
-                        iterator;
-                    for (iterator in rawData) {
-                        if (rawData.hasOwnProperty(iterator)) {
-                            data.push({
-                                text: rawData[iterator].name,
-                                value: rawData[iterator].id
-                            });
-                        }
-                    }
+                    var data = helpersModule.prepareSelectSource(res.data);
                     var $elements = $cnt.find('[rel$="_' + _this.get('key') + '"]');
                     $elements
                         .on('init', function () {

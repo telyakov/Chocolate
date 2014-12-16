@@ -9,24 +9,9 @@ var TreeColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
                 allowEdit = this.getRawAllowEdit();
 
             return function () {
-                var defer = deferredModule.create(),
-                    deferId = deferredModule.save(defer);
-                _this.evalReadProc(deferId);
+                var defer = _this.evalReadProc();
                 defer.done(function (res) {
-                    var rawData = res.data;
-                    var data = [],
-                        iterator;
-                    for (iterator in rawData) {
-                        if (rawData.hasOwnProperty(iterator)) {
-                            data.push({
-                                text: rawData[iterator].name,
-                                id: rawData[iterator].id,
-                                description:  rawData[iterator].description ?
-                                    rawData[iterator].description:
-                                    ''
-                            });
-                        }
-                    }
+                    var data = helpersModule.prepareTreeSource(res.data);
                     var $elements = $cnt.find('[rel$="_' + _this.get('key') + '"]');
 
                     $elements

@@ -506,9 +506,9 @@ var chCardFunction = {
 
         }
 
-        facade.getCardModule().addCallback(function () {
+        setTimeout(function () {
             chCard.setElementValue($context, value, isAllowEdit);
-        });
+        }, 0);
     },
     multimediaInitFunction: function (pk, sql, formID, id) {
         var $gridTabs = $('#' + id).closest('[data-id=grid-tabs]'),
