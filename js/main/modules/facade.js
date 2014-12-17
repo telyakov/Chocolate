@@ -73,7 +73,7 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
             view = view + '.xml';
         }
         view = view.replace(/\\/g, '/');
-        var defer = deferresdModule.create(),
+        var defer = deferredModule.create(),
             deferID = deferredModule.save(defer);
         var data = {
             key: optionsModule.getSetting('key'),

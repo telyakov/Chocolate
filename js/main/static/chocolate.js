@@ -254,7 +254,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
         },
         intExpressionEval: function(expr, def){
 
-                if(expr !== null){
+                if(expr !== null && expr !== '' && expr !== undefined){
                     if($.isNumeric(expr)){
                         return parseInt(expr, 10);
                     }else{

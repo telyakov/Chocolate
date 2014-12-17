@@ -68,7 +68,6 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return this.getKey() === 'crm\\map';
         },
         isAttachmentView: function () {
-            console.log( this.getKey())
             return this.getKey() === 'attachmentstasks';
         },
         isDiscussionView: function () {

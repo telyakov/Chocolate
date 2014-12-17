@@ -281,15 +281,20 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
         layoutFormSection: function ($panel) {
             var $formSection;
             if (this.model.isDiscussionView()) {
-                $formSection = $('<section>');
+                if(this.card){
+                    $formSection = $panel;
+                }else{
+                    $formSection = $('<section>');
+                    $panel.append($formSection);
+                }
             } else {
                 $formSection = $('<section>', {
                     'class': 'section-grid',
                     'data-id': 'grid-form'
                 });
+            $panel.append($formSection);
             }
 
-            $panel.append($formSection);
             var ViewClass = this.model.getFormView(),
                 view = new ViewClass({
                     $el: $formSection,
