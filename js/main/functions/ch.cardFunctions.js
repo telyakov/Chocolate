@@ -510,10 +510,8 @@ var chCardFunction = {
             chCard.setElementValue($context, value, isAllowEdit);
         }, 0);
     },
-    multimediaInitFunction: function (pk, sql, formID, id) {
-        var $gridTabs = $('#' + id).closest('[data-id=grid-tabs]'),
-            card = facade.getFactoryModule().makeChCard($gridTabs);
-        sql = facade.getBindModule().bindCardSql(sql, card);
+    multimediaInitFunction: function (sql, id) {
+        console.log(sql)
         $.get(chApp.getOptions().urls.imagesUrls, {sql: sql})
             .done(function (response) {
                 var res = new ChResponse(response),

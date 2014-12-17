@@ -318,15 +318,18 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 return null;
             }
         },
-        readProcEval: function (deferID, filterData, mainSql) {
-            var data = {
-                entityid: this.get('parentId'),
-                parentid: this.get('parentId'),
+        getParamsForBind: function(pk){
+            return {
+                entityid: pk? pk :this.get('parentId'),
+                parentid: pk? pk :this.get('parentId'),
                 entitytype: this.getParentEntityTypeID(),
                 entitytypeid: this.getParentEntityTypeID(),
                 parententitytypeid: this.getParentEntityTypeID(),
                 parententitytype: this.getParentEntityTypeID()
             };
+        },
+        readProcEval: function (deferID, filterData, mainSql) {
+            var data = this.getParamsForBind();
             if (filterData) {
                 data = $.extend(data, filterData);
             }

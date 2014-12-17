@@ -161,7 +161,13 @@ grunt --force
 #sudo passwd postgres
 #chocolate
 #chocolate
-#Настроить пароль
+# su - postgres
+# chocolate
+#\q
+#exit
+#sudo cp  /vagrant/protected/provision/postgresql.conf /var/lib/pgsql/9.3/data/postgresql.conf
+#sudo cp  /vagrant/protected/provision/pg_hba.conf /var/lib/pgsql/9.3/data/pg_hba.conf
+#/opt/php-5.6.0/bin/php yiic migrate -y
 #ALTER USER postgres WITH PASSWORD 'chocolate'
 #Скопировать конфиги
 #Ребут

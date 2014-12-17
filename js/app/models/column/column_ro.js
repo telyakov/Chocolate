@@ -24,7 +24,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             }
             return sql;
         },
-        evalReadProc: function () {
+        evalReadProc: function (params) {
             var mainDefer = deferredModule.create(),
                 deferId = deferredModule.save(mainDefer);
             if (this.readProcData === null) {
@@ -33,9 +33,8 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
                 if (sql) {
                     var dataDefer = deferredModule.create(),
                         dateDeferID = deferredModule.save(dataDefer);
-                    bindModule.deferredBindSql(dateDeferID, sql);
+                    bindModule.deferredBindSql(dateDeferID, sql, params);
                     dataDefer.done(function (res) {
-                        console.log(res)
                         var prepareSql = res.sql;
                         var columnDefer = deferredModule.create(),
                             columnDeferID = deferredModule.save(columnDefer);
