@@ -19,7 +19,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             '<% }else{ %>',
             '<% _.each(data, function(item) { %>',
             '<span class="radio inline">',
-            '<input id="<%= item.id %>" value="<%= item.val %>|" type="radio" name="<%= attribute %>[]">',
+            '<input id="<%= item.id %>" value="<%= item.val %>|" type="radio" name="<%= attribute %>">',
             '<label for="<%= item.id %>"><%= item.name %></label>',
             '</span>',
             ' <% }); %>',

@@ -8,6 +8,65 @@ var AbstractView = (function (Backbone) {
                 '</footer>'
             ].join('')
         ),
+        _formID: null,
+        getFormID: function () {
+            if (this._formID === null) {
+                this._formID = helpersModule.uniqueID();
+            }
+            return this._formID;
+        },
+        generateCardID: function(id){
+            return [ 'card_', this.model.getView(), id ].join('');
+        },
+        openCardHandler: function(pk){
+                var view = this.model.getView(),
+                    $tabs = $('#tabs'),
+                    cardID = this.generateCardID(pk),
+                    $a = $tabs.find("li[data-tab-id='" + cardID + "']").children('a'),
+                    tab;
+                if ($a.length === 0) {
+                    var viewID = this.getFormID(),
+                        caption = this.model.getCardTabCaption();
+                    if ($.isNumeric(pk)) {
+                        caption += ' [' + pk + ']';
+                    } else {
+                        caption += '[новая запись]';
+                    }
+                    var $li = $('<li/>', {
+                        'data-tab-id': cardID,
+                        'data-id': pk,
+                        'data-view': view,
+                        'html': facade.getTabsModule().createTabLink('', caption)
+                    });
+                    facade.getTabsModule().push($li);
+                    $tabs.children('ul').append($li);
+                    $tabs.tabs("refresh");
+                    var _this = this;
+                    var cardView =  new CardView({
+                        model: _this.model,
+                        id: pk
+                    });
+                    $tabs.tabs({
+                        beforeLoad: function (event, ui) {
+                            ui.jqXHR.abort();
+                            cardView.render(view, pk, viewID, ui.panel);
+                        }
+                    });
+
+                    $a = $li.children('a');
+                    tab = facade.getFactoryModule().makeChTab($a);
+                    $tabs.tabs({ active: tab.getIndex()});
+                    var href = '#' + tab.getPanelID(),
+                        $context = $(href);
+                    facade.getRepaintModule().reflowCard($context);
+                    cardView.initScripts($context);
+                    $a.attr('href', href);
+                } else {
+                    console.log('elese')
+                    tab = facade.getFactoryModule().makeChTab($a);
+                    $tabs.tabs({ active: tab.getIndex() });
+                }
+        },
         _refresh_timer_id: null,
         initialize: function (options) {
             _.bindAll(this, 'render');

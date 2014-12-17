@@ -1,7 +1,7 @@
 var GridView = (function (Backbone) {
     'use strict';
     return AbstractView.extend({
-        _formID: null,
+
         template: _.template([
                 '<form action="/grid/save?view=<%=view %>" data-id="<%= view %>" id="<%= id%>"',
                 'data-ajax-add="<%= ajaxAdd%>" ',
@@ -90,60 +90,12 @@ var GridView = (function (Backbone) {
             'touchmove .card-button': 'openCard',
             'dblclick .card-button': 'openCard'
         },
-        generateCardID: function(id){
-            return [ 'card_', this.model.getView(), id ].join('');
-        },
+
         openCard: function(e){
             if(this.model.hasCard()){
                 var $this = $(e.target),
-                    pk = $this.closest('tr').attr("data-id"),
-                    view = this.model.getView(),
-                    $tabs = $('#tabs'),
-                    cardID = this.generateCardID(pk),
-                    $a = $tabs.find("li[data-tab-id='" + cardID + "']").children('a'),
-                    tab;
-                if ($a.length === 0) {
-                    var viewID = this.getFormID(),
-                        caption = this.model.getCardTabCaption();
-                    if ($.isNumeric(pk)) {
-                        caption += ' [' + pk + ']';
-                    } else {
-                        caption += '[новая запись]';
-                    }
-                    var $li = $('<li/>', {
-                        'data-tab-id': cardID,
-                        'data-id': pk,
-                        'data-view': view,
-                        'html': facade.getTabsModule().createTabLink('', caption)
-                    });
-                    facade.getTabsModule().push($li);
-                    $tabs.children('ul').append($li);
-                    $tabs.tabs("refresh");
-                    var _this = this;
-                    var cardView =  new CardView({
-                        model: _this.model,
-                        id: pk
-                    });
-                    $tabs.tabs({
-                        beforeLoad: function (event, ui) {
-                            ui.jqXHR.abort();
-                            cardView.render(view, pk, viewID, ui.panel);
-                        }
-                    });
-
-                    $a = $li.children('a');
-                    tab = facade.getFactoryModule().makeChTab($a);
-                    $tabs.tabs({ active: tab.getIndex()});
-                    var href = '#' + tab.getPanelID(),
-                        $context = $(href);
-                    facade.getRepaintModule().reflowCard($context);
-                    cardView.initScripts($context);
-                    $a.attr('href', href);
-                } else {
-                    console.log('elese')
-                    tab = facade.getFactoryModule().makeChTab($a);
-                    $tabs.tabs({ active: tab.getIndex() });
-                }
+                    pk = $this.closest('tr').attr("data-id");
+                this.openCardHandler(pk);
 
             }
         },
@@ -155,12 +107,7 @@ var GridView = (function (Backbone) {
                 '</a></div>'
             ].join('')
         ),
-        getFormID: function () {
-            if (this._formID === null) {
-                this._formID = helpersModule.uniqueID();
-            }
-            return this._formID;
-        },
+
         render: function () {
             var formId = this.getFormID(),
                 html = this.template({
@@ -185,85 +132,6 @@ var GridView = (function (Backbone) {
         },
         refresh: function () {
             this.initData();
-
-            //var url = this.getRefreshUrl(),
-            //    parentView = parentView? parentView :this.getParentView(),
-            //    searchData = this.getSearchData(),
-            //    chMessagesContainer = this.getMessagesContainer(),
-            //    _this = this;
-            //console.log(parentView, searchData)
-            //$.ajax({
-            //    url: url + '&ParentView=' + parentView,
-            //    type: "POST",
-            //    data: searchData,
-            //    success: function (response, st, xhr) {
-            //        var chResponse = new ChSearchResponse(response);
-            //        var type = _this.getType();
-            //        if (chResponse.isSuccess()) {
-            //            if (type == 'map') {
-            //                var $map = _this.$form.children('section').children('.map');
-            //                var ch_map = facade.getFactoryModule().makeChMap($map);
-            //                ch_map.refreshPoints(chResponse.getData(), chMessagesContainer);
-            //
-            //            } else if (type == 'canvas') {
-            //                var $canvas = _this.$form.find('canvas');
-            //                var ch_canvas = facade.getFactoryModule().makeChCanvas($canvas);
-            //                var data = chResponse.getData();
-            //                _this.updateStorage(data, {});
-            //                var options = new ChCanvasOptions();
-            //                ch_canvas.refreshData(data, options);
-            //            }
-            //            else {
-            //                _this.updateData(chResponse.getData(), chResponse.getOrder());
-            //                _this._clearDeletedObj();
-            //                _this._clearChangedObj();
-            //                _this.clearSelectedArea();
-            //
-            //            }
-            //            var filterForm = _this.getFilterForm();
-            //            if (filterForm && typeof filterForm != 'undefined' && filterForm.$form.length) {
-            //
-            //                var filters = filterForm.getAutoRefreshFiltersCol();
-            //                if (filters.length) {
-            //                    //todo: сделать один общий ajax
-            //                    filters.forEach(
-            //                        /**
-            //                         * @param chFilter {ChFilter}
-            //                         */
-            //                            function (chFilter) {
-            //                            $.get('/majestic/filterLayout', {'name': chFilter.getKey(), view: _this.getView(), 'parentID': _this.getParentPK()}).done(function (response, st, xhr) {
-            //                                var $filter = $('<li>' + response + '</li>');
-            //                                var selValues = chFilter.getNamesSelectedValues();
-            //                                chFilter.$elem.html($filter.html());
-            //                                selValues.forEach(function (value) {
-            //                                    chFilter.$elem.find('[value="' + value + '"]').prop("checked", true);
-            //                                })
-            //                                delete xhr.responseText;
-            //                                delete xhr;
-            //                                delete response;
-            //
-            //                            }).fail(function () {
-            //                                console.log('error')
-            //                            })
-            //                        })
-            //                }
-            //
-            //            }
-            //        }
-            //        chResponse.destroy();
-            //        delete chResponse;
-            //        delete response;
-            //        delete xhr.responseText;
-            //        delete xhr;
-            //        facade.getFactoryModule().garbageCollection();
-            //
-            //    },
-            //    error: function (xhr, st, er) {
-            //        chMessagesContainer.sendMessage(er, ChResponseStatus.ERROR)
-            //    }
-            //})
-
-
         },
         _callbacks: null,
         getCallbacks: function () {

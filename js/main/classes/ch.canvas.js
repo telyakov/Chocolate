@@ -37,7 +37,7 @@ ChCanvas.prototype.prepareData = function (data) {
  * @param data array
  * @param options {ChCanvasOptions}
  */
-ChCanvas.prototype.refreshData = function (data, options) {
+ChCanvas.prototype.refreshData = function (data, options, model) {
     data = this.prepareData(data);
     var
         cell_height = options.cell_height,
@@ -207,7 +207,7 @@ ChCanvas.prototype.refreshData = function (data, options) {
 
     layout(ctx);
 
-    var ch_form = facade.getFactoryModule().makeChGridForm(this.$canvas.closest('form'));
+    console.log( this.$canvas);
     this.$canvas.unbind('click');
     this.$canvas.on("click", function (e) {
         var xpos, ypos;
@@ -228,7 +228,7 @@ ChCanvas.prototype.refreshData = function (data, options) {
             y = y - (y % 1);
             if (typeof( data[y][x]) !== 'undefined') {
                 var pk = data[y][x].id;
-                ch_form.openCard(pk);
+                model.openCardHandler(pk);
             }
         }
     });

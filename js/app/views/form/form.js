@@ -196,6 +196,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             return $panel;
 
         },
+
         layoutHeader: function ($panel) {
             var title;
             if (this.model.isAttachmentView()) {
