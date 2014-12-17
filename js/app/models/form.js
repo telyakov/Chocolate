@@ -68,6 +68,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return this.getKey() === 'crm\\map';
         },
         isAttachmentView: function () {
+            console.log( this.getKey())
             return this.getKey() === 'attachmentstasks';
         },
         isDiscussionView: function () {
@@ -211,10 +212,11 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         getCardElements: function (card) {
             var key = card.getKey();
             var cardElements = [],
-                collection =  this.getColumnsCardROCollection();
+                collection = this.getColumnsCardROCollection(),
+                _this = this;
             collection.each(function (model) {
                 if (model.getCardKey() === key) {
-                    var elem = CardElementFactory.make(model,collection);
+                    var elem = CardElementFactory.make(model, collection, _this);
                     cardElements.push(elem);
                 }
             });
@@ -322,7 +324,9 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 entityid: this.get('parentId'),
                 parentid: this.get('parentId'),
                 entitytype: this.getParentEntityTypeID(),
-                entitytypeid: this.getParentEntityTypeID()
+                entitytypeid: this.getParentEntityTypeID(),
+                parententitytypeid: this.getParentEntityTypeID(),
+                parententitytype: this.getParentEntityTypeID()
             };
             if (filterData) {
                 data = $.extend(data, filterData);

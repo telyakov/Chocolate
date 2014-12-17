@@ -22,7 +22,7 @@ var CardView = (function (Backbone, $) {
                 '<div class="card-bottom-header card-error"></div>'
             ];
             var $image = imageAdapter.convert(this.model.getCardHeaderImage()),
-                image = $image.wrapAll('<div></div>').parent().html();
+                image = $image? $image.wrapAll('<div></div>').parent().html(): '';
             if (this.model.hasCardHeader()) {
                 html.push('<div class="card-top-header"><div class="card-header-left">');
                 html.push(image);

@@ -77,7 +77,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
 
         getVisibleCaption: function () {
             var caption = this.getCaption();
-            return caption || this.getHeaderImage() ? caption : this.get('key');
+            return caption || this.get('columnProperties').getHeaderImage() ? caption : this.get('key');
         },
         getFormat: function () {
             return this.get('columnProperties').getFormat();

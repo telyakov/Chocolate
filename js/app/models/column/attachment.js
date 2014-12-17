@@ -27,6 +27,12 @@ var AttachmentColumnRO = (function (Backbone) {
                 });
             };
         },
+        getVisibleCaption: function(){
+          return 'Вложения';
+        },
+        //getHeaderImage: function(){
+        //    return false;
+        //},
         getView: function () {
             return 'attachments.xml';
         },

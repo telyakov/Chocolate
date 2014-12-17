@@ -64,13 +64,16 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
     });
 
     mediator.subscribe(optionsModule.getChannel('openForm'), function (opts) {
-        var view = opts.view,
+        var $el = opts.$el,
+            card = opts.card,
+            view = opts.view,
             parentModel = opts.parentModel,
             parentID = opts.parentID;
         if(view.indexOf('.xml') === -1){
             view = view + '.xml';
         }
-        var defer = deferredModule.create(),
+        view = view.replace(/\\/g, '/');
+        var defer = deferresdModule.create(),
             deferID = deferredModule.save(defer);
         var data = {
             key: optionsModule.getSetting('key'),
@@ -88,7 +91,8 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
             });
             var view = new FormView({
                 model: model,
-                $el: $('#tabs')
+                $el: $el,
+                card: card
             });
         });
     });
@@ -221,8 +225,8 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
         storageModule.saveRoles(roles);
     });
 
-    mediator.subscribe(optionsModule.getChannel('reflowTab'), function () {
-        repaintModule.reflowActiveTab();
+    mediator.subscribe(optionsModule.getChannel('reflowTab'), function (force) {
+        repaintModule.reflowActiveTab(force);
     });
 
     return {

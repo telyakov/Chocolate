@@ -4,6 +4,9 @@ var ColumnProperties = (function (Backbone) {
         defaults: {
             $obj: null
         },
+        getHeaderImage: function(){
+            return this.get('$obj').children('headerimage').text();
+        },
         getCaption: function () {
             return this.get('$obj').children('caption').text();
         },

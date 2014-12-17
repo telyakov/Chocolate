@@ -5,6 +5,12 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             _.bindAll(this, 'render');
             this.$el = options.$el;
             this.model = options.model;
+            if (options.card) {
+                this.card = options.card;
+            } else {
+                this.card = null;
+            }
+
             this.render();
         },
         headerTemplate: _.template([
@@ -30,7 +36,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
         ].join('')),
         events: {
             'click .grid-button .editable': 'openChildForm',
-            'click .menu-button-refresh': function(e){
+            'click .menu-button-refresh': function (e) {
                 var _this = this;
                 if (_this.model.hasChange()) {
                     var $dialog = $('<div>' + optionsModule.getMessage('refreshForm') + '</div>');
@@ -69,9 +75,9 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 e.stopImmediatePropagation();
 
             },
-            'keydown input.filter': function(e){
+            'keydown input.filter': function (e) {
                 if (e.keyCode === optionsModule.getKeyCode('enter')) {
-                  this.model.trigger('refresh:form', {});
+                    this.model.trigger('refresh:form', {});
                 }
             }
         },
@@ -98,6 +104,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             }
             Chocolate.leaveFocus();
             mediator.publish(optionsModule.getChannel('openForm'), {
+                $el: $('#tabs'),
                 view: view,
                 parentModel: this.model,
                 parentID: parentID
@@ -121,37 +128,38 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             this.layoutHeader($panel);
             this.layoutFilters($panel, panelDefer);
             $.when(panelDefer).done(function () {
-                setTimeout(function () {
-                    _this.layoutFormSection($panel);
-                    if (!_this.model.isMapView()) {
-                        mediator.publish(optionsModule.getChannel('reflowTab'));
-                    }
-                }, 17);
+                _this.layoutFormSection($panel);
+
+                if (!_this.model.isMapView()) {
+                    setTimeout(function () {
+                        mediator.publish(optionsModule.getChannel('reflowTab'), true);
+                    }, 17);
+                }
 
             });
         },
-        getFilterData: function(){
+        getFilterData: function () {
             //todo: support idlist
-            if(this.model.hasFilters()){
+            if (this.model.hasFilters()) {
                 var rawData = this.$el.find('.filter-form').serializeArray(),
                     value,
                     name,
                     separator,
                     result = [];
-                rawData.forEach(function(item){
+                rawData.forEach(function (item) {
                     value = item.value;
                     name = item.name;
-                    if(value){
-                        if(name.slice(-2) === '[]'){
+                    if (value) {
+                        if (name.slice(-2) === '[]') {
                             separator = '|';
                             name = name.slice(0, name.length - 2);
-                        }else{
+                        } else {
                             separator = '';
                         }
 
-                        if(result.hasOwnProperty(name)){
+                        if (result.hasOwnProperty(name)) {
                             result[name] += value + separator;
-                        }else{
+                        } else {
                             result[name] = value + separator;
                         }
                     }
@@ -170,11 +178,14 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 //            }
                 //        }
 
-            }else{
+            } else {
                 return {};
             }
         },
         createPanel: function () {
+            if (this.card) {
+                return this.$el;
+            }
             var id = helpersModule.uniqueID(),
                 $panel = $('<div>', {
                     id: id

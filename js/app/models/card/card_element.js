@@ -21,7 +21,8 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
         defaults: {
             collection: null,
             column: null,
-            key: null
+            key: null,
+            model: null
         },
         getMinHeight: function () {
             return 42;
