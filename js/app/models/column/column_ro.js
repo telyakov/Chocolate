@@ -17,20 +17,25 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             return this._column_custom_properties;
         },
         readProcData: null,
+        getSql: function () {
+            var sql = this.get('columnProperties').getDataSource();
+            if (!sql) {
+                sql = this.get('columnProperties').getFromDataSource();
+            }
+            return sql;
+        },
         evalReadProc: function () {
             var mainDefer = deferredModule.create(),
                 deferId = deferredModule.save(mainDefer);
             if (this.readProcData === null) {
-                var _this = this;
-                var sql = this.get('columnProperties').getDataSource();
-                if (!sql) {
-                    sql = this.get('columnProperties').getFromDataSource();
-                }
+                var _this = this,
+                    sql = this.getSql();
                 if (sql) {
                     var dataDefer = deferredModule.create(),
                         dateDeferID = deferredModule.save(dataDefer);
                     bindModule.deferredBindSql(dateDeferID, sql);
                     dataDefer.done(function (res) {
+                        console.log(res)
                         var prepareSql = res.sql;
                         var columnDefer = deferredModule.create(),
                             columnDeferID = deferredModule.save(columnDefer);
@@ -47,7 +52,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
                 } else {
                     deferredModule.pop(deferId).resolve({data: {}});
                 }
-            }else{
+            } else {
                 deferredModule.pop(deferId).resolve(this.readProcData);
             }
             return mainDefer;
@@ -117,8 +122,8 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         getRawAllowEdit: function () {
             return this.get('columnProperties').getAllowEdit();
         },
-        isVisibleInCard: function(){
-          return helpersModule.boolEval(this.get('columnProperties').getCardVisible(), false);
+        isVisibleInCard: function () {
+            return helpersModule.boolEval(this.get('columnProperties').getCardVisible(), false);
         },
         isEdit: function () {
             return helpersModule.boolEval(this.get('columnProperties').getAllowEdit(), true);

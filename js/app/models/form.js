@@ -318,7 +318,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 return null;
             }
         },
-        readProcEval: function (deferID, filterData) {
+        readProcEval: function (deferID, filterData, mainSql) {
             var data = {
                 entityid: this.get('parentId'),
                 parentid: this.get('parentId'),
@@ -330,7 +330,13 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             if (filterData) {
                 data = $.extend(data, filterData);
             }
-            bindModule.deferredBindSql(deferID, this.getDataFormProperties().getReadProc(), data);
+            var sql;
+            if (mainSql) {
+                sql = mainSql;
+            } else {
+                sql = this.getDataFormProperties().getReadProc();
+            }
+            bindModule.deferredBindSql(deferID, sql, data);
         },
         _preview: null,
         getPreview: function () {

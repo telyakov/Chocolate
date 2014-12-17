@@ -225,7 +225,11 @@ var GridView = (function (Backbone) {
                 model = this.model,
                 _this = this;
             var data = this.view.getFilterData();
-            model.readProcEval(deferID, data);
+            var mainSql;
+            if(this.view.card){
+                mainSql = this.view.card.get('column').getSql();
+            }
+            model.readProcEval(deferID, data, mainSql);
             defer.done(function (data) {
                 var sql = data.sql;
                 var deferRead = deferredModule.create(),
@@ -315,7 +319,7 @@ var GridView = (function (Backbone) {
                 $.publish(subscribeName, true);
             });
             $.publish(subscribeName, true);
-            form.setRowCount(Object.keys(data).length);
+            form.setRowCount(Object.keys(recordset).length);
         },
         generateRow: function (data, columns, form) {
             var style = '',
