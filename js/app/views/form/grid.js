@@ -1,4 +1,4 @@
-var GridView = (function (AbstractGridView, $, _) {
+var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule) {
     'use strict';
     return AbstractGridView.extend({
         template: _.template([
@@ -33,6 +33,14 @@ var GridView = (function (AbstractGridView, $, _) {
                 '</section>'
             ].join('')
         ),
+        columnHeaderTemplate: _.template([
+                '<div><a><span class="<%= class %>"></span>',
+                '<span class="grid-caption">',
+                '<%= caption%>',
+                '</span><span class="grid-sorting"></span>',
+                '</a></div>'
+            ].join('')
+        ),
         events: function () {
             return _.extend({}, AbstractGridView.prototype.events, {
                 'touchmove .card-button': 'openCard',
@@ -51,15 +59,6 @@ var GridView = (function (AbstractGridView, $, _) {
                 this.openCardHandler(pk);
             }
         },
-        columnHeaderTemplate: _.template([
-                '<div><a><span class="<%= class %>"></span>',
-                '<span class="grid-caption">',
-                '<%= caption%>',
-                '</span><span class="grid-sorting"></span>',
-                '</a></div>'
-            ].join('')
-        ),
-
         render: function () {
             var formId = this.getFormID(),
                 html = this.template({
@@ -96,7 +95,6 @@ var GridView = (function (AbstractGridView, $, _) {
                 this._callbacks = callbacks;
             }
             return this._callbacks;
-
         },
         getSortedColumns: function () {
             var sortedColumnCollection = [],
@@ -173,37 +171,40 @@ var GridView = (function (AbstractGridView, $, _) {
                 sortedColumnCollection = this.getSortedColumns(),
                 callbacks = this.getCallbacks(),
                 model = this.model,
-                _this = this;
-            var data = this.view.getFilterData();
-            var mainSql;
+                _this = this,
+                data = this.view.getFilterData(),
+                mainSql;
             if (this.view.card) {
                 mainSql = this.view.card.get('column').getSql();
             }
-            var defer = model.deferReadProc(data, mainSql);
-            defer.done(function (data) {
-                var sql = data.sql;
-                var deferRead = deferredModule.create(),
-                    deferReadID = deferredModule.save(deferRead);
-                mediator.publish(optionsModule.getChannel('socketRequest'), {
-                    query: sql,
-                    type: optionsModule.getRequestType('chFormRefresh'),
-                    id: deferReadID
+            model
+                .deferReadProc(data, mainSql)
+                .done(function (data) {
+                    var sql = data.sql,
+                        defer = deferredModule.create(),
+                        deferID = deferredModule.save(defer);
+                    mediator.publish(optionsModule.getChannel('socketRequest'), {
+                        query: sql,
+                        type: optionsModule.getRequestType('chFormRefresh'),
+                        id: deferID
+                    });
+                    defer.done(function (data) {
+                        _this.refreshDone(data, callbacks, sortedColumnCollection, form);
+                    });
                 });
-                deferRead.done(function (data) {
-                    _this.refreshDone(data, callbacks, sortedColumnCollection, form);
-                });
-            });
         },
         refreshDone: function (data, callbacks, sortedColumnCollection, form) {
             var order = data.order,
                 recordset = data.data;
             form.saveInStorage(recordset, this.model.getPreview(), {}, {}, {}, order);
 
-            var html = this.generateRows(recordset, order, sortedColumnCollection, form);
-
-            var $table = form.getTable();
-            var $tbody = $table.find('tbody'), $tr, cacheVisible = [],
-                $userGrid = form._getUserGrid(), subscribeName = form.getLayoutSubscribeName();
+            var html = this.generateRows(recordset, order, sortedColumnCollection, form),
+                $table = form.getTable(),
+                $tbody = $table.find('tbody'),
+                $tr,
+                cacheVisible = [],
+                $userGrid = form._getUserGrid(),
+                subscribeName = form.getLayoutSubscribeName();
             $.unsubscribe(subscribeName);
             $.subscribe(subscribeName, function (e, refreshCache) {
                 var scrollTop = $userGrid.scrollTop();
@@ -249,7 +250,6 @@ var GridView = (function (AbstractGridView, $, _) {
                     .find('.table-td')
                     .css({display: 'none'});
             });
-
             var prevScrollTop = 0;
             $userGrid.unbind('scroll.chocolate').on('scroll.chocolate', $.debounce(150, false, function () {
                 var curScrollTop = $(this).scrollTop();
@@ -322,8 +322,6 @@ var GridView = (function (AbstractGridView, $, _) {
             });
             rowBuilder.push('</tr>');
             return rowBuilder.join('');
-
-
         },
         generateRows: function (data, order, sortedColumnCollection, form) {
             var count = 0,
@@ -339,4 +337,4 @@ var GridView = (function (AbstractGridView, $, _) {
             $form.after(this.footerTemplate());
         }
     });
-})(AbstractGridView, jQuery, _);
+})(AbstractGridView, jQuery, _, deferredModule, optionsModule);
