@@ -24,9 +24,7 @@ var DiscussionView = (function (Backbone) {
             }));
 
             var form = facade.getFactoryModule().makeChDiscussionForm($('#' + formID));
-            var defer = deferredModule.create(),
-                deferID = deferredModule.save(defer);
-            this.model.readProcEval(deferID);
+            var defer = this.model.deferReadProc();
             defer.done(function(data){
                 var sql = data.sql;
             form.init(sql);

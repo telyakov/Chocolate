@@ -1,4 +1,4 @@
-var AttachmentView = (function (Backbone) {
+var AttachmentView = (function (AbstractGridView, $, _, factoryModule, deferredModule, optionsModule) {
     'use strict';
     return AbstractGridView.extend({
         template: _.template(
@@ -41,189 +41,147 @@ var AttachmentView = (function (Backbone) {
                 '</a></div></th>',
                 '</thead><tbody class="files"></tbody></table></div>',
                 '</section>',
-                '<%= footer%>',
                 '</form>',
                 '</section>'
 
             ].join('')
         ),
-
         events: function () {
             return _.extend({}, AbstractGridView.prototype.events, {
-                'click .attachment-file': $.debounce(2000, true, function (e) {
-                    var id = $(e.target).attr('data-id');
-                    mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
-                })
+                'click .attachment-file': $.debounce(2000, true, this.downloadFileHandler)
             });
         },
-        initScript: function (sectionID, formID, isNewRow, jsonDefaultValues) {
-            $(function () {
-                var $section = $('#' + sectionID),
-                    $cnt = $section.parent();
-                if (!$cnt.hasClass('card-grid')) {
-                    facade.getRepaintModule().reflowGrid($cnt);
-                }
-                if (!isNewRow) {
-                    $section
-                        .on('drop', function (e) {
-                            $(this).removeClass("attachment-dragover");
-                            e.preventDefault();
-                        })
-                        .on('dragover', function (e) {
-                            $(this).addClass("attachment-dragover");
-                            e.preventDefault();
-                        })
-                        .on('dragleave', function () {
-                            $(this).removeClass("attachment-dragover");
-                        });
-                }
-                var $form = $('#' + formID),
-                    form = facade.getFactoryModule().makeChGridForm($form);
-                $form.on('fileuploadsubmit', function () {
-                    return false;
-                });
-                var defaultValues = $.parseJSON(jsonDefaultValues);
-                form.saveInStorage({}, {}, defaultValues, {}, {});
-            });
-        },
-        stopHandler: function (formID) {
-            var filesModule = facade.getFilesModule(),
-                form = facade.getFactoryModule().makeChGridForm($('#' + formID));
-            if (filesModule.hasErrors(formID)) {
-                form.getMessagesContainer().sendMessage('Возникли ошибки при добавлении вложений', chApp.getResponseStatuses().ERROR);
-                filesModule.clearErrors(formID);
-            } else {
-                if (form.isHasChange()) {
-                    form.save();
-                } else {
-                    form.refresh();
-                }
-            }
-        },
-        refresh: function () {
-            this.refreshData();
-        },
-        _callbacks: null,
-        getCallbacks: function () {
-            if (this._callbacks === null) {
-                var callbacks = [],
-                    $cnt = this.$el;
-                this.model.getColumnsROCollection().each(function (column) {
-                    callbacks.push(column.getJsFn($cnt));
-                });
-                this._callbacks = callbacks;
-            }
-            return this._callbacks;
-
-        },
-        refreshData: function () {
-            var form = factoryModule.makeChGridForm($('#' + this.getFormID())),
-                callbacks = this.getCallbacks(),
-                defer = deferredModule.create(),
-                deferID = deferredModule.save(defer),
-                model = this.model,
-                _this = this;
-            var data = this.view.getFilterData();
-            var mainSql;
-            if (this.view.card) {
-                mainSql = this.view.card.get('column').getSql();
-            }
-            model.readProcEval(deferID, data, mainSql);
-            defer.done(function (data) {
-                var sql = data.sql;
-                var deferRead = deferredModule.create(),
-                    deferReadID = deferredModule.save(deferRead);
-                mediator.publish(optionsModule.getChannel('socketRequest'), {
-                    query: sql,
-                    type: optionsModule.getRequestType('chFormRefresh'),
-                    id: deferReadID
-                });
-                var main = chApp.namespace('main');
-                var chTable = facade.getFactoryModule().makeChTable($(main.idSel(_this.getFormID())).find('table'));
-                chTable.initAttachmentScript();
-                deferRead.done(function (data) {
-                    form.updateStorage(data.data, data.order);
-                    var correctData = [];
-                    data.order.forEach(function (key) {
-                        correctData.push(data.data[key]);
-                    });
-                    var tmpl_data = {'files': correctData},
-                        content = window.tmpl('template-download', tmpl_data);
-                    content = content.replace(new RegExp('fade', 'g'), 'fade in');
-                    var $html = $(content);
-                    form.getTable()
-                        .find('tbody')
-                        .html($html)
-                        .trigger("update");
-                    form._clearDeletedObj();
-                    form._clearChangedObj();
-                    form.clearSelectedArea();
-                    form.setRowCount(Object.keys(data.data).length);
-                });
-            });
-        },
-        failHandler: function (formID, data) {
-            var filesModule = facade.getFilesModule();
-            filesModule.pushError(formID, data.errorThrown);
-            filesModule.push(formID, data.files);
-        },
-        addedHandler: function (formID, data) {
-            var $form = $('#' + formID),
-                form = facade.getFactoryModule().makeChGridForm($form);
-            if (data.isValidated) {
-                var rowID = Chocolate.uniqueID();
-                data.files[0].rowID = rowID;
-                facade.getFilesModule().push(formID, data.files);
-                data.context.attr("data-id", rowID);
-                data.context.find("td input[type=file]").attr("parent-id", rowID);
-                $form.find("div[data-id=user-grid] table").trigger("update");
-                form.getSaveButton().addClass("active");
-            } else {
-                data.context.remove();
-                form.getMessagesContainer().sendMessage("Слишком большой размер файла (максисмум 50мб.)", chApp.getResponseStatuses().ERROR);
-            }
+        downloadFileHandler: function (e) {
+            var id = $(e.target).attr('data-id');
+            mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
         },
         render: function () {
-            var sectionID = this.$el.parent().attr('id'),
-                formID = this.getFormID();
-            var footer = this.footerTemplate();
+            var formID = this.getFormID();
             this.$el.html(this.template({
                 isSaved: !this.model.isNotSaved(),
                 formID: formID,
                 parentView: this.model.getParentView(),
                 parentID: this.model.get('parentId'),
                 inputID: helpersModule.uniqueID(),
-                gridViewID: helpersModule.uniqueID(),
-                footer: footer
+                gridViewID: helpersModule.uniqueID()
             }));
-
-            this.initScript(
-                sectionID,
-                formID,
-                '',
-                ''
-            );
             var $form = $('#' + formID);
-            var _this = this;
-            $form.
-                fileupload({
+            this.layoutFooter($form);
+            this.layoutFooter($form);
+            this.initScript($form);
+            this.refreshData();
+        },
+        initScript: function ($form) {
+            var $dropZone = false;
+            if (!this.model.isNotSaved()) {
+                $dropZone = $form.closest('.attachment-grid');
+                $dropZone
+                    .on('drop', function (e) {
+                        $(this).removeClass('attachment-dragover');
+                        e.preventDefault();
+                    })
+                    .on('dragover', function (e) {
+                        $(this).addClass('attachment-dragover');
+                        e.preventDefault();
+                    })
+                    .on('dragleave', function () {
+                        $(this).removeClass('attachment-dragover');
+                    });
+            }
+            var _this = this,
+                form = facade.getFactoryModule().makeChGridForm($form);
+            $form
+                .on('fileuploadsubmit', function () {
+                    return false;
+                })
+                .fileupload({
                     'autoUpload': false,
                     'maxFileSize': 50000000,
                     'acceptFileTypes': /(.*)$/i,
                     'added': function (e, data) {
-                        _this.addedHandler(formID, data);
+                        if (data.isValidated) {
+                            var rowID = Chocolate.uniqueID();
+                            data.files[0].rowID = rowID;
+                            facade.getFilesModule().push(_this.getFormID(), data.files);
+                            data.context.attr("data-id", rowID);
+                            data.context.find("td input[type=file]").attr("parent-id", rowID);
+                            $form.find("div[data-id=user-grid] table").trigger("update");
+                            form.getSaveButton().addClass("active");
+                        } else {
+                            data.context.remove();
+                            form.getMessagesContainer().sendMessage("Слишком большой размер файла (максисмум 50мб.)", chApp.getResponseStatuses().ERROR);
+                        }
                     },
                     'stop': function () {
-                        _this.stopHandler(formID);
+                        var filesModule = facade.getFilesModule();
+                        if (filesModule.hasErrors(_this.getFormID())) {
+                            form.getMessagesContainer().sendMessage('Возникли ошибки при добавлении вложений', chApp.getResponseStatuses().ERROR);
+                            filesModule.clearErrors(_this.getFormID());
+                        } else {
+                            if (form.isHasChange()) {
+                                form.save();
+                            } else {
+                                form.refresh();
+                            }
+                        }
                     },
                     'fail': function (e, data) {
-                        _this.failHandler(formID, data);
+                        var filesModule = facade.getFilesModule();
+                        filesModule.pushError(_this.getFormID(), data.errorThrown);
+                        filesModule.push(_this.getFormID(), data.files);
                     },
-                    'dropZone': this.model.isNotSaved() ? false : $("#" + sectionID),
+                    'dropZone': $dropZone,
                     'url': '/Attachment/upload?view=attachments.xml&ParentView=' + this.model.getParentView() + '&ParentID=' + this.model.get('parentId')
                 });
+            //todo: save in storage?
+            //form.saveInStorage({}, {}, {}, {}, {});
+        },
+        refresh: function () {
             this.refreshData();
-            this.layoutFooter($form);
+        },
+        refreshData: function () {
+            var $form = $('#' + this.getFormID()),
+                form = factoryModule.makeChGridForm($form),
+                model = this.model,
+                _this = this,
+                mainSql;
+            if (this.view.card) {
+                mainSql = this.view.card.get('column').getSql();
+            }
+            model
+                .deferReadProc(this.view.getFilterData(), mainSql)
+                .done(function (data) {
+                    var sql = data.sql,
+                        defer = deferredModule.create(),
+                        deferID = deferredModule.save(defer);
+                    mediator.publish(optionsModule.getChannel('socketRequest'), {
+                        query: sql,
+                        type: optionsModule.getRequestType('chFormRefresh'),
+                        id: deferID
+                    });
+                    var table = facade.getFactoryModule().makeChTable($form.find('table'));
+                    table.initAttachmentScript();
+                    defer.done(function (data) {
+                        //todo: persist to storage
+                        form.updateStorage(data.data, data.order);
+                        var files = [];
+                        data.order.forEach(function (key) {
+                            files.push(data.data[key]);
+                        });
+                        var content = window
+                            .tmpl('template-download', {'files': files})
+                            .replace(new RegExp('fade', 'g'), 'fade in');
+                        form.getTable()
+                            .find('tbody')
+                            .html($(content))
+                            .trigger('update');
+                        //todo: clear changed data
+                        form._clearDeletedObj();
+                        form._clearChangedObj();
+                        form.clearSelectedArea();
+                        form.setRowCount(Object.keys(data.data).length);
+                    });
+                });
         }
     });
-})(Backbone);
+})(AbstractGridView, jQuery, _, factoryModule, deferredModule, optionsModule);

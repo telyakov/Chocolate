@@ -172,8 +172,6 @@ var GridView = (function (AbstractGridView, $, _) {
             var form = factoryModule.makeChGridForm($('#' + this.getFormID())),
                 sortedColumnCollection = this.getSortedColumns(),
                 callbacks = this.getCallbacks(),
-                defer = deferredModule.create(),
-                deferID = deferredModule.save(defer),
                 model = this.model,
                 _this = this;
             var data = this.view.getFilterData();
@@ -181,7 +179,7 @@ var GridView = (function (AbstractGridView, $, _) {
             if (this.view.card) {
                 mainSql = this.view.card.get('column').getSql();
             }
-            model.readProcEval(deferID, data, mainSql);
+            var defer = model.deferReadProc(data, mainSql);
             defer.done(function (data) {
                 var sql = data.sql;
                 var deferRead = deferredModule.create(),

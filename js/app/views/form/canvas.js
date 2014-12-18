@@ -41,12 +41,10 @@ var CanvasView = (function (Backbone) {
 
             var $canvas = $('#' + this.getCanvasID()),
                 canvas = facade.getFactoryModule().makeChCanvas($canvas),
-                defer = deferredModule.create(),
-                deferID = deferredModule.save(defer),
                 model = this.model,
                 _this = this,
                 data = this.view.getFilterData();
-            model.readProcEval(deferID, data);
+            var defer = model.deferReadProc(data);
             defer.done(function (res) {
                 var sql = res.sql;
                 var deferRead = deferredModule.create(),
