@@ -101,14 +101,16 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         getToId: function () {
             return this.get('columnProperties').getToId();
         },
-        getTemplate: function () {
-            var template = ChGridForm.TEMPLATE_TD;
-            //todo: видимость перенести в модель, пока что убрана
-            //if ($cell.css('display') !== "none") {
-            template = template.replace('style', '');
-            //} else {
-            //    template = template.replace('style', 'style="display:none;"');
-            //}
+        getTemplate: function (isVisible) {
+            var template = [
+                '<td style class="{class}{class2}"><div class="table-td"><a data-value="{value}"',
+                ' data-pk ="{pk}" rel="{rel}" class="editable"></a></div></td>'
+            ].join('');
+            if (isVisible) {
+                template = template.replace('style', '');
+            } else {
+                template = template.replace('style', 'style="display:none;"');
+            }
             return template.replace(/\{class\}/g, this.getClass());
         },
         getClass: function () {

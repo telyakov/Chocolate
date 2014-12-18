@@ -271,6 +271,16 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule)
             $.publish(subscribeName, true);
             form.setRowCount(Object.keys(recordset).length);
         },
+        generateRows: function (data, order, sortedColumnCollection, form) {
+            var count = 0,
+                stringBuilder = [];
+            var _this = this;
+            order.forEach(function (key) {
+                count++;
+                stringBuilder.push(_this.generateRow(data[key], sortedColumnCollection, form));
+            });
+            return stringBuilder.join('');
+        },
         generateRow: function (data, columns, form) {
             var style = '',
                 idClass = '',
@@ -299,9 +309,11 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule)
                     ChGridForm.TEMPLATE_FIRST_TD
                 ];
 
-            var key, _this = this;
+            var key,
+                thList = form.getTh();
             columns.forEach(function (item) {
                 key = item.get('key');
+                var isVisible = thList.filter('[data-id="'+ key + '"]').css('display') !== "none";
                 var value = '', class2 = '',
                     rel = [form.getUserGridID(), key].join('_');
                 if (data[key] !== undefined && (key !== 'id' || isNumericID )) {
@@ -314,7 +326,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule)
                     class2 = idClass;
                 }
                 rowBuilder.push(
-                    item.getTemplate().replace(/\{pk\}/g, id)
+                    item.getTemplate(isVisible).replace(/\{pk\}/g, id)
                         .replace(/\{rel\}/g, rel)
                         .replace(/\{value\}/g, value)
                         .replace(/\{class2\}/g, class2)
@@ -322,16 +334,6 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule)
             });
             rowBuilder.push('</tr>');
             return rowBuilder.join('');
-        },
-        generateRows: function (data, order, sortedColumnCollection, form) {
-            var count = 0,
-                stringBuilder = [];
-            var _this = this;
-            order.forEach(function (key) {
-                count++;
-                stringBuilder.push(_this.generateRow(data[key], sortedColumnCollection, form));
-            });
-            return stringBuilder.join('');
         },
         layoutFooter: function ($form) {
             $form.after(this.footerTemplate());
