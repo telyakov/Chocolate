@@ -1,6 +1,6 @@
 var AttachmentView = (function (Backbone) {
     'use strict';
-    return AbstractView.extend({
+    return AbstractGridView.extend({
         template: _.template(
             [
                 '<form id="<%= formID %>" class="grid-form" data-id="attachments.xml" ',
@@ -47,11 +47,14 @@ var AttachmentView = (function (Backbone) {
 
             ].join('')
         ),
-        events: {
-            'click .attachment-file': $.debounce(2000, true, function (e) {
-                var id = $(e.target).attr('data-id');
-                mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
-            })
+
+        events: function () {
+            return _.extend({}, AbstractGridView.prototype.events, {
+                'click .attachment-file': $.debounce(2000, true, function (e) {
+                    var id = $(e.target).attr('data-id');
+                    mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
+                })
+            });
         },
         initScript: function (sectionID, formID, isNewRow, jsonDefaultValues) {
             $(function () {
@@ -200,8 +203,9 @@ var AttachmentView = (function (Backbone) {
                 '',
                 ''
             );
+            var $form = $('#' + formID);
             var _this = this;
-            $('#' + formID).
+            $form.
                 fileupload({
                     'autoUpload': false,
                     'maxFileSize': 50000000,
@@ -219,6 +223,7 @@ var AttachmentView = (function (Backbone) {
                     'url': '/Attachment/upload?view=attachments.xml&ParentView=' + this.model.getParentView() + '&ParentID=' + this.model.get('parentId')
                 });
             this.refreshData();
+            this.layoutFooter($form);
         }
     });
 })(Backbone);

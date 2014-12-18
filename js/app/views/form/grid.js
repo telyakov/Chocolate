@@ -1,7 +1,6 @@
-var GridView = (function (Backbone) {
+var GridView = (function (AbstractGridView, $, _) {
     'use strict';
-    return AbstractView.extend({
-
+    return AbstractGridView.extend({
         template: _.template([
                 '<form action="/grid/save?view=<%=view %>" data-id="<%= view %>" id="<%= id%>"',
                 'data-ajax-add="<%= ajaxAdd%>" ',
@@ -34,69 +33,22 @@ var GridView = (function (Backbone) {
                 '</section>'
             ].join('')
         ),
-        events: {
-            'keydown .tablesorter': function (e) {
-                if (['TABLE', 'SPAN'].indexOf(e.target.tagName) !== -1) {
-                    //span for ie fix
-                    var op = optionsModule,
-                        keyCode = e.keyCode,
-                        catchKeys = [
-                            op.getKeyCode('up'),
-                            op.getKeyCode('down'),
-                            op.getKeyCode('del')
-                        ];
-                    if (catchKeys.indexOf(keyCode) !== -1) {
-                        var form = facade.getFactoryModule().makeChGridForm($(e.target).closest('form')),
-                            $activeRow,
-                            $nextRow;
-
-                        if (keyCode === op.getKeyCode('del')) {
-                            form.removeRows(form.getSelectedRows());
-                        } else if ((e.ctrlKey || e.shiftKey) && [op.getKeyCode('up'), op.getKeyCode('down')].indexOf(keyCode) !== -1) {
-                            $activeRow = form.getActiveRow();
-                            if (keyCode === op.getKeyCode('down')) {
-                                $nextRow = $activeRow.next('tr');
-                            } else {
-                                $nextRow = $activeRow.prev('tr');
-                            }
-                            if ($nextRow.length) {
-                                form.setCorrectScroll($nextRow);
-                                form.selectRow($nextRow, true, false);
-                            }
-                        } else if ([op.getKeyCode('up'), op.getKeyCode('down')].indexOf(keyCode) !== -1) {
-                            $activeRow = form.getActiveRow();
-                            if (keyCode === op.getKeyCode('up')) {
-                                $nextRow = $activeRow.prev('tr');
-                            } else {
-                                $nextRow = $activeRow.next('tr');
-                            }
-                            if ($nextRow.length) {
-                                form.setCorrectScroll($nextRow);
-                                form.selectRow($nextRow, false, false);
-                            }
-                        }
-                        return false;
-                    }
-                }
-                return true;
-
-
-            },
-            'click tbody > tr': function(e){
-                var $this = $(e.target).closest('tr'),
-                    form = facade.getFactoryModule().makeChGridForm($this.closest('form'));
-                form.selectRow($this, e.ctrlKey || e.shiftKey, true);
-            },
-            'touchmove .card-button': 'openCard',
-            'dblclick .card-button': 'openCard'
+        events: function () {
+            return _.extend({}, AbstractGridView.prototype.events, {
+                'touchmove .card-button': 'openCard',
+                'dblclick .card-button': 'openCard'
+            });
         },
-
-        openCard: function(e){
-            if(this.model.hasCard()){
+        selectRow: function (e) {
+            var $this = $(e.target).closest('tr'),
+                form = facade.getFactoryModule().makeChGridForm($this.closest('form'));
+            form.selectRow($this, e.ctrlKey || e.shiftKey, true);
+        },
+        openCard: function (e) {
+            if (this.model.hasCard()) {
                 var $this = $(e.target),
-                    pk = $this.closest('tr').attr("data-id");
+                    pk = $this.closest('tr').attr('data-id');
                 this.openCardHandler(pk);
-
             }
         },
         columnHeaderTemplate: _.template([
@@ -226,7 +178,7 @@ var GridView = (function (Backbone) {
                 _this = this;
             var data = this.view.getFilterData();
             var mainSql;
-            if(this.view.card){
+            if (this.view.card) {
                 mainSql = this.view.card.get('column').getSql();
             }
             model.readProcEval(deferID, data, mainSql);
@@ -247,7 +199,7 @@ var GridView = (function (Backbone) {
         refreshDone: function (data, callbacks, sortedColumnCollection, form) {
             var order = data.order,
                 recordset = data.data;
-            form.saveInStorage(recordset,this.model.getPreview(), {}, {}, {}, order);
+            form.saveInStorage(recordset, this.model.getPreview(), {}, {}, {}, order);
 
             var html = this.generateRows(recordset, order, sortedColumnCollection, form);
 
@@ -389,4 +341,4 @@ var GridView = (function (Backbone) {
             $form.after(this.footerTemplate());
         }
     });
-})(Backbone);
+})(AbstractGridView, jQuery, _);
