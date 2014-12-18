@@ -131,7 +131,7 @@ var GridView = (function (Backbone) {
             });
         },
         refresh: function () {
-            this.initData();
+            this.refreshData();
         },
         _callbacks: null,
         getCallbacks: function () {
@@ -209,14 +209,14 @@ var GridView = (function (Backbone) {
             }));
             var $table = $('#' + tableID);
             this.initTableScript($table);
-            this.initData();
+            this.refreshData();
 
 
         },
         initTableScript: function ($table) {
             facade.getFactoryModule().makeChTable($table).initScript();
         },
-        initData: function () {
+        refreshData: function () {
             var form = factoryModule.makeChGridForm($('#' + this.getFormID())),
                 sortedColumnCollection = this.getSortedColumns(),
                 callbacks = this.getCallbacks(),

@@ -57,7 +57,7 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
                         '</td>',
                         '<td>',
                         '<div class="table-td">',
-                        '<a class="attachment-file" data-id="{%=file.fileid%}" title="{%=file.name%}" download="{%=file.name%}">{%=file.name%}</a>',
+                        '<a class="attachment-file" data-id="{%=file.filesid%}" title="{%=file.name%}" download="{%=file.name%}">{%=file.name%}</a>',
                         '</div>',
                         '</td>',
                         '<td>',

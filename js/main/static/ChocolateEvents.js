@@ -31,7 +31,6 @@ var ChocolateEvents = {
         this.openTaskWizardEvent($content);
         this.signInTextEvents($content);
         this.disableFiltersEvent($content);
-        this.downloadAttachmentEvent($content);
         this.toggleSystemColsEvent($tabs);
         this.warningMessageEvent($window);
         this.formMenuButtonEvent($tabs);
@@ -476,17 +475,6 @@ var ChocolateEvents = {
         facade.getFactoryModule().makeChGridForm($(this).closest('form'))
             .toggleSystemCols()
             .clearSelectedArea();
-    },
-    downloadAttachmentEvent: function ($context) {
-        $context
-            .on('click', '.attachment-file', function () {
-                return false;
-            })
-            .on('click', '.attachment-file', $.debounce(2000, true, this.downloadFileHandler));
-    },
-    downloadFileHandler: function () {
-        var id = $(this).attr('data-id');
-        mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
     },
     reflowWindowEvent: function ($context) {
         $context.on('resize', $.debounce(300, false, this.reflowWindowHandler));

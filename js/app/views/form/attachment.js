@@ -47,9 +47,142 @@ var AttachmentView = (function (Backbone) {
 
             ].join('')
         ),
+        events: {
+            'click .attachment-file': $.debounce(2000, true, function (e) {
+                var id = $(e.target).attr('data-id');
+                mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
+            })
+        },
+        initScript: function (sectionID, formID, isNewRow, jsonDefaultValues) {
+            $(function () {
+                var $section = $('#' + sectionID),
+                    $cnt = $section.parent();
+                if (!$cnt.hasClass('card-grid')) {
+                    facade.getRepaintModule().reflowGrid($cnt);
+                }
+                if (!isNewRow) {
+                    $section
+                        .on('drop', function (e) {
+                            $(this).removeClass("attachment-dragover");
+                            e.preventDefault();
+                        })
+                        .on('dragover', function (e) {
+                            $(this).addClass("attachment-dragover");
+                            e.preventDefault();
+                        })
+                        .on('dragleave', function () {
+                            $(this).removeClass("attachment-dragover");
+                        });
+                }
+                var $form = $('#' + formID),
+                    form = facade.getFactoryModule().makeChGridForm($form);
+                $form.on('fileuploadsubmit', function () {
+                    return false;
+                });
+                var defaultValues = $.parseJSON(jsonDefaultValues);
+                form.saveInStorage({}, {}, defaultValues, {}, {});
+            });
+        },
+        stopHandler: function (formID) {
+            var filesModule = facade.getFilesModule(),
+                form = facade.getFactoryModule().makeChGridForm($('#' + formID));
+            if (filesModule.hasErrors(formID)) {
+                form.getMessagesContainer().sendMessage('Возникли ошибки при добавлении вложений', chApp.getResponseStatuses().ERROR);
+                filesModule.clearErrors(formID);
+            } else {
+                if (form.isHasChange()) {
+                    form.save();
+                } else {
+                    form.refresh();
+                }
+            }
+        },
+        refresh: function () {
+            this.refreshData();
+        },
+        _callbacks: null,
+        getCallbacks: function () {
+            if (this._callbacks === null) {
+                var callbacks = [],
+                    $cnt = this.$el;
+                this.model.getColumnsROCollection().each(function (column) {
+                    callbacks.push(column.getJsFn($cnt));
+                });
+                this._callbacks = callbacks;
+            }
+            return this._callbacks;
+
+        },
+        refreshData: function () {
+            var form = factoryModule.makeChGridForm($('#' + this.getFormID())),
+                callbacks = this.getCallbacks(),
+                defer = deferredModule.create(),
+                deferID = deferredModule.save(defer),
+                model = this.model,
+                _this = this;
+            var data = this.view.getFilterData();
+            var mainSql;
+            if (this.view.card) {
+                mainSql = this.view.card.get('column').getSql();
+            }
+            model.readProcEval(deferID, data, mainSql);
+            defer.done(function (data) {
+                var sql = data.sql;
+                var deferRead = deferredModule.create(),
+                    deferReadID = deferredModule.save(deferRead);
+                mediator.publish(optionsModule.getChannel('socketRequest'), {
+                    query: sql,
+                    type: optionsModule.getRequestType('chFormRefresh'),
+                    id: deferReadID
+                });
+                var main = chApp.namespace('main');
+                var chTable = facade.getFactoryModule().makeChTable($(main.idSel(_this.getFormID())).find('table'));
+                chTable.initAttachmentScript();
+                deferRead.done(function (data) {
+                    form.updateStorage(data.data, data.order);
+                    var correctData = [];
+                    data.order.forEach(function (key) {
+                        correctData.push(data.data[key]);
+                    });
+                    var tmpl_data = {'files': correctData},
+                        content = window.tmpl('template-download', tmpl_data);
+                    content = content.replace(new RegExp('fade', 'g'), 'fade in');
+                    var $html = $(content);
+                    form.getTable()
+                        .find('tbody')
+                        .html($html)
+                        .trigger("update");
+                    form._clearDeletedObj();
+                    form._clearChangedObj();
+                    form.clearSelectedArea();
+                    form.setRowCount(Object.keys(data.data).length);
+                });
+            });
+        },
+        failHandler: function (formID, data) {
+            var filesModule = facade.getFilesModule();
+            filesModule.pushError(formID, data.errorThrown);
+            filesModule.push(formID, data.files);
+        },
+        addedHandler: function (formID, data) {
+            var $form = $('#' + formID),
+                form = facade.getFactoryModule().makeChGridForm($form);
+            if (data.isValidated) {
+                var rowID = Chocolate.uniqueID();
+                data.files[0].rowID = rowID;
+                facade.getFilesModule().push(formID, data.files);
+                data.context.attr("data-id", rowID);
+                data.context.find("td input[type=file]").attr("parent-id", rowID);
+                $form.find("div[data-id=user-grid] table").trigger("update");
+                form.getSaveButton().addClass("active");
+            } else {
+                data.context.remove();
+                form.getMessagesContainer().sendMessage("Слишком большой размер файла (максисмум 50мб.)", chApp.getResponseStatuses().ERROR);
+            }
+        },
         render: function () {
-           var sectionID = this.$el.parent().attr('id'),
-               formID = helpersModule.uniqueID();
+            var sectionID = this.$el.parent().attr('id'),
+                formID = this.getFormID();
             var footer = this.footerTemplate();
             this.$el.html(this.template({
                 isSaved: !this.model.isNotSaved(),
@@ -61,25 +194,31 @@ var AttachmentView = (function (Backbone) {
                 footer: footer
             }));
 
-            var attachmentModule = chApp.getAttachment();
-            attachmentModule.initScript(
+            this.initScript(
                 sectionID,
                 formID,
                 '',
                 ''
             );
-            $('#'+ formID).
+            var _this = this;
+            $('#' + formID).
                 fileupload({
                     'autoUpload': false,
                     'maxFileSize': 50000000,
                     'acceptFileTypes': /(.*)$/i,
                     'added': function (e, data) {
-                        attachmentModule.addedHandler(formID, data);},
-                    'stop':function(){attachmentModule.stopHandler(formID);},
-                    'fail':function(e,data){attachmentModule.failHandler(formID, data);},
-                    'dropZone': this.model.isNotSaved()? false : $("#" + sectionID),
-                    'url':'/Attachment/upload?view=attachments.xml&ParentView=' + this.model.getParentView() + '&ParentID='+  this.model.get('parentId')});
-            chApp.namespace('attachments').initData(formID, this.model.isNotSaved(), this.model.getParentView());
+                        _this.addedHandler(formID, data);
+                    },
+                    'stop': function () {
+                        _this.stopHandler(formID);
+                    },
+                    'fail': function (e, data) {
+                        _this.failHandler(formID, data);
+                    },
+                    'dropZone': this.model.isNotSaved() ? false : $("#" + sectionID),
+                    'url': '/Attachment/upload?view=attachments.xml&ParentView=' + this.model.getParentView() + '&ParentID=' + this.model.get('parentId')
+                });
+            this.refreshData();
         }
     });
 })(Backbone);
