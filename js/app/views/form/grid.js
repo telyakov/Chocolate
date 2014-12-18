@@ -1,4 +1,4 @@
-var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule) {
+var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule, factoryModule) {
     'use strict';
     return AbstractGridView.extend({
         template: _.template([
@@ -96,16 +96,18 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule)
             }
             return this._callbacks;
         },
-        getSortedColumns: function () {
+        getSortedColumns: function (form) {
             var sortedColumnCollection = [],
-                form = factoryModule.makeChGridForm($('#' + this.getFormID())),
                 hasSetting = form.hasSettings(),
-                iterator = 1;
+                iterator = 1,
+                index;
             this.model.getColumnsROCollection().each(function (column) {
-                if (!hasSetting) {
+                if (hasSetting) {
+                    index = form.getPositionColumn(column.get('key'));
+                } else {
+                    index = iterator;
                     iterator++;
                 }
-                var index = hasSetting ? form.getPositionColumn(column.get('key')) : iterator - 1;
                 sortedColumnCollection[index] = column;
             });
             return sortedColumnCollection;
@@ -167,18 +169,13 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule)
             facade.getFactoryModule().makeChTable($table).initScript();
         },
         refreshData: function () {
-            var form = factoryModule.makeChGridForm($('#' + this.getFormID())),
-                sortedColumnCollection = this.getSortedColumns(),
-                callbacks = this.getCallbacks(),
-                model = this.model,
-                _this = this,
-                data = this.view.getFilterData(),
+            var _this = this,
                 mainSql;
             if (this.view.card) {
                 mainSql = this.view.card.get('column').getSql();
             }
-            model
-                .deferReadProc(data, mainSql)
+            this.model
+                .deferReadProc(this.view.getFilterData(), mainSql)
                 .done(function (data) {
                     var sql = data.sql,
                         defer = deferredModule.create(),
@@ -189,12 +186,15 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule)
                         id: deferID
                     });
                     defer.done(function (data) {
-                        _this.refreshDone(data, callbacks, sortedColumnCollection, form);
+                        _this.refreshDone(data);
                     });
                 });
         },
-        refreshDone: function (data, callbacks, sortedColumnCollection, form) {
-            var order = data.order,
+        refreshDone: function (data) {
+            var form = factoryModule.makeChGridForm($('#' + this.getFormID())),
+                callbacks = this.getCallbacks(),
+                sortedColumnCollection = this.getSortedColumns(form),
+                order = data.order,
                 recordset = data.data;
             form.saveInStorage(recordset, this.model.getPreview(), {}, {}, {}, order);
 
@@ -313,7 +313,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule)
                 thList = form.getTh();
             columns.forEach(function (item) {
                 key = item.get('key');
-                var isVisible = thList.filter('[data-id="'+ key + '"]').css('display') !== "none";
+                var isVisible = thList.filter('[data-id="' + key + '"]').css('display') !== "none";
                 var value = '', class2 = '',
                     rel = [form.getUserGridID(), key].join('_');
                 if (data[key] !== undefined && (key !== 'id' || isNumericID )) {
@@ -339,4 +339,4 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule)
             $form.after(this.footerTemplate());
         }
     });
-})(AbstractGridView, jQuery, _, deferredModule, optionsModule);
+})(AbstractGridView, jQuery, _, deferredModule, optionsModule, factoryModule);
