@@ -13,6 +13,9 @@ var MultimediaCardElement = (function () {
         renderControl: function (pk, controlID, tabindex) {
             return  '<div class="card-multimedia" id=' + controlID+ '></div>';
         },
+        processBeforeRender: function () {
+            return '';
+        },
         getCallback: function (controlID, pk) {
             var column = this.get('column'),
                 model = this.get('model');
