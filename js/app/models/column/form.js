@@ -15,10 +15,10 @@ var FormColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
             class_name += ' grid-button';
             return class_name;
         },
-        getJsFn: function ($cnt) {
+        getJsFn: function () {
             var _this = this,
                 allowEdit = this.getRawAllowEdit();
-            return function () {
+            return function ($cnt) {
                 $cnt.find('[rel$="_' + _this.get('key') + '"]')
                     .editable({
                         mode: 'inline',

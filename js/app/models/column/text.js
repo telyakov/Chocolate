@@ -1,10 +1,10 @@
 var TextColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
     'use strict';
     return ColumnRO.extend({
-        getJsFn: function ($cnt) {
+        getJsFn: function () {
             var _this = this,
                 customProperties = _this.getColumnCustomProperties();
-            return function () {
+            return function ($cnt) {
                 var $elements = $cnt.find('[rel$="_' + _this.get('key') + '"]');
                 var options = {
                     mode: 'inline',

@@ -1,11 +1,11 @@
 var SelectColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
     'use strict';
     return ColumnRO.extend({
-        getJsFn: function ($cnt) {
+        getJsFn: function () {
             var _this = this,
                 allowEdit = this.getRawAllowEdit();
 
-            return function () {
+            return function ($cnt) {
                 var defer =_this.evalReadProc();
                 defer.done(function (res) {
                     var data = helpersModule.prepareSelectSource(res.data);

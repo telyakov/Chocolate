@@ -6,12 +6,12 @@ var DateColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
             options['class'] = 'sorter-shortDate';
             return options;
         },
-        getJsFn: function ($cnt) {
+        getJsFn: function () {
             var _this = this,
                 isTime = _this.getEditType() === 'date',
                 allowEdit = this.getRawAllowEdit();
 
-            return function () {
+            return function ($cnt) {
                 $cnt.find('[rel$="_' + _this.get('key') + '"]')
                     .on('init', function () {
                         chFunctions.dateColumnInitFunction($(this), allowEdit);

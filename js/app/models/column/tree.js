@@ -4,11 +4,11 @@ var TreeColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
         isSingle: function(){
             return helpersModule.boolEval(this.get('columnProperties').getSingleValueMode(), false);
         },
-        getJsFn: function ($cnt) {
+        getJsFn: function () {
             var _this = this,
                 allowEdit = this.getRawAllowEdit();
 
-            return function () {
+            return function ($cnt) {
                 var defer = _this.evalReadProc();
                 defer.done(function (res) {
                     var data = helpersModule.prepareTreeSource(res.data);

@@ -8,9 +8,9 @@ var AttachmentColumnRO = (function (Backbone) {
         isEdit: function () {
             return true;
         },
-        getJsFn: function ($cnt) {
+        getJsFn: function () {
             var _this = this;
-            return function () {
+            return function ($cnt) {
                 $cnt.find('[rel$="' + _this.getKey() + '"]').editable({
                     type: 'text',
                     mode: 'inline',

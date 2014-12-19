@@ -55,12 +55,26 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         getCreateEmptyProc: function(){
             return this.getDataFormProperties().getCreateEmptyProc();
         },
-        deferEmptyProc: function(){
-            var defer = bindModule.deferredBindSql( this.model.getCreateEmptyProc());
+        deferDefaultData: function(){
+            var defaultDefer = deferredModule.create(),
+                defaultDeferID = deferredModule.save(defaultDefer),
+                defer = bindModule.deferredBindSql( this.getCreateEmptyProc());
+            defer.done(function(res){
+                var sql = res.sql;
+                mediator.publish(optionsModule.getChannel('socketRequest'), {
+                    query: sql,
+                    type: optionsModule.getRequestType('deferred'),
+                    id: defaultDeferID
+                });
+            });
+            return defaultDefer;
 
         },
         isSupportCreateEmpty: function () {
             return this.getCreateEmptyProc()? true : false;
+        },
+        isAutoOpenCard: function(){
+          return helpersModule.boolEval(this.getCardCollection().getAutoOpen(), false);
         },
         isAllowCreate: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAllowAddNew(), false);
