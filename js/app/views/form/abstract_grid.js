@@ -3,7 +3,8 @@ var AbstractGridView = (function (AbstractView, $, _) {
     return AbstractView.extend({
         events: {
             'keydown .tablesorter': 'navigateHandler',
-            'click tbody > tr': 'selectRowHandler'
+            'click tbody > tr': 'selectRowHandler',
+            'click .menu-button-expand': 'contentExpandHandler'
         },
         navigateHandler: function (e) {
             if (['TABLE', 'SPAN'].indexOf(e.target.tagName) !== -1) {

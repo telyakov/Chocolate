@@ -102,8 +102,13 @@ var bindModule = (function (userModule, undefined) {
                             if (paramName === 'userid') {
                                 newParams.push(' @' + paramName + '=' + userModule.getID());
                             } else {
+
                                 if (data && data[paramName]) {
-                                    newParams.push(' @' + paramName + '=' + "'" + data[paramName] + "'");
+                                    var correctVal = data[paramName].replace(/\'/g, '\'\'');
+                                    newParams.push(' @' + paramName + '=' + "'" + correctVal + "'");
+                                }else if(isFull){
+                                    newParams.push(' @' + paramName + '=' + 'NULL');
+
                                 }
                             }
                         }

@@ -225,14 +225,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             this.model
                 .deferReadProc(this.view.getFilterData(), mainSql)
                 .done(function (data) {
-                    var sql = data.sql,
-                        defer = deferredModule.create(),
-                        deferID = deferredModule.save(defer);
-                    mediator.publish(optionsModule.getChannel('socketRequest'), {
-                        query: sql,
-                        type: optionsModule.getRequestType('chFormRefresh'),
-                        id: deferID
-                    });
+                    var defer = _this.model.deferReadData(data.sql);
                     defer.done(function (data) {
                         _this.refreshDone(data);
                     });
@@ -317,11 +310,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             form.setRowCount(Object.keys(recordset).length);
         },
         generateRows: function (data, order, sortedColumnCollection, form) {
-            var count = 0,
-                stringBuilder = [];
+            var stringBuilder = [];
             var _this = this;
             order.forEach(function (key) {
-                count++;
+                //count++;
                 stringBuilder.push(_this.generateRow(data[key], sortedColumnCollection, form));
             });
             return stringBuilder.join('');

@@ -52,14 +52,14 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         isSearchColumnVisible: function () {
             return this.getColumnsCollection().length > 10;
         },
-        getCreateEmptyProc: function(){
+        getCreateEmptyProc: function () {
             return this.getDataFormProperties().getCreateEmptyProc();
         },
-        deferDefaultData: function(){
+        deferDefaultData: function () {
             var defaultDefer = deferredModule.create(),
                 defaultDeferID = deferredModule.save(defaultDefer),
-                defer = bindModule.deferredBindSql( this.getCreateEmptyProc());
-            defer.done(function(res){
+                defer = bindModule.deferredBindSql(this.getCreateEmptyProc());
+            defer.done(function (res) {
                 var sql = res.sql;
                 mediator.publish(optionsModule.getChannel('socketRequest'), {
                     query: sql,
@@ -70,11 +70,47 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return defaultDefer;
 
         },
-        isSupportCreateEmpty: function () {
-            return this.getCreateEmptyProc()? true : false;
+        getCreateProc: function(){
+            return this.getDataFormProperties().getCreateProc();
         },
-        isAutoOpenCard: function(){
-          return helpersModule.boolEval(this.getCardCollection().getAutoOpen(), false);
+        getUpdateProc: function () {
+            var sql = this.getDataFormProperties().getValidationProc();
+            if (!sql) {
+                sql = this.getDataFormProperties().getUpdateProc();
+            }
+            return sql;
+        },
+        deferSave: function (data) {
+            var defer = deferredModule.create(),
+                deferID = deferredModule.save(defer),
+                sql;
+            if($.isNumeric(data.id)){
+                sql = this.getUpdateProc();
+            }else{
+                sql = this.getCreateProc();
+            }
+            var extendedData = $.extend({}, this.getParamsForBind(), data),
+                 paramDefer = bindModule.deferredBindSql(sql, extendedData, true);
+            paramDefer.done(function(res){
+                console.log(res)
+            });
+            return defer;
+        },
+        deferReadData: function (sql) {
+            var defer = deferredModule.create(),
+                deferID = deferredModule.save(defer);
+            mediator.publish(optionsModule.getChannel('socketRequest'), {
+                query: sql,
+                type: optionsModule.getRequestType('chFormRefresh'),
+                id: deferID
+            });
+            return defer;
+        },
+        isSupportCreateEmpty: function () {
+            return this.getCreateEmptyProc() ? true : false;
+        },
+        isAutoOpenCard: function () {
+            return helpersModule.boolEval(this.getCardCollection().getAutoOpen(), false);
         },
         isAllowCreate: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAllowAddNew(), false);

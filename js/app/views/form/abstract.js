@@ -12,7 +12,20 @@ var AbstractView = (function (Backbone, $, _) {
             this.view = options.view;
             this.formID = facade.getHelpersModule().uniqueID();
             this.listenTo(this.model, 'refresh:form', this.lazyRefresh);
+            this.listenTo(this.model, 'save:form', this.save);
             this.render();
+        },
+        contentExpandHandler: function (e) {
+            var $this = $(e.target).closest('button'),
+                $expandSection = $this.closest('section');
+            $this.toggleClass('menu-button-selected');
+            $expandSection.siblings('.section-header, .section-filters').toggleClass('expand-hidden');
+            var $expandCardCol = $expandSection.closest('.card-col');
+            if ($expandCardCol.length) {
+                $expandCardCol.toggleClass('expand-card-visible');
+                $expandCardCol.siblings('.card-col').toggleClass('expand-hidden');
+            }
+            mediator.publish(optionsModule.getChannel('reflowTab'), true);
         },
         _refreshTimerID: null,
         lazyRefresh: function (opts) {
@@ -33,9 +46,9 @@ var AbstractView = (function (Backbone, $, _) {
             return this.formID;
         },
         _chForm: null,
-        getChForm: function(){
+        getChForm: function () {
             //todo: for support legacy code
-            if(this._chForm === null){
+            if (this._chForm === null) {
                 this._chForm = facade.getFactoryModule().makeChGridForm($('#' + this.getFormID()));
             }
             return this._chForm;
@@ -100,6 +113,9 @@ var AbstractView = (function (Backbone, $, _) {
                 cardView.initScripts($context);
                 $a.attr('href', href);
             }
+        },
+        save: function(data){
+            console.log('not implemented save method');
         },
         refresh: function () {
             console.log('not implemented refresh method');

@@ -33,16 +33,5 @@ echo CHtml::closeTag('form');
     <button class="discussion-submit">Отправить</button>
 </section>
 </section>
-<?
-Yii::app()->clientScript->registerScript(uniqid(),
-    <<<JS
-
-    var form = facade.getFactoryModule().makeChDiscussionForm($('#'+'$id'));
-    form.init('$sql');
-    form.refresh();
-JS
-,CClientScript::POS_READY);
-?>
-
 
 

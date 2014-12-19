@@ -9,7 +9,49 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
         },
         events: {
             'click .link-form, .link-profile': 'openForm',
-            'click .menu-root': 'openFormFromMenu'
+            'click .menu-root': 'openFormFromMenu',
+            'click .filter-button': 'filterTreeHandler',
+            'click .tab-menu-link': 'openCardTabMenuHandler'
+
+        },
+        openCardTabMenuHandler: function (e) {
+            //todo: move to card model
+            var $this = $(e.target),
+                $tabs = $this.closest('.tab-menu').prevAll('.ui-tabs-nav').find('a'),
+                menu = [],
+                activeClass = chApp.getOptions().classes.activeTab;
+            $tabs.each(function () {
+                var item = {
+                    title: $(this).text(),
+                    cmd: $(this).attr('id')
+                };
+                if ($(this).parent().hasClass(activeClass)) {
+                    item.uiIcon = 'ui-icon-check';
+                }
+                menu.push(item);
+            });
+            $this.contextmenu({
+                show: {effect: "blind", duration: 0},
+                menu: menu,
+                select: function (event, ui) {
+                    $('#' + ui.cmd).trigger('click');
+                }
+            });
+            $this.contextmenu('open', $this);
+        },
+        filterTreeHandler: function (e) {
+            var $this = $(e.target).closest('button'),
+                $tree = $this.closest('div').siblings('.widget-tree'),
+                nodes = $tree.find('li');
+            $this.toggleClass('menu-button-selected');
+            var selectedNodes = nodes.filter(function () {
+                return $(this).has('.dynatree-selected').length === 0;
+            });
+            if ($this.hasClass('menu-button-selected')) {
+                selectedNodes.hide();
+            } else {
+                selectedNodes.show();
+            }
         },
         openForm: function (e) {
             mediator.publish(optionsModule.getChannel('xmlRequest'), {

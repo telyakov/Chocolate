@@ -14,7 +14,6 @@ var ChocolateEvents = {
             $content = main.$content,
             $window = main.$window,
             $tabs = main.$tabs,
-            $footer = main.$footer,
             $body = $('body');
         this.ajaxIndicatorEvent();
         this.closeTabEvent($content);
@@ -39,78 +38,6 @@ var ChocolateEvents = {
         this.modalFormElementEvent($content);
         this.searchColumnsEvent($tabs);
         this.sendEmailEvent($tabs);
-        this.sendMessageEvent($tabs);
-        this.openCardTabMenuEvent($tabs);
-        this.filterTreeEvent($body);
-        this.contentExpandEvent($tabs);
-    },
-    contentExpandEvent: function ($cnt) {
-        $cnt.on('click', '.menu-button-expand', this.contentExpandHandler);
-    },
-    contentExpandHandler: function () {
-        var $this = $(this),
-            $expandSection = $this.closest('section');
-        $this.toggleClass('menu-button-selected');
-        $expandSection.siblings('.section-header, .section-filters').toggleClass('expand-hidden');
-        var $expandCardCol = $expandSection.closest('.card-col');
-        if ($expandCardCol.length) {
-            $expandCardCol.toggleClass('expand-card-visible');
-            $expandCardCol.siblings('.card-col').toggleClass('expand-hidden');
-        }
-        facade.getRepaintModule().reflowActiveTab(true);
-
-    },
-    filterTreeEvent: function ($cnt) {
-        $cnt.on('click', '.filter-button', this.filterTreeHandler);
-    },
-    filterTreeHandler: function () {
-        var $this = $(this),
-            $tree = $this.closest('div').siblings('.widget-tree'),
-            nodes = $tree.find('li');
-        $this.toggleClass('menu-button-selected');
-        var selectedNodes = nodes.filter(function () {
-            return $(this).has('.dynatree-selected').length === 0;
-        });
-        if ($this.hasClass('menu-button-selected')) {
-            selectedNodes.hide();
-        } else {
-            selectedNodes.show();
-        }
-    },
-    openCardTabMenuEvent: function ($context) {
-        $context.on('click', '.tab-menu-link', this.openCardTabMenuHandler);
-    },
-    openCardTabMenuHandler: function () {
-        var $this = $(this),
-            $tabs = $this.closest('.tab-menu').prevAll('.ui-tabs-nav').find('a'),
-            menu = [],
-            activeClass = chApp.getOptions().classes.activeTab;
-        $tabs.each(function () {
-            var item = {
-                title: $(this).text(),
-                cmd: $(this).attr('id')
-            };
-            if ($(this).parent().hasClass(activeClass)) {
-                item.uiIcon = 'ui-icon-check';
-            }
-            menu.push(item);
-        });
-        $(this).contextmenu({
-            show: {effect: "blind", duration: 0},
-            menu: menu,
-            select: function (event, ui) {
-                $('#' + ui.cmd).trigger('click');
-            }
-        });
-        $(this).contextmenu('open', $(this));
-    },
-    sendMessageEvent: function ($context) {
-        $context.on('click', '.discussion-submit', this.sendMessageHandler);
-    },
-    sendMessageHandler: function () {
-        var msg = $(this).prev('.discussion-input').val();
-        var form = facade.getFactoryModule().makeChDiscussionForm($(this).closest('section').prev('form'));
-        form.sendMessage(msg);
     },
     sendEmailEvent: function ($context) {
         $context.on('click', '.fm-email-send', this.sendEmailHandler);

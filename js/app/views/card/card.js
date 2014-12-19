@@ -132,11 +132,7 @@ var CardView = (function (Backbone, $) {
         '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
     ]. join('')),
         createPanel: function (card, $panel) {
-            var startYPos = 1,
-                maxPos = 'max',
-                tabIndex = 0,
-                cellWidth = parseInt(100 / card.getCols(), 10),
-                html = {},
+            var html = {},
                 callbacks = [],
                 event = 'render_' + helpersModule.uniqueID(),
                 elements = this.model.getCardElements(card),

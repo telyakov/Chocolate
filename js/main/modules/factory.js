@@ -92,12 +92,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         makeChGridColumnHeader: function ($el) {
             return _private.make($el, 'ChGridColumnHeader');
         },
-        /**
-         * @returns {ChDiscussionForm}
-         */
-        makeChDiscussionForm: function ($el) {
-            return _private.make($el, 'ChDiscussionForm');
-        },
         make: function ($el, objClass) {
             var id = $el.attr('id');
             if (!id) {
@@ -172,9 +166,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         },
         makeChGridColumnHeader: function ($el) {
             return _private.makeChGridColumnHeader($el);
-        },
-        makeChDiscussionForm: function ($el) {
-            return _private.makeChDiscussionForm($el);
         },
         garbageCollection: function () {
             _private.garbageCollection();
