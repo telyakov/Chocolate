@@ -24,6 +24,9 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             }
             return sql;
         },
+        getDefault: function () {
+            return helpersModule.defaultExpressionEval(this.get('columnProperties').getDefault());
+        },
         evalReadProc: function (params) {
             var mainDefer = deferredModule.create(),
                 deferId = deferredModule.save(mainDefer);
@@ -31,9 +34,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
                 var _this = this,
                     sql = this.getSql();
                 if (sql) {
-                    var dataDefer = deferredModule.create(),
-                        dateDeferID = deferredModule.save(dataDefer);
-                    bindModule.deferredBindSql(dateDeferID, sql, params);
+                    var dataDefer = bindModule.deferredBindSql(sql, params);
                     dataDefer.done(function (res) {
                         var prepareSql = res.sql;
                         var columnDefer = deferredModule.create(),

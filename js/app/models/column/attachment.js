@@ -30,9 +30,9 @@ var AttachmentColumnRO = (function (Backbone) {
         getVisibleCaption: function(){
           return 'Вложения';
         },
-        //getHeaderImage: function(){
-        //    return false;
-        //},
+        getDefault: function () {
+            return  null;
+        },
         getView: function () {
             return 'attachments.xml';
         },

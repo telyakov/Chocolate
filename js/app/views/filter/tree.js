@@ -30,10 +30,7 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 multiSelectId = deferredModule.save(multiSelectDf),
                 enabledId = deferredModule.save(enabledDf);
 
-            var defer = deferredModule.create(),
-                deferID = deferredModule.save(defer);
-            model.readProcEval(deferID);
-
+            var defer = model.readProcEval();
             model.isVisibleEval(visibleId);
             model.isEnabledEval(enabledId);
             model.isMultiSelectEval(multiSelectId);

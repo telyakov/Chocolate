@@ -44,13 +44,48 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
         events: function () {
             return _.extend({}, AbstractGridView.prototype.events, {
                 'touchmove .card-button': 'openCard',
-                'dblclick .card-button': 'openCard'
+                'dblclick .card-button': 'openCard',
+                'click .menu-button-add': 'addRowHandler'
             });
         },
-        selectRow: function (e) {
-            var $this = $(e.target).closest('tr'),
-                form = facade.getFactoryModule().makeChGridForm($this.closest('form'));
-            form.selectRow($this, e.ctrlKey || e.shiftKey, true);
+        addRowHandler: function (e) {
+            var $this = $(e.target);
+            var urls = chApp.namespace('options.urls'),
+                form = facade.getFactoryModule().makeChGridForm($(this).closest('form'));
+            if(this.model.isSupportCreateEmpty()){
+                var defer = bindModule.deferredBindSql(this.model.getCreateEmptyProc());
+                defer.done(function(res){
+                   console.log(res);
+                });
+            }else{
+                form.addRow(this.model.getColumnsDefaultValues());
+            }
+            //if (form.isAjaxAdd()) {
+            //    $.get(urls.addRow, {view: form.getView()})
+            //        .done(function (res) {
+            //            var response = new ChResponse(res);
+            //            if (response.isSuccess()) {
+            //                var defData = $.extend({}, form.getDefaultObj(), response.getData());
+            //                form.addRow(defData);
+            //            } else {
+            //                response.sendMessage(form.getMessagesContainer());
+            //            }
+            //        })
+            //        .fail(function (e) {
+            //            var resStatuses = chApp.namespace('responseStatuses'),
+            //                main = chApp.namespace('main');
+            //            form.getMessagesContainer().sendMessage(e.responseText, resStatuses.ERROR);
+            //            mediator.publish(facade.getOptionsModule().getChannel('logError'),
+            //                'Ошибка при получении данных при создании новой строки:',
+            //                e.responseText,
+            //                e.statusText,
+            //                e.status
+            //            );
+            //        });
+            //} else {
+            //    var defData = $.extend({}, form.getDefaultObj());
+            //    form.addRow(defData);
+            //}
         },
         openCard: function (e) {
             if (this.model.hasCard()) {
@@ -113,7 +148,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             return sortedColumnCollection;
         },
         layoutForm: function ($form) {
-            var form = factoryModule.makeChGridForm($form),
+            var form = this.getChForm(),
                 _this = this,
                 roCollection = this.model.getColumnsROCollection(),
                 hasSetting = form.hasSettings(),
@@ -191,7 +226,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 });
         },
         refreshDone: function (data) {
-            var form = factoryModule.makeChGridForm($('#' + this.getFormID())),
+            var form = this.getChForm(),
                 callbacks = this.getCallbacks(),
                 sortedColumnCollection = this.getSortedColumns(form),
                 order = data.order,
@@ -334,9 +369,6 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             });
             rowBuilder.push('</tr>');
             return rowBuilder.join('');
-        },
-        layoutFooter: function ($form) {
-            $form.after(this.footerTemplate());
         }
     });
 })(AbstractGridView, jQuery, _, deferredModule, optionsModule, factoryModule);

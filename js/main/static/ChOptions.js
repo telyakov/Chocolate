@@ -28,7 +28,7 @@ var ChOptions = {
     },
     settings: {
         locale: 'ru',
-        key: '6543210',
+        key: 'test6543210',
         defaultColumnsWidth: '150',
         defaultAutoUpdateMS: 100000,
         formatDate: 'YYYY.MM.DD HH:mm:ss',

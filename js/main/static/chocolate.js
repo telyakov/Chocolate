@@ -240,7 +240,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
         openForm: function (url) {
             context.openForm(url);
         },
-        boolEval: function(val, def){
+        boolEval: function (val, def) {
             var prepareVal = $.trim(val.toLowerCase());
             switch (true) {
                 case prepareVal === 'true':
@@ -252,17 +252,17 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
 
             }
         },
-        intExpressionEval: function(expr, def){
+        intExpressionEval: function (expr, def) {
 
-                if(expr !== null && expr !== '' && expr !== undefined){
-                    if($.isNumeric(expr)){
-                        return parseInt(expr, 10);
-                    }else{
-                        return expr;
-                    }
-                }else{
-                    return def;
+            if (expr !== null && expr !== '' && expr !== undefined) {
+                if ($.isNumeric(expr)) {
+                    return parseInt(expr, 10);
+                } else {
+                    return expr;
                 }
+            } else {
+                return def;
+            }
 
         },
         boolExpressionEval: function (expr, deferId, defaultValue) {
@@ -288,9 +288,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                         var posSql = posEqualSign + 1,
                             sql = $.trim(prepareExpr.substr(posSql));
 
-                        var sqlDefer = deferredModule.create(),
-                            sqlDeferID = deferredModule.save(sqlDefer);
-                        bindModule.deferredBindSql(sqlDeferID, sql);
+                        var sqlDefer = bindModule.deferredBindSql(sql);
                         sqlDefer.done(function (data) {
                             var sql = data.sql;
                             mediator.publish(optionsModule.getChannel('socketRequest'), {
@@ -312,6 +310,19 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
             //        return false;
             //    default:
 
+        },
+        defaultExpressionEval: function (expr) {
+            var raw = $.trim(expr.toLowerCase());
+            switch (true) {
+                case raw === 'currentuserfio':
+                    return userModule.getName();
+                case raw === 'userid':
+                    return userModule.getID();
+                case raw === 'currentemployeeid':
+                    return userModule.getEmployeeID();
+                default:
+                    return expr;
+            }
         },
         scriptExpressionEval: function (expr, e, model) {
             var exprInLowerCase = expr.toLowerCase();
@@ -350,7 +361,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
 
             }
         },
-        decToHeh: function(dec){
+        decToHeh: function (dec) {
             var decColor = parseInt(dec, 10),
                 hexColor = decColor.toString(16);
             if (hexColor.length < 6) {
@@ -363,7 +374,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                 B = [hexColor.charAt(0), hexColor.charAt(1)].join('');
             return [R, G, B].join('');
         },
-        prepareSelectSource: function(data){
+        prepareSelectSource: function (data) {
             var result = [],
                 iterator;
             for (iterator in data) {
@@ -376,7 +387,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
             }
             return result;
         },
-        prepareTreeSource: function(data){
+        prepareTreeSource: function (data) {
             var result = [],
                 iterator;
             for (iterator in data) {
@@ -385,7 +396,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                         text: data[iterator].name,
                         id: data[iterator].id,
                         description: data[iterator].description ?
-                            data[iterator].description:
+                            data[iterator].description :
                             ''
                     });
                 }

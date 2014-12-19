@@ -19,10 +19,8 @@ var ChocolateEvents = {
         this.ajaxIndicatorEvent();
         this.closeTabEvent($content);
         this.menuContextEvent($tabs);
-        //this.openCardEvent($tabs);
         this.contextFormMenuEvent($tabs);
         this.cardCancelEvent($tabs);
-        this.addRowToForm($tabs);
         this.saveFormEvent($tabs);
         this.cardSaveEvent($tabs);
         this.reflowTabEvent($tabs);
@@ -551,39 +549,6 @@ var ChocolateEvents = {
     cardCancelHandler: function () {
         var card = facade.getFactoryModule().makeChCard($(this).closest('[data-id=grid-tabs]'));
         card.undoChange();
-    },
-    addRowToForm: function ($context) {
-        $context.on('click', '.menu-button-add', this.addRowToFormHandler);
-    },
-    addRowToFormHandler: function () {
-        var urls = chApp.namespace('options.urls'),
-            form = facade.getFactoryModule().makeChGridForm($(this).closest('form'));
-        if (form.isAjaxAdd()) {
-            $.get(urls.addRow, {view: form.getView()})
-                .done(function (res) {
-                    var response = new ChResponse(res);
-                    if (response.isSuccess()) {
-                        var defData = $.extend({}, form.getDefaultObj(), response.getData());
-                        form.addRow(defData);
-                    } else {
-                        response.sendMessage(form.getMessagesContainer());
-                    }
-                })
-                .fail(function (e) {
-                    var resStatuses = chApp.namespace('responseStatuses'),
-                        main = chApp.namespace('main');
-                    form.getMessagesContainer().sendMessage(e.responseText, resStatuses.ERROR);
-                    mediator.publish(facade.getOptionsModule().getChannel('logError'),
-                        'Ошибка при получении данных при создании новой строки:',
-                        e.responseText,
-                        e.statusText,
-                        e.status
-                    );
-                });
-        } else {
-            var defData = $.extend({}, form.getDefaultObj());
-            form.addRow(defData);
-        }
     },
     saveFormEvent: function ($context) {
         $context.on('click', '.menu-button-save', this.saveFormHandler);

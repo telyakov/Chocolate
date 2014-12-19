@@ -32,6 +32,14 @@ var AbstractView = (function (Backbone, $, _) {
         getFormID: function () {
             return this.formID;
         },
+        _chForm: null,
+        getChForm: function(){
+            //todo: for support legacy code
+            if(this._chForm === null){
+                this._chForm = facade.getFactoryModule().makeChGridForm($('#' + this.getFormID()));
+            }
+            return this._chForm;
+        },
         footerTemplate: _.template([
                 '<footer class="grid-footer" data-id="grid-footer">',
                 '<div class="footer-info" data-id="info"></div>',

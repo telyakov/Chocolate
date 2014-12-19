@@ -138,14 +138,19 @@ var bindModule = (function (userModule, undefined) {
         bindCardSql: function (sql, card) {
             return _private.bindCardSql(sql, card);
         },
-        deferredBindSql: function (deferId, sql, data, isFull) {
+        deferredBindSql: function (sql, data, isFull) {
+            var defer = deferredModule.create(),
+                deferID = deferredModule.save(defer);
             if (data === undefined) {
-                return _private.bindSql(deferId, sql);
+                _private.bindSql(deferID, sql);
+            } else {
+
+                if (isFull === undefined) {
+                    isFull = false;
+                }
+                _private.bindFromData(deferID, sql, data, isFull);
             }
-            if (isFull === undefined) {
-                isFull = false;
-            }
-            return _private.bindFromData(deferId, sql, data, isFull);
+            return defer;
         }
     };
 })(userModule, undefined);

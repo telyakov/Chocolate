@@ -198,14 +198,10 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
         }
     });
 
-    mediator.subscribe(optionsModule.getChannel('setIdentity'), function (id, name) {
-        storageModule.saveUser(id, name);
-        var rolesDefer = deferredModule.create(),
-            rolesDeferID = deferredModule.save(rolesDefer),
-            formsDefer = deferredModule.create(),
-            formsDeferID = deferredModule.save(formsDefer);
-        bindModule.deferredBindSql(rolesDeferID,  optionsModule.getSql('getRoles'));
-        bindModule.deferredBindSql(formsDeferID,  optionsModule.getSql('getForms'));
+    mediator.subscribe(optionsModule.getChannel('setIdentity'), function (id, employeeId, name) {
+        storageModule.saveUser(id,employeeId,  name);
+        var rolesDefer  = bindModule.deferredBindSql(optionsModule.getSql('getRoles')),
+            formsDefer = bindModule.deferredBindSql(optionsModule.getSql('getForms'));
         rolesDefer.done(function (data) {
             var rolesSql = data.sql;
             mediator.publish(requestChannel, {
@@ -278,10 +274,11 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
         getImageAdapter: function () {
             return imageAdapter;
         },
-        startApp: function (userID, userName) {
+        startApp: function (userID, userName, $employeeID) {
             helpersModule.init();
             var appModel = new AppModel({
                     userId: userID,
+                    employeeId: $employeeID,
                     userName: userName
                 }),
                 view = new AppView({

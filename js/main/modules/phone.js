@@ -8,9 +8,7 @@ var phoneModule = (function (optionsModule, userModule, bindModule, mediator) {
                 phoneto: to
             };
 
-            var sqlDefer = deferredModule.create(),
-                sqlDeferID = deferredModule.save(sqlDefer);
-            bindModule.deferredBindSql(sqlDeferID, optionsModule.getSql('makeCall'), data);
+            var sqlDefer = bindModule.deferredBindSql(optionsModule.getSql('makeCall'), data);
             sqlDefer.done(function (data) {
                 var sql = data.sql;
                 mediator.publish(optionsModule.getChannel('socketRequest'), {

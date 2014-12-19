@@ -5,32 +5,33 @@ var storageModule = (function () {
     'use strict';
     function ObjectStorage(duration) {
         var self,
-            name ='_objectStorage',
+            name = '_objectStorage',
             defaultDuration = 15000;
-        if (ObjectStorage.instances[ name ]) {
-            self = ObjectStorage.instances[ name ];
+        if (ObjectStorage.instances[name]) {
+            self = ObjectStorage.instances[name];
             self.duration = duration || self.duration;
         } else {
             self = this;
             self._name = name;
             self.duration = duration || defaultDuration;
             self._init();
-            ObjectStorage.instances[ name ] = self;
+            ObjectStorage.instances[name] = self;
         }
         return self;
     }
+
     ObjectStorage.instances = {};
     ObjectStorage.prototype = {
         // type == local || session
         _save: function (type) {
-            var stringified = JSON.stringify(this[ type ]),
-                storage = window[ type + 'Storage' ];
+            var stringified = JSON.stringify(this[type]),
+                storage = window[type + 'Storage'];
             if (storage.getItem(this._name) !== stringified) {
                 storage.setItem(this._name, stringified);
             }
         },
         _get: function (type) {
-            this[ type ] = JSON.parse(window[ type + 'Storage' ].getItem(this._name)) || {};
+            this[type] = JSON.parse(window[type + 'Storage'].getItem(this._name)) || {};
         },
         _init: function () {
             var self = this;
@@ -86,12 +87,16 @@ var storageModule = (function () {
             getUserID: function () {
                 return _private.getUser().id;
             },
+            getEmployeeID: function () {
+                return _private.getUser().employeeId;
+            },
             getUserRoles: function () {
                 return _private.getUser().roles;
             },
-            saveUser: function (id, name) {
+            saveUser: function (id, employeeId, name) {
                 _private.getSession().user = {
                     id: id,
+                    employeeId: employeeId,
                     name: name
                 };
                 return true;
@@ -131,16 +136,20 @@ var storageModule = (function () {
         getUserID: function () {
             return _private.getUserID();
         },
+        getEmployeeID: function () {
+            return _private.getEmployeeID();
+        },
         getUserRoles: function () {
             return _private.getUserRoles();
         },
         /**
          * @param id {string}
+         * @param employeeId {string}
          * @param name {string}
          * @returns {boolean}
          */
-        saveUser: function (id, name) {
-            return _private.saveUser(id, name);
+        saveUser: function (id, employeeId, name) {
+            return _private.saveUser(id, employeeId, name);
         },
         saveRoles: function (roles) {
             return _private.saveRoles(roles);

@@ -109,9 +109,7 @@ var ch ={
                     $context.html(elemText);
                     $context.unbind('click');
                     if(isAllowEdit){
-                        var sqlDefer = deferredModule.create(),
-                            sqlDeferID = deferredModule.save(sqlDefer);
-                        bindModule.deferredBindSql(sqlDeferID, sql, cardElement.getCard().getActualDataObj());
+                          var sqlDefer = bindModule.deferredBindSql(sql, cardElement.getCard().getActualDataObj());
                         sqlDefer.done(function (data) {
                             var sql = data.sql;
                             $context.uniqueId();

@@ -14,6 +14,18 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             parentModel: null,
             parentId: null
         },
+        getColumnsDefaultValues: function () {
+            var defaults = {},
+                def;
+
+            this.getColumnsROCollection().each(function (column) {
+                def = column.getDefault();
+                if (def !== '' && def !== null) {
+                    defaults[column.get('key')] = def;
+                }
+            });
+            return defaults;
+        },
         hasCardHeader: function () {
             return this.getCardHeaderText() || this.getCardHeaderImage();
         },
@@ -40,8 +52,15 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         isSearchColumnVisible: function () {
             return this.getColumnsCollection().length > 10;
         },
+        getCreateEmptyProc: function(){
+            return this.getDataFormProperties().getCreateEmptyProc();
+        },
+        deferEmptyProc: function(){
+            var defer = bindModule.deferredBindSql( this.model.getCreateEmptyProc());
+
+        },
         isSupportCreateEmpty: function () {
-            return this.getDataFormProperties().getCreateEmptyProc() ? true : false;
+            return this.getCreateEmptyProc()? true : false;
         },
         isAllowCreate: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAllowAddNew(), false);
@@ -318,10 +337,10 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 return null;
             }
         },
-        getParamsForBind: function(pk){
+        getParamsForBind: function (pk) {
             return {
-                entityid: pk? pk :this.get('parentId'),
-                parentid: pk? pk :this.get('parentId'),
+                entityid: pk ? pk : this.get('parentId'),
+                parentid: pk ? pk : this.get('parentId'),
                 entitytype: this.getParentEntityTypeID(),
                 entitytypeid: this.getParentEntityTypeID(),
                 parententitytypeid: this.getParentEntityTypeID(),
@@ -329,8 +348,6 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             };
         },
         deferReadProc: function (filterData, mainSql) {
-            var defer = deferredModule.create(),
-                deferID = deferredModule.save(defer);
             var data = this.getParamsForBind();
             if (filterData) {
                 data = $.extend(data, filterData);
@@ -341,8 +358,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             } else {
                 sql = this.getDataFormProperties().getReadProc();
             }
-            bindModule.deferredBindSql(deferID, sql, data);
-            return defer;
+            return bindModule.deferredBindSql(sql, data);
         },
         _preview: null,
         getPreview: function () {

@@ -42,6 +42,7 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
             mediator.publish(
                 optionsModule.getChannel('setIdentity'),
                 this.model.get('userId'),
+                this.model.get('employeeId'),
                 this.model.get('userName')
             );
             this._renderAnimateIndicator();

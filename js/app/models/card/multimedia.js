@@ -21,9 +21,7 @@ var MultimediaCardElement = (function () {
                 model = this.get('model');
             return function () {
                 var sql = column.getSql();
-                var defer = deferredModule.create(),
-                    deferID = deferredModule.save(defer);
-                bindModule.deferredBindSql(deferID, sql, model.getParamsForBind(pk));
+                var defer = bindModule.deferredBindSql(sql, model.getParamsForBind(pk));
                 defer.done(function (res) {
                     var prepareSql = res.sql;
                     chCardFunction.multimediaInitFunction(prepareSql, controlID);

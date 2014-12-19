@@ -40,9 +40,7 @@ var CardView = (function (Backbone, $) {
             if (this.isVisibleCaption(cards)) {
                 var entityTypeID = this.model.getEntityTypeID();
                 cards.each(function (card) {
-                    var defer = deferredModule.create(),
-                        deferID = deferredModule.save(defer),
-                        sql = card.getCaptionReadProc(),
+                    var sql = card.getCaptionReadProc(),
                         data = {
                             parentid: pk,
                             entityid: pk,
@@ -50,7 +48,7 @@ var CardView = (function (Backbone, $) {
                             entitytype: entityTypeID
                         };
                     if (sql) {
-                        bindModule.deferredBindSql(deferID, sql, data);
+                        var defer  = bindModule.deferredBindSql(sql, data);
                         defer.done(function (res) {
                             var prepareSql = res.sql;
                             mediator.publish(facade.getOptionsModule().getChannel('socketRequest'), {

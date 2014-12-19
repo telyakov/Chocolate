@@ -33,8 +33,9 @@
 $user = Yii::app()->user;
 $name = $user->fullName;
 $id = $user->id;
+$employeeID = $user->employeeID;
 Yii::app()->clientScript->registerScript('start', <<<JS
-    facade.startApp('$id', '$name');
+    facade.startApp('$id', '$name', '$employeeID');
 JS
     , CClientScript::POS_READY
 )

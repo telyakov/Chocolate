@@ -1,4 +1,4 @@
-var AttachmentView = (function (AbstractGridView, $, _, factoryModule, deferredModule, optionsModule) {
+var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsModule) {
     'use strict';
     return AbstractGridView.extend({
         template: _.template(
@@ -89,7 +89,7 @@ var AttachmentView = (function (AbstractGridView, $, _, factoryModule, deferredM
                     });
             }
             var _this = this,
-                form = facade.getFactoryModule().makeChGridForm($form);
+                form = this.getChForm();
             $form
                 .on('fileuploadsubmit', function () {
                     return false;
@@ -141,7 +141,7 @@ var AttachmentView = (function (AbstractGridView, $, _, factoryModule, deferredM
         },
         refreshData: function () {
             var $form = $('#' + this.getFormID()),
-                form = factoryModule.makeChGridForm($form),
+                form = this.getChForm(),
                 model = this.model,
                 _this = this,
                 mainSql;
@@ -184,4 +184,4 @@ var AttachmentView = (function (AbstractGridView, $, _, factoryModule, deferredM
                 });
         }
     });
-})(AbstractGridView, jQuery, _, factoryModule, deferredModule, optionsModule);
+})(AbstractGridView, jQuery, _, deferredModule, optionsModule);

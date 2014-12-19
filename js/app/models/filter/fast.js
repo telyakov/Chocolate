@@ -2,9 +2,7 @@ var FastFilterRO = (function (FilterRO, helpersModule, optionsModule) {
     'use strict';
     return FilterRO.extend({
         dataEval: function (deferId) {
-            var defer = deferredModule.create(),
-                deferID = deferredModule.save(defer);
-            this.readProcEval(deferID);
+            var defer = this.readProcEval();
             defer.done(function (data) {
                 var sql = data.sql;
                 mediator.publish(optionsModule.getChannel('socketRequest'), {
