@@ -94,6 +94,9 @@ var bindModule = (function (userModule, undefined) {
             },
             bindFromSqlParams: function (sql, sqlParams, data, isFull) {
                 var i, param, paramName, newParams = [];
+                    //correctNewLine =  function($0, $1){
+                    //    return $1 ? $0 : '\r\n';
+                    //};
                 for (i in sqlParams) {
                     if (sqlParams.hasOwnProperty(i)) {
                         param = sqlParams[i];
@@ -104,7 +107,9 @@ var bindModule = (function (userModule, undefined) {
                             } else {
 
                                 if (data && data[paramName]) {
-                                    var correctVal = data[paramName].replace(/\'/g, '\'\'');
+                                    var correctVal = data[paramName]
+                                        .replace(/\'/g, '\'\'');
+                                        //.replace(/(\r)?\n/g, correctNewLine);
                                     newParams.push(' @' + paramName + '=' + "'" + correctVal + "'");
                                 }else if(isFull){
                                     newParams.push(' @' + paramName + '=' + 'NULL');

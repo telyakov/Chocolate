@@ -28,7 +28,7 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
         sendMessage: function (msg) {
             var data = {};
             data[this.insDate] = moment();
-            data[this.textMessage] = msg;
+            data[this.textMessage] = msg.replace(/\n/g, '<br/>');
             data[this.myMessage] = 1;
             data[this.userName] = '';
 
@@ -42,15 +42,23 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
             };
             this.model.trigger('save:form', dateToSave);
         },
+        scrollToBottom: function(){
+            var $form = $('#' + this.getFormID());
+            $form.scrollTop($form.height());
+        },
         save: function(data){
+            var _this = this;
             $('#' + this.getFormID())
                 .next('.discussion-footer').children('.discussion-input').val('');
-            var defer = this.model.deferSave(data);
+            this.model.deferSave(data)
+                .done(function(){
+                    _this.scrollToBottom();
+            });
         },
         refresh: function () {
-            var _this = this,
-                defer = this.model.deferReadProc();
-            defer.done(function (data) {
+            var _this = this;
+            this.model.deferReadProc()
+                .done(function (data) {
                 var defer = _this.model.deferReadData(data.sql);
                 defer.done(function (res) {
                     _this.layout(res.data, res.order);
@@ -59,16 +67,12 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
             });
         },
         render: function () {
-            var parentModel = this.model.get('parentModel'),
-                parentID = this.model.get('parentId'),
-                formID = this.getFormID(),
-                _this = this;
+            var parentModel = this.model.get('parentModel');
             this.$el.html(this.template({
-                formID: formID,
+                formID: this.getFormID(),
                 parentView: parentModel.getView(),
-                parentID: parentID
+                parentID: this.model.get('parentId')
             }));
-
             this.refresh();
         },
         layout: function (data, order) {
@@ -80,6 +84,7 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
             var $form = $('#' + this.getFormID());
             $form.find('.discussion-content').html(html.join(''));
             mediator.publish(optionsModule.getChannel('reflowTab'));
+            _this.scrollToBottom();
             $form.next('.discussion-footer').children('.discussion-input').focus();
         },
         isMyMessage: function (msgData) {

@@ -70,7 +70,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return defaultDefer;
 
         },
-        getCreateProc: function(){
+        getCreateProc: function () {
             return this.getDataFormProperties().getCreateProc();
         },
         getUpdateProc: function () {
@@ -84,15 +84,19 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             var defer = deferredModule.create(),
                 deferID = deferredModule.save(defer),
                 sql;
-            if($.isNumeric(data.id)){
+            if ($.isNumeric(data.id)) {
                 sql = this.getUpdateProc();
-            }else{
+            } else {
                 sql = this.getCreateProc();
             }
             var extendedData = $.extend({}, this.getParamsForBind(), data),
-                 paramDefer = bindModule.deferredBindSql(sql, extendedData, true);
-            paramDefer.done(function(res){
-                console.log(res)
+                paramDefer = bindModule.deferredBindSql(sql, extendedData, true);
+            paramDefer.done(function (res) {
+                mediator.publish(optionsModule.getChannel('socketRequest'), {
+                    query: res.sql,
+                    type: optionsModule.getRequestType('deferred'),
+                    id: deferID
+                });
             });
             return defer;
         },
