@@ -403,6 +403,12 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
             }
             return result;
         },
+        merge: function(source, addition){
+          context.mergeObj(source, addition);
+        },
+        leaveFocus: function(){
+            context.leaveFocus();
+        },
         init: function () {
             context.init();
         }

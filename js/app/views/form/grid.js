@@ -48,7 +48,24 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 'click .menu-button-add': 'addRowHandler'
             });
         },
-        addRowHandler: function (e) {
+        openMailClient:function(){
+            //console.log(this.getJqueryActiveRow());
+            //console.log('open');
+            //var form = facade.getFactoryModule().makeChGridForm($(this).closest('.section-header').siblings('.section-grid').children('form'));
+            var id = this.getActiveRowID();
+            if (id) {
+                var dataObj = form.getDataObj()[id],
+                    emailCol = chApp.getOptions().settings.emailCol,
+                    emails = dataObj[emailCol],
+                    url = encodeURIComponent(chApp.getOptions().urls.bpOneTask + id),
+                    task = chApp.getMain().stripHtml(dataObj.task),
+                    subject = 'База:' + task.substr(0, 50);
+
+                window.open('mailto:' + emails + '?subject=' + subject + '&body=' + url, '_self');
+
+            }
+        },
+        addRowHandler: function () {
             var defValues = this.model.getColumnsDefaultValues(),
                 _this = this;
             if(this.model.isSupportCreateEmpty()){
@@ -126,7 +143,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
         },
         layoutMenu: function ($form) {
             var menuView = new MenuView({
-                model: this.model,
+                view: this,
                 $el: $form
             });
         },
@@ -244,7 +261,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 $tr,
                 cacheVisible = [],
                 $userGrid = form._getUserGrid(),
-                subscribeName = form.getLayoutSubscribeName();
+                subscribeName = this.getLayoutSubscribeName();
             $.unsubscribe(subscribeName);
             $.subscribe(subscribeName, function (e, refreshCache) {
                 var scrollTop = $userGrid.scrollTop();
@@ -307,7 +324,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 $.publish(subscribeName, true);
             });
             $.publish(subscribeName, true);
-            form.setRowCount(Object.keys(recordset).length);
+            this.setRowCount(Object.keys(recordset).length);
         },
         generateRows: function (data, order, sortedColumnCollection, form) {
             var stringBuilder = [];

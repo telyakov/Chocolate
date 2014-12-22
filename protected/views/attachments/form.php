@@ -111,7 +111,7 @@ use Chocolate\HTML\Grid\Settings\XEditableSettings;
 <? $id = $this->htmlOptions['id'];
 Yii::app()->clientScript->registerScript(
     uniqid(), <<<JS
-chApp.namespace('attachments').initData('$id', '$isNewRow');
+//chApp.namespace('attachments').initData('$id', '$isNewRow');
 JS
     , CClientScript::POS_READY
 );

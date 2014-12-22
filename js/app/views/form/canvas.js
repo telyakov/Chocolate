@@ -23,7 +23,7 @@ var CanvasView = (function (Backbone) {
                 }));
             this.$el.html($form);
             var menuView = new MenuView({
-                model: this.model,
+                view: this,
                 $el: $form
             });
             var $sectionCanvas = $('<section>', {

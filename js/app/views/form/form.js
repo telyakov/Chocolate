@@ -182,11 +182,18 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 return {};
             }
         },
+        _panelID: null,
+        getPanelID: function () {
+            if (this._panelID === null) {
+                this._panelID = helpersModule.uniqueID();
+            }
+            return this._panelID;
+        },
         createPanel: function () {
             if (this.card) {
                 return this.$el;
             }
-            var id = helpersModule.uniqueID(),
+            var id = this.getPanelID(),
                 $panel = $('<div>', {
                     id: id
                 });
@@ -196,7 +203,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             return $panel;
 
         },
-
         layoutHeader: function ($panel) {
             var title;
             if (this.model.isAttachmentView()) {
@@ -215,15 +221,21 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             } else {
                 if (this.model.hasHeader()) {
                     var asyncId = helpersModule.uniqueID(),
-                        image = facade.getImageAdapter().convert(this.model.getImage());
-                    title = this.model.getHeaderText();
-
+                        model = this.model,
+                        image = facade.getImageAdapter().convert(model.getImage());
+                    title = model.getHeaderText();
+                    if (title.indexOf('fm-email-send') !== -1) {
+                        this.events['click #' + this.getPanelID() + ' .fm-email-send'] = function () {
+                            model.trigger('openMailClient');
+                        };
+                        this.delegateEvents();
+                    }
                     $panel.append(this.headerTemplate({
-                        'image': image,
-                        'title': title,
-                        'asyncId': asyncId
+                        image: image,
+                        title: title,
+                        asyncId: asyncId
                     }));
-                    var stateProcedure = this.model.getStateProc();
+                    var stateProcedure = model.getStateProc();
                     if (stateProcedure) {
                         mediator.publish(optionsModule.getChannel('socketRequest'), {
                             query: stateProcedure,
@@ -282,9 +294,9 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
         layoutFormSection: function ($panel) {
             var $formSection;
             if (this.model.isDiscussionView()) {
-                if(this.card){
+                if (this.card) {
                     $formSection = $panel;
-                }else{
+                } else {
                     $formSection = $('<section>');
                     $panel.append($formSection);
                 }
@@ -293,7 +305,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     'class': 'section-grid',
                     'data-id': 'grid-form'
                 });
-            $panel.append($formSection);
+                $panel.append($formSection);
             }
 
             var ViewClass = this.model.getFormView(),

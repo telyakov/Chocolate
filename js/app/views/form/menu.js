@@ -49,7 +49,8 @@ var MenuView = (function (Backbone) {
         initialize: function (options) {
             _.bindAll(this, 'render');
             this.$el = options.$el;
-            this.model = options.model;
+            this.view = options.view;
+            this.model = options.view.model;
             this.render();
         },
         events: {},
@@ -73,7 +74,7 @@ var MenuView = (function (Backbone) {
                 });
             this.$el.append(html);
             if (isAllowPrintActions) {
-                chFunctions.initPrintActions(printID, this.model.getPrintActions());
+                chFunctions.initPrintActions(printID, this.model.getPrintActions(), this.view);
             }
             if (isAllowAudit) {
                 chFunctions.systemColsInit(auditID);

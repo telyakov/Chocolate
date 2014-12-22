@@ -282,8 +282,8 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return collection;
         },
         getCardElements: function (card) {
-            var key = card.getKey();
-            var cardElements = [],
+            var key = card.getKey(),
+                cardElements = [],
                 collection = this.getColumnsCardROCollection(),
                 _this = this;
             collection.each(function (model) {

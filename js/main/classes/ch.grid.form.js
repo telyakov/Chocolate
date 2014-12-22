@@ -1,6 +1,4 @@
 function ChGridForm($form) {
-    this.previewTimerID = null;
-    this.selectedTimerID = null;
     this.$form = $form;
     this.chFormSettings = new ChFormSettings(this);
     this._$table = null;
@@ -49,9 +47,9 @@ ChGridForm.TEMPLATE_FIRST_TD = '<td class="grid-menu"><span class="card-button" 
 ChGridForm.prototype.getExitMessage = function () {
     return 'В форме "' + this.getTabCaption() + '" имеются несохраненные изменения. Закрыть без сохранения?';
 };
-ChGridForm.prototype.removeSelectedRows = function () {
-    this.removeRows(this.getSelectedRows());
-};
+//ChGridForm.prototype.removeSelectedRows = function () {
+//    this.removeRows(this.getSelectedRows());
+//};
 ChGridForm.prototype.addPriorityColorAndApply = function (id, priority, color) {
     var priorities = this.priorityColorCol[id];
     if (typeof priorities == 'undefined') {
@@ -297,9 +295,9 @@ ChGridForm.prototype.isCardSupport = function () {
     }
     return this._is_card_support;
 };
-ChGridForm.prototype.getActiveRowID = function () {
-    return this.getActiveRow().attr('data-id');
-};
+//ChGridForm.prototype.getActiveRowID = function () {
+//    return this.getActiveRow().attr('data-id');
+//};
 ChGridForm.prototype.isAutoOpenCard = function () {
     return this.getGridPropertiesObj()['autoOpenCard'];
 };
@@ -405,129 +403,127 @@ ChGridForm.prototype.getPreviewObj = function () {
  * @param rel {string}
  * @private
  */
-ChGridForm.prototype._createSelectedArea = function (width, height, left, top, rel) {
-    var selAreaClasses = ChOptions.classes.selectedArea;
-    var $selLeft = $('<div class="sel-left"></div>'),
-        $selRight = $('<div class="sel-right"></div>'),
-        $selTop = $('<div class="sel-top"></div>'),
-        $selBottom = $('<div class="sel-bottom"></div>');
-    if (typeof rel != 'undefined') {
-        $selLeft.attr('rel', rel);
-        $selRight.attr('rel', rel);
-        $selTop.attr('rel', rel);
-        $selBottom.attr('rel', rel);
-        selAreaClasses += ' ' + ChOptions.classes.selectedMouseArea;
-    } else {
-        selAreaClasses += ' ' + ChOptions.classes.selectedKeyboardArea;
-    }
-    $selLeft.addClass(selAreaClasses);
-    $selRight.addClass(selAreaClasses);
-    $selTop.addClass(selAreaClasses);
-    $selBottom.addClass(selAreaClasses);
-
-    $selLeft.css({height: height, top: top, left: left});
-    $selRight.css({height: height, top: top, left: width + left});
-    $selTop.css({width: width, top: top, left: left});
-    $selBottom.css({width: width, top: top + height, left: left});
-//    this.getTable().children('tbody').append($selLeft, $selRight, $selTop, $selBottom);
-    this.getTable().parent().append($selLeft, $selRight, $selTop, $selBottom);
-}
+//ChGridForm.prototype._createSelectedArea = function (width, height, left, top, rel) {
+//    var selAreaClasses = ChOptions.classes.selectedArea;
+//    var $selLeft = $('<div class="sel-left"></div>'),
+//        $selRight = $('<div class="sel-right"></div>'),
+//        $selTop = $('<div class="sel-top"></div>'),
+//        $selBottom = $('<div class="sel-bottom"></div>');
+//    if (typeof rel != 'undefined') {
+//        $selLeft.attr('rel', rel);
+//        $selRight.attr('rel', rel);
+//        $selTop.attr('rel', rel);
+//        $selBottom.attr('rel', rel);
+//        selAreaClasses += ' ' + ChOptions.classes.selectedMouseArea;
+//    } else {
+//        selAreaClasses += ' ' + ChOptions.classes.selectedKeyboardArea;
+//    }
+//    $selLeft.addClass(selAreaClasses);
+//    $selRight.addClass(selAreaClasses);
+//    $selTop.addClass(selAreaClasses);
+//    $selBottom.addClass(selAreaClasses);
+//
+//    $selLeft.css({height: height, top: top, left: left});
+//    $selRight.css({height: height, top: top, left: width + left});
+//    $selTop.css({width: width, top: top, left: left});
+//    $selBottom.css({width: width, top: top + height, left: left});
+////    this.getTable().children('tbody').append($selLeft, $selRight, $selTop, $selBottom);
+//    this.getTable().parent().append($selLeft, $selRight, $selTop, $selBottom);
+//}
 /**
  *
  * @param $row {jQuery}
  * @param isMouse {Boolean}
  * @param $activeRow {jQuery}
  */
-ChGridForm.prototype.layoutSelectedArea = function ($row, isMouse, $activeRow) {
-    var id = $row.attr('data-id'),
-        $tbody = this.getTable().children('tbody');
-//        selAreaClass = ChOptions.classes.selectedArea;
-    if ($row.hasClass(ChOptions.classes.selectedRow)) {
-//        console.log($row.close,  $($row.get(0).offsetParent), $row,  $($row.get(0).offsetParent).offset())
-        var parentOffsetTop = $row.closest('table').offset().top,
-            left = 28,
-            width = $row.width() - left;
-        if (isMouse) {
-            var height = $row.height(), top = $row.offset().top - parentOffsetTop;
-            this._createSelectedArea(width, height, left, top, id);
-        } else {
-            if (this.selectedTimerID) {
-                clearTimeout(this.selectedTimerID);
-            }
-            var selectedClass = ChOptions.classes.selectedRow, _this = this;
-            this.selectedTimerID = setTimeout(function () {
-                var $selectedByMouse = $tbody.children('.' + ChOptions.classes.selectedMouseArea);
-                if ($selectedByMouse.length) {
-                    $selectedByMouse.remove();
-                    $tbody.children('.' + selectedClass).removeClass(selectedClass);
-                    $activeRow.addClass(selectedClass);
-                    $row.addClass(selectedClass);
-                }
-                $tbody.closest('div').children('.' + ChOptions.classes.selectedArea).remove();
-                var $selectedRows = $tbody.children('.' + ChOptions.classes.selectedRow),
-                    last = $selectedRows.last().get(0),
-                    height = last.offsetTop + last.offsetHeight - $selectedRows.first().get(0).offsetTop,
-                    top = $selectedRows.first().offset().top - parentOffsetTop;
-                _this._createSelectedArea(width, height, left, top);
-            }, 100)
-
-        }
-
-        if (this.previewTimerID) {
-            clearTimeout(this.previewTimerID);
-        }
-        var _this = this;
-        this.previewTimerID = setTimeout(function () {
-            var preview_data = _this.getPreviewObj(),
-                data = Chocolate.mergeObj(_this.getDataObj()[id], _this.getChangedObj()[id]);
-            if (typeof(preview_data) != 'undefined') {
-                var html = '';
-                for (var key in preview_data) {
-                    if (data.hasOwnProperty(key)) {
-                        html += '<span class="footer-title">';
-                        html += preview_data[key]['caption'] + '</span>: <span>';
-                        if (preview_data[key]['type'] == 'dt') {
-                            html += moment(data[key], 'MM.DD.YYYY HH:mm:ss').format(chApp.getOptions().settings.signatureFormat);
-                        } else {
-                            html += data[key];
-                        }
-                        html += ' </span><span class="footer-separator"></span>';
-                    }
-                }
-                _this.getGridForm().find('footer div[data-id=info]').html(html);
-            }
-        }, 300)
-    } else {
-        var $selected = this.getTable().find('[rel="' + id + '"]');
-        $selected.remove();
-    }
-}
+//ChGridForm.prototype.layoutSelectedArea = function ($row, isMouse, $activeRow) {
+//    var id = $row.attr('data-id'),
+//        $tbody = this.getTable().children('tbody');
+//    if ($row.hasClass(ChOptions.classes.selectedRow)) {
+//        var parentOffsetTop = $row.closest('table').offset().top,
+//            left = 28,
+//            width = $row.width() - left;
+//        if (isMouse) {
+//            var height = $row.height(), top = $row.offset().top - parentOffsetTop;
+//            this._createSelectedArea(width, height, left, top, id);
+//        } else {
+//            if (this.selectedTimerID) {
+//                clearTimeout(this.selectedTimerID);
+//            }
+//            var selectedClass = ChOptions.classes.selectedRow, _this = this;
+//            this.selectedTimerID = setTimeout(function () {
+//                var $selectedByMouse = $tbody.children('.' + ChOptions.classes.selectedMouseArea);
+//                if ($selectedByMouse.length) {
+//                    $selectedByMouse.remove();
+//                    $tbody.children('.' + selectedClass).removeClass(selectedClass);
+//                    $activeRow.addClass(selectedClass);
+//                    $row.addClass(selectedClass);
+//                }
+//                $tbody.closest('div').children('.' + ChOptions.classes.selectedArea).remove();
+//                var $selectedRows = $tbody.children('.' + ChOptions.classes.selectedRow),
+//                    last = $selectedRows.last().get(0),
+//                    height = last.offsetTop + last.offsetHeight - $selectedRows.first().get(0).offsetTop,
+//                    top = $selectedRows.first().offset().top - parentOffsetTop;
+//                _this._createSelectedArea(width, height, left, top);
+//            }, 100)
+//
+//        }
+//
+//        if (this.previewTimerID) {
+//            clearTimeout(this.previewTimerID);
+//        }
+//        var _this = this;
+//        this.previewTimerID = setTimeout(function () {
+//            var preview_data = _this.getPreviewObj(),
+//                data = Chocolate.mergeObj(_this.getDataObj()[id], _this.getChangedObj()[id]);
+//            if (typeof(preview_data) != 'undefined') {
+//                var html = '';
+//                for (var key in preview_data) {
+//                    if (data.hasOwnProperty(key)) {
+//                        html += '<span class="footer-title">';
+//                        html += preview_data[key]['caption'] + '</span>: <span>';
+//                        if (preview_data[key]['type'] == 'dt') {
+//                            html += moment(data[key], 'MM.DD.YYYY HH:mm:ss').format(chApp.getOptions().settings.signatureFormat);
+//                        } else {
+//                            html += data[key];
+//                        }
+//                        html += ' </span><span class="footer-separator"></span>';
+//                    }
+//                }
+//                _this.getGridForm().find('footer div[data-id=info]').html(html);
+//            }
+//        }, 300)
+//    } else {
+//        var $selected = this.getTable().find('[rel="' + id + '"]');
+//        $selected.remove();
+//    }
+//}
 /**
  *
  * @param $row {jQuery}
  * @param group {Boolean}
  * @param isMouse {Boolean}
  */
-ChGridForm.prototype.selectRow = function ($row, group, isMouse) {
-    var $activeRow = this.getActiveRow(),
-        actvClass = ChOptions.classes.activeRow,
-        selctClass = ChOptions.classes.selectedRow;
-
-    $activeRow.removeClass(actvClass);
-    $row.addClass(actvClass);
-    if (!group) {
-        var $tbody = this.getTable().children('tbody');
-        $tbody.children('.' + selctClass).removeClass(selctClass);
-        $tbody.closest('div').children('.' + ChOptions.classes.selectedArea).remove();
-    }
-    if ($row.hasClass(selctClass) && !isMouse) {
-        $activeRow.removeClass(selctClass)
-    } else {
-        $row.toggleClass(selctClass);
-    }
-    this.layoutSelectedArea($row, isMouse, $activeRow);
-    this.setRowCount(this.getSelectedRows().length);
-};
+//ChGridForm.prototype.selectRow = function ($row, group, isMouse) {
+//    var $activeRow = this.getActiveRow(),
+//        actvClass = ChOptions.classes.activeRow,
+//        selctClass = ChOptions.classes.selectedRow;
+//
+//    $activeRow.removeClass(actvClass);
+//    $row.addClass(actvClass);
+//    if (!group) {
+//        var $tbody = this.getTable().children('tbody');
+//        $tbody.children('.' + selctClass).removeClass(selctClass);
+//        $tbody.closest('div').children('.' + ChOptions.classes.selectedArea).remove();
+//    }
+//    if ($row.hasClass(selctClass) && !isMouse) {
+//        $activeRow.removeClass(selctClass)
+//    } else {
+//        $row.toggleClass(selctClass);
+//    }
+//    this.layoutSelectedArea($row, isMouse, $activeRow);
+//    this.setRowCount(this.getSelectedRows().length);
+//};
 
 /**
  * @returns {String}
@@ -595,16 +591,16 @@ ChGridForm.prototype.getDefaultObj = function () {
 ChGridForm.prototype._resetErrors = function () {
     this.$form.find('td.grid-error').removeClass('grid-error');
 };
-ChGridForm.prototype.setCorrectScroll = function ($row) {
-    var $userGrid = this._getUserGrid(),
-        leftBound = $userGrid.find('thead').height(),
-        rightBound = $userGrid.height() - leftBound,
-        rowTopOffset = $row.offset().top - $userGrid.offset().top;
-    if (rowTopOffset < leftBound || rowTopOffset > rightBound) {
-        $userGrid.scrollTop($userGrid.scrollTop() + rowTopOffset - rightBound);
-    }
-    $.publish(this.getLayoutSubscribeName(), false);
-};
+//ChGridForm.prototype.setCorrectScroll = function ($row) {
+//    var $userGrid = this._getUserGrid(),
+//        leftBound = $userGrid.find('thead').height(),
+//        rightBound = $userGrid.height() - leftBound,
+//        rowTopOffset = $row.offset().top - $userGrid.offset().top;
+//    if (rowTopOffset < leftBound || rowTopOffset > rightBound) {
+//        $userGrid.scrollTop($userGrid.scrollTop() + rowTopOffset - rightBound);
+//    }
+//    $.publish(this.getLayoutSubscribeName(), false);
+//};
 ChGridForm.prototype.save = function (refresh) {
     this._resetErrors();
     var userGridID = this.getUserGridID(),
@@ -664,7 +660,8 @@ ChGridForm.prototype.save = function (refresh) {
                         if (ch_response.isSuccess()) {
                             _this.getSaveButton().removeClass('active');
                             if (refresh) {
-                                _this.refresh();
+                                //todo: вернуть код
+                                //_this.refresh();
                             }
                         } else {
                             ch_response.sendMessage(ch_messages_container);
@@ -772,9 +769,9 @@ ChGridForm.prototype.getSearchData = function () {
     }
     return filter_data;
 };
-ChGridForm.prototype.restoreData = function () {
-    this.initData(this.getDataObj(), this.getOrderData());
-};
+//ChGridForm.prototype.restoreData = function () {
+//    this.initData(this.getDataObj(), this.getOrderData());
+//};
 ChGridForm.prototype.getOrderData = function () {
     var storage = this.getStorage();
     return storage[this.getID()].order;
@@ -782,101 +779,101 @@ ChGridForm.prototype.getOrderData = function () {
 ChGridForm.prototype.clearSelectedArea = function () {
     this.getTable().parent().children('.sel-area').remove();
 };
-ChGridForm.prototype.getLayoutSubscribeName = function () {
-    return ['layout', this.getUserGridID()].join('/');
-};
-ChGridForm.prototype.initData = function (data, order) {
-    var $table = this.getTable(), $html;
-    if (this._isAttachmentsModel()) {
-        var tmpl_data = {'files': data},
-            content = window.tmpl('template-download', tmpl_data);
-        content = content.replace(new RegExp('fade', 'g'), 'fade in');
-        $html = $(content);
-        $table
-            .find('tbody').html($html)
-            .trigger("update")
-    } else {
-        $html = this.generateRows(data, order);
-        var $tbody = $table.find('tbody'), $tr, cacheVisible = [],
-            $userGrid = this._getUserGrid(), subscribeName = this.getLayoutSubscribeName();
-        $.unsubscribe(subscribeName);
-        $.subscribe(subscribeName, function (e, refreshCache) {
-            var scrollTop = $userGrid.scrollTop();
-            if (refreshCache || !$tr) {
-                $tr = $tbody.children('tr').filter(':not(.filtered)');
-                cacheVisible = [];
-            }
-            var trHeight = $tr.eq(2).height();
-            if (!trHeight) {
-                if ($tr.hasClass('ch-mobile')) {
-                    trHeight = 67;
-                } else {
-                    trHeight = 23;
-                }
-            }
-            var visibleHeight = $userGrid.height(),
-                startIndex = Math.max((scrollTop / trHeight ^ 0 ) - 7, 0),
-                endIndex = Math.min(((scrollTop + visibleHeight) / trHeight ^ 0) + 7, $tr.length);
-            $tr.filter(function (i) {
-                if (i >= startIndex && i <= endIndex) {
-                    if (cacheVisible[i]) {
-                        return false
-                    }
-                    cacheVisible[i] = 1;
-                    return true;
-                }
-                return false;
-            })
-                .find('.table-td')
-                .css({display: 'block'});
-            $tr.filter(function (i) {
-                if (i < startIndex || i > endIndex) {
-                    if (cacheVisible[i]) {
-                        delete cacheVisible[i];
-                        return true;
-                    }
-                    if (refreshCache) {
-                        return true;
-                    }
-                }
-                return false;
-            })
-                .find('.table-td')
-                .css({display: 'none'});
-        });
-
-        var prevScrollTop = 0;
-        $userGrid.unbind('scroll.chocolate').on('scroll.chocolate', $.debounce(150, false, function () {
-            var curScrollTop = $(this).scrollTop();
-            if (curScrollTop !== prevScrollTop) {
-                $.publish(subscribeName, false);
-            }
-            prevScrollTop = curScrollTop;
-        }));
-
-        $tbody.html($html);
-        facade.getFormModule().fireCallbacks($table, this.getCallbackID());
-        $table.trigger("update");
-        var _this = this;
-        $table.unbind('sortEnd').unbind('filterEnd').bind('sortEnd filterEnd', function () {
-            _this.clearSelectedArea();
-            $.publish(subscribeName, true);
-        });
-        $.publish(subscribeName, true);
-    }
-    this.setRowCount(Object.keys(data).length);
-};
-ChGridForm.prototype.setRowCount = function (count) {
-    if (count) {
-        this.getFooter().children('.footer-counter').text(count)
-    }
-};
-ChGridForm.prototype.updateData = function (data, order) {
-    this.updateStorage(data, order);
-    this.initData(data, order);
-    delete data;
-    delete order;
-};
+//ChGridForm.prototype.getLayoutSubscribeName = function () {
+//    return ['layout', this.getUserGridID()].join('/');
+//};
+//ChGridForm.prototype.initData = function (data, order) {
+//    var $table = this.getTable(), $html;
+//    if (this._isAttachmentsModel()) {
+//        var tmpl_data = {'files': data},
+//            content = window.tmpl('template-download', tmpl_data);
+//        content = content.replace(new RegExp('fade', 'g'), 'fade in');
+//        $html = $(content);
+//        $table
+//            .find('tbody').html($html)
+//            .trigger("update")
+//    } else {
+//        $html = this.generateRows(data, order);
+//        var $tbody = $table.find('tbody'), $tr, cacheVisible = [],
+//            $userGrid = this._getUserGrid(), subscribeName = this.getLayoutSubscribeName();
+//        $.unsubscribe(subscribeName);
+//        $.subscribe(subscribeName, function (e, refreshCache) {
+//            var scrollTop = $userGrid.scrollTop();
+//            if (refreshCache || !$tr) {
+//                $tr = $tbody.children('tr').filter(':not(.filtered)');
+//                cacheVisible = [];
+//            }
+//            var trHeight = $tr.eq(2).height();
+//            if (!trHeight) {
+//                if ($tr.hasClass('ch-mobile')) {
+//                    trHeight = 67;
+//                } else {
+//                    trHeight = 23;
+//                }
+//            }
+//            var visibleHeight = $userGrid.height(),
+//                startIndex = Math.max((scrollTop / trHeight ^ 0 ) - 7, 0),
+//                endIndex = Math.min(((scrollTop + visibleHeight) / trHeight ^ 0) + 7, $tr.length);
+//            $tr.filter(function (i) {
+//                if (i >= startIndex && i <= endIndex) {
+//                    if (cacheVisible[i]) {
+//                        return false
+//                    }
+//                    cacheVisible[i] = 1;
+//                    return true;
+//                }
+//                return false;
+//            })
+//                .find('.table-td')
+//                .css({display: 'block'});
+//            $tr.filter(function (i) {
+//                if (i < startIndex || i > endIndex) {
+//                    if (cacheVisible[i]) {
+//                        delete cacheVisible[i];
+//                        return true;
+//                    }
+//                    if (refreshCache) {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            })
+//                .find('.table-td')
+//                .css({display: 'none'});
+//        });
+//
+//        var prevScrollTop = 0;
+//        $userGrid.unbind('scroll.chocolate').on('scroll.chocolate', $.debounce(150, false, function () {
+//            var curScrollTop = $(this).scrollTop();
+//            if (curScrollTop !== prevScrollTop) {
+//                $.publish(subscribeName, false);
+//            }
+//            prevScrollTop = curScrollTop;
+//        }));
+//
+//        $tbody.html($html);
+//        facade.getFormModule().fireCallbacks($table, this.getCallbackID());
+//        $table.trigger("update");
+//        var _this = this;
+//        $table.unbind('sortEnd').unbind('filterEnd').bind('sortEnd filterEnd', function () {
+//            _this.clearSelectedArea();
+//            $.publish(subscribeName, true);
+//        });
+//        $.publish(subscribeName, true);
+//    }
+//    this.setRowCount(Object.keys(data).length);
+//};
+//ChGridForm.prototype.setRowCount = function (count) {
+//    if (count) {
+//        this.getFooter().children('.footer-counter').text(count)
+//    }
+//};
+//ChGridForm.prototype.updateData = function (data, order) {
+//    this.updateStorage(data, order);
+//    this.initData(data, order);
+//    delete data;
+//    delete order;
+//};
 ChGridForm.prototype.clearChange = function () {
     this._clearChangedObj();
     this._clearDeletedObj();
@@ -890,7 +887,6 @@ ChGridForm.prototype._clearChangedObj = function () {
     if (this._isAttachmentsModel()) {
         facade.getFilesModule().clear(this.getID());
     } else {
-
         var changeObj = this.getChangedObj();
         for (var name in changeObj) {
             changeObj[name] = {};
@@ -927,7 +923,7 @@ ChGridForm.prototype.refresh = function (parentView) {
                     ch_canvas.refreshData(data, options);
                 }
                 else {
-                    _this.updateData(chResponse.getData(), chResponse.getOrder());
+                    //_this.updateData(chResponse.getData(), chResponse.getOrder());
                     _this._clearDeletedObj();
                     _this._clearChangedObj();
                     _this.clearSelectedArea();
@@ -1018,12 +1014,12 @@ ChGridForm.prototype.getRefreshUrl = function () {
     }
     return this._refresh_url
 };
-ChGridForm.prototype.getSaveButton = function () {
-    if (this._$save_btn == null) {
-        this._$save_btn = this.$form.find('menu').children('.menu-button-save');
-    }
-    return this._$save_btn;
-};
+//ChGridForm.prototype.getSaveButton = function () {
+//    if (this._$save_btn == null) {
+//        this._$save_btn = this.$form.find('menu').children('.menu-button-save');
+//    }
+//    return this._$save_btn;
+//};
 ChGridForm.prototype.getParentFormID = function () {
     if (this._parent_form_id == null) {
         var parent_id = this.$form.attr('data-parent-id');
@@ -1198,38 +1194,38 @@ ChGridForm.prototype.generateRows = function (data, order) {
     return stringBuilder.join('');
 
 };
-ChGridForm.prototype.getSelectedRows = function () {
-    var rows = [];
-    this.getTable().find('.row-selected').each(function () {
-        rows.push($(this));
-    });
-    return rows;
-};
-ChGridForm.prototype.removeRows = function ($rows) {
-    var lng = $rows.length;
-    if (lng) {
-        var delObj = this.getDeletedObj();
-        for (var i = 0; i < lng; i++) {
-            delObj[$rows[i].attr('data-id')] = true;
-            $rows[i].remove();
-        }
-
-        this.getTable().trigger("update");
-        this.getSaveButton().addClass('active');
-        this.getTable().parent().find('.' + chApp.getOptions().classes.selectedArea).remove();
-    }
-    chApp.getMain().leaveFocus();
-};
-ChGridForm.prototype.removeRow = function ($table_cell) {
-    var $table = this.getTable(),
-        $tr = $table_cell.closest('tr'),
-        id = $tr.attr('data-id'),
-        deleted_obj = this.getDeletedObj();
-    deleted_obj[id] = true;
-    $tr.remove();
-    $table.trigger("update");
-    this.getSaveButton().addClass('active');
-};
+//ChGridForm.prototype.getSelectedRows = function () {
+//    var rows = [];
+//    this.getTable().find('.row-selected').each(function () {
+//        rows.push($(this));
+//    });
+//    return rows;
+//};
+//ChGridForm.prototype.removeRows = function ($rows) {
+//    var lng = $rows.length;
+//    if (lng) {
+//        var delObj = this.getDeletedObj();
+//        for (var i = 0; i < lng; i++) {
+//            delObj[$rows[i].attr('data-id')] = true;
+//            $rows[i].remove();
+//        }
+//
+//        this.getTable().trigger("update");
+//        this.getSaveButton().addClass('active');
+//        this.getTable().parent().find('.' + chApp.getOptions().classes.selectedArea).remove();
+//    }
+//    chApp.getMain().leaveFocus();
+//};
+//ChGridForm.prototype.removeRow = function ($table_cell) {
+//    var $table = this.getTable(),
+//        $tr = $table_cell.closest('tr'),
+//        id = $tr.attr('data-id'),
+//        deleted_obj = this.getDeletedObj();
+//    deleted_obj[id] = true;
+//    $tr.remove();
+//    $table.trigger("update");
+//    this.getSaveButton().addClass('active');
+//};
 ChGridForm.prototype.saveInStorage = function (data, preview, default_values, required_fields, grid_properties, order) {
     var storage = this.getStorage();
     storage[this.getID()] = {data: data, preview: preview, change: {}, deleted: {}, defaultValues: default_values, required: required_fields, gridProperties: grid_properties, order: order};
@@ -1287,9 +1283,9 @@ ChGridForm.prototype.toggleSystemCols = function () {
     this.chFormSettings.setSystemVisibleMode(!isHidden);
     return this;
 };
-ChGridForm.prototype.getActiveRow = function () {
-    return this.getTable().find('.' + ChOptions.classes.activeRow);
-};
+//ChGridForm.prototype.getActiveRow = function () {
+//    return this.getTable().find('.' + ChOptions.classes.activeRow);
+//};
 ChGridForm.prototype.exportToExcel = function () {
     var data = {
         data: $.extend(true, this.getDataObj(), this.getChangedObj()),

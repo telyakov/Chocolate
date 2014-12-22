@@ -12,7 +12,8 @@ function ChFormSettings(form) {
             var _this = this;
             this.auto_update_inerval_id = setInterval(function () {
                 if (form.$form.is(':visible') && !form.isHasChange()) {
-                    _this.ch_grid_form.refresh();
+                    //todo: вернуть код
+                    //_this.ch_grid_form.refresh();
                 }
             }, ChOptions.settings.defaultAutoUpdateMS)
         }

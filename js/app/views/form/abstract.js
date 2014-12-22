@@ -13,7 +13,15 @@ var AbstractView = (function (Backbone, $, _) {
             this.formID = facade.getHelpersModule().uniqueID();
             this.listenTo(this.model, 'refresh:form', this.lazyRefresh);
             this.listenTo(this.model, 'save:form', this.save);
+            this.listenTo(this.model, 'change:form', this.change);
+            this.listenTo(this.model, 'openMailClient', this.openMailClient);
             this.render();
+        },
+        change: function(opts){
+            console.log('not implemented change method');
+        },
+        openMailClient: function(){
+            console.log('not implemented openMailClient method');
         },
         contentExpandHandler: function (e) {
             var $this = $(e.target).closest('button'),

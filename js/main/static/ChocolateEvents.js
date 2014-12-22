@@ -37,25 +37,6 @@ var ChocolateEvents = {
         this.deselectTreeElementEvent($body);
         this.modalFormElementEvent($content);
         this.searchColumnsEvent($tabs);
-        this.sendEmailEvent($tabs);
-    },
-    sendEmailEvent: function ($context) {
-        $context.on('click', '.fm-email-send', this.sendEmailHandler);
-    },
-    sendEmailHandler: function () {
-        var form = facade.getFactoryModule().makeChGridForm($(this).closest('.section-header').siblings('.section-grid').children('form'));
-        var id = form.getActiveRowID();
-        if (id) {
-            var dataObj = form.getDataObj()[id],
-                emailCol = chApp.getOptions().settings.emailCol,
-                emails = dataObj[emailCol],
-                url = encodeURIComponent(chApp.getOptions().urls.bpOneTask + id),
-                task = chApp.getMain().stripHtml(dataObj.task),
-                subject = 'База:' + task.substr(0, 50);
-
-            window.open('mailto:' + emails + '?subject=' + subject + '&body=' + url, '_self');
-
-        }
     },
     searchColumnsEvent: function ($context) {
         $context.on('keydown', '.grid-column-search', $.debounce(200, false, this.searchColumnsHandler));
@@ -261,102 +242,6 @@ var ChocolateEvents = {
             return false;
         }
     },
-    openChildGridHandler: function () {
-        var main = chApp.namespace('main'),
-            $editable = $(this).find('.editable'),
-            options = $editable.data().editable.options,
-            view = options.view,
-            column = facade.getFactoryModule().makeChGridColumnBody($editable),
-            form = column.getChForm(),
-            parentID = column.getID(),
-            isNew = !$.isNumeric(parentID),
-            parentView = form.getView(),
-            tabID = ChGridColumn.createChildGridTabID(parentID, view, parentView),
-            $tabs = main.$tabs,
-        template = form.getFmChildGridCollection().getCardTemplate(view, parentView, isNew),
-            $currentTab = $tabs.find("[aria-controls='" + tabID + "']"),
-            toID = options.toID,
-            toName = options.toName,
-            fromID = options.fromID,
-            fromName = options.fromName,
-            isSelect = '';
-        if (toID && toName && fromName && fromID) {
-            isSelect = 1;
-        }
-        Chocolate.leaveFocus();
-        if ($currentTab.length) {
-            $tabs.tabs("select", tabID);
-        } else {
-            var caption = [options.title, ' [', parentID, ']'].join('');
-            facade.getTabsModule().addAndSetActive(tabID, caption);
-        if (template === null) {
-            var urls = chApp.getOptions().urls;
-                $.get(urls.childGrid, {
-                    view: view,
-                    jsonFilters: JSON.stringify({filters: {ParentID: parentID}}),
-                    ParentView: parentView,
-                    parentViewID: form.getID(),
-                    isSelect: isSelect
-                })
-                    .done(function (res) {
-                        var response = new ChGridResponse(res);
-                        if (response.isSuccess()) {
-                            var template = response.getData(),
-                                $html = facade.getHelpersModule().layoutTemplate(template, parentID);
-                            try {
-                                $('<div></div>')
-                                    .attr('id', tabID)
-                                    .appendTo($tabs)
-                                    .html($html);
-                                $('#' + tabID).find('.grid-select').on('click', function () {
-                                        var form = facade.getFactoryModule().makeChGridForm($(this).closest('.grid-footer').prev('form'));
-                                        if (form.isHasChange()) {
-                                            form.getMessagesContainer().sendMessage('Сохраните сетку, перед выбором!', ChResponseStatus.ERROR);
-                                        } else {
-                                            var selectedRows = form.getSelectedRows();
-                                            if (selectedRows.length !== 1) {
-                                                form.getMessagesContainer().sendMessage('Выберите одну строчку', ChResponseStatus.ERROR);
-                                            }
-                                            //todo: реализовать алгоритм биндинга
-//                                                    var rowID = factory.getSelectedRows[0].attr('data-id');
-//                                                    var data =  form.getDataObj()[rowID];
-//                                                    var $tr = $editable.closest('tr');
-//                                                    factory.getChGridColumnBody()
-//                                                    column.setChangedValue(toID, data[fromID]);
-//                                                    editable.html(data[fromName])
-                                        }
-                                    }
-                                );
-                                $tabs.tabs("refresh");
-                                form.getFmChildGridCollection().setCardTemplate(view, parentView, template, isNew);
-                            } catch (er) {
-                                mediator.publish(facade.getOptionsModule().getChannel('logError'),
-                                    'Возникла ошибка при вставке html+ js дочерней сетке в DOM',
-                                    er
-                                );
-                                $html.remove();
-                            }
-                        } else {
-                            mediator.publish(facade.getOptionsModule().getChannel('logError'),
-                                response.getStatusMsg
-                            );
-                        }
-                    })
-                    .fail(function (er) {
-                        mediator.publish(facade.getOptionsModule().getChannel('logError'),
-                            'Возникла ошибка при открытии дочерней карточки',
-                            er
-                        );
-                    });
-        } else {
-            $('<div></div>')
-                .attr('id', tabID)
-                .appendTo($tabs)
-                .html(facade.getHelpersModule().layoutTemplate(template, parentID));
-        }
-        }
-        return false;
-    },
     makeCallEvent: function ($context) {
         $context.on('click', '.fm-phone', this.makeCallHandler);
     },
@@ -462,7 +347,8 @@ var ChocolateEvents = {
                 switch (ui.cmd) {
                     case 'delete':
                         var form = facade.getFactoryModule().makeChGridForm(ui.target.closest('form'));
-                        form.removeSelectedRows();
+                        //todo: времено удалено. Перенести в модель
+                        //form.removeSelectedRows();
                         break;
                     default :
                         break;

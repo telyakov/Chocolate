@@ -121,6 +121,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                             if (form.isHasChange()) {
                                 form.save();
                             } else {
+                                //todo: вернуть код
                                 form.refresh();
                             }
                         }
@@ -179,7 +180,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                         form._clearDeletedObj();
                         form._clearChangedObj();
                         form.clearSelectedArea();
-                        form.setRowCount(Object.keys(data.data).length);
+                        this.setRowCount(Object.keys(data.data).length);
                     });
                 });
         }

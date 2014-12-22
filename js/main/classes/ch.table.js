@@ -110,10 +110,10 @@ ChTable.prototype._initFloatThead = function () {
 
 
 };
-ChTable.prototype._initData = function () {
-
-    this.ch_form.restoreData();
-};
+//ChTable.prototype._initData = function () {
+//
+//    //this.ch_form.restoreData();
+//};
 ChTable.prototype._initSettings = function () {
     //this.ch_form.setDefaultSettings();
     if (this.ch_form.chFormSettings.isAutoUpdate()) {

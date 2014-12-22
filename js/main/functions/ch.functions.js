@@ -61,9 +61,10 @@ var chFunctions = {
             }).done(function (resp) {
                 var chResp = new ChResponse(resp);
                 if (chResp.isSuccess()) {
-                    chForm
-                        .clearChange()
-                        .refresh();
+                    //todo: вернуть код
+                    //chForm
+                    //    .clearChange()
+                    //    .refresh();
                 }
                 chResp.sendMessage(chMsgContainer);
             })
@@ -234,7 +235,7 @@ var chFunctions = {
         }
         return true;
     },
-    initPrintActions: function (id, printActions) {
+    initPrintActions: function (id, printActions, view) {
         var $actionButton = $('#' + id);
         var chForm =facade.getFactoryModule().makeChGridForm($actionButton.closest('form')),
             rexExp = new RegExp('\[IdList\]');
@@ -246,7 +247,7 @@ var chFunctions = {
                 var url = ui.cmd;
                 if (rexExp.test(url)) {
                     var idList = '',
-                        rows = chForm.getSelectedRows(),
+                        rows = view.getSelectedRows(),
                         lng = rows.length;
                     for (var i = 0; i < lng; i++) {
                         idList += rows[i].attr('data-id') + ' ';

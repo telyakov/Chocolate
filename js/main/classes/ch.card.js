@@ -181,7 +181,8 @@ ChCard.prototype.save = function () {
                         if (chResponse.isSuccess()) {
                             _this._closeCard();
                             chResponse.sendMessage(gridForm.getMessagesContainer());
-                            gridForm.refresh();
+                            //todo: вернуть код
+                            //gridForm.refresh();
                         } else {
                             var msgContainer = facade.getFactoryModule().makeChMessagesContainer(_this.getErrorContainer());
                             chResponse.sendMessage(msgContainer);
