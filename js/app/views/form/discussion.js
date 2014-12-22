@@ -32,39 +32,44 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
             data[this.myMessage] = 1;
             data[this.userName] = '';
 
-            var html = this.renderMessage(data),
-                $form = $('#' + this.getFormID());
-            $form.find('.discussion-content').append(html);
-
+            var html = this.renderMessage(data);
+            this.getJqueryForm().find('.discussion-content').append(html);
             var dateToSave = {
                 id: helpersModule.uniqueID(),
                 textmessage: msg
             };
             this.model.trigger('save:form', dateToSave);
         },
-        scrollToBottom: function(){
-            var $form = $('#' + this.getFormID());
+        scrollToBottom: function () {
+            var $form = this.getJqueryForm();
             $form.scrollTop($form.height());
+            return this;
         },
-        save: function(data){
+        focusToInput: function(){
+            this.getJqueryForm()
+                .next('.discussion-footer')
+                .children('.discussion-input').focus();
+            return this;
+        },
+        save: function (data) {
             var _this = this;
             $('#' + this.getFormID())
                 .next('.discussion-footer').children('.discussion-input').val('');
             this.model.deferSave(data)
-                .done(function(){
+                .done(function () {
                     _this.scrollToBottom();
-            });
+                });
         },
         refresh: function () {
             var _this = this;
             this.model.deferReadProc()
                 .done(function (data) {
-                var defer = _this.model.deferReadData(data.sql);
-                defer.done(function (res) {
-                    _this.layout(res.data, res.order);
+                    var defer = _this.model.deferReadData(data.sql);
+                    defer.done(function (res) {
+                        _this.layout(res.data, res.order);
 
+                    });
                 });
-            });
         },
         render: function () {
             var parentModel = this.model.get('parentModel');
@@ -81,11 +86,11 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
             order.forEach(function (key) {
                 html.push(_this.renderMessage(data[key]));
             });
-            var $form = $('#' + this.getFormID());
-            $form.find('.discussion-content').html(html.join(''));
+            this.getJqueryForm().find('.discussion-content').html(html.join(''));
             mediator.publish(optionsModule.getChannel('reflowTab'));
-            _this.scrollToBottom();
-            $form.next('.discussion-footer').children('.discussion-input').focus();
+            this
+                .scrollToBottom()
+                .focusToInput();
         },
         isMyMessage: function (msgData) {
             return parseInt(msgData[this.myMessage], 10) ? true : false;

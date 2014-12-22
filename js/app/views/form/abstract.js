@@ -45,11 +45,18 @@ var AbstractView = (function (Backbone, $, _) {
         getFormID: function () {
             return this.formID;
         },
+        jqueryForm: null,
+        getJqueryForm: function () {
+            if (this.jqueryForm === null) {
+                this.jqueryForm = $('#' + this.formID);
+            }
+            return this.jqueryForm;
+        },
         _chForm: null,
         getChForm: function () {
             //todo: for support legacy code
             if (this._chForm === null) {
-                this._chForm = facade.getFactoryModule().makeChGridForm($('#' + this.getFormID()));
+                this._chForm = facade.getFactoryModule().makeChGridForm(this.getJqueryForm());
             }
             return this._chForm;
         },
@@ -114,7 +121,7 @@ var AbstractView = (function (Backbone, $, _) {
                 $a.attr('href', href);
             }
         },
-        save: function(data){
+        save: function (data) {
             console.log('not implemented save method');
         },
         refresh: function () {
