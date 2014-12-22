@@ -22,7 +22,7 @@ var CardView = (function (Backbone, $) {
                 '<div class="card-bottom-header card-error"></div>'
             ];
             var $image = imageAdapter.convert(this.model.getCardHeaderImage()),
-                image = $image? $image.wrapAll('<div></div>').parent().html(): '';
+                image = $image ? $image.wrapAll('<div></div>').parent().html() : '';
             if (this.model.hasCardHeader()) {
                 html.push('<div class="card-top-header"><div class="card-header-left">');
                 html.push(image);
@@ -48,7 +48,7 @@ var CardView = (function (Backbone, $) {
                             entitytype: entityTypeID
                         };
                     if (sql) {
-                        var defer  = bindModule.deferredBindSql(sql, data);
+                        var defer = bindModule.deferredBindSql(sql, data);
                         defer.done(function (res) {
                             var prepareSql = res.sql;
                             mediator.publish(facade.getOptionsModule().getChannel('socketRequest'), {
@@ -113,24 +113,20 @@ var CardView = (function (Backbone, $) {
         },
         beforeLoad: function (e, ui, $tabPanel, $this) {
             if (!ui.tab.data('loaded')) {
-                var chCard = factoryModule.makeChCard($this),
-                    tabID = $(ui.tab).attr('data-id'),
-                    pk = chCard.getKey(),
-                    isNumeric = $.isNumeric(pk);
-                var card = this.model.getCardROCollection().findWhere({
-                    key: tabID
-                });
+                var key = $(ui.tab).attr('data-id'),
+                    card = this.model.getCardROCollection().findWhere({
+                        key: key
+                    });
                 this.createPanel(card, $(ui.panel));
                 ui.tab.data('loaded', 1);
-
             }
             return false;
         },
-        buttonsTemplate : _.template([
-        '<div class="card-action-button" data-id="action-button-panel">',
-        '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
-        '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
-    ]. join('')),
+        buttonsTemplate: _.template([
+            '<div class="card-action-button" data-id="action-button-panel">',
+            '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
+            '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
+        ].join('')),
         createPanel: function (card, $panel) {
             var html = {},
                 callbacks = [],
@@ -145,16 +141,18 @@ var CardView = (function (Backbone, $) {
                     'data-rows': card.getRows()
                 });
             $panel.html($div);
-            $panel.append(this.buttonsTemplate());
+            if (card.hasSaveButtons()) {
+                $panel.append(this.buttonsTemplate());
+            }
 
-           $.subscribe(event, function (e, data) {
-               var x = data.x,
-                   y = data.y,
-                   text = data.html;
-               if(!html.hasOwnProperty(y)){
-                   html[y]= {};
-               }
-               html[y][x] = text;
+            $.subscribe(event, function (e, data) {
+                var x = data.x,
+                    y = data.y,
+                    text = data.html;
+                if (!html.hasOwnProperty(y)) {
+                    html[y] = {};
+                }
+                html[y][x] = text;
 
                 if (data.callback) {
                     callbacks.push(data.callback);
@@ -166,10 +164,10 @@ var CardView = (function (Backbone, $) {
                     var i,
                         j,
                         hasOwn = Object.hasOwnProperty;
-                    for(i in html){
-                        if(hasOwn.call(html, i)){
-                            for(j in html[i]){
-                                if(hasOwn.call(html[i], j)){
+                    for (i in html) {
+                        if (hasOwn.call(html, i)) {
+                            for (j in html[i]) {
+                                if (hasOwn.call(html[i], j)) {
                                     cardHtml += html[i][j];
                                 }
                             }
@@ -179,22 +177,17 @@ var CardView = (function (Backbone, $) {
                     callbacks.forEach(function (fn) {
                         fn();
                     });
-                    setTimeout(function(){
+                    setTimeout(function () {
                         mediator.publish(optionsModule.getChannel('reflowTab'));
                     }, 0);
                 }
             });
             var i = 0,
                 pk = this.id;
-            elements.each(function(model){
+            elements.each(function (model) {
                 model.render(event, i, card, pk);
                 i++;
             });
-            //var sortedElements = _.sortBy(elements, function (model) {
-                //return model.getCardX();
-                //console.log(model.getCardX(), model.getCardY());
-            //console.log(sortedElements)
-
         }
     });
 })(Backbone, jQuery);

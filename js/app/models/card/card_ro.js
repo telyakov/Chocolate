@@ -11,6 +11,9 @@ var CardRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
         getKey: function(){
             return this.get('card').getKey();
         },
+        hasSaveButtons: function(){
+          return this.getKey().toLowerCase() !== 'обсуждения';
+        },
         getCaption: function(){
             return this.get('card').getCaption();
         },
