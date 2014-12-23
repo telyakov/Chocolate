@@ -9,7 +9,7 @@ var ChOptions = {
     constants: {
         multiTaskService: '81',
         tasksXml: 'tasks.xml',
-        tasksForTopsXml: 'tasksForTops.xml',
+        tasksForTopsXml: 'tasksfortops.xml',
         userSettingsXml: 'UserSettings.xml'
     },
     channels: {
@@ -100,7 +100,7 @@ var ChOptions = {
         formSave: '/grid/save',
         tasks: '/grid/index?view=tasks.xml',
         tasksForTops: '/grid/index?view=tasks%5Ctasksfortops.xml',
-        bpOneTask: 'http://bp.78stroy.ru/grid/searchByID?view=tasks%5Ctasksfortops.xml&id=',
+        bpOneTask: 'http://bp.78stroy.ru/grid/searchByID?view=tasks%5Ctasksfortops.xml&id='
     },
     labels: {
         attention: 'attention',

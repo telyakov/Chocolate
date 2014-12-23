@@ -154,25 +154,46 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
         getDeletedDataFromStorage: function () {
             return this.getStorage().deleted;
         },
-        hasSettings: function () {
-            if ($.isEmptyObject(this.getSettingsObj())) {
-                return false;
+        getFormStyleID: function () {
+            var key = this.model.getView();
+            if (storageModule.hasSetting(key, 'globalStyle')) {
+                return storageModule.getSetting(key, 'globalStyle');
+            } else {
+                if (this.model.getView() === optionsModule.getConstants('tasksForTopsXml')) {
+                    return 2;
+                } else {
+                    return 1;
+                }
             }
-            return true;
         },
-        getSettingsObj: function () {
-            var storage = Chocolate.storage.local.settings,
-                key = this.getView();
-            if (typeof storage[key] === 'undefined') {
-                storage[key] = {};
+        hasSettings: function () {
+            return !$.isEmptyObject(this.getFormSettingsFromStorage());
+        },
+        persistFormSettings: function (settings) {
+            storageModule.persistSettings(this.model.getView(), settings);
+        },
+        getFormSettingsFromStorage: function () {
+            var settings = storageModule.getSettings(),
+                key = this.model.getView();
+            if (!settings.hasOwnProperty(key)) {
+                settings[key] = {};
             }
-            return storage[key];
+            return settings[key];
+        },
+        persistData: function (data, order) {
+            storageModule.addToSession(this.getFormID(), {
+                data: data,
+                order: order,
+                changed: {},
+                deleted: {}
+            });
         },
         getStorage: function () {
             var formID = this.getFormID();
             if (!storageModule.hasSession(formID)) {
                 storageModule.addToSession(formID, {
                     data: {},
+                    order: [],
                     changed: {},
                     deleted: {}
                 });

@@ -123,21 +123,31 @@ var storageModule = (function (undefined) {
             },
             addToSession: function (key, obj) {
                 this.getSession()[key] = obj;
-
+            },
+            persistSettings: function (key, obj) {
+                this.getSettings()[key] = obj;
+            },
+            getSettingByKey: function(key, attr){
+                return _private.getLocal().grid_settings[key][attr];
             }
         };
     _private.init();
     return {
+        persistSettings: function(key, obj){
+            _private.persistSettings(key, obj);
+        },
         getSettings: function () {
-
+            return _private.getSettings();
+        },
+        hasSetting: function(key, attr){
+            return !!_private.getSettingByKey(key, attr);
+        },
+        getSettingByKey: function(key, attr){
+            return _private.getSettingByKey(key, attr);
         },
         hasSession: function (key) {
             var storage = _private.getSession()[key];
-            if(storage !== undefined && !$.isEmptyObject(storage)){
-                return true;
-            }else{
-                return false;
-            }
+            return !!(storage !== undefined && !$.isEmptyObject(storage));
         },
         addToSession: function (key, obj) {
             _private.addToSession(key, obj);

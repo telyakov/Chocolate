@@ -100,6 +100,22 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 .layoutSelectedArea($row, isMouse, $activeRow)
                 .setRowCount(this.getSelectedRows().length);
         },
+        getTh: function () {
+            return this.getThead().children('tr').first().children('th');
+        },
+        getThead: function () {
+            return this.getJqueryDataTable().children('thead');
+        },
+        getRowClass: function () {
+            switch (this.getFormStyleID()) {
+                case 1:
+                    return '';
+                case 2:
+                    return 'ch-mobile';
+                default:
+                    return '';
+            }
+        },
         selectedTimerID: null,
         previewTimerID: null,
         layoutSelectedArea: function ($row, isMouse, $activeRow) {
@@ -245,6 +261,20 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
         clearSelectedArea: function () {
             this.getJqueryDataTable().parent().children('.sel-area').remove();
             return this;
+        },
+        getPositionColumn: function (key) {
+            var settings = this.getFormSettingsFromStorage(),
+                i,
+                hasOwn = Object.prototype.hasOwnProperty,
+                obj;
+            for (i in settings) {
+                if (hasOwn.call(settings, i)) {
+                    obj = settings[i];
+                    if (obj.key === key) {
+                        return obj.weight;
+                    }
+                }
+            }
         }
     });
 })

@@ -1,4 +1,4 @@
-var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule, helpersModule, window) {
+var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule, helpersModule, window, undefined) {
     'use strict';
     return AbstractGridView.extend({
         template: _.template([
@@ -157,15 +157,14 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             return this._callbacks;
         },
         getSortedColumns: function () {
-            var form = this.getChForm();
-
             var sortedColumnCollection = [],
-                hasSetting = form.hasSettings(),
+                hasSetting = this.hasSettings(),
                 iterator = 1,
-                index;
+                index,
+                _this = this;
             this.model.getColumnsROCollection().each(function (column) {
                 if (hasSetting) {
-                    index = form.getPositionColumn(column.get('key'));
+                    index = _this.getPositionColumn(column.get('key'));
                 } else {
                     index = iterator;
                     iterator++;
@@ -175,10 +174,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             return sortedColumnCollection;
         },
         layoutForm: function ($form) {
-            var form = this.getChForm(),
-                _this = this,
+            var _this = this,
                 roCollection = this.model.getColumnsROCollection(),
-                hasSetting = form.hasSettings(),
+                hasSetting = this.hasSettings(),
                 rows = [{
                     options: {'data-id': 'chocolate-control-column'},
                     header: ''
@@ -202,7 +200,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     };
                     iterator++;
                 }
-                var index = hasSetting ? form.getPositionColumn(column.get('key')) : iterator - 1;
+                var index = hasSetting ? _this.getPositionColumn(column.get('key')) : iterator - 1;
                 rows[index] = {
                     options: column.getHeaderOptions(),
                     header: _this.columnHeaderTemplate({
@@ -213,7 +211,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             });
 
             if (!hasSetting) {
-                form.setSettingsObj(setting);
+                this.persistFormSettings(setting);
             }
             var tableID = helpersModule.uniqueID();
             $form.append(this.gridTemplate({
@@ -246,19 +244,18 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 });
         },
         refreshDone: function (data) {
-            var form = this.getChForm(),
-                sortedColumnCollection = this.getSortedColumns(),
+            var sortedColumnCollection = this.getSortedColumns(),
                 order = data.order,
                 recordset = data.data;
-            form.saveInStorage(recordset, this.model.getPreview(), {}, {}, {}, order);
+            this.persistData(recordset, order);
 
-            var html = this.generateRows(recordset, order, sortedColumnCollection, form),
-                $table = form.getTable(),
-                $tbody = $table.find('tbody'),
+            var html = this.generateRows(recordset, order, sortedColumnCollection),
+                $table = this.getJqueryDataTable(),
+                $tbody = this.getJqueryTbody(),
                 $tr,
                 _this = this,
                 cacheVisible = [],
-                $userGrid = form._getUserGrid(),
+                $userGrid = this.getJqueryGridView(),
                 subscribeName = this.getLayoutSubscribeName();
             $.unsubscribe(subscribeName);
             $.subscribe(subscribeName, function (e, refreshCache) {
@@ -324,7 +321,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             $.publish(subscribeName, true);
             this.setRowCount(Object.keys(recordset).length);
         },
-        generateRows: function (data, order, sortedColumnCollection, form) {
+        generateRows: function (data, order, sortedColumnCollection) {
             var stringBuilder = [];
             var _this = this;
             order.forEach(function (key) {
@@ -334,12 +331,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             return stringBuilder.join('');
         },
         generateRow: function (data, columns) {
-            var form = this.getChForm();
             var style = '',
                 idClass = '',
                 colorCol = this.model.getColorColumnName(),
-                keyColorCol = this.model.getKeyColorColumnName(),
-                rowClass = '';
+                keyColorCol = this.model.getKeyColorColumnName();
             if (colorCol && data[colorCol]) {
                 var correctColor = helpersModule.decToHeh(data[colorCol]);
                 style = ['style="background:#', correctColor, '"'].join('');
@@ -347,8 +342,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             if (keyColorCol && data[keyColorCol]) {
                 idClass = ' td-red';
             }
-            if (form.chFormSettings.getGlobalStyle() === 2) {
-                rowClass = 'class="ch-mobile"';
+            var rowClass = this.getRowClass();
+            if(rowClass){
+                rowClass = 'class="' + rowClass + '"';
             }
             var id = data.id,
                 isNumericID = $.isNumeric(id),
@@ -359,16 +355,17 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     style,
                     rowClass,
                     '>',
-                    ChGridForm.TEMPLATE_FIRST_TD
+                    '<td class="grid-menu"><span class="card-button" data-id="card-button" title="Открыть карточку"></span>'
                 ];
 
             var key,
-                thList = form.getTh();
+                gridViewID = this.getJqueryGridView().attr('id'),
+                thList = this.getTh();
             columns.forEach(function (item) {
                 key = item.get('key');
                 var isVisible = thList.filter('[data-id="' + key + '"]').css('display') !== "none";
                 var value = '', class2 = '',
-                    rel = [form.getUserGridID(), key].join('_');
+                    rel = [gridViewID, key].join('_');
                 if (data[key] !== undefined && (key !== 'id' || isNumericID )) {
                     value = data[key];
                     if (value) {
@@ -389,4 +386,4 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             return rowBuilder.join('');
         }
     });
-})(AbstractGridView, jQuery, _, deferredModule, optionsModule, helpersModule, window);
+})(AbstractGridView, jQuery, _, deferredModule, optionsModule, helpersModule, window, undefined);

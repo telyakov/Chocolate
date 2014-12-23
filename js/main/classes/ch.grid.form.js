@@ -43,7 +43,6 @@ ChGridForm.prototype.destroy = function () {
     delete this._$user_grid;
 };
 ChGridForm.TEMPLATE_TD = '<td style class="{class}{class2}"><div class="table-td"><a data-value="{value}" data-pk ="{pk}" rel="{rel}" class="editable"></a></div></td>';
-ChGridForm.TEMPLATE_FIRST_TD = '<td class="grid-menu"><span class="card-button" data-id="card-button" title="Открыть карточку"></span>';
 ChGridForm.prototype.getExitMessage = function () {
     return 'В форме "' + this.getTabCaption() + '" имеются несохраненные изменения. Закрыть без сохранения?';
 };
@@ -125,81 +124,8 @@ ChGridForm.prototype.getType = function () {
     return this._type;
 };
 ChGridForm.prototype.getTh = function () {
-//    if (this._$th == null) {
     return this.getThead().children('tr').first().children('th');
-//    }
-//    return this._$th;
 };
-//ChGridForm.prototype.hasSettings = function () {
-//    if ($.isEmptyObject(this.getSettingsObj())) {
-//        return false;
-//    }
-//    return true;
-//};
-//ChGridForm.prototype.setDefaultSettings = function () {
-//    var $th = this.getTh(), settings_obj = [];
-//    if (this.hasSettings()) {
-//        var $tr = this.getThead().children('tr'),
-//            $tr_sorted = $('<tr></tr>');
-//
-//        settings_obj = this.getSettingsObj();
-//        var sorted_columns = settings_obj.sort(function (a, b) {
-//            if (a.key == ChOptions.keys.controlColumn) {
-//                return -1
-//            }
-//            if (b.key == ChOptions.keys.controlColumn) {
-//                return 1
-//            }
-//            if (a.weight > b.weight) {
-//                return 1
-//            } else {
-//                return -1
-//            }
-//        });
-//        $th.each(function () {
-//
-//        })
-//        var oldKeys = [];
-//        for (var i in sorted_columns) {
-//            var column = sorted_columns[i];
-//            $tr_sorted.append($th.filter('[data-id="' + column.key + '"]'));
-//            oldKeys.push(column.key);
-//        }
-//        $th.each(function () {
-//            var id = $(this).attr('data-id');
-//            if ($.inArray(id, oldKeys) == -1) {
-//                var weight = sorted_columns.length;
-//                sorted_columns.push({
-//                    key: id,
-//                    weight: weight,
-//                    width: ChOptions.settings.defaultColumnsWidth
-//                })
-//                $tr_sorted.append($(this))
-//            }
-//        })
-//        this.setSettingsObj(sorted_columns)
-//
-//        $tr.replaceWith($tr_sorted);
-//    } else {
-//        $th.each(function (i, elem) {
-//            if (i == 0) {
-//                settings_obj[i] = {
-//                    key: $(elem).attr('data-id'),
-//                    weight: i,
-//                    width: '28'
-//                };
-//            } else {
-//                settings_obj[i] = {
-//                    key: $(elem).attr('data-id'),
-//                    weight: i,
-//                    width: ChOptions.settings.defaultColumnsWidth
-//                }
-//            }
-//        })
-//        this.setSettingsObj(settings_obj)
-//    }
-//
-//};
 ChGridForm.prototype.getFooter = function () {
     if (this._$footer == null) {
         this._$footer = this.$form.siblings('footer');
@@ -273,17 +199,17 @@ ChGridForm.prototype.changeSettings = function (start_index, end_index) {
                 }
             }
         }
-        this.setSettingsObj(new_settings)
+        this.setSettingsObj(new_settings);
     }
 };
-//ChGridForm.prototype.getSettingsObj = function () {
-//    var storage = Chocolate.storage.local.settings,
-//        key = this.getView();
-//    if (typeof storage[key]  === 'undefined') {
-//        storage[key] = {};
-//    }
-//    return storage[key];
-//};
+ChGridForm.prototype.getSettingsObj = function () {
+    var storage = Chocolate.storage.local.settings,
+        key = this.getView();
+    if (typeof storage[key]  === 'undefined') {
+        storage[key] = {};
+    }
+    return storage[key];
+};
 ChGridForm.prototype.isCardSupport = function () {
     if (this._is_card_support == null) {
         this._is_card_support = this.$form.attr('data-card-support') == '1';
@@ -827,121 +753,11 @@ ChGridForm.prototype._getColumnTemplates = function () {
     }
     return templates;
 };
-/**
- * Добавляет строку в таблицу и возвращает id добавленной строки;
- * @param data
- * @returns {*}
- */
-//ChGridForm.prototype.addRow = function (data) {
-//    var templates = this._getColumnTemplates(),
-//        $table = this.getTable();
-//
-//    if (typeof data['id'] === 'undefined') {
-//        data['id'] = Chocolate.uniqueID();
-//    }
-//    var grid_properties = this.getGridPropertiesObj(),
-//        $row = $(this.generateRow(templates, data, grid_properties));
-//    $table
-//        .find('tbody').prepend($row)
-//        .trigger('addRows', [$row, false])
-//    $row.addClass('grid-row-changed');
-//
-//    var row_id = data['id'],
-//        dataObj = this.getDataObj();
-//    if (dataObj === []) {
-//        dataObj = {};
-//    }
-//    dataObj[row_id] = jQuery.extend({}, data);
-//    facade.getFormModule().fireCallbacks($row, this.getCallbackID());
-//    if (this.isAutoOpenCard()) {
-//        this.openCard(row_id);
-//    }
-//    return row_id;
-//};
+
 ChGridForm.prototype._isAttachmentsModel = function () {
     return this.getView().indexOf(Chocolate.ATTACHMENTS_VIEW) != -1;
 };
-//ChGridForm.prototype.generateRow = function (templates, data, gridProp) {
-//    var style = '',
-//        idClass = '',
-//        colorCol = gridProp.colorColumnName,
-//        keyColorCol = gridProp.colorKey,
-//        rowClass = '';
-//    if (colorCol && data[colorCol]) {
-//        var decColor = parseInt(data[colorCol], 10),
-//            hexColor = decColor.toString(16);
-//        if (hexColor.length < 6) {
-//            while (hexColor.length < 6) {
-//                hexColor += '0' + hexColor;
-//            }
-//        }
-//        var R = [hexColor.charAt(4), hexColor.charAt(5)].join(''),
-//            G = [hexColor.charAt(2), hexColor.charAt(3)].join(''),
-//            B = [hexColor.charAt(0), hexColor.charAt(1)].join('');
-//        style = ['style="background:#', R, G, B, '"'].join('');
-//    }
-//    if (keyColorCol && data[keyColorCol]) {
-//        idClass = ' td-red';
-//    }
-//
-//    if (this.chFormSettings.getGlobalStyle() == 2) {
-//        rowClass = 'class="ch-mobile"';
-//    }
-//    var id = data['id'],
-//        isNumericID = $.isNumeric(id),
-//        rowBuilder = [
-//            '<tr data-id="',
-//            id,
-//            '"',
-//            style,
-//            rowClass,
-//            '>',
-//            ChGridForm.TEMPLATE_FIRST_TD
-//        ];
-//
-//    var key,
-//        hasOwn = Object.prototype.hasOwnProperty;
-//    for (key in templates) {
-//        if (hasOwn.call(templates, key)) {
-//            var value = '', class2 = '',
-//                rel = [this.getUserGridID(), key].join('_');
-//            if (typeof data[key] !== 'undefined' && (key != 'id' || isNumericID )) {
-//                value = data[key];
-//                if (value) {
-//                    value = value.replace(/"/g, '&quot;')
-//                }
-//            }
-//            if (key == 'id') {
-//                class2 = idClass;
-//            }
-//
-//            rowBuilder.push(
-//                templates[key].replace(/\{pk\}/g, id)
-//                    .replace(/\{rel\}/g, rel)
-//                    .replace(/\{value\}/g, value)
-//                    .replace(/\{class2\}/g, class2)
-//            );
-//        }
-//    }
-//    rowBuilder.push('</tr>');
-//    return rowBuilder.join('');
-//};
-//ChGridForm.prototype.generateRows = function (data, order) {
-//    var templates = this._getColumnTemplates(),
-//        grid_properties = this.getGridPropertiesObj(),
-//        count = 0,
-//        stringBuilder = [];
-//    var _this = this;
-//    order.forEach(function (key) {
-//        count++;
-//        if (count > 500) {
-//            return;
-//        }
-//        //stringBuilder.push(_this.generateRow(templates, data[key], grid_properties));
-//    });
-//    return stringBuilder.join('');
-//
-//};
+
 ChGridForm.prototype.saveInStorage = function (data, preview, default_values, required_fields, grid_properties, order) {
     var storage = this.getStorage();
     storage[this.getID()] = {data: data, preview: preview, change: {}, deleted: {}, defaultValues: default_values, required: required_fields, gridProperties: grid_properties, order: order};
