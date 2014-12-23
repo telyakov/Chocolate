@@ -6,6 +6,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             'click tbody > tr': 'selectRowHandler',
             'click .menu-button-expand': 'contentExpandHandler'
         },
+
         navigateHandler: function (e) {
             if (['TABLE', 'SPAN'].indexOf(e.target.tagName) !== -1) {
                 //span for ie fix
@@ -75,6 +76,18 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
         getJqueryDataTable: function () {
             return this.getJqueryGridView().find('table');
         },
+        getJqueryFloatHeadTable: function () {
+            return this.$('.floatThead-table');
+        },
+        getColumnWidth: function (index) {
+            var settings = this.getFormSettingsFromStorage();
+            if ($.isEmptyObject(settings)) {
+                var defaultWidth = optionsModule.getSetting('defaultColumnsWidth');
+                this.setColumnWidth(index, defaultWidth)
+                return defaultWidth;
+            }
+            return settings[index].width;
+        },
         selectRowHandler: function (e) {
             var $this = $(e.target).closest('tr');
             this.selectRow($this, e.ctrlKey || e.shiftKey, true);
@@ -104,7 +117,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             return this.getThead().children('tr').first().children('th');
         },
         getThead: function () {
-            return this.getJqueryDataTable().children('thead');
+            return this.getJqueryFloatHeadTable().children('thead');
         },
         getRowClass: function () {
             switch (this.getFormStyleID()) {

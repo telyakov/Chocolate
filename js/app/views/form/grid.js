@@ -45,8 +45,107 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             return _.extend({}, AbstractGridView.prototype.events, {
                 'touchmove .card-button': 'openCard',
                 'dblclick .card-button': 'openCard',
-                'click .menu-button-add': 'addRowHandler'
+                'click .menu-button-add': 'addRowHandler',
+                'keydown .grid-column-search': $.debounce(200, false, this.searchColumnsHandler)
+
             });
+        },
+        searchColumnsHandler: function (e) {
+            var opm = optionsModule,
+                $this = $(e.target),
+                $th = this.getTh(),
+                searchedClass = opm.getClass('searchedColumn'),
+                $fixedTable = this.getJqueryFloatHeadTable(),
+                $table = this.getJqueryDataTable(),
+                tables = [$table.eq(0)[0], $fixedTable.eq(0)[0]],
+                search = $this.val();
+            if ([opm.getKeyCode('enter'), opm.getKeyCode('escape')].indexOf(e.keyCode) === -1) {
+
+                var oldHiddenPositions = [],
+                    hiddenPositions = [];
+                $th.each(function (i) {
+                    var $this = $(this),
+                        index = $this.get(0).cellIndex;
+                    if ($this.hasClass(searchedClass)) {
+                        oldHiddenPositions.push(index);
+                    }
+                    if ($this.css('display') !== 'none' || $this.hasClass(searchedClass)) {
+                        var caption = $(this).text().toLowerCase();
+                        $this.removeClass(searchedClass);
+
+                        if (i !== 0 && caption !== opm.getSetting('keyCaption') && caption.indexOf(search) === -1) {
+                            hiddenPositions.push(index);
+                            $this.addClass(searchedClass);
+                        }
+                    }
+                });
+                var visiblePositions = [],
+                    sum = 0,
+                    curWidth = $table.width(),
+                    newWidth,
+                    _this = this;
+                oldHiddenPositions.forEach(function (item) {
+                    if (hiddenPositions.indexOf(item) === -1) {
+                        visiblePositions.push(item);
+                        sum += parseInt(_this.getColumnWidth(item), 10);
+                    }
+                });
+
+                var newHiddenPositions = [];
+                hiddenPositions.forEach(function (item) {
+                    if (oldHiddenPositions.indexOf(item) === -1) {
+                        newHiddenPositions.push(item);
+                        sum -= parseInt(_this.getColumnWidth(item), 10);
+                    }
+                });
+                var tableHelperModule = facade.getTableModule();
+                tableHelperModule.hideTableCols(tables, newHiddenPositions);
+                tableHelperModule.showTableCols(tables, visiblePositions);
+                newWidth = curWidth + sum;
+                $table.width(newWidth);
+                $fixedTable.width(newWidth);
+                $table.floatThead('reflow');
+            } else {
+                $(this).val('');
+                var positions = [];
+                $th.each(function (i) {
+                    if ($(this).hasClass(searchedClass)) {
+                        positions.push(i);
+                        $(this).removeClass(searchedClass);
+                    }
+                });
+                acade.getTableModule().showTableCols(tables, positions);
+                if (e.keyCode === opm.getKeyCode('escape')) {
+                    $th
+                        .filter('.grid-column-searched-red, .grid-column-searched-yellow, .grid-column-searched-green')
+                        .removeClass('grid-column-searched-red grid-column-searched-yellow grid-column-searched-green');
+                } else {
+                    var $parent = $th.parent(),
+                        color = $parent.attr('data-color');
+                    if (!color || color === 'green') {
+                        $parent.attr('data-color', 'yellow');
+                    }
+                    if (color === 'yellow') {
+                        $parent.attr('data-color', 'red');
+                    }
+                    if (color === 'red') {
+                        $parent.attr('data-color', 'green');
+                    }
+                    $th.each(function () {
+                        var caption = $(this).text().toLowerCase();
+                        if (caption.indexOf(search) !== -1) {
+                            $(this)
+                                .removeClass('grid-column-searched-red grid-column-searched-yellow grid-column-searched-green')
+                                .addClass('grid-column-searched-' + $parent.attr('data-color'));
+                        } else {
+                            $(this).removeClass('grid-column-searched-' + $parent.attr('data-color'));
+
+                        }
+                    });
+
+                }
+            }
+            this.clearSelectedArea();
         },
         openMailClient: function () {
             var id = this.getActiveRowID();
