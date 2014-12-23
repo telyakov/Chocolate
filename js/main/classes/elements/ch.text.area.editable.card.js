@@ -60,7 +60,7 @@ ChTextAreaEditableCard.prototype.create = function (context, e, allow_edit, name
                     editor.on("load", function (e) {
                         var $tbody = $textArea.siblings('iframe').eq(1).contents().find('body');
                         $tbody
-                            .on('keydown', ChocolateEvents.addSignToIframeHandler)
+                            .on('keydown', helpersModule.addSignToIframe)
                             .on('keydown', function(e){
                                 var keys = chApp.namespace('events.KEY');
                                 if(e.keyCode == keys.ESCAPE){

@@ -403,14 +403,29 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
             }
             return result;
         },
-        merge: function(source, addition){
-          return context.mergeObj(source, addition);
+        merge: function (source, addition) {
+            return context.mergeObj(source, addition);
         },
-        leaveFocus: function(){
+        leaveFocus: function () {
             context.leaveFocus();
         },
-        stripHtml: function(html){
+        stripHtml: function (html) {
             return context.stripHtml(html);
+        },
+        addSignToIframe: function(e){
+            if (e.keyCode === optionsModule.getKeyCode('f4')) {
+                var userModule = facade.getUserModule();
+                $(this).insertAtCaretIframe(userModule.getSign());
+                return false;
+            }
+            return true;
+        },
+        createTitleHtml: function (pk, caption) {
+            if ($.isNumeric(pk)) {
+                return caption + ' [' + pk + ']';
+            } else {
+                return caption;
+            }
         },
         init: function () {
             context.init();

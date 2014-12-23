@@ -9,30 +9,34 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
         },
         modalFormElementHandler: function (e) {
             var $this = $(e.target),
-                key = $this.attr('data-name');
-            var model = this.model.getColumnsROCollection().findWhere({
-                key: key
-            });
-            var $elem = $this.prevAll('a'),
+                key = $this.attr('data-name'),
+                pk = $this.closest('tr').attr('data-id'),
+                model = this.model.getColumnsROCollection().findWhere({
+                    key: key
+                }),
+                $elem = $this.prevAll('a'),
                 column = facade.getFactoryModule().makeChGridColumnBody($elem),
-                isEdit = chCardFunction._isAllowEdit(this.getDBDataFromStorage(column.getID()),
-                    model.getRawAllowEdit()),
-                name = key,
+                isEdit = chCardFunction._isAllowEdit(
+                    this.getDBDataFromStorage(pk),
+                    model.getRawAllowEdit()
+                ),
                 caption = model.getVisibleCaption(),
                 isMarkupSupport = !!model.getColumnCustomProperties().get('markupSupport'),
                 $cell = $elem.parent(),
-                $popupControl = $('<a class="grid-textarea"></a>');
-            Chocolate.leaveFocus();
+                $popupControl = $('<a/>', {
+                    'class': 'grid-textarea'
+                });
+            helpersModule.leaveFocus();
             $popupControl.appendTo($cell.closest('section'));
             if (isMarkupSupport) {
-                chFunctions.wysiHtmlInit($popupControl, ChEditable.getTitle(column.getID(), caption));
+                chFunctions.wysiHtmlInit($popupControl, helpersModule.createTitleHtml(pk, caption));
             } else {
                 $popupControl.editable({
                     type: 'textarea',
                     mode: 'popup',
                     onblur: 'ignore',
                     savenochange: false,
-                    title: ChEditable.getTitle(column.getID(), caption)
+                    title: helpersModule.createTitleHtml(pk, caption)
                 });
             }
             $popupControl
@@ -41,7 +45,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                     $popup: $popupControl,
                     $elem: $elem,
                     column: column,
-                    name: name
+                    name: key
                 },
                 function saveHandler(e, params) {
                     var data = e.data;
@@ -60,7 +64,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                     $(this).remove();
                 });
 
-            var value = $elem.editable('getValue')[name];
+            var value = $elem.editable('getValue')[key];
             if (typeof value !== 'string') {
                 value = value.toString();
             }
@@ -77,10 +81,9 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 var editor = new wysihtml5.Editor($textArea.get(0)), eventData = {};
                 editor.on('load', function () {
                     $textArea.siblings('iframe').eq(1).contents().find('body')
-                        .on('keydown', eventData, ChocolateEvents.addSignToIframeHandler)
+                        .on('keydown', eventData, helpersModule.addSignToIframe)
                         .on('keydown', function (e) {
-                            var keys = chApp.namespace('events.KEY');
-                            if (e.keyCode === keys.ESCAPE) {
+                            if (e.keyCode === optionsModule.getKeyCode('escape')) {
                                 $popupControl.editable('hide');
                             }
                         });

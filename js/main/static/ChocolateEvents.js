@@ -241,19 +241,6 @@ var ChocolateEvents = {
         });
         return false;
     },
-    /**
-     * @param e {Event}
-     * @returns {boolean}
-     */
-    addSignToIframeHandler: function (e) {
-        var moduleKey = chApp.namespace('events.KEY'),
-            userModule = facade.getUserModule();
-        if (e.keyCode === moduleKey.F4) {
-            $(this).insertAtCaretIframe(userModule.getSign());
-            return false;
-        }
-        return true;
-    },
     signInTextEvents: function ($context) {
         $context.on('keydown', 'textarea', this.addSignToTextHandler);
     },

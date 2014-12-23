@@ -13,7 +13,7 @@ var chFunctions = {
                 $(this).unbind('keydown.chocolate');
                 editable.$element.attr('data-change', 1);
             })
-            .on('keydown', ChocolateEvents.addSignToIframeHandler);
+            .on('keydown', helpersModule.addSignToIframe);
     },
     wysiHtmlInit: function ($target, title) {
         $target.editable({

@@ -12,10 +12,3 @@ ChEditable.prototype.getTitle = function (pk, caption) {
         return caption;
     }
 };
-ChEditable.getTitle = function (pk, caption) {
-    if ($.isNumeric(pk)) {
-        return caption + ' [' + pk + ']'
-    } else {
-        return caption;
-    }
-};
