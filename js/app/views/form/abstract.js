@@ -34,7 +34,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
         },
         _refreshTimerID: null,
         lazyRefresh: function (opts) {
-            var isLazy = opts && opts.isLazy? true: false;
+            var isLazy = opts && opts.isLazy ? true : false;
             if (isLazy) {
                 if (this._refreshTimerID) {
                     clearTimeout(this._refreshTimerID);
@@ -243,11 +243,11 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
         getDeletedDataFromStorage: function () {
             return this.getStorage().deleted;
         },
-        isAutoUpdate: function(){
+        isAutoUpdate: function () {
             var key = this.model.getView();
-            if (storageModule.hasSetting(key, 'auto_update')){
-                return storageModule.getSettingByKey(key, 'auto_update')? true : false;
-            }else{
+            if (storageModule.hasSetting(key, 'auto_update')) {
+                return storageModule.getSettingByKey(key, 'auto_update') ? true : false;
+            } else {
                 return false;
             }
         },
@@ -263,11 +263,32 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             }
         },
-        setFormStyleID: function(val){
-            storageModule.persistSetting(this.model.getView(),'globalStyle', val);
+        setFormStyleID: function (val) {
+            storageModule.persistSetting(this.model.getView(), 'globalStyle', val);
         },
-        setAutoUpdate: function(val){
+        _autoUpdateTimerID: null,
+        startAutoUpdate: function () {
+            if (this._autoUpdateTimerID === null) {
+                var _this = this;
+                this._autoUpdateTimerID = setInterval(function () {
+                    if (_this.getJqueryForm().is(':visible') && !this.hasChange()) {
+                        _this.model.trigger('refresh:form');
+                    }
+                }, optionsModule.getSetting('defaultAutoUpdateMS'));
+            }
+        },
+        stopAutoUpdate: function () {
+            if (this._autoUpdateTimerID !== null) {
+                clearInterval(this._autoUpdateTimerID);
+            }
+        },
+        setAutoUpdate: function (val) {
             storageModule.persistSetting(this.model.getView(), 'auto_update', val);
+            if (val) {
+                this.startAutoUpdate();
+            } else {
+                this.stopAutoUpdate();
+            }
         },
         hasSettings: function () {
             return !$.isEmptyObject(this.getFormSettingsFromStorage());

@@ -1,4 +1,4 @@
-var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModule, undefined, moment) {
+var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModule, undefined, moment, storageModule) {
     'use strict';
     return AbstractView.extend({
         events: {
@@ -90,6 +90,18 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 });
             }
             return false;
+        },
+        isSystemColumnsMode: function(){
+            var key = this.model.getView();
+            if (storageModule.hasSetting(key, 'globalStyle')) {
+                return storageModule.getSettingByKey(key, 'systemVisibleMode');
+            }else{
+                return false;
+            }
+        },
+        persistSystemColumnsMode: function(val){
+            storageModule.persistSetting(this.model.getView(), 'systemVisibleMode', val);
+            return this;
         },
         navigateHandler: function (e) {
             if (['TABLE', 'SPAN'].indexOf(e.target.tagName) !== -1) {
@@ -375,4 +387,4 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
         }
     });
 })
-(AbstractView, jQuery, _, optionsModule, helpersModule, undefined, moment);
+(AbstractView, jQuery, _, optionsModule, helpersModule, undefined, moment, storageModule);

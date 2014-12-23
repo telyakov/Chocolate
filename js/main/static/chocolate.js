@@ -427,6 +427,9 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                 return caption;
             }
         },
+        appHasChange: function(){
+          return context.hasChange();
+        },
         init: function () {
             context.init();
         }

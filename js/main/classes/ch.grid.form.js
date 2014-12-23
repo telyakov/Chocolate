@@ -770,48 +770,14 @@ ChGridForm.prototype.updateStorage = function (data, order) {
     storage[this.getID()].deleted = {};
 };
 
-ChGridForm.prototype.toggleColls = function (isHidden, $thList) {
-    var positions = [],
-        $fixedTable = this.getFixedTable(),
-        $table = this.getTable(),
-        tables = [$table.eq(0)[0], $fixedTable.eq(0)[0]];
-    var sum = 0;
-    var curWidth = $table.width();
-    var newWidth;
-    var _this = this;
-    $thList.each(function (i) {
-        positions.push($(this).get(0).cellIndex);
-        sum += parseInt(_this.getColumnWidth($(this).get(0).cellIndex), 10);
-    });
-    if (isHidden) {
-        facade.getTableModule().showTableCols(tables, positions);
-        newWidth = curWidth + sum;
-
-    } else {
-        facade.getTableModule().hideTableCols(tables, positions);
-        newWidth = curWidth - sum;
-    }
-    $table.width(newWidth);
-    $fixedTable.width(newWidth);
-    $table.floatThead('reflow');
-};
-
 ChGridForm.prototype.toggleAllCols = function () {
     var
         isHidden = this.chFormSettings.isShortVisibleMode(),
 //        hiddenClass = ChOptions.classes.hiddenAllColsTable,
         $th = this.getFixedTable().find('[' + ChOptions.classes.allowHideColumn + ']');
-    this.toggleColls(isHidden, $th);
-    this.chFormSettings.setShortVisibleMode(!isHidden);
+    //todo: вернуть код
+    //this.toggleColls(isHidden, $th);
+    //this.chFormSettings.setShortVisibleMode(!isHidden);
     return this;
 };
-ChGridForm.prototype.toggleSystemCols = function () {
-    var isHidden = this.chFormSettings.isSystemVisibleMode(),
-        $th = this.getFixedTable().find('th').filter(function (index) {
-            return $.inArray($(this).attr('data-id'), ChOptions.settings.systemCols) !== -1;
-        });
-    this.toggleColls(isHidden, $th);
-    this.$form.find('.menu-button-toggle').toggleClass(chApp.getOptions().classes.menuButtonSelected)
-    this.chFormSettings.setSystemVisibleMode(!isHidden);
-    return this;
-};
+

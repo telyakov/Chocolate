@@ -116,10 +116,11 @@ ChTable.prototype._initFloatThead = function () {
 //};
 ChTable.prototype._initSettings = function () {
     //this.ch_form.setDefaultSettings();
-    if (this.ch_form.chFormSettings.isAutoUpdate()) {
-        this.ch_form.chFormSettings.startAutoUpdate();
-    }
-
+    //if (this.ch_form.chFormSettings.isAutoUpdate()) {
+        //todo: вернуть код
+        //this.ch_form.chFormSettings.startAutoUpdate();
+    //}
+//
 };
 ChTable.prototype._initContextMenu = function () {
     var $fixed_table = this.ch_form.getFixedTable(),
@@ -179,16 +180,18 @@ ChTable.prototype.initScript = function () {
     this._initContextMenu();
     this._initDragtable();
     var _this = this;
-    if(_this.ch_form.chFormSettings.isShortVisibleMode()){
-        var $th = this.ch_form.getFixedTable().find('[' + ChOptions.classes.allowHideColumn + ']');
-        _this.ch_form.toggleColls(false, $th);
-    }
-    if(_this.ch_form.chFormSettings.isSystemVisibleMode()){
-        var $th2 = _this.ch_form.getFixedTable().find('th').filter(function (index) {
-            return $.inArray($(this).attr('data-id'), ChOptions.settings.systemCols) !== -1;
-        });
-        _this.ch_form.toggleColls(false, $th2);
-    }
+    //todo: вернуть код
+    //if(_this.ch_form.chFormSettings.isShortVisibleMode()){
+    //    var $th = this.ch_form.getFixedTable().find('[' + ChOptions.classes.allowHideColumn + ']');
+    //    _this.ch_form.toggleColls(false, $th);
+    //}
+    //todo: вернуть код
+    //if(_this.ch_form.chFormSettings.isSystemVisibleMode()){
+    //    var $th2 = _this.ch_form.getFixedTable().find('th').filter(function (index) {
+    //        return $.inArray($(this).attr('data-id'), ChOptions.settings.systemCols) !== -1;
+    //    });
+    //    _this.ch_form.toggleColls(false, $th2);
+    //}
 };
 ChTable.prototype.initAttachmentScript = function () {
     this._initSettings();

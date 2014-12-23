@@ -48,8 +48,47 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 'click .menu-button-add': 'addRowHandler',
                 'keydown .grid-column-search': $.debounce(200, false, this.searchColumnsHandler),
                 'click .menu-button-excel': 'exportToExcel',
-                'click .menu-button-settings': 'openFormSettingHandler'
+                'click .menu-button-settings': 'openFormSettingHandler',
+                'click .menu-button-toggle': 'toggleSystemCols'
             });
+        },
+        toggleSystemCols: function () {
+            var isHidden = this.isSystemColumnsMode(),
+                systemColAttr = optionsModule.getSetting('systemCols'),
+                $th = this.getJqueryFloatHeadTable().find('th').filter(function () {
+                    return systemColAttr.indexOf($(this).attr('data-id')) !== -1;
+                });
+            this.toggleColumns(isHidden, $th);
+            this.getJqueryForm().find('.menu-button-toggle').toggleClass(optionsModule.getClass('menuButtonSelected'));
+            return this
+                .persistSystemColumnsMode(!isHidden)
+                .clearSelectedArea();
+        },
+        toggleColumns: function (isHidden, $thList) {
+            var positions = [],
+                $fixedTable = this.getJqueryFloatHeadTable(),
+                $table = this.getJqueryDataTable(),
+                tables = [$table.eq(0)[0], $fixedTable.eq(0)[0]],
+                sum = 0,
+                curWidth = $table.width(),
+                newWidth,
+                _this = this,
+                cellIndex;
+            $thList.each(function () {
+                cellIndex = $(this).get(0).cellIndex;
+                positions.push(cellIndex);
+                sum += parseInt(_this.getColumnWidth(cellIndex), 10);
+            });
+            if (isHidden) {
+                facade.getTableModule().showTableCols(tables, positions);
+                newWidth = curWidth + sum;
+            } else {
+                facade.getTableModule().hideTableCols(tables, positions);
+                newWidth = curWidth - sum;
+            }
+            $table.width(newWidth);
+            $fixedTable.width(newWidth);
+            $table.floatThead('reflow');
         },
         exportToExcel: function () {
             var data = {

@@ -28,36 +28,12 @@ var ChocolateEvents = {
         this.openTaskWizardEvent($content);
         this.signInTextEvents($content);
         this.disableFiltersEvent($content);
-        this.toggleSystemColsEvent($tabs);
-        this.warningMessageEvent($window);
     },
     tabHistoryLogEvent: function ($context) {
         $context.on('click', '#tabs>ul>li', this.tabHistoryLogHandler);
     },
     tabHistoryLogHandler: function () {
         facade.getTabsModule().push($(this));
-    },
-    warningMessageEvent: function ($context) {
-        $context.on('beforeunload', this.warningMessageHandler);
-    },
-    /**
-     * @returns {string|undefined}
-     */
-    warningMessageHandler: function () {
-        var main = chApp.namespace('main');
-        if (main.hasChange()) {
-            var messages = chApp.getMessages();
-            return messages.chocolateHasChange;
-        }
-    },
-    toggleSystemColsEvent: function ($context) {
-        $context.on('click', '.menu-button-toggle', this.toggleSystemColsHandler);
-    },
-    toggleSystemColsHandler: function () {
-        //todo: вернуть код
-        facade.getFactoryModule().makeChGridForm($(this).closest('form'))
-            .toggleSystemCols();
-            //.clearSelectedArea();
     },
     reflowWindowEvent: function ($context) {
         $context.on('resize', $.debounce(300, false, this.reflowWindowHandler));

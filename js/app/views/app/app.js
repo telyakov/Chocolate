@@ -1,4 +1,4 @@
-var AppView = (function (Backbone, $, optionsModule, mediator, location) {
+var AppView = (function (Backbone, $, optionsModule, mediator, location, window, helpersModule) {
     'use strict';
     return Backbone.View.extend({
         initialize: function (options) {
@@ -13,7 +13,10 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
             'click .filter-button': 'filterTreeHandler',
             'click .widget-elem-close': 'deselectTreeElementHandler',
             'keydown': 'preventDefaultBrowserEvents',
-            'click .fm-phone': 'makeCallHandler'
+            'click .fm-phone': 'makeCallHandler',
+            'beforeunload': function(){
+                return 'sadsad';
+            }
         },
         makeCallHandler: function (e) {
             var phoneTo = $(e.target).attr('data-phone');
@@ -86,7 +89,15 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
             }
             return false;
         },
-
+        createGlobalEvents: function(){
+            $(window)
+                .on('beforeunload', this.warningMessageHandler);
+        },
+        warningMessageHandler: function () {
+            if (helpersModule.appHasChange()) {
+                return optionsModule.getMessage('chocolateHasChange');
+            }
+        },
         render: function () {
             mediator.publish(
                 optionsModule.getChannel('setIdentity'),
@@ -164,6 +175,7 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
             this.$el
                 .append($downloadAttachmentTmpl)
                 .append($uploadAttachmentTmpl);
+            this.createGlobalEvents();
         },
         _renderAnimateIndicator: function () {
             this.$el.children('header').html(
@@ -227,4 +239,4 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
     })
         ;
 })
-(Backbone, jQuery, optionsModule, mediator, location);
+(Backbone, jQuery, optionsModule, mediator, location, window, helpersModule);

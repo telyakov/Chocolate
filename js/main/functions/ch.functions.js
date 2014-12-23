@@ -2,9 +2,10 @@ var chFunctions = {
     systemColsInit: function (sysColsID) {
         var $btn = $('#' + sysColsID),
             form = facade.getFactoryModule().makeChGridForm($btn.closest('form'));
-        if (!form.chFormSettings.isSystemVisibleMode()) {
-            $btn.addClass(chApp.getOptions().classes.menuButtonSelected);
-        }
+        //todo: вернуть код
+        //if (!form.chFormSettings.isSystemVisibleMode()) {
+        //    $btn.addClass(chApp.getOptions().classes.menuButtonSelected);
+        //}
     },
     textShownFunction: function (e, editable) {
         var $body = editable.$form.find("iframe").contents().find("body");
