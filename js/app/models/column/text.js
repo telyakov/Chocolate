@@ -41,7 +41,19 @@ var TextColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
                 }
                 $elements
                     .on('init', function (e, editable) {
-                        chFunctions.textInitFunc(this, e, rawAllowEdit, _this.get('key'), _this.getVisibleCaption(), isMarkupSupport, editable.$element);
+                        var $element = editable.$element,
+                            column = facade.getFactoryModule().makeChGridColumnBody($element),
+                            isEdit = chCardFunction._isAllowEdit(column.getDataObj(), rawAllowEdit);
+                        if (!isEdit) {
+                            $(this).unbind('click');
+                            column.markAsNoChanged();
+                        }
+                        var $modalBtn = $('<div/>', {
+                            'class' : 'grid-modal-open form-modal-button',
+                            'data-name': _this.get('key')
+                        });
+                        $element.parent().append($modalBtn);
+
                     })
                     .editable(options);
             };

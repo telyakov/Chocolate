@@ -35,81 +35,12 @@ var ChocolateEvents = {
         this.preventDefaultBrowserEvents($window);
         this.keyActionsCardEvent($tabs);
         this.deselectTreeElementEvent($body);
-        this.modalFormElementEvent($content);
     },
     tabHistoryLogEvent: function ($context) {
         $context.on('click', '#tabs>ul>li', this.tabHistoryLogHandler);
     },
     tabHistoryLogHandler: function () {
         facade.getTabsModule().push($(this));
-    },
-    modalFormElementEvent: function ($context) {
-        $context.on('click', '.form-modal-button', this.modalFormElementHandler);
-    },
-    modalFormElementHandler: function () {
-        var $this = $(this),
-            isEdit = parseInt($this.attr('data-edit'), 10),
-            name = $this.attr('data-name'),
-            caption = $this.attr('data-caption'),
-            isMarkupSupport = parseInt($this.attr('data-markup'), 10),
-            $elem = $(this).prevAll('a'),
-            $cell = $elem.parent(),
-            column = facade.getFactoryModule().makeChGridColumnBody($elem),
-            $popupControl = $('<a class="grid-textarea"></a>');
-        Chocolate.leaveFocus();
-        $popupControl.appendTo($cell.closest('section'));
-        if (isMarkupSupport) {
-            chFunctions.wysiHtmlInit($popupControl, ChEditable.getTitle(column.getID(), caption));
-        } else {
-            $popupControl.editable({
-                type: 'textarea',
-                mode: 'popup',
-                onblur: 'ignore',
-                savenochange: false,
-                title: ChEditable.getTitle(column.getID(), caption)
-            });
-        }
-        $popupControl
-            .bind('save', {
-                isEdit: isEdit,
-                $popup: $popupControl,
-                $elem: $elem,
-                column: column,
-                name: name
-            },
-            ChTextColumn.SaveHandler
-        )
-            .bind('hide', function () {
-                $(this).remove();
-            });
-
-        var value = $elem.editable('getValue')[name];
-        if (typeof value !== 'string') {
-            value = value.toString();
-        }
-        if (isMarkupSupport) {
-            value = value.replace(/\r\n|\r|\n/g, '<br>');
-        }
-        $popupControl
-            .editable('setValue', value)
-            .editable('show');
-        var $textArea = $popupControl.next('div').find('textarea');
-        if (!isEdit) {
-            $textArea.attr('readonly', true);
-        } else if (isMarkupSupport) {
-            var editor = new wysihtml5.Editor($textArea.get(0)), eventData = {};
-            editor.on('load', function () {
-                $textArea.siblings('iframe').eq(1).contents().find('body')
-                    .on('keydown', eventData, ChocolateEvents.addSignToIframeHandler)
-                    .on('keydown', function (e) {
-                        var keys = chApp.namespace('events.KEY');
-                        if (e.keyCode === keys.ESCAPE) {
-                            $popupControl.editable('hide');
-                        }
-                    });
-            });
-        }
-        return false;
     },
     deselectTreeElementEvent: function ($context) {
         $context.on('click', '.widget-elem-close', this.deselectTreeElementHandler);

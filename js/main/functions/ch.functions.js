@@ -6,9 +6,6 @@ var chFunctions = {
             $btn.addClass(chApp.getOptions().classes.menuButtonSelected);
         }
     },
-    textInitFunc: function ($context, e, allowEdit, columnName, caption, isMarkupSupport, $element) {
-        (new ChTextColumn($element)).create($context, e, allowEdit, columnName, caption, isMarkupSupport);
-    },
     textShownFunction: function (e, editable) {
         var $body = editable.$form.find("iframe").contents().find("body");
         $body

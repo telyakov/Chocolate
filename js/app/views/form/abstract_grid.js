@@ -4,9 +4,90 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
         events: {
             'keydown .tablesorter': 'navigateHandler',
             'click tbody > tr': 'selectRowHandler',
-            'click .menu-button-expand': 'contentExpandHandler'
+            'click .menu-button-expand': 'contentExpandHandler',
+            'click .form-modal-button': 'modalFormElementHandler'
         },
+        modalFormElementHandler: function (e) {
+            var $this = $(e.target),
+                key = $this.attr('data-name');
+            var model = this.model.getColumnsROCollection().findWhere({
+                key: key
+            });
+            var $elem = $this.prevAll('a'),
+                column = facade.getFactoryModule().makeChGridColumnBody($elem),
+                isEdit = chCardFunction._isAllowEdit(this.getDBDataFromStorage(column.getID()),
+                    model.getRawAllowEdit()),
+                name = key,
+                caption = model.getVisibleCaption(),
+                isMarkupSupport = !!model.getColumnCustomProperties().get('markupSupport'),
+                $cell = $elem.parent(),
+                $popupControl = $('<a class="grid-textarea"></a>');
+            Chocolate.leaveFocus();
+            $popupControl.appendTo($cell.closest('section'));
+            if (isMarkupSupport) {
+                chFunctions.wysiHtmlInit($popupControl, ChEditable.getTitle(column.getID(), caption));
+            } else {
+                $popupControl.editable({
+                    type: 'textarea',
+                    mode: 'popup',
+                    onblur: 'ignore',
+                    savenochange: false,
+                    title: ChEditable.getTitle(column.getID(), caption)
+                });
+            }
+            $popupControl
+                .bind('save', {
+                    isEdit: isEdit,
+                    $popup: $popupControl,
+                    $elem: $elem,
+                    column: column,
+                    name: name
+                },
+                function saveHandler(e, params) {
+                    var data = e.data;
+                    if (data && data.isEdit && data.$popup && data.$elem && data.column && data.name) {
+                        if (typeof params.newValue !== 'undefined') {
+                            data.column.setChangedValue(data.name, params.newValue);
+                            data.$elem.editable('setValue', params.newValue);
+                            data.$popup.empty();
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            )
+                .bind('hide', function () {
+                    $(this).remove();
+                });
 
+            var value = $elem.editable('getValue')[name];
+            if (typeof value !== 'string') {
+                value = value.toString();
+            }
+            if (isMarkupSupport) {
+                value = value.replace(/\r\n|\r|\n/g, '<br>');
+            }
+            $popupControl
+                .editable('setValue', value)
+                .editable('show');
+            var $textArea = $popupControl.next('div').find('textarea');
+            if (!isEdit) {
+                $textArea.attr('readonly', true);
+            } else if (isMarkupSupport) {
+                var editor = new wysihtml5.Editor($textArea.get(0)), eventData = {};
+                editor.on('load', function () {
+                    $textArea.siblings('iframe').eq(1).contents().find('body')
+                        .on('keydown', eventData, ChocolateEvents.addSignToIframeHandler)
+                        .on('keydown', function (e) {
+                            var keys = chApp.namespace('events.KEY');
+                            if (e.keyCode === keys.ESCAPE) {
+                                $popupControl.editable('hide');
+                            }
+                        });
+                });
+            }
+            return false;
+        },
         navigateHandler: function (e) {
             if (['TABLE', 'SPAN'].indexOf(e.target.tagName) !== -1) {
                 //span for ie fix

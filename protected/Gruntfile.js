@@ -76,7 +76,6 @@ module.exports = function (grunt) {
                     '../js/main/classes/ch.canvas.options.js',
                     '../js/main/classes/ch.canvas.js',
                     '../js/main/classes/elements/ch.editable.js',
-                    '../js/main/classes/elements/ch.text.area.editable.column.js',
                     '../js/main/classes/elements/ch.text.area.editable.card.js',
                     '../js/main/framework/fm.cardsCollection.js',
                     '../js/main/framework/fm.ChildGridCollection.js',
