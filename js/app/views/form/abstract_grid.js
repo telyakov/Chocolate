@@ -140,25 +140,25 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                     clearTimeout(this.previewTimerID);
                 }
                 this.previewTimerID = setTimeout(function () {
-                    var form = _this.getChForm(),
-                        previewData = form.getPreviewObj(),
-                        data = helpersModule.merge(form.getDataObj()[id], form.getChangedObj()[id]);
+                    var previewData = _this.model.getPreview(),
+                        data = _this.getActualDataFromStorage(id);
                     if (previewData !== undefined) {
-                        var html = '', key;
+                        var html = [], key;
                         for (key in previewData) {
-                            if (previewData.hasOwnProperty(key)) {
-                                html += '<span class="footer-title">';
-                                html += previewData[key].caption + '</span>: <span>';
+                            if (data.hasOwnProperty(key)) {
+                                html.push('<span class="footer-title">');
+                                html.push(previewData[key].caption);
+                                html.push('</span>: <span>');
                                 if (previewData[key].type === 'dt') {
-                                    html += moment(data[key], 'MM.DD.YYYY HH:mm:ss')
-                                        .format(optionsModule.getSetting('signatureFormat'));
+                                    html.push(moment(data[key], 'MM.DD.YYYY HH:mm:ss')
+                                        .format(optionsModule.getSetting('signatureFormat')));
                                 } else {
-                                    html += data[key];
+                                    html.push(data[key]);
                                 }
-                                html += '</span><span class="footer-separator"></span>';
+                                html.push('</span><span class="footer-separator"></span>');
                             }
                         }
-                        _this.$('.footer-info').html(html);
+                        _this.$('.footer-info').html(html.join(''));
                     }
                 }, 300);
             } else {
@@ -210,36 +210,28 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             this.removeRows(this.getSelectedRows());
         },
         removeRows: function ($rows) {
-            var lng = $rows.length;
-            if (lng) {
-                //var delObj = this.getChForm().getDeletedObj();
+            if ($rows.length) {
                 var data = {
                     op: 'del',
                     data: []
                 };
                 for (var i = 0; i < lng; i++) {
-                    data.data[$rows[i].attr('data-id')] = true;
+                    data.data.push({id: $rows[i].attr('data-id')});
                     $rows[i].remove();
                 }
                 this.model.trigger('change:form', data);
             }
             helpersModule.leaveFocus();
         },
-        change: function(opts){
+        change: function (opts) {
             console.log(opts);
             this.getJqueryDataTable().trigger("update");
             this.getSaveButton().addClass('active');
             this.getJqueryDataTable().parent().find('.' + optionsModule.getClass('selectedArea')).remove();
-
-            //var operation = opts.op;
-            //switch(operation){
-            //    case 'del':
-            //
-            //        break;
-            //}
+            //todo: Реализовать изменение данных
         },
         getSaveButton: function () {
-           return this.$('menu').children('.menu-button-save');
+            return this.$('menu').children('.menu-button-save');
         },
         getActiveRowID: function () {
             return this.getJqueryActiveRow().attr('data-id');
@@ -249,6 +241,10 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
         },
         layoutFooter: function ($form) {
             $form.after(this.footerTemplate());
+        },
+        clearSelectedArea: function () {
+            this.getJqueryDataTable().parent().children('.sel-area').remove();
+            return this;
         }
     });
 })

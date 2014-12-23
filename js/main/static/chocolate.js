@@ -404,10 +404,13 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
             return result;
         },
         merge: function(source, addition){
-          context.mergeObj(source, addition);
+          return context.mergeObj(source, addition);
         },
         leaveFocus: function(){
             context.leaveFocus();
+        },
+        stripHtml: function(html){
+            return context.stripHtml(html);
         },
         init: function () {
             context.init();

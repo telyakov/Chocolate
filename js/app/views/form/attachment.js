@@ -106,7 +106,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                             data.context.attr("data-id", rowID);
                             data.context.find("td input[type=file]").attr("parent-id", rowID);
                             $form.find("div[data-id=user-grid] table").trigger("update");
-                            form.getSaveButton().addClass("active");
+                            _this.getSaveButton().addClass("active");
                         } else {
                             data.context.remove();
                             form.getMessagesContainer().sendMessage("Слишком большой размер файла (максисмум 50мб.)", chApp.getResponseStatuses().ERROR);
@@ -179,8 +179,9 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                         //todo: clear changed data
                         form._clearDeletedObj();
                         form._clearChangedObj();
-                        form.clearSelectedArea();
-                        this.setRowCount(Object.keys(data.data).length);
+                        _this
+                            .clearSelectedArea()
+                            .setRowCount(Object.keys(data.data).length);
                     });
                 });
         }

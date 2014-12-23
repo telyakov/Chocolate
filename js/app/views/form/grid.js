@@ -1,4 +1,4 @@
-var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule, factoryModule) {
+var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule, helpersModule, window) {
     'use strict';
     return AbstractGridView.extend({
         template: _.template([
@@ -48,71 +48,66 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 'click .menu-button-add': 'addRowHandler'
             });
         },
-        openMailClient:function(){
-            //console.log(this.getJqueryActiveRow());
-            //console.log('open');
-            //var form = facade.getFactoryModule().makeChGridForm($(this).closest('.section-header').siblings('.section-grid').children('form'));
+        openMailClient: function () {
             var id = this.getActiveRowID();
             if (id) {
-                var dataObj = form.getDataObj()[id],
-                    emailCol = chApp.getOptions().settings.emailCol,
-                    emails = dataObj[emailCol],
-                    url = encodeURIComponent(chApp.getOptions().urls.bpOneTask + id),
-                    task = chApp.getMain().stripHtml(dataObj.task),
+                var data = this.getDBDataFromStorage(id),
+                    emailColumn = optionsModule.getSetting('emailCol'),
+                    emails = data[emailColumn],
+                    url = encodeURIComponent(optionsModule.getUrl('bpOneTask') + id),
+                    task = helpersModule.stripHtml(data.task),
                     subject = 'База:' + task.substr(0, 50);
 
                 window.open('mailto:' + emails + '?subject=' + subject + '&body=' + url, '_self');
-
             }
         },
         addRowHandler: function () {
             var defValues = this.model.getColumnsDefaultValues(),
                 _this = this;
-            if(this.model.isSupportCreateEmpty()){
+            if (this.model.isSupportCreateEmpty()) {
                 var defer = this.model.deferDefaultData();
-                defer.done(function(res){
+                defer.done(function (res) {
                     var data = res.data,
                         i,
                         hasOwn = Object.prototype.hasOwnProperty,
                         result;
                     for (i in data) {
                         if (hasOwn.call(data, i)) {
-                                result = data[i];
-                                break;
+                            result = data[i];
+                            break;
                         }
                     }
                     defValues = $.extend(defValues, result);
                     _this.addRow(defValues);
                 });
-            }else{
+            } else {
                 _this.addRow(defValues);
             }
         },
-        addRow: function(data){
-            var form = this.getChForm();
-            if(!data.hasOwnProperty('id')){
+        addRow: function (data) {
+            if (!data.hasOwnProperty('id')) {
                 data.id = helpersModule.uniqueID();
             }
-            var $row = $(this.generateRow(data, this.getSortedColumns(form), form));
-            form
-                .getTable()
-                .find('tbody')
+            var $row = $(this.generateRow(data, this.getSortedColumns()));
+            $row.addClass('grid-row-changed');
+            this
+                .getJqueryTbody()
                 .prepend($row)
                 .trigger('addRows', [$row, false]);
-            $row.addClass('grid-row-changed');
-                var id = data.id,
-                dataObj = form.getDataObj();
-            if (dataObj === []) {
-                dataObj = {};
-            }
-            dataObj[id] = jQuery.extend({}, data);
+            var model = this.model,
+                id = data.id;
+            model.trigger('change:form', {
+                op: 'upd',
+                id: id,
+                data: $.extend({}, data)
+            });
             this.applyCallbacks($row);
-            if(this.model.isAutoOpenCard()){
+            if (model.isAutoOpenCard()) {
                 this.openCardHandler(id);
             }
 
         },
-        applyCallbacks: function($cnt){
+        applyCallbacks: function ($cnt) {
             this.getCallbacks().forEach(function (fn) {
                 fn($cnt);
             });
@@ -136,7 +131,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
 
                 });
             this.$el.html(html);
-            var $form = $('#' + formId);
+            var $form = this.getJqueryForm();
             this.layoutMenu($form);
             this.layoutForm($form);
             this.layoutFooter($form);
@@ -161,7 +156,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             }
             return this._callbacks;
         },
-        getSortedColumns: function (form) {
+        getSortedColumns: function () {
+            var form = this.getChForm();
+
             var sortedColumnCollection = [],
                 hasSetting = form.hasSettings(),
                 iterator = 1,
@@ -250,7 +247,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
         },
         refreshDone: function (data) {
             var form = this.getChForm(),
-                sortedColumnCollection = this.getSortedColumns(form),
+                sortedColumnCollection = this.getSortedColumns(),
                 order = data.order,
                 recordset = data.data;
             form.saveInStorage(recordset, this.model.getPreview(), {}, {}, {}, order);
@@ -259,6 +256,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 $table = form.getTable(),
                 $tbody = $table.find('tbody'),
                 $tr,
+                _this = this,
                 cacheVisible = [],
                 $userGrid = form._getUserGrid(),
                 subscribeName = this.getLayoutSubscribeName();
@@ -320,7 +318,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             this.applyCallbacks(this.$el);
             $table.trigger("update");
             $table.unbind('sortEnd').unbind('filterEnd').bind('sortEnd filterEnd', function () {
-                form.clearSelectedArea();
+                _this.clearSelectedArea();
                 $.publish(subscribeName, true);
             });
             $.publish(subscribeName, true);
@@ -331,11 +329,12 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             var _this = this;
             order.forEach(function (key) {
                 //count++;
-                stringBuilder.push(_this.generateRow(data[key], sortedColumnCollection, form));
+                stringBuilder.push(_this.generateRow(data[key], sortedColumnCollection));
             });
             return stringBuilder.join('');
         },
-        generateRow: function (data, columns, form) {
+        generateRow: function (data, columns) {
+            var form = this.getChForm();
             var style = '',
                 idClass = '',
                 colorCol = this.model.getColorColumnName(),
@@ -390,4 +389,4 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             return rowBuilder.join('');
         }
     });
-})(AbstractGridView, jQuery, _, deferredModule, optionsModule, factoryModule);
+})(AbstractGridView, jQuery, _, deferredModule, optionsModule, helpersModule, window);

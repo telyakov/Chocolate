@@ -136,7 +136,8 @@ var ChocolateEvents = {
 
             }
         }
-        form.clearSelectedArea();
+        //todo: вернуть код
+        //form.clearSelectedArea();
     },
     tabHistoryLogEvent: function ($context) {
         $context.on('click', '#tabs>ul>li', this.tabHistoryLogHandler);
@@ -282,9 +283,10 @@ var ChocolateEvents = {
         $context.on('click', '.menu-button-toggle', this.toggleSystemColsHandler);
     },
     toggleSystemColsHandler: function () {
+        //todo: вернуть код
         facade.getFactoryModule().makeChGridForm($(this).closest('form'))
-            .toggleSystemCols()
-            .clearSelectedArea();
+            .toggleSystemCols();
+            //.clearSelectedArea();
     },
     reflowWindowEvent: function ($context) {
         $context.on('resize', $.debounce(300, false, this.reflowWindowHandler));

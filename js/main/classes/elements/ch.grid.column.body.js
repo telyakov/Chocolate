@@ -39,7 +39,8 @@ ChGridColumnBody.prototype = {
         var row_obj = changed_obj[this.getID()];
         row_obj[name] = val2storage;
         this.getRow().addClass('grid-row-changed');
-        this.getChForm().getSaveButton().addClass('active');
+        //todo: вернуть код
+        //this.getChForm().getSaveButton().addClass('active');
     }
 };
 ChGridColumnBody.prototype.getDataObj = function(){

@@ -1,7 +1,7 @@
 /**
  * Storage Module
  */
-var storageModule = (function () {
+var storageModule = (function (undefined) {
     'use strict';
     function ObjectStorage(duration) {
         var self,
@@ -93,6 +93,9 @@ var storageModule = (function () {
             getUserRoles: function () {
                 return _private.getUser().roles;
             },
+            getSettings: function () {
+                return _private.getLocal().settings;
+            },
             saveUser: function (id, employeeId, name) {
                 _private.getSession().user = {
                     id: id,
@@ -117,12 +120,34 @@ var storageModule = (function () {
                 }
                 _private.getUser().roles = result;
                 return true;
+            },
+            addToSession: function (key, obj) {
+                this.getSession()[key] = obj;
+
             }
         };
     _private.init();
     return {
-        getSession: function () {
-            return _private.getSession();
+        getSettings: function () {
+
+        },
+        hasSession: function (key) {
+            var storage = _private.getSession()[key];
+            if(storage !== undefined && !$.isEmptyObject(storage)){
+                return true;
+            }else{
+                return false;
+            }
+        },
+        addToSession: function (key, obj) {
+            _private.addToSession(key, obj);
+        },
+        getSession: function (id) {
+            if (id === undefined) {
+                return _private.getSession();
+            } else {
+                return _private.getSession()[id];
+            }
         },
         getLocal: function () {
             return _private.getLocal();
@@ -155,4 +180,4 @@ var storageModule = (function () {
             return _private.saveRoles(roles);
         }
     };
-})();
+})(undefined);

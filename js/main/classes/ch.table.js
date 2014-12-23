@@ -157,7 +157,9 @@ ChTable.prototype._initContextMenu = function () {
 //                        ChTableHelper.hideColsManyTables(tables, [from]);
 //                        break;
                 case 'toggle-cols':
-                    _this.ch_form.toggleAllCols().clearSelectedArea();
+                    _this.ch_form.toggleAllCols();
+                    //todo: вернуть код
+                //.clearSelectedArea();
                     break;
                 default :
 //                        alert('неизвестная команда')

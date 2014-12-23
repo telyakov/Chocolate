@@ -150,7 +150,8 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                 data.description = commandObj.description;
                 data.users = commandObj.usersTitle;
                 data.serviceid = commandObj.serviceID;
-                form.addRow(data);
+                //todo: вернуть код
+                //form.addRow(data);
             };
         },
         title: function ($cnt) {

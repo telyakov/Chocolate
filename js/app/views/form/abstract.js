@@ -1,4 +1,4 @@
-var AbstractView = (function (Backbone, $, _) {
+var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersModule, optionsModule) {
     'use strict';
     return Backbone.View.extend({
         $el: null,
@@ -17,10 +17,7 @@ var AbstractView = (function (Backbone, $, _) {
             this.listenTo(this.model, 'openMailClient', this.openMailClient);
             this.render();
         },
-        change: function(opts){
-            console.log('not implemented change method');
-        },
-        openMailClient: function(){
+        openMailClient: function () {
             console.log('not implemented openMailClient method');
         },
         contentExpandHandler: function (e) {
@@ -129,17 +126,100 @@ var AbstractView = (function (Backbone, $, _) {
                 $a.attr('href', href);
             }
         },
+        getActualDataFromStorage: function (id) {
+            if (id === undefined) {
+                return helpersModule.merge(
+                    this.getDBDataFromStorage(),
+                    this.getChangedDataFromStorage()
+                );
+            } else {
+                //todo: как будет переделано хранилище - оптимизировать код
+                return helpersModule.merge(
+                    this.getDBDataFromStorage(),
+                    this.getChangedDataFromStorage()
+                )[id];
+            }
+
+        },
+        getDBDataFromStorage: function (id) {
+            if (id === undefined) {
+                return this.getStorage().data;
+            } else {
+                return this.getStorage().data[id];
+            }
+        },
+        getChangedDataFromStorage: function () {
+            return this.getStorage().changed;
+        },
+        getDeletedDataFromStorage: function () {
+            return this.getStorage().deleted;
+        },
+        hasSettings: function () {
+            if ($.isEmptyObject(this.getSettingsObj())) {
+                return false;
+            }
+            return true;
+        },
+        getSettingsObj: function () {
+            var storage = Chocolate.storage.local.settings,
+                key = this.getView();
+            if (typeof storage[key] === 'undefined') {
+                storage[key] = {};
+            }
+            return storage[key];
+        },
+        getStorage: function () {
+            var formID = this.getFormID();
+            if (!storageModule.hasSession(formID)) {
+                storageModule.addToSession(formID, {
+                    data: {},
+                    changed: {},
+                    deleted: {}
+                });
+            }
+            return storageModule.getSession(formID);
+
+        },
         save: function (data) {
-            console.log('not implemented save method');
+            mediator.publish(optionsModule.getChannel('logError'),
+                {
+                    model: this,
+                    error: 'not implemented save method'
+                }
+            );
         },
         refresh: function () {
-            console.log('not implemented refresh method');
+            mediator.publish(optionsModule.getChannel('logError'),
+                {
+                    model: this,
+                    error: 'not implemented refresh method'
+                }
+            );
         },
         showMessage: function () {
-            console.log('not implemented showMessage method');
+            mediator.publish(optionsModule.getChannel('logError'),
+                {
+                    model: this,
+                    error: 'not implemented showMessage method'
+                }
+            );
         },
         render: function () {
-            console.log('not implemented render method');
+            mediator.publish(optionsModule.getChannel('logError'),
+                {
+                    model: this,
+                    error: 'not implemented render method'
+                }
+            );
+        },
+        change: function (opts) {
+            mediator.publish(optionsModule.getChannel('logError'),
+                {
+                    model: this,
+                    error: 'not implemented change method'
+                }
+            );
         }
     });
-})(Backbone, jQuery, _);
+})
+(Backbone, jQuery, _, storageModule, undefined, helpersModule, optionsModule);
