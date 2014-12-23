@@ -368,10 +368,6 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         isAttachmentSupport: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);
         },
-        hasChange: function () {
-            //todo: реализовать
-            return false;
-        },
         getEntityTypeID: function () {
             return this.getDataFormProperties().getAttachmentsEntityType();
         },

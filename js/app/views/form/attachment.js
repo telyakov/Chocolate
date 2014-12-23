@@ -65,11 +65,14 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 inputID: helpersModule.uniqueID(),
                 gridViewID: helpersModule.uniqueID()
             }));
-            var $form = $('#' + formID);
+            var $form = this.getJqueryForm();
             this.layoutFooter($form);
             this.layoutFooter($form);
             this.initScript($form);
             this.refreshData();
+        },
+        hasChange: function () {
+            return facade.getFilesModule().isNotEmpty(this.getFormID()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
         },
         initScript: function ($form) {
             var $dropZone = false;
@@ -88,8 +91,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                         $(this).removeClass('attachment-dragover');
                     });
             }
-            var _this = this,
-                form = this.getChForm();
+            var _this = this;
             $form
                 .on('fileuploadsubmit', function () {
                     return false;
@@ -109,20 +111,19 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                             _this.getSaveButton().addClass("active");
                         } else {
                             data.context.remove();
-                            form.getMessagesContainer().sendMessage("Слишком большой размер файла (максисмум 50мб.)", chApp.getResponseStatuses().ERROR);
+                            _this.showMessage("Слишком большой размер файла (максисмум 50мб.)");
                         }
                     },
                     'stop': function () {
                         var filesModule = facade.getFilesModule();
                         if (filesModule.hasErrors(_this.getFormID())) {
-                            form.getMessagesContainer().sendMessage('Возникли ошибки при добавлении вложений', chApp.getResponseStatuses().ERROR);
+                            _this.showMessage("Возникли ошибки при добавлении вложений");
                             filesModule.clearErrors(_this.getFormID());
                         } else {
-                            if (form.isHasChange()) {
-                                form.save();
+                            if (_this.hasChange()) {
+                               _this.model.trigger('save:form');
                             } else {
-                                //todo: вернуть код
-                                form.refresh();
+                               _this.model.trigger('refresh:form');
                             }
                         }
                     },
@@ -134,15 +135,12 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                     'dropZone': $dropZone,
                     'url': '/Attachment/upload?view=attachments.xml&ParentView=' + this.model.getParentView() + '&ParentID=' + this.model.get('parentId')
                 });
-            //todo: save in storage?
-            //form.saveInStorage({}, {}, {}, {}, {});
         },
         refresh: function () {
             this.refreshData();
         },
         refreshData: function () {
-            var $form = $('#' + this.getFormID()),
-                form = this.getChForm(),
+            var $form = this.getJqueryForm(),
                 model = this.model,
                 _this = this,
                 mainSql;
@@ -163,8 +161,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                     var table = facade.getFactoryModule().makeChTable($form.find('table'));
                     table.initAttachmentScript();
                     defer.done(function (data) {
-                        //todo: persist to storage
-                        form.updateStorage(data.data, data.order);
+                        _this.persistData(data.data, data.order);
                         var files = [];
                         data.order.forEach(function (key) {
                             files.push(data.data[key]);
@@ -172,13 +169,9 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                         var content = window
                             .tmpl('template-download', {'files': files})
                             .replace(new RegExp('fade', 'g'), 'fade in');
-                        form.getTable()
-                            .find('tbody')
+                        _this.getJqueryTbody()
                             .html($(content))
                             .trigger('update');
-                        //todo: clear changed data
-                        form._clearDeletedObj();
-                        form._clearChangedObj();
                         _this
                             .clearSelectedArea()
                             .setRowCount(Object.keys(data.data).length);

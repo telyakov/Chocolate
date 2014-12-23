@@ -15,7 +15,7 @@ var CanvasView = (function (Backbone) {
             return this._canvasID;
         },
         render: function () {
-            var formID = helpersModule.uniqueID(),
+            var formID = this.getFormID(),
                 $form = $(this.template({
                     id: formID,
                     view: this.model.getView(),
@@ -56,8 +56,7 @@ var CanvasView = (function (Backbone) {
                 });
                 deferRead.done(function (res) {
                     var data = res.data;
-                    var form = facade.getFactoryModule().makeChGridForm($('#' + _this.getFormID()));
-                    form.saveInStorage(data, {}, {}, {}, {}, {});
+                    this.persistData(data, res.order);
                     var options = new ChCanvasOptions();
                     canvas.refreshData(data, options, _this);
                 });

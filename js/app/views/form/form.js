@@ -38,7 +38,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             'click .grid-button .editable': 'openChildForm',
             'click .menu-button-refresh': function (e) {
                 var _this = this;
-                if (_this.model.hasChange()) {
+                if (this.hasChange()) {
                     var $dialog = $('<div>' + optionsModule.getMessage('refreshForm') + '</div>');
                     $dialog.dialog({
                         title: optionsModule.getMessage('projectName'),

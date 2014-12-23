@@ -105,7 +105,6 @@ var bindModule = (function (userModule, undefined) {
                             if (paramName === 'userid') {
                                 newParams.push(' @' + paramName + '=' + userModule.getID());
                             } else {
-
                                 if (data && data[paramName]) {
                                     var correctVal = data[paramName]
                                         .replace(/\'/g, '\'\'');

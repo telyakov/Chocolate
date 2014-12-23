@@ -6,7 +6,7 @@ var MapView = (function (Backbone) {
             '</form>'
         ].join('')),
         render: function () {
-            var formID = helpersModule.uniqueID(),
+            var formID =this.getFormID(),
                 $form = $(this.template({
                     id: formID,
                     view: this.model.getView()

@@ -34,7 +34,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
         },
         _refreshTimerID: null,
         lazyRefresh: function (opts) {
-            var isLazy = opts.isLazy;
+            var isLazy = opts && opts.isLazy? true: false;
             if (isLazy) {
                 if (this._refreshTimerID) {
                     clearTimeout(this._refreshTimerID);
@@ -200,6 +200,10 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             }
             return storageModule.getSession(formID);
 
+        },
+        hasChange: function () {
+            helpersModule.leaveFocus();
+            return !$.isEmptyObject(this.getChangedDataFromStorage()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
         },
         save: function (data) {
             mediator.publish(optionsModule.getChannel('logError'),

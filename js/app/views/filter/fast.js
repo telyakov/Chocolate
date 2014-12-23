@@ -93,7 +93,6 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
 
                     _this.listenTo(parentModel, 'change:value', function (value) {
                             if (value) {
-                                //this.model.set('value', value);
                                 var refreshDf = deferredModule.create(),
                                     refreshDeferId = deferredModule.save(refreshDf),
                                     defer =_this.model.readProcEval({'parentfilter.id': value});
