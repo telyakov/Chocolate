@@ -93,7 +93,7 @@ var storageModule = (function (undefined) {
             getUserRoles: function () {
                 return _private.getUser().roles;
             },
-            getSettings: function () {
+            getColumnsSettings: function () {
                 return _private.getLocal().settings;
             },
             saveUser: function (id, employeeId, name) {
@@ -124,20 +124,29 @@ var storageModule = (function (undefined) {
             addToSession: function (key, obj) {
                 this.getSession()[key] = obj;
             },
-            persistSettings: function (key, obj) {
-                this.getSettings()[key] = obj;
+            persistColumnsSettings: function (key, obj) {
+                this.getColumnsSettings()[key] = obj;
+            },
+            getSettings: function(){
+                return _private.getLocal().grid_settings;
             },
             getSettingByKey: function(key, attr){
-                return _private.getLocal().grid_settings[key][attr];
+                return _private.getSettings()[key][attr];
+            },
+            persistSetting: function(key, attr, val){
+               _private.getSettings()[key][attr] = val;
             }
         };
     _private.init();
     return {
-        persistSettings: function(key, obj){
-            _private.persistSettings(key, obj);
+        persistColumnsSettings: function(key, obj){
+            _private.persistColumnsSettings(key, obj);
+        },
+        persistSetting: function(key, attr, val){
+            _private.persistSetting(key, attr, val);
         },
         getSettings: function () {
-            return _private.getSettings();
+            return _private.getColumnsSettings();
         },
         hasSetting: function(key, attr){
             return !!_private.getSettingByKey(key, attr);

@@ -89,7 +89,8 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 $tabs = $('#tabs'),
                 cardID = this.generateCardID(pk),
                 $a = $tabs.find("li[data-tab-id='" + cardID + "']").children('a'),
-                tab;
+                tab,
+                _this = this;
             if ($a.length) {
                 tab = facade.getFactoryModule().makeChTab($a);
                 $tabs.tabs({active: tab.getIndex()});
@@ -105,14 +106,16 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 facade.getTabsModule().push($li);
                 $tabs.children('ul').append($li);
                 $tabs.tabs('refresh');
-                var cardView = new CardView({
-                    model: this.model,
-                    id: pk
-                });
+
                 $tabs.tabs({
                     beforeLoad: function (event, ui) {
                         ui.jqXHR.abort();
-                        cardView.render(view, pk, viewID, ui.panel);
+                        var cardView = new CardView({
+                            model: _this.model,
+                            id: pk,
+                            $el: ui.panel
+                        });
+                        cardView.render(view, pk, viewID);
                     }
                 });
 
@@ -122,9 +125,95 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 var href = '#' + tab.getPanelID(),
                     $context = $(href);
                 facade.getRepaintModule().reflowCard($context);
-                cardView.initScripts($context);
+                this.initCardScripts($context);
                 $a.attr('href', href);
             }
+        },
+        initCardScripts: function ($cnt) {
+            var _this = this;
+            $cnt
+                .addClass(optionsModule.getClass('card'))
+                .children('div').tabs({
+                    beforeLoad: function (e, ui) {
+                        if (!ui.tab.data('loaded')) {
+                            var key = $(ui.tab).attr('data-id'),
+                                card = _this.model.getCardROCollection().findWhere({
+                                    key: key
+                                });
+                            _this.createCardPanel(card, $(ui.panel));
+                            ui.tab.data('loaded', 1);
+                        }
+                        return false;
+                    },
+                    cache: true
+                });
+        },
+        cardButtonsTemplate: _.template([
+            '<div class="card-action-button" data-id="action-button-panel">',
+            '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
+            '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
+        ].join('')),
+        createCardPanel: function (card, $panel) {
+            var html = {},
+                callbacks = [],
+                event = 'render_' + helpersModule.uniqueID(),
+                elements = this.model.getCardElements(card),
+                length = elements.length,
+                asyncTaskCompleted = 0,
+                $div = $('<div>', {
+                    'class': 'card-content',
+                    'data-id': 'card-control',
+                    'id': helpersModule.uniqueID(),
+                    'data-rows': card.getRows()
+                });
+            $panel.html($div);
+            if (card.hasSaveButtons()) {
+                $panel.append(this.cardButtonsTemplate());
+            }
+
+            $.subscribe(event, function (e, data) {
+                var x = data.x,
+                    y = data.y,
+                    text = data.html;
+                if (!html.hasOwnProperty(y)) {
+                    html[y] = {};
+                }
+                html[y][x] = text;
+
+                if (data.callback) {
+                    callbacks.push(data.callback);
+                }
+                asyncTaskCompleted++;
+                if (asyncTaskCompleted === length) {
+                    $.unsubscribe(event);
+                    var cardHtml = '';
+                    var i,
+                        j,
+                        hasOwn = Object.hasOwnProperty;
+                    for (i in html) {
+                        if (hasOwn.call(html, i)) {
+                            for (j in html[i]) {
+                                if (hasOwn.call(html[i], j)) {
+                                    cardHtml += html[i][j];
+                                }
+                            }
+                        }
+                    }
+                    $div.html(cardHtml);
+                    callbacks.forEach(function (fn) {
+                        fn();
+                    });
+                    setTimeout(function () {
+                        mediator.publish(optionsModule.getChannel('reflowTab'));
+                    }, 0);
+                }
+            });
+            var i = 0,
+                pk = this.id;
+            elements.each(function (model) {
+                model.render(event, i, card, pk);
+                i++;
+            });
         },
         getActualDataFromStorage: function (id) {
             if (id === undefined) {
@@ -154,10 +243,18 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
         getDeletedDataFromStorage: function () {
             return this.getStorage().deleted;
         },
+        isAutoUpdate: function(){
+            var key = this.model.getView();
+            if (storageModule.hasSetting(key, 'auto_update')){
+                return storageModule.getSettingByKey(key, 'auto_update')? true : false;
+            }else{
+                return false;
+            }
+        },
         getFormStyleID: function () {
             var key = this.model.getView();
             if (storageModule.hasSetting(key, 'globalStyle')) {
-                return storageModule.getSetting(key, 'globalStyle');
+                return storageModule.getSettingByKey(key, 'globalStyle');
             } else {
                 if (this.model.getView() === optionsModule.getConstants('tasksForTopsXml')) {
                     return 2;
@@ -166,11 +263,17 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             }
         },
+        setFormStyleID: function(val){
+            storageModule.persistSetting(this.model.getView(),'globalStyle', val);
+        },
+        setAutoUpdate: function(val){
+            storageModule.persistSetting(this.model.getView(), 'auto_update', val);
+        },
         hasSettings: function () {
             return !$.isEmptyObject(this.getFormSettingsFromStorage());
         },
-        persistFormSettings: function (settings) {
-            storageModule.persistSettings(this.model.getView(), settings);
+        persistColumnsSettings: function (settings) {
+            storageModule.persistColumnsSettings(this.model.getView(), settings);
         },
         getFormSettingsFromStorage: function () {
             var settings = storageModule.getSettings(),

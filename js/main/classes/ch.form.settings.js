@@ -41,22 +41,6 @@ ChFormSettings.prototype.setGlobalStyle = function(value){
     var storage = this._getStorage();
     storage.local.grid_settings[this.ch_grid_form.getView()].globalStyle = value;
 };
-
-ChFormSettings.prototype.getGlobalStyle = function(){
-    var storage = this._getStorage();
-    var defaultValue;
-    if(this.ch_grid_form.getView() !='tasks/tasksfortops.xml'){
-        defaultValue =1;
-    }else{
-        defaultValue =2;
-    }
-    if(storage.local.grid_settings[this.ch_grid_form.getView()].globalStyle){
-        return storage.local.grid_settings[this.ch_grid_form.getView()].globalStyle;
-    }else{
-        return defaultValue;
-    }
-};
-
 /**
  * @param value {boolean}
  */

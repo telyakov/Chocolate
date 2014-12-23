@@ -10,9 +10,48 @@ var CardView = (function (Backbone, $) {
                 this.$el = options.$el;
             }
         },
-        render: function (view, pk, viewID, $panel) {
-            $panel.html(this.generateHeader(view));
-            this.generateList(view, pk, viewID, $panel);
+        events: {
+            'keydown .card-input a': 'keyActionsCardHandler',
+            'click .tab-menu-link': 'openCardTabMenuHandler'
+        },
+        keyActionsCardHandler: function (e) {
+            if (e.keyCode === optionsModule.getKeyCode('enter')) {
+                var $this = $(e.target), $modalBtn = $this.next('.grid-modal-open');
+                if ($modalBtn.length) {
+                    $modalBtn.triggerHandler('click');
+                } else {
+                    $this.triggerHandler('click');
+                }
+                return false;
+            }
+        },
+        openCardTabMenuHandler: function (e) {
+            var $this = $(e.target),
+                $tabs = $this.closest('.tab-menu').prevAll('.ui-tabs-nav').find('a'),
+                menu = [],
+                activeClass = chApp.getOptions().classes.activeTab;
+            $tabs.each(function () {
+                var item = {
+                    title: $(this).text(),
+                    cmd: $(this).attr('id')
+                };
+                if ($(this).parent().hasClass(activeClass)) {
+                    item.uiIcon = 'ui-icon-check';
+                }
+                menu.push(item);
+            });
+            $this.contextmenu({
+                show: {effect: "blind", duration: 0},
+                menu: menu,
+                select: function (event, ui) {
+                    $('#' + ui.cmd).trigger('click');
+                }
+            });
+            $this.contextmenu('open', $this);
+        },
+        render: function (view, pk, viewID) {
+            this.$el.html(this.generateHeader(view));
+            this.generateList(view, pk, viewID);
 
         },
         generateHeader: function () {
@@ -64,8 +103,7 @@ var CardView = (function (Backbone, $) {
         isVisibleCaption: function (cards) {
             return cards.length > 1;
         },
-        generateList: function (view, pk, viewID, $panel) {
-
+        generateList: function (view, pk, viewID) {
             var html = '<div data-id="grid-tabs"' +
                 'data-view="' + view + '"' +
                 'data-pk="' + pk + '"' + 'data-form-id="' + viewID + '"' +
@@ -93,101 +131,12 @@ var CardView = (function (Backbone, $) {
                 html += '<span class="tab-menu"><a class="tab-menu-link"></a></span>';
             }
             html += '</div>';
-            $panel.append(html);
+            this.$el.append(html);
 
             if ($.isNumeric(pk)) {
                 this.createSqlTasks(cards, tabIdList, pk);
             }
 
-        },
-        initScripts: function ($cnt) {
-            var _this = this;
-            $cnt
-                .addClass(optionsModule.getClass('card'))
-                .children('div').tabs({
-                    beforeLoad: function (e, ui) {
-                        return _this.beforeLoad(e, ui, $cnt, $(this));
-                    },
-                    cache: true
-                });
-        },
-        beforeLoad: function (e, ui, $tabPanel, $this) {
-            if (!ui.tab.data('loaded')) {
-                var key = $(ui.tab).attr('data-id'),
-                    card = this.model.getCardROCollection().findWhere({
-                        key: key
-                    });
-                this.createPanel(card, $(ui.panel));
-                ui.tab.data('loaded', 1);
-            }
-            return false;
-        },
-        buttonsTemplate: _.template([
-            '<div class="card-action-button" data-id="action-button-panel">',
-            '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
-            '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
-        ].join('')),
-        createPanel: function (card, $panel) {
-            var html = {},
-                callbacks = [],
-                event = 'render_' + helpersModule.uniqueID(),
-                elements = this.model.getCardElements(card),
-                length = elements.length,
-                asyncTaskCompleted = 0,
-                $div = $('<div>', {
-                    'class': 'card-content',
-                    'data-id': 'card-control',
-                    'id': helpersModule.uniqueID(),
-                    'data-rows': card.getRows()
-                });
-            $panel.html($div);
-            if (card.hasSaveButtons()) {
-                $panel.append(this.buttonsTemplate());
-            }
-
-            $.subscribe(event, function (e, data) {
-                var x = data.x,
-                    y = data.y,
-                    text = data.html;
-                if (!html.hasOwnProperty(y)) {
-                    html[y] = {};
-                }
-                html[y][x] = text;
-
-                if (data.callback) {
-                    callbacks.push(data.callback);
-                }
-                asyncTaskCompleted++;
-                if (asyncTaskCompleted === length) {
-                    $.unsubscribe(event);
-                    var cardHtml = '';
-                    var i,
-                        j,
-                        hasOwn = Object.hasOwnProperty;
-                    for (i in html) {
-                        if (hasOwn.call(html, i)) {
-                            for (j in html[i]) {
-                                if (hasOwn.call(html[i], j)) {
-                                    cardHtml += html[i][j];
-                                }
-                            }
-                        }
-                    }
-                    $div.html(cardHtml);
-                    callbacks.forEach(function (fn) {
-                        fn();
-                    });
-                    setTimeout(function () {
-                        mediator.publish(optionsModule.getChannel('reflowTab'));
-                    }, 0);
-                }
-            });
-            var i = 0,
-                pk = this.id;
-            elements.each(function (model) {
-                model.render(event, i, card, pk);
-                i++;
-            });
         }
     });
 })(Backbone, jQuery);

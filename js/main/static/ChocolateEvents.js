@@ -30,70 +30,12 @@ var ChocolateEvents = {
         this.disableFiltersEvent($content);
         this.toggleSystemColsEvent($tabs);
         this.warningMessageEvent($window);
-        this.formMenuButtonEvent($tabs);
-        this.makeCallEvent($body);
-        this.preventDefaultBrowserEvents($window);
-        this.keyActionsCardEvent($tabs);
-        this.deselectTreeElementEvent($body);
     },
     tabHistoryLogEvent: function ($context) {
         $context.on('click', '#tabs>ul>li', this.tabHistoryLogHandler);
     },
     tabHistoryLogHandler: function () {
         facade.getTabsModule().push($(this));
-    },
-    deselectTreeElementEvent: function ($context) {
-        $context.on('click', '.widget-elem-close', this.deselectTreeElementHandler);
-    },
-    deselectTreeElementHandler: function () {
-        var $panelElem = $(this).closest('.widget-panel-elm'),
-            key = $panelElem.attr('data-key'),
-            tree = $panelElem.closest('.widget-panel').prev('.widget-tree-compact').dynatree("getTree");
-        tree.selectKey(key, false);
-        $panelElem.remove();
-    },
-    keyActionsCardEvent: function ($context) {
-        $context.on('keydown', '.card-input a', this.keyActionsCardHandler);
-    },
-    /**
-     *
-     * @param e {Event}
-     * @returns {boolean|undefined}
-     */
-    keyActionsCardHandler: function (e) {
-        var keys = chApp.namespace('events.KEY');
-        if (e.keyCode === keys.ENTER) {
-            var $this = $(this), $modalBtn = $this.next('.grid-modal-open');
-            if ($modalBtn.length) {
-                $modalBtn.triggerHandler('click');
-            } else {
-                $(this).triggerHandler('click');
-            }
-            return false;
-        }
-    },
-    makeCallEvent: function ($context) {
-        $context.on('click', '.fm-phone', this.makeCallHandler);
-    },
-    makeCallHandler: function () {
-        var phoneTo = $(this).attr('data-phone');
-        facade.getPhoneModule().makeCall(phoneTo);
-    },
-    formMenuButtonEvent: function ($context) {
-        $context
-            .on('click', '.menu-button-excel', this.exportToExcelHandler)
-            .on('click', '.menu-button-settings', this.openFormSettingHandler);
-    },
-    /**
-     * #tips2
-     */
-    exportToExcelHandler: function () {
-        var form = facade.getFactoryModule().makeChGridForm($(this).closest('form'));
-        form.exportToExcel();
-    },
-    openFormSettingHandler: function () {
-        var form = facade.getFactoryModule().makeChGridForm($(this).closest('form'));
-        form.openSettings();
     },
     warningMessageEvent: function ($context) {
         $context.on('beforeunload', this.warningMessageHandler);
@@ -256,27 +198,6 @@ var ChocolateEvents = {
             return false;
         }
         return true;
-    },
-    preventDefaultBrowserEvents: function ($context) {
-        $context.on('keydown', function (e) {
-            var isNotTextEditMode = (['INPUT', 'TEXTAREA'].indexOf(e.target.tagName) === -1);
-            if (isNotTextEditMode) {
-                var keys = chApp.namespace('events.KEY');
-
-                if (e.keyCode === keys.BACKSPACE) {
-                    e.preventDefault();
-                }
-                if (e.keyCode === keys.ESCAPE && e.target.tagName === 'BODY') {
-                    var tab = facade.getTabsModule().getActiveChTab();
-                    if (tab.isCardTypePanel()) {
-                        var card = facade.getFactoryModule().makeChCard(tab.getPanel().children('[data-id=grid-tabs]'));
-                        if (!card._isChanged() && $(e.target).children('.fancybox-overlay').length === 0) {
-                            facade.getTabsModule().closeActiveTab();
-                        }
-                    }
-                }
-            }
-        });
     },
     disableFiltersEvent: function ($context) {
         $context.on('click', '.section-filters div > label', this.disableFilterHandler);

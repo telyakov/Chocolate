@@ -11,33 +11,40 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
             'click .link-form, .link-profile': 'openForm',
             'click .menu-root': 'openFormFromMenu',
             'click .filter-button': 'filterTreeHandler',
-            'click .tab-menu-link': 'openCardTabMenuHandler'
-
+            'click .widget-elem-close': 'deselectTreeElementHandler',
+            'keydown': 'preventDefaultBrowserEvents',
+            'click .fm-phone': 'makeCallHandler'
         },
-        openCardTabMenuHandler: function (e) {
-            //todo: move to card model
-            var $this = $(e.target),
-                $tabs = $this.closest('.tab-menu').prevAll('.ui-tabs-nav').find('a'),
-                menu = [],
-                activeClass = chApp.getOptions().classes.activeTab;
-            $tabs.each(function () {
-                var item = {
-                    title: $(this).text(),
-                    cmd: $(this).attr('id')
-                };
-                if ($(this).parent().hasClass(activeClass)) {
-                    item.uiIcon = 'ui-icon-check';
+        makeCallHandler: function (e) {
+            var phoneTo = $(e.target).attr('data-phone');
+            facade.getPhoneModule().makeCall(phoneTo);
+        },
+        preventDefaultBrowserEvents: function (e) {
+            var isNotTextEditMode = (['INPUT', 'TEXTAREA'].indexOf(e.target.tagName) === -1);
+            if (isNotTextEditMode) {
+                if (e.keyCode === optionsModule.getKeyCode('backspace')) {
+                    e.preventDefault();
                 }
-                menu.push(item);
-            });
-            $this.contextmenu({
-                show: {effect: "blind", duration: 0},
-                menu: menu,
-                select: function (event, ui) {
-                    $('#' + ui.cmd).trigger('click');
+                if (e.keyCode === optionsModule.getKeyCode('escape') && e.target.tagName === 'BODY') {
+                    var tab = facade.getTabsModule().getActiveChTab();
+                    if (tab.isCardTypePanel()) {
+                        var card = facade.getFactoryModule().makeChCard(tab.getPanel().children('[data-id=grid-tabs]'));
+                        if (!card._isChanged() && $(e.target).children('.fancybox-overlay').length === 0) {
+                            facade.getTabsModule().closeActiveTab();
+                        }
+                    }
                 }
-            });
-            $this.contextmenu('open', $this);
+            }
+        },
+        deselectTreeElementHandler: function (e) {
+            var $panelElem = $(e.target).closest('.widget-panel-elm'),
+                key = $panelElem.attr('data-key'),
+                tree = $panelElem
+                    .closest('.widget-panel')
+                    .prev('.widget-tree-compact')
+                    .dynatree("getTree");
+            tree.selectKey(key, false);
+            $panelElem.remove();
         },
         filterTreeHandler: function (e) {
             var $this = $(e.target).closest('button'),
@@ -194,7 +201,7 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location) {
             }
             if (host !== '10.0.5.2' && path !== optionsModule.getUrl('openFromEmail')) {
                 mediator.publish(optionsModule.getChannel('xmlRequest'), {
-                    name:tasksName,
+                    name: tasksName,
                     type: optionsModule.getRequestType('childForm')
                 });
             }

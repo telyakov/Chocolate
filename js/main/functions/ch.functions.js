@@ -268,10 +268,12 @@ var chFunctions = {
                         window.print();
                         break;
                     case 'ch.export2excel':
-                        chForm.exportToExcel();
+                        //todo: вернуть код
+                        //chForm.exportToExcel();
                         break;
                     case 'ch.settings':
-                        chForm.openSettings();
+                        //todo: вернуть код
+                        //chForm.openSettings();
                         break;
 
                 }
