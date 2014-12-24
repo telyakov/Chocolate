@@ -14,9 +14,34 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location, window,
             'click .widget-elem-close': 'deselectTreeElementHandler',
             'keydown': 'preventDefaultBrowserEvents',
             'click .fm-phone': 'makeCallHandler',
-            'beforeunload': function(){
-                return 'sadsad';
+            'click .section-filters div > label': 'disableFilter',
+            'click .filter-mock-no-edit': 'enableFilter',
+            'keydown textarea': 'addSignToText'
+        },
+        addSignToText: function (e) {
+            if (e.keyCode === optionsModule.getKeyCode('f4')) {
+                var userModule = facade.getUserModule();
+                $(e.target).insertAtCaret(userModule.getSign());
+                return false;
             }
+            return true;
+        },
+        enableFilter: function (e) {
+            var $this = $(e.target),
+                $controls = $this.parent().find('select, input');
+            $controls.prop('disabled', false);
+            $controls
+                .filter('input')
+                .eq(0)
+                .focus();
+            $this.remove();
+
+            return false;
+        },
+        disableFilter: function (e) {
+            var $this = $(e.target);
+            $this.siblings('select, input').prop('disabled', true);
+            $this.closest('.filter-item').prepend('<div class="filter-mock-no-edit"></div>');
         },
         makeCallHandler: function (e) {
             var phoneTo = $(e.target).attr('data-phone');
@@ -89,7 +114,7 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location, window,
             }
             return false;
         },
-        createGlobalEvents: function(){
+        createGlobalEvents: function () {
             $(window)
                 .on('beforeunload', this.warningMessageHandler);
         },

@@ -26,8 +26,7 @@ var ChocolateEvents = {
         this.tabHistoryLogEvent($content);
         this.reflowWindowEvent($window);
         this.openTaskWizardEvent($content);
-        this.signInTextEvents($content);
-        this.disableFiltersEvent($content);
+        //this.signInTextEvents($content);
     },
     tabHistoryLogEvent: function ($context) {
         $context.on('click', '#tabs>ul>li', this.tabHistoryLogHandler);
@@ -158,41 +157,5 @@ var ChocolateEvents = {
             ]
         });
         return false;
-    },
-    signInTextEvents: function ($context) {
-        $context.on('keydown', 'textarea', this.addSignToTextHandler);
-    },
-    /**
-     * @param e {Event}
-     * @returns {boolean}
-     */
-    addSignToTextHandler: function (e) {
-        var keys = chApp.namespace('events.KEY'),
-            userModule = facade.getUserModule();
-        if (e.keyCode === keys.F4) {
-            $(e.target).insertAtCaret(userModule.getSign());
-            return false;
-        }
-        return true;
-    },
-    disableFiltersEvent: function ($context) {
-        $context.on('click', '.section-filters div > label', this.disableFilterHandler);
-        $context.on('click', '.filter-mock-no-edit', this.enableFilterEvent);
-    },
-    enableFilterEvent: function () {
-        var $this = $(this),
-            $controls = $this.parent().find('select, input');
-        $controls.prop('disabled', false);
-        $controls.filter('input').eq(0)
-            .focus()
-            .trigger('click');
-        $this.remove();
-
-        return false;
-    },
-    disableFilterHandler: function () {
-        var $this = $(this);
-        $this.siblings('select, input').prop('disabled', true);
-        $this.closest('.filter-item').prepend('<div class="filter-mock-no-edit"></div>');
     }
 };
