@@ -6,7 +6,13 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             'click tbody > tr': 'selectRowHandler',
             'click .menu-button-expand': 'contentExpandHandler',
             'click .form-modal-button': 'modalFormElementHandler',
-            'click .menu-button-save': 'saveFormHandler'
+            'click .menu-button-save': 'saveFormHandler',
+            'click .menu-button-action': 'menuContextHandler',
+            'click .menu-button-print': 'menuContextHandler'
+        },
+        menuContextHandler: function (e) {
+            var $this = $(e.target).closest('button');
+            $this.contextmenu('open', $this);
         },
         saveFormHandler: function () {
             this.model.trigger('save:form', {
@@ -341,7 +347,8 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             this.removeRows(this.getSelectedRows());
         },
         removeRows: function ($rows) {
-            if ($rows.length) {
+            var lng = $rows.length;
+            if (lng) {
                 var data = {
                     op: 'del',
                     data: []
@@ -355,7 +362,6 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             helpersModule.leaveFocus();
         },
         change: function (opts) {
-            console.log(opts);
             this.getJqueryDataTable().trigger("update");
             this.getSaveButton().addClass('active');
             this.getJqueryDataTable().parent().find('.' + optionsModule.getClass('selectedArea')).remove();

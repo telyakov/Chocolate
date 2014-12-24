@@ -285,7 +285,6 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
                     model: appModel,
                    $el: $('body')
                 });
-            ChocolateEvents.createEventsHandlers();
         }
     };
 

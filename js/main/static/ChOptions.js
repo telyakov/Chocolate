@@ -35,7 +35,7 @@ var ChOptions = {
         signatureFormat: 'DD.MM.YYYY HH:mm',
         emailCol: 'emails',
         titleRowHeight: 26,
-        systemCols: ['lastmodifier', 'lastmodifydate', 'insdate', 'username' , 'userid'],
+        systemCols: ['lastmodifier', 'lastmodifydate', 'insdate', 'username', 'userid'],
         topsViews: ['tasksfortops.xml'],
         viewsWithoutFilters: ['tasks/tasksfortops.xml', 'attachments.xml', 'framework/attachments/attachments.xml'],
         keyCaption: 'ключ'
@@ -122,6 +122,16 @@ var ChOptions = {
 };
 
 var optionsModule = (function () {
+    var keys = {
+        ENTER: 13,
+        BACKSPACE: 8,
+        F4: 115,
+        F5: 116,
+        UP: 38,
+        DOWN: 40,
+        DEL: 46,
+        ESCAPE: 27
+    };
     var context = ChOptions,
         _private = {
             getSetting: function (key) {
@@ -139,13 +149,13 @@ var optionsModule = (function () {
             getChannel: function (key) {
                 return context.channels[key];
             },
-            getSql: function(key){
+            getSql: function (key) {
                 return context.sql[key];
             },
-            getClass: function(key){
+            getClass: function (key) {
                 return context.classes[key];
             },
-            getConstants: function(key){
+            getConstants: function (key) {
                 return context.constants[key];
             }
         };
@@ -165,17 +175,17 @@ var optionsModule = (function () {
         getSetting: function (key) {
             return _private.getSetting(key);
         },
-        getSql: function(key){
+        getSql: function (key) {
             return _private.getSql(key);
         },
-        getClass: function(key){
+        getClass: function (key) {
             return _private.getClass(key);
         },
-        getConstants: function(key){
+        getConstants: function (key) {
             return _private.getConstants(key);
         },
-        getKeyCode: function(key){
-            return chApp.namespace('events.KEY')[key.toUpperCase()];
+        getKeyCode: function (key) {
+            return keys[key.toUpperCase()];
         }
     };
 }());

@@ -454,6 +454,30 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
         },
         initTableScript: function ($table) {
             facade.getFactoryModule().makeChTable($table).initScript();
+            this.initContextFormMenuEvent();
+        },
+        initContextFormMenuEvent: function () {
+            var _this = this;
+            this.$el.contextmenu({
+                delegate: '.card-button',
+                show: {effect: 'blind', duration: 0},
+                menu: [
+                    {
+                        title: optionsModule.getMessage('Delete') + ' [DEL]',
+                        cmd: 'delete',
+                        uiIcon: 'ui-icon-trash'
+                    }
+                ],
+                select: function (e, ui) {
+                    switch (ui.cmd) {
+                        case 'delete':
+                            _this.removeSelectedRows();
+                            break;
+                        default :
+                            break;
+                    }
+                }
+            });
         },
         refreshData: function () {
             var _this = this,

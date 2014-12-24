@@ -62,14 +62,13 @@ ChTextAreaEditableCard.prototype.create = function (context, e, allow_edit, name
                         $tbody
                             .on('keydown', helpersModule.addSignToIframe)
                             .on('keydown', function(e){
-                                var keys = chApp.namespace('events.KEY');
-                                if(e.keyCode == keys.ESCAPE){
+                                if(e.keyCode === optionsModule.getKeyCode('escape')){
                                    $text_modal.editable('hide');
                                 }
-                            })
+                            });
                     });
                 }
-                e.preventDefault()
+                e.preventDefault();
 
             } else {
                 if (typeof($text_modal.attr('data-init')) == 'undefined') {

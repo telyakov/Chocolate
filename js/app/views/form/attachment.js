@@ -135,6 +135,30 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                     'dropZone': $dropZone,
                     'url': '/Attachment/upload?view=attachments.xml&ParentView=' + this.model.getParentView() + '&ParentID=' + this.model.get('parentId')
                 });
+            this.initContextFormMenuEvent();
+        },
+        initContextFormMenuEvent: function () {
+            var _this = this;
+            this.$el.contextmenu({
+                delegate: '.attachment-grid-menu',
+                show: {effect: 'blind', duration: 0},
+                menu: [
+                    {
+                        title: optionsModule.getMessage('Delete') + ' [DEL]',
+                        cmd: 'delete',
+                        uiIcon: 'ui-icon-trash'
+                    }
+                ],
+                select: function (e, ui) {
+                    switch (ui.cmd) {
+                        case 'delete':
+                            _this.removeSelectedRows();
+                            break;
+                        default :
+                            break;
+                    }
+                }
+            });
         },
         refresh: function () {
             this.refreshData();

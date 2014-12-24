@@ -3,7 +3,7 @@
  */
 var chApp = chApp || {
     main: Chocolate,
-    events: ChocolateEvents,
+    //events: ChocolateEvents,
     options: ChOptions,
     responseStatuses: ChResponseStatus,
     attachments: ch.attachments

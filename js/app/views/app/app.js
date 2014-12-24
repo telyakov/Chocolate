@@ -19,7 +19,14 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location, window,
             'keydown textarea': 'addSignToText',
             'click #tabs>ul>li': 'tabHistoryLog',
             'mouseup .ui-tabs-anchor[href=1]': 'reflowTab',
-            'click .ui-tabs-anchor[href^=#]': 'reflowTab'
+            'click .ui-tabs-anchor[href^=#]': 'reflowTab',
+            'click .tab-closed': 'closeTabHandler',
+            'touchmove #tabs>ul>li>a': 'closeTabHandler'
+        },
+        closeTabHandler: function (e) {
+            facade.getTabsModule().close($(e.target));
+            e.preventDefault();
+            return false;
         },
         reflowTab: function () {
             mediator.publish(facade.getOptionsModule().getChannel('reflowTab'));
