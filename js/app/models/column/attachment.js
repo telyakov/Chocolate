@@ -1,4 +1,4 @@
-var AttachmentColumnRO = (function (Backbone) {
+var AttachmentColumnRO = (function () {
     'use strict';
     return ColumnRO.extend({
         defaults: {
@@ -11,7 +11,7 @@ var AttachmentColumnRO = (function (Backbone) {
         getJsFn: function () {
             var _this = this;
             return function ($cnt) {
-                $cnt.find('[rel$="' + _this.getKey() + '"]').editable({
+                $cnt.find('.' + _this.getUniqueClass()).editable({
                     type: 'text',
                     mode: 'inline',
                     name: _this.getKey(),
@@ -77,4 +77,4 @@ var AttachmentColumnRO = (function (Backbone) {
         }
 
     });
-})(Backbone);
+})();

@@ -102,17 +102,20 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         getToId: function () {
             return this.get('columnProperties').getToId();
         },
+        getUniqueClass: function () {
+            return 'column-' + this.get('key');
+        },
         getTemplate: function (isVisible) {
             var template = [
-                '<td style class="{class}{class2}"><div class="table-td"><a data-value="{value}"',
-                ' data-pk ="{pk}" rel="{rel}" class="editable"></a></div></td>'
-            ].join('');
+                    '<td style class="' + this.getClass() + ' {class}"><div class="table-td"><a data-value="{value}"',
+                    ' data-pk ="{pk}"  class="editable ' + this.getUniqueClass() + '"></a></div></td>'
+                ].join('');
             if (isVisible) {
                 template = template.replace('style', '');
             } else {
                 template = template.replace('style', 'style="display:none;"');
             }
-            return template.replace(/\{class\}/g, this.getClass());
+            return template;
         },
         getClass: function () {
             var class_name = '';

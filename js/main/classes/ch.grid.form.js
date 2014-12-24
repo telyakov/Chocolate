@@ -42,7 +42,6 @@ ChGridForm.prototype.destroy = function () {
     delete this._$grid_form;
     delete this._$user_grid;
 };
-ChGridForm.TEMPLATE_TD = '<td style class="{class}{class2}"><div class="table-td"><a data-value="{value}" data-pk ="{pk}" rel="{rel}" class="editable"></a></div></td>';
 ChGridForm.prototype.getExitMessage = function () {
     return 'В форме "' + this.getTabCaption() + '" имеются несохраненные изменения. Закрыть без сохранения?';
 };
@@ -201,18 +200,6 @@ ChGridForm.prototype.getSettingsObj = function () {
         storage[key] = {};
     }
     return storage[key];
-};
-ChGridForm.prototype.isCardSupport = function () {
-    if (this._is_card_support == null) {
-        this._is_card_support = this.$form.attr('data-card-support') == '1';
-    }
-    return this._is_card_support;
-};
-ChGridForm.prototype.isAutoOpenCard = function () {
-    return this.getGridPropertiesObj()['autoOpenCard'];
-};
-ChGridForm.prototype.generateCardID = function (id) {
-    return [ 'card_', this.getView(), id ].join('');
 };
 ChGridForm.prototype.getEntityTypeID = function () {
     if(typeof this.getGridPropertiesObj() === 'undefined'){

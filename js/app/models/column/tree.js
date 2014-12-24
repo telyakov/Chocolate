@@ -12,7 +12,7 @@ var TreeColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
                 var defer = _this.evalReadProc();
                 defer.done(function (res) {
                     var data = helpersModule.prepareTreeSource(res.data);
-                    var $elements = $cnt.find('[rel$="_' + _this.get('key') + '"]');
+                    var $elements = $cnt.find('.' + _this.getUniqueClass());
 
                     $elements
                         .on('init', function () {

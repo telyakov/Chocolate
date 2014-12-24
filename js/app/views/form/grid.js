@@ -607,16 +607,14 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     rowClass,
                     '>',
                     '<td class="grid-menu"><span class="card-button" data-id="card-button" title="Открыть карточку"></span>'
-                ];
-
-            var key,
-                gridViewID = this.getJqueryGridView().attr('id'),
+                ],
+                key,
                 thList = this.getTh();
             columns.forEach(function (item) {
                 key = item.get('key');
-                var isVisible = thList.filter('[data-id="' + key + '"]').css('display') !== "none";
-                var value = '', class2 = '',
-                    rel = [gridViewID, key].join('_');
+                var isVisible = thList.filter('[data-id="' + key + '"]').css('display') !== "none",
+                     value = '',
+                    tdClass = '';
                 if (data[key] !== undefined && (key !== 'id' || isNumericID )) {
                     value = data[key];
                     if (value) {
@@ -624,13 +622,12 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     }
                 }
                 if (key === 'id') {
-                    class2 = idClass;
+                    tdClass = idClass;
                 }
                 rowBuilder.push(
                     item.getTemplate(isVisible).replace(/\{pk\}/g, id)
-                        .replace(/\{rel\}/g, rel)
                         .replace(/\{value\}/g, value)
-                        .replace(/\{class2\}/g, class2)
+                        .replace(/\{class\}/g, tdClass)
                 );
             });
             rowBuilder.push('</tr>');

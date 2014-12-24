@@ -55,7 +55,7 @@ ChGridColumnHeader.prototype = {
 
     },
     getTemplate: function () {
-        var template = ChGridForm.TEMPLATE_TD;
+        var template = '<td style class="{class}{class2}"><div class="table-td"><a data-value="{value}" data-pk ="{pk}" rel="{rel}" class="editable"></a></div></td>';
         if(this.$cell.css('display')!="none"){
             template =template.replace('style', '');
         }else{

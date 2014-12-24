@@ -9,7 +9,7 @@ var SelectColumnRO = (function (Backbone, helpersModule, FilterProperties, bindM
                 var defer =_this.evalReadProc();
                 defer.done(function (res) {
                     var data = helpersModule.prepareSelectSource(res.data);
-                    var $elements = $cnt.find('[rel$="_' + _this.get('key') + '"]');
+                    var $elements = $cnt.find('.' + _this.getUniqueClass());
                     $elements
                         .on('init', function () {
                             chFunctions.selectColumnInitFunc($(this), allowEdit);

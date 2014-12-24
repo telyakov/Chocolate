@@ -5,7 +5,7 @@ var TextColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
             var _this = this,
                 customProperties = _this.getColumnCustomProperties();
             return function ($cnt) {
-                var $elements = $cnt.find('[rel$="_' + _this.get('key') + '"]');
+                var $elements = $cnt.find('.' + _this.getUniqueClass());
                 var options = {
                     mode: 'inline',
                     name: _this.get('key'),

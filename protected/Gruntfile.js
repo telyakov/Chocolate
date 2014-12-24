@@ -49,12 +49,11 @@ module.exports = function (grunt) {
             },
             main: {
                 src: [
-                    '../js/main/static/ChOptions.js',
-                    '../js/main/modules/mediator.js', //first loading module
+                    '../js/app/modules/options.js',
+                    '../js/main/modules/mediator.js',
                     '../js/main/modules/table.js',
                     '../js/main/modules/form.js',
                     '../js/app/modules/deferred.js',
-
                     '../js/main/static/ChResponseStatus.js',
                     '../js/main/classes/ch.dynatree.js',
                     '../js/main/classes/ch.map.js',

@@ -10,7 +10,7 @@ var CheckBoxColumnRO = (function (Backbone, helpersModule, FilterProperties, bin
             var _this = this,
                 customProperties = _this.getColumnCustomProperties();
             return function ($cnt) {
-                $cnt.find('[rel$="_' + _this.get('key') + '"]')
+                $cnt.find('.' + _this.getUniqueClass())
                     .on('init', function () {
                         chFunctions.checkBoxInitFunc($(this), _this.get('key'), _this.getRawAllowEdit());
                     })

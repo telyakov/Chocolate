@@ -19,7 +19,7 @@ var FormColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
             var _this = this,
                 allowEdit = this.getRawAllowEdit();
             return function ($cnt) {
-                $cnt.find('[rel$="_' + _this.get('key') + '"]')
+                $cnt.find('.' + _this.getUniqueClass())
                     .editable({
                         mode: 'inline',
                         name: _this.get('key'),

@@ -12,7 +12,7 @@ var DateColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
                 allowEdit = this.getRawAllowEdit();
 
             return function ($cnt) {
-                $cnt.find('[rel$="_' + _this.get('key') + '"]')
+                $cnt.find('.' + _this.getUniqueClass())
                     .on('init', function () {
                         chFunctions.dateColumnInitFunction($(this), allowEdit);
                     })
