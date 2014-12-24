@@ -82,9 +82,8 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             }
         },
         openChildForm: function (e) {
-            var main = chApp.namespace('main'),
-                $editable = $(e.target);
-            var options = $editable.data().editable.options,
+            var $editable = $(e.target),
+                options = $editable.data().editable.options,
                 view = options.view,
                 column = facade.getFactoryModule().makeChGridColumnBody($editable),
                 form = column.getChForm(),
@@ -92,7 +91,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 isNew = !$.isNumeric(parentID),
                 parentView = form.getView(),
                 tabID = ChGridColumn.createChildGridTabID(parentID, view, parentView),
-                $tabs = main.$tabs,
+                $tabs = $('#tabs'),
                 $currentTab = $tabs.find("[aria-controls='" + tabID + "']"),
                 toID = options.toID,
                 toName = options.toName,

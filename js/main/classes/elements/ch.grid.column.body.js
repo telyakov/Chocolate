@@ -47,6 +47,5 @@ ChGridColumnBody.prototype.getDataObj = function(){
     return this.getChForm().getDataObj()[this.getID()];
 };
 ChGridColumnBody.prototype.markAsNoChanged = function(){
-    var classes = chApp.namespace('options.classes');
-    this.$cell.closest('td').addClass(classes.notChanged);
+    this.$cell.closest('td').addClass(optionsModule.getClass('notChanged'));
 };

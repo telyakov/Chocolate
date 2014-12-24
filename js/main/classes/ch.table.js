@@ -100,9 +100,10 @@ ChTable.prototype._initResize = function () {
     });
 };
 
-ChTable.prototype._initFloatThead = function () {
+ChTable.prototype._initFloatThead = function (view) {
     var _this = this;
     _this.$table.floatThead({
+        view: view,
         scrollContainer: function ($table) {
             return _this.ch_form._getUserGrid();
         }
@@ -172,11 +173,11 @@ ChTable.prototype._initContextMenu = function () {
 ChTable.prototype._initDragtable = function () {
     this.ch_form.getFixedTable().dragtable();
 };
-ChTable.prototype.initScript = function () {
+ChTable.prototype.initScript = function (view) {
     this._initSettings();
     this._initTableSorter();
     this._initResize();
-    this._initFloatThead();
+    this._initFloatThead(view);
     this._initContextMenu();
     this._initDragtable();
     var _this = this;
@@ -193,11 +194,11 @@ ChTable.prototype.initScript = function () {
     //    _this.ch_form.toggleColls(false, $th2);
     //}
 };
-ChTable.prototype.initAttachmentScript = function () {
+ChTable.prototype.initAttachmentScript = function (view) {
     this._initSettings();
     this._initTableSorter();
     this._initResize();
-    this._initFloatThead();
+    this._initFloatThead(view);
 //    this._initContextMenu();
 //    this._initDragtable();
 };

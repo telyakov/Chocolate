@@ -248,20 +248,6 @@ class GridForm extends CFormModel
         }
     }
 
-    public function insertRow()
-    {
-        $response = new Response();
-        try {
-            $row = $this->dataFormModel->rowInserted();
-            $response->setStatus('Строка успешно добавлена.', Response::SUCCESS);
-            $response->setData($row->data);
-        } catch (Exception $e) {
-            $response->setStatus('Не удалось добавить новую строку.', Response::ERROR);
-        } finally {
-            return $response;
-        }
-    }
-
     public function getCard($key)
     {
         //TODO: Важен регистр ключа - позднее исправить
@@ -286,29 +272,6 @@ class GridForm extends CFormModel
     public static function isAttachment($view)
     {
         return stripos($view, Attachments::VIEW) !== false;
-    }
-
-    public function getSearchResponse()
-    {
-        $response = new SearchResponse();
-        try {
-            $recordset = $this->loadData();
-            if (!GridForm::isAttachment($this->getView())) {
-                $response->setData($recordset->rawUrlEncode());
-//                $response->setPreviewData($this->getPreviewData($recordset));
-                $response->setOrder($recordset->getOrder());
-            } else {
-                $response->setData(FileModel::recordset2arr($recordset));
-                //TODO: для вложений тоже добавить превью
-//                $response->setPreviewData([]);
-                $response->setOrder($recordset->getOrder());
-            }
-            $response->setStatus('Операция успешно завершена', Response::SUCCESS);
-        } catch (Exception $e) {
-            $response->setStatus('Возникла ошибка при обновленние данных сетки.' . Response::ERROR);
-        } finally {
-            return $response;
-        }
     }
 
     public function loadData()
@@ -364,49 +327,6 @@ class GridForm extends CFormModel
 
     public  static function isChat($view){
         return stripos($view, 'discussions.xml') !== false;
-    }
-    public function getGridResponse($parentViewID, $isSelect)
-    {
-        $response = new GridResponse();
-        try {
-            if (GridForm::isAttachment($this->getView())) {
-                $response->setData(Yii::app()->controller->renderPartial('//attachments/index',
-                        [
-                            'model' => $this,
-                            'parentViewID' => $parentViewID
-                        ], true, true)
-                );
-            } elseif(GridForm::isChat($this->getView())){
-                $response->setData(Yii::app()->controller->renderPartial('//discussions/index',
-                        [
-                            'model' => $this,
-                            'parentViewID' => $parentViewID,
-                            'sql' => \Chocolate\HTML\Card\Settings\Chat::getSql($this)
-                        ], true, true)
-                );
-            }
-            else {
-                if ($isSelect) {
-                    $response->setData(Yii::app()->controller->renderPartial('//grid/selected_grid',
-                            [
-                                'model' => $this,
-                                'parentViewID' => $parentViewID,
-                            ], true, true)
-                    );
-                } else {
-                    $response->setData(Yii::app()->controller->renderPartial('//grid/grid',
-                            [
-                                'model' => $this,
-                                'parentViewID' => $parentViewID,
-                            ], true, true)
-                    );
-                }
-            }
-        } catch (Exception $e) {
-            $response->setStatus('Возникла ошибка при построении сетки.');
-        } finally {
-            return $response;
-        }
     }
 
     public function getCardElementsSettings($cardKey)

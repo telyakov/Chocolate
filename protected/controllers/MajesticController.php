@@ -17,12 +17,8 @@ class MajesticController extends Controller
         ];
     }
 
-    public function actionExecute($cache = false, $sql){
-        $response = MajesticModel::execute($cache,$sql);
-        $response->send();
-    }
-
-    public function actionFilterLayout($name, $view, $parentID){
+    public function actionFilterLayout($name, $view, $parentID)
+    {
         $model = Controller::loadForm($view);
         $collection = $model->getFilterSettingsCollection();
         $setting = $collection->getByKey($name);
@@ -30,17 +26,20 @@ class MajesticController extends Controller
             'form' => new ChFilterForm(),
             'model' => $model,
             'settings' => $setting,
-            'parentID' =>  $parentID
+            'parentID' => $parentID
         ]);
 
     }
-    public function actionImages($sql){
+
+    public function actionImages($sql)
+    {
 
         $resp = MajesticModel::images($sql);
         $resp->send();
     }
 
-    public function actionExport2Excel(){
+    public function actionExport2Excel()
+    {
 
         $data = json_decode(Yii::app()->request->getParam('data'), true);
         ExcelModel::export(

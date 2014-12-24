@@ -183,7 +183,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                         id: deferID
                     });
                     var table = facade.getFactoryModule().makeChTable($form.find('table'));
-                    table.initAttachmentScript();
+                    table.initAttachmentScript(_this);
                     defer.done(function (data) {
                         _this.persistData(data.data, data.order);
                         var files = [];

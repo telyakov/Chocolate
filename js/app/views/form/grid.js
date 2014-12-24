@@ -423,7 +423,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     setting[iterator] = {
                         key: column.get('key'),
                         weight: iterator,
-                        width: ChOptions.settings.defaultColumnsWidth
+                        width: optionsModule.getSetting('defaultColumnsWidth')
                     };
                     iterator++;
                 }
@@ -453,7 +453,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
 
         },
         initTableScript: function ($table) {
-            facade.getFactoryModule().makeChTable($table).initScript();
+            facade.getFactoryModule().makeChTable($table).initScript(this);
             this.initContextFormMenuEvent();
         },
         initContextFormMenuEvent: function () {

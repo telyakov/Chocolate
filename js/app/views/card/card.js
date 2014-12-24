@@ -84,7 +84,7 @@ var CardView = (function (Backbone, $) {
             var $this = $(e.target),
                 $tabs = $this.closest('.tab-menu').prevAll('.ui-tabs-nav').find('a'),
                 menu = [],
-                activeClass = chApp.getOptions().classes.activeTab;
+                activeClass = optionsModule.getClass('activeTab');
             $tabs.each(function () {
                 var item = {
                     title: $(this).text(),
@@ -124,7 +124,7 @@ var CardView = (function (Backbone, $) {
                 html.push(this.model.getCardHeaderText());
                 html.push('</div></div>');
             }
-            if (chApp.getOptions().settings.topsViews.indexOf(view) !== -1) {
+            if (optionsModule.getSetting('topsViews').indexOf(view) !== -1) {
                 html.push('<menu class="menu"><button class="active menu-button card-menu-save"><span class="fa-save"></span><span>Сохранить</span></button></menu>');
             }
             html.push('</header>');

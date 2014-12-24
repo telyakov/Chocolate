@@ -30,7 +30,6 @@ ChCardElement.prototype.getGridForm = function () {
     return this._ch_grid_form;
 };
 ChCardElement.prototype.markAsNoChanged = function(){
-    var classes = chApp.namespace('options.classes');
     this.$elem.closest('.card-input').addClass('card-input-no-edit');
 };
 

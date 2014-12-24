@@ -136,14 +136,6 @@ ChGridForm.prototype.setSettingsObj = function (setting_obj) {
     var storage = this.getSettingsObj();
     Chocolate.storage.local.settings[this.getView()] = setting_obj
 };
-ChGridForm.prototype.getColumnWidth = function (index) {
-    var settingObj = this.getSettingsObj();
-    if ($.isEmptyObject(settingObj)) {
-        this.setColumnWidth(index, ChOptions.settings.defaultColumnsWidth)
-        return ChOptions.settings.defaultColumnsWidth;
-    }
-    return settingObj[index].width;
-};
 ChGridForm.prototype.setColumnWidth = function (index, width) {
     var settingObj = this.getSettingsObj();
     if (!$.isEmptyObject(settingObj)) {
@@ -244,9 +236,9 @@ ChGridForm.prototype.getGridForm = function () {
  * @returns {String}
  */
 ChGridForm.prototype.getSaveUrl = function () {
-    if (this._save_url == null) {
+    if (this._save_url === null) {
         this._save_url = [
-            chApp.getOptions().urls.formSave,
+            optionsModule.getUrl('formSave'),
             '?view=',
             this.getView(),
             '&parentView=',
@@ -522,86 +514,86 @@ ChGridForm.prototype._clearChangedObj = function () {
     //todo: вернуть код
     //this.getSaveButton().removeClass('active')
 };
-ChGridForm.prototype.refresh = function (parentView) {
-    console.log("refresh")
-    var url = this.getRefreshUrl(),
-        parentView = parentView? parentView :this.getParentView(),
-        searchData = this.getSearchData(),
-        chMessagesContainer = this.getMessagesContainer(),
-        _this = this;
-    console.log(parentView, searchData)
-    $.ajax({
-        url: url + '&ParentView=' + parentView,
-        type: "POST",
-        data: searchData,
-        success: function (response, st, xhr) {
-            var chResponse = new ChSearchResponse(response);
-            var type = _this.getType();
-            if (chResponse.isSuccess()) {
-                if (type == 'map') {
-                    var $map = _this.$form.children('section').children('.map');
-                    var ch_map = facade.getFactoryModule().makeChMap($map);
-                    ch_map.refreshPoints(chResponse.getData(), chMessagesContainer);
-
-                } else if (type == 'canvas') {
-                    var $canvas = _this.$form.find('canvas');
-                    var ch_canvas = facade.getFactoryModule().makeChCanvas($canvas);
-                    var data = chResponse.getData();
-                    _this.updateStorage(data, {});
-                    var options = new ChCanvasOptions();
-                    ch_canvas.refreshData(data, options);
-                }
-                else {
-                    //_this.updateData(chResponse.getData(), chResponse.getOrder());
-                    _this._clearDeletedObj();
-                    _this._clearChangedObj();
-                    //todo: вернуть код
-                    //_this.clearSelectedArea();
-
-                }
-                var filterForm = _this.getFilterForm();
-                if (filterForm && typeof filterForm != 'undefined' && filterForm.$form.length) {
-
-                    var filters = filterForm.getAutoRefreshFiltersCol();
-                    if (filters.length) {
-                        //todo: сделать один общий ajax
-                        filters.forEach(
-                            /**
-                             * @param chFilter {ChFilter}
-                             */
-                                function (chFilter) {
-                                $.get('/majestic/filterLayout', {'name': chFilter.getKey(), view: _this.getView(), 'parentID': _this.getParentPK()}).done(function (response, st, xhr) {
-                                    var $filter = $('<li>' + response + '</li>');
-                                    var selValues = chFilter.getNamesSelectedValues();
-                                    chFilter.$elem.html($filter.html());
-                                    selValues.forEach(function (value) {
-                                        chFilter.$elem.find('[value="' + value + '"]').prop("checked", true);
-                                    })
-                                    delete xhr.responseText;
-                                    delete xhr;
-                                    delete response;
-
-                                }).fail(function () {
-                                    console.log('error')
-                                })
-                            })
-                    }
-
-                }
-            }
-            chResponse.destroy();
-            delete chResponse;
-            delete response;
-            delete xhr.responseText;
-            delete xhr;
-            facade.getFactoryModule().garbageCollection();
-
-        },
-        error: function (xhr, st, er) {
-            chMessagesContainer.sendMessage(er, ChResponseStatus.ERROR)
-        }
-    })
-};
+//ChGridForm.prototype.refresh = function (parentView) {
+//    console.log("refresh")
+//    var url = this.getRefreshUrl(),
+//        parentView = parentView? parentView :this.getParentView(),
+//        searchData = this.getSearchData(),
+//        chMessagesContainer = this.getMessagesContainer(),
+//        _this = this;
+//    console.log(parentView, searchData)
+//    $.ajax({
+//        url: url + '&ParentView=' + parentView,
+//        type: "POST",
+//        data: searchData,
+//        success: function (response, st, xhr) {
+//            var chResponse = new ChSearchResponse(response);
+//            var type = _this.getType();
+//            if (chResponse.isSuccess()) {
+//                if (type == 'map') {
+//                    var $map = _this.$form.children('section').children('.map');
+//                    var ch_map = facade.getFactoryModule().makeChMap($map);
+//                    ch_map.refreshPoints(chResponse.getData(), chMessagesContainer);
+//
+//                } else if (type == 'canvas') {
+//                    var $canvas = _this.$form.find('canvas');
+//                    var ch_canvas = facade.getFactoryModule().makeChCanvas($canvas);
+//                    var data = chResponse.getData();
+//                    _this.updateStorage(data, {});
+//                    var options = new ChCanvasOptions();
+//                    ch_canvas.refreshData(data, options);
+//                }
+//                else {
+//                    //_this.updateData(chResponse.getData(), chResponse.getOrder());
+//                    _this._clearDeletedObj();
+//                    _this._clearChangedObj();
+//                    //todo: вернуть код
+//                    //_this.clearSelectedArea();
+//
+//                }
+//                var filterForm = _this.getFilterForm();
+//                if (filterForm && typeof filterForm != 'undefined' && filterForm.$form.length) {
+//
+//                    var filters = filterForm.getAutoRefreshFiltersCol();
+//                    if (filters.length) {
+//                        //todo: сделать один общий ajax
+//                        filters.forEach(
+//                            /**
+//                             * @param chFilter {ChFilter}
+//                             */
+//                                function (chFilter) {
+//                                $.get('/majestic/filterLayout', {'name': chFilter.getKey(), view: _this.getView(), 'parentID': _this.getParentPK()}).done(function (response, st, xhr) {
+//                                    var $filter = $('<li>' + response + '</li>');
+//                                    var selValues = chFilter.getNamesSelectedValues();
+//                                    chFilter.$elem.html($filter.html());
+//                                    selValues.forEach(function (value) {
+//                                        chFilter.$elem.find('[value="' + value + '"]').prop("checked", true);
+//                                    })
+//                                    delete xhr.responseText;
+//                                    delete xhr;
+//                                    delete response;
+//
+//                                }).fail(function () {
+//                                    console.log('error')
+//                                })
+//                            })
+//                    }
+//
+//                }
+//            }
+//            chResponse.destroy();
+//            delete chResponse;
+//            delete response;
+//            delete xhr.responseText;
+//            delete xhr;
+//            facade.getFactoryModule().garbageCollection();
+//
+//        },
+//        error: function (xhr, st, er) {
+//            chMessagesContainer.sendMessage(er, ChResponseStatus.ERROR)
+//        }
+//    })
+//};
 /**
  * @returns {jQuery}
  */
@@ -637,12 +629,6 @@ ChGridForm.prototype.getFixedTable = function () {
         this._$fixed_table = this.$form.find('section[data-id=grid]').find('table.floatThead-table');
     }
     return this._$fixed_table;
-};
-ChGridForm.prototype.getRefreshUrl = function () {
-    if (this._refresh_url == null) {
-        this._refresh_url = chApp.getOptions().urls.formSearch + '?view=' + this.getView();
-    }
-    return this._refresh_url
 };
 ChGridForm.prototype.getParentFormID = function () {
     if (this._parent_form_id == null) {
@@ -724,7 +710,7 @@ ChGridForm.prototype.toggleAllCols = function () {
     var
         isHidden = this.chFormSettings.isShortVisibleMode(),
 //        hiddenClass = ChOptions.classes.hiddenAllColsTable,
-        $th = this.getFixedTable().find('[' + ChOptions.classes.allowHideColumn + ']');
+        $th = this.getFixedTable().find('[' + optionsModule.getClass('allowHideColumn') + ']');
     //todo: вернуть код
     //this.toggleColls(isHidden, $th);
     //this.chFormSettings.setShortVisibleMode(!isHidden);

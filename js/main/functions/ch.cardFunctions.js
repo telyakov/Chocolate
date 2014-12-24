@@ -199,7 +199,7 @@ var chCardFunction = {
     },
     dateSaveFunc: function (e, params, name) {
         var $target = $(e.target);
-        var dtValue = moment(params.newValue).format(ChOptions.settings.formatDate);
+        var dtValue = moment(params.newValue).format(optionsModule.getSetting('formatDate'));
         facade.getFactoryModule().makeChCardElement($target)
             .setChangedValue(name, dtValue)
             .setChangedValueInGrid(name, params.newValue);
@@ -235,9 +235,9 @@ var chCardFunction = {
                if(chForm){
                    chForm.addPriorityColorAndApply($context.attr('data-pk'),priority, color)
                }
-            if(label == ChOptions.labels.attention){
+            if(label === optionsModule.getSetting('attention')){
                 $context.html('<span class="fa-exclamation"></span>');
-            }else if(label == ChOptions.labels.notView){
+            }else if(label === optionsModule.getSetting('notView')){
                 $context.html('<span class="fa-question"></span>');
             }
             else{
@@ -434,8 +434,7 @@ var chCardFunction = {
         }, 0);
     },
     multimediaInitFunction: function (sql, id) {
-        console.log(sql)
-        $.get(chApp.getOptions().urls.imagesUrls, {sql: sql})
+        $.get(optionsModule.getUrl('imagesUrls'), {sql: sql})
             .done(function (response) {
                 var res = new ChResponse(response),
                  data = res.getData();

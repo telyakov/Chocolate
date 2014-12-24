@@ -31,33 +31,4 @@ class MajesticModel
             return $response;
         }
     }
-
-    public static function execute($cache, $sql)
-    {
-        $response = new Response();
-        try {
-            $routine = new DataBaseRoutine($sql);
-            if (!$routine->isSuccessBinding()) {
-
-                $routine = Yii::app()->bind->bindProcedureFromData($routine, new \FrameWork\DataBase\DataBaseParameters());
-            }
-            if ($cache) {
-                if (!$recordset = Yii::app()->cache->getRoutineData($routine)) {
-                    $recordset = Yii::app()->erp->exec($routine);
-                    Yii::app()->cache->setRoutineData($routine, $recordset);
-                }
-                $response->setData($recordset->rawUrlEncode());
-
-            } else {
-                $response->setData(Yii::app()->erp->exec($routine)->rawUrlEncode());
-            }
-
-            $response->setStatus('Успешно выполнено.', Response::SUCCESS);
-            return $response;
-        } catch (Exception $e) {
-            $response->setStatus($e->getMessage(), Response::ERROR);
-            return $response;
-        }
-    }
-
 }

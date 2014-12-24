@@ -32,7 +32,7 @@ ChTab.prototype.getCardContent = function () {
  */
 ChTab.prototype.isCardTypePanel = function () {
     if (this._is_card_type_panel == null) {
-        this._is_card_type_panel = this.getPanel().hasClass(ChOptions.classes.card);
+        this._is_card_type_panel = this.getPanel().hasClass(optionsModule.getClass('card'));
     }
     return this._is_card_type_panel;
 };

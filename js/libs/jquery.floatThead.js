@@ -22,6 +22,7 @@
                 return $table.find('tbody tr:visible:first>td');
             },
             floatTableClass: 'floatThead-table',
+            view: null,
             debug: false //print possible issues (that don't prevent script loading) to console, if console exists.
         }
     };
@@ -218,19 +219,17 @@
                 layoutAuto = {'table-layout': $table.css('tableLayout') || 'auto'};
 
             function setHeaderHeight() {
-                var settingsModule = chApp.getOptions().settings,
-                    view = $header.closest('form').attr('data-id'),
+                var view = $header.closest('form').attr('data-id'),
                     headerHgh;
-                if (settingsModule.viewsWithoutFilters.indexOf(view) !== -1){
-                    headerHgh = settingsModule.titleRowHeight;
+                if (optionsModule.getSetting('viewsWithoutFilters').indexOf(view) !== -1){
+                    headerHgh = optionsModule.getSetting('titleRowHeight');
                 }
                 else{
-                    headerHgh = settingsModule.titleRowHeight * 2;
+                    headerHgh = optionsModule.getSetting('titleRowHeight') * 2;
                 }
                 $sizerRow.outerHeight(headerHgh);
                 $sizerCells.outerHeight(headerHgh);
             }
-
 
             function setFloatWidth() {
                 var tableWidth = $table.outerWidth(),
@@ -334,7 +333,6 @@
              */
             function reflow() {
                 var sum = 0,
-                    form = facade.getFactoryModule().makeChGridForm($table.closest('form')),
                     i,
                     numCols = columnNum();//if the tables columns change dynamically since last time (datatables) we need to rebuild the sizer rows and get new count
 
@@ -350,7 +348,7 @@
                                 if (!rowWidth) {
                                     rowWidth = rowCell.offsetWidth;
                                 }
-                                var widthCol = form.getColumnWidth(i);
+                                var widthCol = opts.view.getColumnWidth(i);
                                 sum = Number(widthCol) + Number(sum);
                                 $headerCells.eq(i).width(widthCol);
                                 $tableCells.eq(i).width(widthCol);

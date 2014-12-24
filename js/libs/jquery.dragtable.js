@@ -82,7 +82,7 @@
             if(!e.pageX &&  e.originalEvent.touches){
                 e.pageX = e.originalEvent.touches[0].pageX;
             }
-            if($(e.target).attr('data-id') ==ChOptions.keys.controlColumn){
+            if($(e.target).attr('data-id') === optionsModule.getSetting('controlColumn')){
                 return false
             }
             //call this first, catch any drag display issues

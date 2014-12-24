@@ -4,7 +4,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
         template: _.template([
             '<% if (isNextRow) { %> </div><div class="filter-row"><% } %>',
             '<li class="fast-filter filter-item" id="<%= containerID %>" ',
-            ' <% if (isAutoRefresh) { %> data-auto-ref=1  <% } %> name="<%= attribute %>"',
+            ' name="<%= attribute %>"',
             ' <% if (parentFilterKey) { %> rel="<%= parentFilterKey %>"  <% } %> >',
             '<input type="hidden" name="<%= attribute %>">',
 

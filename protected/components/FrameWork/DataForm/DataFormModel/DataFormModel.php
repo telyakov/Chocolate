@@ -161,21 +161,4 @@ class DataFormModel
         }
     }
 
-    public function rowInserted()
-    {
-        try {
-            if ($routine = $this->_dataFormProperties->getCreateEmptyProc()) {
-                $routine = \Yii::app()->bind->bindProcedureFromModel($routine, $this);
-                $row = \Yii::app()->erp->exec($routine)->getFirst();
-                if (DataFormModel::isNewRow($row->id)) {
-                    throw new DataFormException('Не удалось получить id для строки, добавленной с помощью CreateEmptyIns,');
-                }
-                return $row;
-            }else{
-                throw new DataFormException('Не задана процедура CreateEmptyIns.');
-            }
-        } catch (\Exception $e) {
-            self::handleException('Не удалось добавить строку с помощью CreateEmptyIns.', 0, $e);
-        }
-    }
 }

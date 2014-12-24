@@ -21,18 +21,6 @@ ChFilter.prototype.getChForm = function(){
     }
     return this.chForm;
 };
-
-/**
- * @returns {boolean}
- */
-ChFilter.prototype.isAutoRefresh = function(){
-    if(this.autoRefresh === null){
-        var atr = this.$elem.attr(ChOptions.attributes.filterAutoRefresh);
-        this.autoRefresh = typeof atr !== 'undefined';
-    }
-    return this.autoRefresh;
-};
-
 ChFilter.prototype.getNamesSelectedValues= function(){
     var names = [];
     var $inputs =  this.$elem.find('input:checked');

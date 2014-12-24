@@ -72,10 +72,11 @@ var chFunctions = {
         }
     },
     layoutChildrenFilters: function (targetID, name, view, currentID, parentName) {
+        //todo: вернуть код
         $('#' + targetID).on('click', function (e) {
             var jForm = $(this).closest('form'),
                 ChFilterForm = facade.getFactoryModule().makeChFilterForm(jForm),
-                rawUrl = chApp.getOptions().urls.filterLayouts;
+                rawUrl = optionsModule.getUrl('filterLayouts');
             //TODO: поддержка всех типов фильтро
             var value = ChFilterForm.getData()[parentName];
             if (typeof(value) !== 'undefined') {
@@ -216,7 +217,7 @@ var chFunctions = {
         var chColumn = facade.getFactoryModule().makeChGridColumnBody($(e.target)),
             newVal = params.newValue;
         if (newVal) {
-            newVal = moment(newVal).format(ChOptions.settings.formatDate);
+            newVal = moment(newVal).format(optionsModule.getSetting('formatDate'));
         }
         chColumn.setChangedValue(name, newVal);
     },

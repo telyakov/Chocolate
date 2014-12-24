@@ -9,22 +9,7 @@ function ChCard($grid_tabs) {
     this._container_id = null;
     this._$header = null;
     this._$error_container = null;
-    this._parentItem = null;
 }
-
-ChCard.prototype.getTabDataUrl = function (tabID) {
-    return [
-        ChOptions.urls.cardGet,
-        '?view=',
-        this.getView(),
-        "&tabID=",
-        encodeURIComponent(tabID),
-        "&viewID=",
-        this.getFormID(),
-        "&pk=",
-        this.getKey()
-    ].join('');
-};
 ChCard.prototype.getHeaderContainer = function () {
     if (this._$header === null) {
         this._$header = this.getContainer().children('header');
@@ -197,8 +182,7 @@ ChCard.prototype.save = function () {
             this._closeCard();
         }
     } else {
-        var moduleMessages= chApp.getMessages(),
-            errorMessage = moduleMessages.NotFilledRequiredFields;
+        var errorMessage = optionsModule.getMessage('NotFilledRequiredFields');
         facade.getFactoryModule()
             .makeChMessagesContainer(this.getErrorContainer())
             .sendMessage(errorMessage, chApp.getResponseStatuses().ERROR);

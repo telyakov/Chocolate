@@ -56,16 +56,16 @@ ChFilterForm.prototype.getData = function () {
     });
     return result;
 };
-ChFilterForm.prototype.getFiltersObj = function () {
-    return this.$form.find('.' + ChOptions.classes.filterClass);
-};
-ChFilterForm.prototype.getAutoRefreshFiltersCol = function () {
-    var collection = [];
-    this.getFiltersObj().each(function () {
-        var chFilter = facade.getFactoryModule().makeChFilter($(this));
-        if (chFilter.isAutoRefresh()) {
-            collection.push(chFilter);
-        }
-    });
-    return collection;
-};
+//ChFilterForm.prototype.getFiltersObj = function () {
+//    return this.$form.find('.' + ChOptions.classes.filterClass);
+//};
+//ChFilterForm.prototype.getAutoRefreshFiltersCol = function () {
+//    var collection = [];
+//    this.getFiltersObj().each(function () {
+//        var chFilter = facade.getFactoryModule().makeChFilter($(this));
+//        if (chFilter.isAutoRefresh()) {
+//            collection.push(chFilter);
+//        }
+//    });
+//    return collection;
+//};
