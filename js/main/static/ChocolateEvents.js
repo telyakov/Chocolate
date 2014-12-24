@@ -19,35 +19,6 @@ var ChocolateEvents = {
         this.closeTabEvent($content);
         this.menuContextEvent($tabs);
         this.contextFormMenuEvent($tabs);
-        this.cardCancelEvent($tabs);
-        this.saveFormEvent($tabs);
-        this.cardSaveEvent($tabs);
-        this.reflowTabEvent($tabs);
-        this.tabHistoryLogEvent($content);
-        this.reflowWindowEvent($window);
-        this.openTaskWizardEvent($content);
-        //this.signInTextEvents($content);
-    },
-    tabHistoryLogEvent: function ($context) {
-        $context.on('click', '#tabs>ul>li', this.tabHistoryLogHandler);
-    },
-    tabHistoryLogHandler: function () {
-        facade.getTabsModule().push($(this));
-    },
-    reflowWindowEvent: function ($context) {
-        $context.on('resize', $.debounce(300, false, this.reflowWindowHandler));
-    },
-    reflowWindowHandler: function () {
-        facade.getRepaintModule().clearCache();
-        mediator.publish(optionsModule.getChannel('reflowTab'));
-    },
-    reflowTabEvent: function ($context) {
-        $context.on('mouseup', '.ui-tabs-anchor[href=1]', this.reflowTabHandler);
-        $context.on('click', '.ui-tabs-anchor[href^=#]', this.reflowTabHandler);
-    },
-    reflowTabHandler: function () {
-        mediator.publish(facade.getOptionsModule().getChannel('reflowTab'));
-
     },
     ajaxIndicatorEvent: function () {
         var $spinner = $('#fadingBarsG');
@@ -103,59 +74,5 @@ var ChocolateEvents = {
                 }
             }
         });
-    },
-    cardCancelEvent: function ($context) {
-        $context.on('click', '.card-cancel', this.cardCancelHandler);
-    },
-    cardCancelHandler: function () {
-        var card = facade.getFactoryModule().makeChCard($(this).closest('[data-id=grid-tabs]'));
-        card.undoChange();
-    },
-    saveFormEvent: function ($context) {
-        $context.on('click', '.menu-button-save', this.saveFormHandler);
-    },
-    saveFormHandler: function () {
-        var form = facade.getFactoryModule().makeChGridForm($(this).closest('form'));
-        form.save(true);
-    },
-    cardSaveEvent: function ($context) {
-//            .on('click', '.card-menu-save', this.cardSaveFromMenuHandler)
-        $context
-            .on('click', '.card-save', this.cardSaveButtonHandler);
-    },
-    cardSaveFromMenuHandler: function () {
-        var main = chApp.namespace('main'),
-            card = facade.getFactoryModule().makeChCard($(this).closest('header').siblings('[data-id=grid-tabs]'));
-        main.leaveFocus();
-        card.save();
-    },
-    cardSaveButtonHandler: function () {
-        var main = chApp.namespace('main'),
-            card = facade.getFactoryModule().makeChCard($(this).closest('[data-id=grid-tabs]'));
-        main.leaveFocus();
-        card.save();
-    },
-    openTaskWizardEvent: function ($context) {
-        $context.on('click', '.fm-wizard-task', this.openTaskWizardHandler);
-    },
-    openTaskWizardHandler: function () {
-        var $this = $(this),
-            tw = facade.getTaskWizard(),
-            form = facade.getFactoryModule().makeChGridForm(
-                $(this)
-                    .closest('.' + optionsModule.getClass('headerSection'))
-                    .siblings('.' + optionsModule.getClass('gridSection'))
-                    .children('form')
-            );
-        $this.chWizard('init', {
-            commandObj: tw.makeCommandObject(form),
-            onDone: tw.onDoneFunc(),
-            commands: [
-                tw.makeServiceCommand(),
-                tw.makeExecutorsCommand(),
-                tw.makeDescriptionCommand()
-            ]
-        });
-        return false;
     }
 };

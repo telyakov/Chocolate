@@ -4,7 +4,7 @@ var CardView = (function (Backbone, $) {
         initialize: function (options) {
             _.bindAll(this, 'render');
             this.model = options.model;
-            //this.form = options.form;
+            this.view = options.view;
             this.id = options.id;
             if (options.$el) {
                 this.$el = options.$el;
@@ -12,7 +12,62 @@ var CardView = (function (Backbone, $) {
         },
         events: {
             'keydown .card-input a': 'keyActionsCardHandler',
-            'click .tab-menu-link': 'openCardTabMenuHandler'
+            'click .tab-menu-link': 'openCardTabMenuHandler',
+            'click .card-menu-save': 'cardSaveHandler',
+            'click .card-save': 'cardSaveHandler',
+            'click .card-cancel': 'cardCancel'
+        },
+        cardCancel: function () {
+            this.undoChange();
+            this.closeTab();
+
+        },
+        closeTab: function () {
+            var id = this.$el.attr('id'),
+                $li = Chocolate.$content.find('li[aria-controls=' + id + ']');
+            facade.getTabsModule().close($li.children('a'));
+        },
+        undoChange: function () {
+            var pk = this.id;
+            if (this.isChanged()) {
+                var changedData = this.view.getChangedDataFromStorage()[pk],
+                    data = this.getDBDataFromStorage(pk),
+                    $tr = this.getJqueryParent();
+                $.each(changedData, function (i) {
+                    var $gridCell = $tr.find(" a[data-pk=" + pk + "][rel$=" + i + "]"),
+                        oldValue = $gridCell.attr("data-value");
+                    if ($gridCell.length) {
+                        if (oldValue === 'null') {
+                            oldValue = '';
+                        }
+                        $gridCell.editable("setValue", oldValue, true);
+
+                        var fromID = $gridCell.data().editable.options['data-from-id'];
+                        if (fromID) {
+                            $gridCell.html(data[fromID]);
+                        }
+                    }
+                });
+            }
+            if (!$.isNumeric(pk)) {
+                this.getJqueryParent().remove();
+            }
+           this.clearStorage();
+        },
+        isChanged: function(){
+            return !$.isEmptyObject(this.view.getChangedDataFromStorage()[this.id]);
+        },
+        getJqueryParent: function(){
+            return this.view.getJqueryDataTable().find('tr[data-id="'+ this.getKey()+'"]');
+        },
+        clearStorage: function () {
+            delete this.view.getChangedDataFromStorage[this.id];
+        },
+        cardSaveHandler: function () {
+            helpersModule.leaveFocus();
+            this.model.trigger('save:card', {
+                id: this.id
+            });
         },
         keyActionsCardHandler: function (e) {
             if (e.keyCode === optionsModule.getKeyCode('enter')) {

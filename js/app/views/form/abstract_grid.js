@@ -5,7 +5,13 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             'keydown .tablesorter': 'navigateHandler',
             'click tbody > tr': 'selectRowHandler',
             'click .menu-button-expand': 'contentExpandHandler',
-            'click .form-modal-button': 'modalFormElementHandler'
+            'click .form-modal-button': 'modalFormElementHandler',
+            'click .menu-button-save': 'saveFormHandler'
+        },
+        saveFormHandler: function () {
+            this.model.trigger('save:form', {
+                refresh: true
+            });
         },
         modalFormElementHandler: function (e) {
             var $this = $(e.target),

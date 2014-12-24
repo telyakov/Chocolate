@@ -52,6 +52,20 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 'click .menu-button-toggle': 'toggleSystemCols'
             });
         },
+        openWizardTask: function (e) {
+            var $this = $(e.target),
+                tw = facade.getTaskWizard();
+            $this.chWizard('init', {
+                commandObj: tw.makeCommandObject(this),
+                onDone: tw.onDoneFunc(),
+                commands: [
+                    tw.makeServiceCommand(),
+                    tw.makeExecutorsCommand(),
+                    tw.makeDescriptionCommand()
+                ]
+            });
+            return false;
+        },
         toggleSystemCols: function () {
             var isHidden = this.isSystemColumnsMode(),
                 systemColAttr = optionsModule.getSetting('systemCols'),

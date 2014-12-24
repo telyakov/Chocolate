@@ -56,7 +56,8 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
             var activeTab = factoryModule.makeChTab($a);
             if (activeTab.isCardTypePanel()) {
                 var card = factoryModule.makeChCard(activeTab.getPanel().children('[data-id=grid-tabs]'));
-                card._undoChange();
+                //todo: вернуть код
+                //card._undoChange();
             } else {
                 var form = factoryModule.makeChGridForm(activeTab.getPanel().find('.section-grid>form'));
                 if (form.isHasChange !== undefined && form.$form.length && form.isHasChange() && !confirm(form.getExitMessage())) {

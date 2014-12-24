@@ -228,56 +228,6 @@ ChGridForm.prototype.getEntityTypeID = function () {
     }
     return this.getGridPropertiesObj().entityTypeID;
 };
-ChGridForm.prototype.openCard = function (pk) {
-    if (this.isCardSupport()) {
-        var view = this.getView(),
-            mainModule = chApp.getMain(),
-            $tabs = mainModule.$tabs,
-            cardID = this.generateCardID(pk),
-            $a = $tabs.find("li[data-tab-id='" + cardID + "']").children('a'),
-            tab;
-        if ($a.length === 0) {
-            var viewID = this.getFormID(),
-                caption = this.getTabCaption();
-            if ($.isNumeric(pk)) {
-                caption += ' [' + pk + ']';
-            } else {
-                caption += '[новая запись]';
-            }
-            var $li = $('<li/>', {
-                'data-tab-id': cardID,
-                'data-id': pk,
-                'data-view': view,
-                'html': facade.getTabsModule().createTabLink('', caption)
-            });
-            facade.getTabsModule().push($li);
-            $tabs.children('ul').append($li);
-            $tabs.tabs("refresh");
-            var _this = this;
-            $tabs.tabs({
-                beforeLoad: function (event, ui) {
-                    ui.jqXHR.abort();
-                    var fmCollection = _this.getFmCardsCollection();
-                    fmCollection.generateTabs(view, pk, viewID, ui.panel);
-
-                }
-            });
-
-            $a = $li.children('a');
-            tab = facade.getFactoryModule().makeChTab($a);
-            $tabs.tabs({ active: tab.getIndex()});
-            var href = '#' + tab.getPanelID(),
-                $context = $(href);
-            facade.getRepaintModule().reflowCard($context);
-            facade.getCardModule().initCard($context);
-            $a.attr('href', href)
-        } else {
-            tab = facade.getFactoryModule().makeChTab($a);
-            $tabs.tabs({ active: tab.getIndex() })
-        }
-    }
-
-};
 ChGridForm.prototype.getCallbackID = function () {
     return this.getUserGridID();
 };

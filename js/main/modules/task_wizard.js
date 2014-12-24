@@ -4,9 +4,9 @@
 var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule, helpersModule) {
     'use strict';
     var _private = {
-        makeCommandObj: function (form) {
+        makeCommandObj: function (view) {
             return {
-                form: form,
+                view: view,
                 serviceID: null,
                 userIdList: null,
                 description: null,
@@ -144,14 +144,13 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
         onDoneFn: function () {
             return function ($cnt) {
                 var commandObj = $cnt.data('chWizard').commandObj,
-                    form = commandObj.form,
-                    data = $.extend({}, form.getDefaultObj());
+                    view = commandObj.view,
+                    data = $.extend({}, view.model.getColumnsDefaultValues());
                 data.usersidlist = commandObj.usersidlist;
                 data.description = commandObj.description;
                 data.users = commandObj.usersTitle;
                 data.serviceid = commandObj.serviceID;
-                //todo: вернуть код
-                //form.addRow(data);
+                view.addRow(data);
             };
         },
         title: function ($cnt) {
@@ -244,11 +243,8 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
         }
     };
     return {
-        /**
-         * @param form {ChGridForm}
-         */
-        makeCommandObject: function (form) {
-            return _private.makeCommandObj(form);
+        makeCommandObject: function (view) {
+            return _private.makeCommandObj(view);
         },
         onDoneFunc: function () {
             return _private.onDoneFn();

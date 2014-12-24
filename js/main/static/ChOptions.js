@@ -36,7 +36,7 @@ var ChOptions = {
         emailCol: 'emails',
         titleRowHeight: 26,
         systemCols: ['lastmodifier', 'lastmodifydate', 'insdate', 'username' , 'userid'],
-        topsViews: ['tasks/tasksfortops.xml'],
+        topsViews: ['tasksfortops.xml'],
         viewsWithoutFilters: ['tasks/tasksfortops.xml', 'attachments.xml', 'framework/attachments/attachments.xml'],
         keyCaption: 'ключ'
     },

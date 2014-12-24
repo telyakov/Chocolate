@@ -14,11 +14,27 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             this.listenTo(this.model, 'refresh:form', this.lazyRefresh);
             this.listenTo(this.model, 'save:form', this.save);
             this.listenTo(this.model, 'change:form', this.change);
+            this.listenTo(this.model, 'save:card', this.saveCard);
             this.listenTo(this.model, 'openMailClient', this.openMailClient);
+            this.listenTo(this.model, 'openWizardTask', this.openWizardTask);
             this.render();
         },
-        openMailClient: function () {
-            console.log('not implemented openMailClient method');
+        openWizardTask: function () {
+            mediator.publish(optionsModule.getChannel('logError'),
+                {
+                    model: this,
+                    error: 'not implemented openWizardTask method'
+                }
+            );
+        },
+        saveCard: function(opts){
+            mediator.publish(optionsModule.getChannel('logError'),
+                {
+                    model: this,
+                    opts: opts,
+                    error: 'not implemented saveCard method'
+                }
+            );
         },
         contentExpandHandler: function (e) {
             var $this = $(e.target).closest('button'),
@@ -112,6 +128,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                         ui.jqXHR.abort();
                         var cardView = new CardView({
                             model: _this.model,
+                            view: _this,
                             id: pk,
                             $el: ui.panel
                         });
@@ -329,10 +346,11 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             helpersModule.leaveFocus();
             return !$.isEmptyObject(this.getChangedDataFromStorage()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
         },
-        save: function (data) {
+        save: function (opts) {
             mediator.publish(optionsModule.getChannel('logError'),
                 {
                     model: this,
+                    opts: opts,
                     error: 'not implemented save method'
                 }
             );
@@ -366,6 +384,14 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 {
                     model: this,
                     error: 'not implemented change method'
+                }
+            );
+        },
+        openMailClient: function () {
+            mediator.publish(optionsModule.getChannel('logError'),
+                {
+                    model: this,
+                    error: 'not implemented openMailClient method'
                 }
             );
         }

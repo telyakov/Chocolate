@@ -59,10 +59,6 @@ FmCardsCollection.prototype._generateHeader = function (view) {
     return html.join('');
 
 };
-FmCardsCollection.prototype.generateTabs = function (view, pk, viewID, $panel) {
-    $panel.html(this._generateHeader(view));
-    this._generateList(view, pk, viewID, $panel);
-};
 /**
  * @param card {ChCard}
  */
@@ -87,41 +83,4 @@ FmCardsCollection.prototype.createSqlTasks = function (card, idList) {
 };
 FmCardsCollection.prototype.isVisibleCaptions = function () {
     return Object.keys(this.cards).length > 1;
-};
-FmCardsCollection.prototype._generateList = function (view, pk, viewID, $panel) {
-
-    var html = '<div data-id="grid-tabs"' +
-        'data-view="' + view + '"' +
-        'data-pk="' + pk + '"' + 'data-form-id="' + viewID + '"' +
-        'data-save-url="/grid/save?view=' + view + '">';
-    var isVisibleCaption = this.isVisibleCaptions();
-    if (isVisibleCaption) {
-        html += '<ul>';
-    } else {
-        html += '<ul class="hidden">';
-    }
-    var tabs = [];
-    var tabIdList = {};
-    for (var key in this.cards) {
-        if (this.cards.hasOwnProperty(key)) {
-            html += ' <li class="card-tab" data-id="' + key + '"';
-            var id = Chocolate.uniqueID();
-            html += ' aria-controls="' + id + '">';
-            var tabID = Chocolate.uniqueID();
-            tabIdList[key] = tabID;
-            html += '<a id="' + tabID + '" href="1" title="' + key + '">' + this.cards[key].caption + '</a>';
-        }
-    }
-    html += '</ul>';
-    if (isVisibleCaption) {
-        html += '<span class="tab-menu"><a class="tab-menu-link"></a></span>';
-    }
-    html += '</div>';
-    $panel.append(html);
-
-    var card = facade.getFactoryModule().makeChCard($panel.children('[data-id=grid-tabs]'));
-    if($.isNumeric(pk)){
-        this.createSqlTasks(card, tabIdList);
-    }
-
 };

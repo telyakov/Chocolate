@@ -16,7 +16,16 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location, window,
             'click .fm-phone': 'makeCallHandler',
             'click .section-filters div > label': 'disableFilter',
             'click .filter-mock-no-edit': 'enableFilter',
-            'keydown textarea': 'addSignToText'
+            'keydown textarea': 'addSignToText',
+            'click #tabs>ul>li': 'tabHistoryLog',
+            'mouseup .ui-tabs-anchor[href=1]': 'reflowTab',
+            'click .ui-tabs-anchor[href^=#]': 'reflowTab'
+        },
+        reflowTab: function () {
+            mediator.publish(facade.getOptionsModule().getChannel('reflowTab'));
+        },
+        tabHistoryLog: function (e) {
+            facade.getTabsModule().push($(e.target).closest('li'));
         },
         addSignToText: function (e) {
             if (e.keyCode === optionsModule.getKeyCode('f4')) {
@@ -54,13 +63,14 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location, window,
                     e.preventDefault();
                 }
                 if (e.keyCode === optionsModule.getKeyCode('escape') && e.target.tagName === 'BODY') {
-                    var tab = facade.getTabsModule().getActiveChTab();
-                    if (tab.isCardTypePanel()) {
-                        var card = facade.getFactoryModule().makeChCard(tab.getPanel().children('[data-id=grid-tabs]'));
-                        if (!card._isChanged() && $(e.target).children('.fancybox-overlay').length === 0) {
-                            facade.getTabsModule().closeActiveTab();
-                        }
-                    }
+                    //todo: вернуть код
+                    //var tab = facade.getTabsModule().getActiveChTab();
+                    //if (tab.isCardTypePanel()) {
+                    //    var card = facade.getFactoryModule().makeChCard(tab.getPanel().children('[data-id=grid-tabs]'));
+                    //    if (!card._isChanged() && $(e.target).children('.fancybox-overlay').length === 0) {
+                    //        facade.getTabsModule().closeActiveTab();
+                    //    }
+                    //}
                 }
             }
         },
@@ -116,7 +126,13 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location, window,
         },
         createGlobalEvents: function () {
             $(window)
-                .on('beforeunload', this.warningMessageHandler);
+                .on('beforeunload', this.warningMessageHandler)
+                .on('resize', $.debounce(300, false, this.reflowWindow));
+
+        },
+        reflowWindow: function () {
+            facade.getRepaintModule().clearCache();
+            mediator.publish(optionsModule.getChannel('reflowTab'));
         },
         warningMessageHandler: function () {
             if (helpersModule.appHasChange()) {
