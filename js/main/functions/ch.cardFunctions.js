@@ -39,33 +39,6 @@ var ch = {
                     };
                 };
             },
-            defaultInit: function ($context, attribute, allowEdit, titleKey, editable, caption, isSingle) {
-                var cardElement = facade.getFactoryModule().makeChCardElement($context),
-                    card = cardElement.getCard(),
-                    actualDataObj = card.getActualDataObj(),
-                    value = actualDataObj[attribute],
-                    isAllowEdit = chCardFunction._isAllowEdit(card.getActualDataObj(), allowEdit);
-                if (typeof(value) == 'undefined' || value === null) {
-                    value = '';
-                }
-                var elemText = cardElement.getParentElement(attribute).html();
-                setTimeout(function () {
-                    card.setElementValue($context, value, isAllowEdit, elemText);
-                    $context.html(elemText);
-                    $context.unbind('click');
-                    if (isAllowEdit) {
-                        $context.on('click', function () {
-                            var dynatreeElem = new ChDynatree($context);
-                            var options = chFunctions.treeViewOptions($context, isSingle);
-                            options.okButton = ch.card.treeView._okButton();
-                            options.defaultValues = function () {
-                                return this.data().editable.value
-                            };
-                            dynatreeElem.buildFromData(options);
-                        });
-                    }
-                }, 0);
-            },
             gridInit: function ($context, attribute, allowEdit, titleKey, editable, caption, isSingle) {
                 var cardElement = facade.getFactoryModule().makeChCardElement($context),
                     card = cardElement.getCard(),
