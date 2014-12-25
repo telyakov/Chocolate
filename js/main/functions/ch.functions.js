@@ -154,31 +154,6 @@ var chFunctions = {
         }
         return options;
     },
-    treeViewInitFunc: function ($context, caption, datakey, allowEdit, isSingle) {
-        var col = facade.getFactoryModule().makeChGridColumnBody($context);
-        if (typeof col.getDataObj() !== 'undefined') {
-            $context.html(col.getDataObj()[datakey]);
-        }
-        $context.unbind('click');
-        var isAllowEdit = chCardFunction._isAllowEdit(col.getDataObj(), allowEdit);
-        //todo: leak memory
-        if (isAllowEdit) {
-            $context.on('click', function () {
-                var chEditable = new ChEditable($context);
-                var dynatreeElem = new ChDynatree($context);
-                var options = chFunctions.treeViewOptions($context, isSingle);
-                options.title = chEditable.getTitle($context.attr('data-pk'), caption);
-                dynatreeElem.buildFromData(options);
-            });
-        } else {
-            col.markAsNoChanged();
-        }
-
-    },
-    defaultColumnSaveFunc: function (e, params, name) {
-        var chColumn = facade.getFactoryModule().makeChGridColumnBody($(e.target));
-        chColumn.setChangedValue(name, params.newValue);
-    },
     treeOnQuerySelect: function (flag, node) {
         if (node.childList === null) {
             return true;

@@ -31,19 +31,7 @@ var TextColumnRO = (function () {
                     var $this = $(this),
                         pk = $this.attr('data-pk'),
                         isAllowEdit = _this.isAllowEdit(view, pk);
-                    $this
-                        .on('init', function textInit() {
-                            if (!isAllowEdit) {
-                                _this.markAsNoChanged($this);
-                            }
-                            var $modalBtn = $('<div/>', {
-                                'class': 'grid-modal-open form-modal-button',
-                                'data-name': _this.get('key')
-                            });
-                            $this.parent().append($modalBtn);
 
-                        })
-                        .editable(options);
                     if (isMarkupSupport && isAllowEdit) {
                         $this.on('shown', function textShown(e, editable) {
                             chFunctions.textShownFunction(e, editable);
@@ -61,6 +49,19 @@ var TextColumnRO = (function () {
                                 });
                             });
                     }
+                    $this
+                        .on('init', function textInit() {
+                            if (!isAllowEdit) {
+                                _this.markAsNoChanged($this);
+                            }
+                            var $modalBtn = $('<div/>', {
+                                'class': 'grid-modal-open form-modal-button',
+                                'data-name': _this.get('key')
+                            });
+                            $this.parent().append($modalBtn);
+
+                        })
+                        .editable(options);
                 });
             };
         }

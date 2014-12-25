@@ -179,6 +179,13 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             return function () {
             };
         },
+        getModalTitle: function(pk){
+            if ($.isNumeric(pk)) {
+                return this.getVisibleCaption() + ' [' + pk + ']';
+            } else {
+                return this.getVisibleCaption();
+            }
+        },
         getEditType: function () {
             return this.get('columnProperties').getEditType();
         },

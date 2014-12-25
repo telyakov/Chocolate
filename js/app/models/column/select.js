@@ -5,9 +5,9 @@ var SelectColumnRO = (function (Backbone, helpersModule) {
             var _this = this,
                 allowEdit = this.getRawAllowEdit();
 
-            return function ($cnt) {
+            return function ($cnt, view) {
                 _this.evalReadProc()
-                    .done(function (res, view) {
+                    .done(function (res) {
                         var data = helpersModule.prepareSelectSource(res.data);
                         $cnt.find('.' + _this.getUniqueClass()).each(function () {
                             var $this = $(this),
