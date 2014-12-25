@@ -1,4 +1,4 @@
-var CheckBoxColumnRO = (function () {
+var CheckBoxColumnRO = (function (helpersModule) {
     'use strict';
     return ColumnRO.extend({
         getHeaderOptions: function () {
@@ -50,7 +50,7 @@ var CheckBoxColumnRO = (function () {
                         showbuttons: false,
                         onblur: 'submit',
                         display: function (value) {
-                            chCardFunction.checkBoxDisplayFunction(
+                            helpersModule.checkBoxDisplay(
                                 value,
                                 $(this),
                                 customProperties
@@ -60,4 +60,4 @@ var CheckBoxColumnRO = (function () {
             };
         }
     });
-})();
+})(helpersModule);

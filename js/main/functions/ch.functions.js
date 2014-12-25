@@ -85,7 +85,6 @@ var chFunctions = {
             }
         })
     },
-
     treeViewOptions: function ($context, isSingle) {
         var options = {
             children: $context.data().editable.options.source,

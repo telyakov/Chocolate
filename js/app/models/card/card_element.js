@@ -15,6 +15,14 @@ var CardElement = (function ($, Backbone, _, helpersModule) {
             }
             return this.id;
         },
+        validate: function ($cnt, value) {
+            var $error = $cnt.closest('.card-col').children('label');
+            if ($.trim(value) === '') {
+                $error.addClass('card-error');
+            } else {
+                $error.removeClass('card-error');
+            }
+        },
         markAsNoChanged: function ($el) {
             $el.closest('.card-input').addClass('card-input-no-edit');
         },

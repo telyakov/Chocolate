@@ -45,7 +45,7 @@ var SelectCardElement = (function ($, helpersModule) {
                                 type: 'select',
                                 mode: 'inline',
                                 validate: function (value) {
-                                    chCardFunction.defaultValidateFunc($(this), value);
+                                    _this.validate($(this), value);
                                 },
                                 inputclass: 'chocolate-select',
                                 showbuttons: false,

@@ -3,8 +3,7 @@
  */
 var chApp = chApp || {
     main: Chocolate,
-    responseStatuses: ChResponseStatus,
-    attachments: ch.attachments
+    responseStatuses: ChResponseStatus
 };
 /**
  * @returns {Chocolate}
@@ -23,10 +22,4 @@ chApp.getResponseStatuses = function () {
  */
 chApp.getFunctions = function(){
     return chFunctions;
-};
-/**
- * @returns {ch.attachments}
- */
-chApp.getAttachment = function(){
-    return this.attachments;
 };

@@ -1,4 +1,4 @@
-var CheckBoxCardElement = (function ($) {
+var CheckBoxCardElement = (function ($, helpersModule) {
     'use strict';
     return CardElement.extend({
         getCallback: function (controlID, pk) {
@@ -48,10 +48,10 @@ var CheckBoxCardElement = (function ($) {
                         showbuttons: false,
                         source: [{'value': 1, 'text': ''}],
                         display: function (value) {
-                            chCardFunction.checkBoxDisplayFunction(value, $(this), customProperties);
+                            helpersModule.checkBoxDisplay(value, $(this), customProperties);
                         }
                     });
             };
         }
     });
-})(jQuery);
+})(jQuery, helpersModule);

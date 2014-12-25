@@ -396,7 +396,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
         stripHtml: function (html) {
             return context.stripHtml(html);
         },
-        addSignToIframe: function(e){
+        addSignToIframe: function (e) {
             if (e.keyCode === optionsModule.getKeyCode('f4')) {
                 var userModule = facade.getUserModule();
                 $(this).insertAtCaretIframe(userModule.getSign());
@@ -411,12 +411,42 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                 return caption;
             }
         },
-        appHasChange: function(){
-          return context.hasChange();
+        appHasChange: function () {
+            return context.hasChange();
         },
         parse: context.parse,
-        newLineSymbolsToBr: function(str){
+        newLineSymbolsToBr: function (str) {
             return str.replace(/\r\n|\r|\n/g, '<br>');
+        },
+        checkBoxDisplay: function (value, $context, customProperties) {
+            var label = customProperties.get('label'),
+                color = customProperties.get('color'),
+                priority = customProperties.get('priority');
+            var chForm;
+            if ($context.closest('tr').length && color && priority) {
+                chForm = facade.getFactoryModule().makeChGridForm($context.closest('form'));
+            }
+            if (typeof(value) !== 'undefined' && parseInt(value, 10)) {
+                if (chForm) {
+                    chForm.addPriorityColorAndApply($context.attr('data-pk'), priority, color)
+                }
+                setTimeout(function () {
+                    if (label === optionsModule.getSetting('attention')) {
+                        $context.html('<span class="fa-exclamation"></span>');
+                    } else if (label === optionsModule.getSetting('notView')) {
+                        $context.html('<span class="fa-question"></span>');
+                    }
+                    else {
+                        $context.html('<span class="fa-check"></span>');
+                    }
+                }, 0);
+
+            } else {
+                if (chForm) {
+                    chForm.removePriorityColorAndApply($context.attr('data-pk'), priority)
+                }
+                $context.html('');
+            }
         },
         /**
          * @param number {string|integer}

@@ -40,7 +40,7 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule) 
                         onblur: 'submit',
                         inputclass: 'chocolate-textarea',
                         validate: function (value) {
-                            chCardFunction.defaultValidateFunc($(this), value);
+                            _this.validate($(this), value);
                         }
                     };
                 if (isMarkupSupport) {

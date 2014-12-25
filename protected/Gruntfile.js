@@ -81,7 +81,6 @@ module.exports = function (grunt) {
                     '../js/main/modules/user.js',
                     '../js/main/modules/bind.js',
                     '../js/main/static/chocolate.js',
-                    '../js/main/functions/ch.cardFunctions.js',
                     '../js/main/functions/ch.functions.js',
                     '../js/main/chApp.js',
                     '../js/main/plugins/wizard.js',

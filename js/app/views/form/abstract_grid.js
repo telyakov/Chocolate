@@ -28,10 +28,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 }),
                 $elem = $this.prevAll('a'),
                 column = facade.getFactoryModule().makeChGridColumnBody($elem),
-                isEdit = chCardFunction._isAllowEdit(
-                    this.getDBDataFromStorage(pk),
-                    model.getRawAllowEdit()
-                ),
+                isEdit = model.isAllowEdit(this, pk),
                 caption = model.getVisibleCaption(),
                 isMarkupSupport = !!model.getColumnCustomProperties().get('markupSupport'),
                 $cell = $elem.parent(),
