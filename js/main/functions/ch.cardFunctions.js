@@ -205,28 +205,6 @@ var chCardFunction = {
             .setChangedValue(name, params.newValue)
             .setChangedValueInGrid(name, params.newValue, $target.text());
     },
-    textAreaInitFunc: function (e, editable, attribute, allowEdit, caption, isNeedFormat, context, isMarkupSupport) {
-        var jCell = $(context);
-        var chCardElement = facade.getFactoryModule().makeChCardElement(jCell),
-            chCard = chCardElement.getCard(),
-            value = chCard.getActualDataObj()[attribute];
-        var isAllowEdit = this._isAllowEdit(chCard.getActualDataObj(), allowEdit);
-        if (isNeedFormat && value) {
-            value = Chocolate.formatNumber(value);
-        }
-        if (!isAllowEdit) {
-            chCardElement.markAsNoChanged();
-
-        }
-        if (value === null) {
-            value = '';
-        }
-        setTimeout(function () {
-            chCard.setElementValue(jCell, value, isAllowEdit);
-            var ch_column = new ChTextAreaEditableCard(editable['$element']);
-            ch_column.create(context, e, isAllowEdit, attribute, caption, isNeedFormat, isMarkupSupport);
-        }, 0);
-    },
     checkBoxDisplayFunction: function (value, $context, customProperties) {
         var label = customProperties.get('label'),
             color = customProperties.get('color'),
@@ -378,21 +356,5 @@ var chCardFunction = {
             }
         }
         return isAllowEdit;
-    },
-
-    selectInitFunction: function ($context, attribute, allowEdit) {
-        var chCardElement = facade.getFactoryModule().makeChCardElement($context);
-        var chCard = chCardElement.getCard(),
-            value = chCard.getActualDataObj()[attribute];
-        var isAllowEdit = this._isAllowEdit(chCard.getActualDataObj(), allowEdit)
-        if (!isAllowEdit) {
-            $context.unbind('click');
-            chCardElement.markAsNoChanged();
-
-        }
-
-        setTimeout(function () {
-            chCard.setElementValue($context, value, isAllowEdit);
-        }, 0);
     }
 };

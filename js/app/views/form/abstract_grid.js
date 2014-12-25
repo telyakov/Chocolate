@@ -81,7 +81,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 value = value.toString();
             }
             if (isMarkupSupport) {
-                value = value.replace(/\r\n|\r|\n/g, '<br>');
+                value = helpersModule.newLineSymbolsToBr(value);
             }
             $popupControl
                 .editable('setValue', value)

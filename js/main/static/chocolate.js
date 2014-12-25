@@ -44,22 +44,6 @@ var Chocolate = {
         Chocolate.$content.trigger('click');
     },
     /**
-     * @param number {string|integer}
-     * @returns {string}
-     */
-    formatNumber: function (number) {
-        if (number === null) {
-            return null;
-        }
-        var result;
-        if (typeof number == 'number') {
-            result = number.toString();
-        } else {
-            result = number;
-        }
-        return result.replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g, "\$1 ");
-    },
-    /**
      * @param str {string}
      * @returns {string}
      */
@@ -431,6 +415,25 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
           return context.hasChange();
         },
         parse: context.parse,
+        newLineSymbolsToBr: function(str){
+            return str.replace(/\r\n|\r|\n/g, '<br>');
+        },
+        /**
+         * @param number {string|integer}
+         * @returns {string}
+         */
+        formatNumber: function (number) {
+            if (number === null) {
+                return null;
+            }
+            var result;
+            if (typeof number == 'number') {
+                result = number.toString();
+            } else {
+                result = number;
+            }
+            return result.replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g, "\$1 ");
+        },
         init: function () {
             context.init();
         }
