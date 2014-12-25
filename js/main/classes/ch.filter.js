@@ -1,3 +1,4 @@
+
 function ChFilter($filter) {
     this.$elem = $filter;
     this.chForm = null;

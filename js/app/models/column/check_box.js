@@ -16,7 +16,6 @@ var CheckBoxColumnRO = (function (helpersModule) {
                         pk = $this.attr('data-pk');
                     if (_this.isAllowEdit(view, pk)) {
                         var attribute = _this.get('key'),
-                            column = facade.getFactoryModule().makeChGridColumnBody($this),
                             val = $this.editable('getValue');
                         if ($.isEmptyObject(val)) {
                             val = 1;

@@ -57,12 +57,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
             return _private.make($el, 'ChGridForm');
         },
         /**
-         * @returns {ChGridColumnBody}
-         */
-        makeChGridColumnBody: function ($el) {
-            return _private.make($el, 'ChGridColumnBody');
-        },
-        /**
          * @returns {ChMessagesContainer}
          */
         makeChMessagesContainer: function ($el) {
@@ -136,9 +130,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         },
         makeChGridForm: function ($el) {
             return _private.makeChGridForm($el);
-        },
-        makeChGridColumnBody: function ($el) {
-            return _private.makeChGridColumnBody($el);
         },
         makeChMessagesContainer: function ($el) {
             return _private.makeChMessagesContainer($el);

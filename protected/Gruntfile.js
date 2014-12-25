@@ -63,8 +63,6 @@ module.exports = function (grunt) {
                     '../js/main/classes/response/ch.grid.response.js',
                     '../js/main/classes/ch.table.js',
                     '../js/main/classes/ch.filter.form.js',
-                    '../js/main/classes/elements/ch.grid.column.body.js',
-                    '../js/main/classes/elements/ch.GridColumn.js',
                     '../js/main/classes/ch.filter.js',
                     '../js/main/classes/ch.form.settings.js',
                     '../js/main/classes/ch.grid.form.js',

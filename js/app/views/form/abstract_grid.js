@@ -27,8 +27,8 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                     key: key
                 }),
                 $elem = $this.prevAll('a'),
-                column = facade.getFactoryModule().makeChGridColumnBody($elem),
-                isEdit = model.isAllowEdit(this, pk),
+                _this = this,
+                isAllowEdit = model.isAllowEdit(this, pk),
                 caption = model.getVisibleCaption(),
                 isMarkupSupport = !!model.getColumnCustomProperties().get('markupSupport'),
                 $cell = $elem.parent(),
@@ -48,28 +48,25 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                     title: helpersModule.createTitleHtml(pk, caption)
                 });
             }
-            $popupControl
-                .bind('save', {
-                    isEdit: isEdit,
-                    $popup: $popupControl,
-                    $elem: $elem,
-                    column: column,
-                    name: key
-                },
-                function saveHandler(e, params) {
-                    var data = e.data;
-                    if (data && data.isEdit && data.$popup && data.$elem && data.column && data.name) {
-                        if (typeof params.newValue !== 'undefined') {
-                            data.column.setChangedValue(data.name, params.newValue);
-                            data.$elem.editable('setValue', params.newValue);
-                            data.$popup.empty();
+            if (isAllowEdit) {
+                $popupControl
+                    .on('save', function saveHandler(e, params) {
+                        if (params.newValue !== undefined) {
+                            var data = {};
+                            data[key] = params.newValue;
+                            _this.model.trigger('change:form', {
+                                op: 'upd',
+                                id: pk,
+                                data: data
+                            });
+                            $elem.editable('setValue', params.newValue);
+                            $popupControl.empty();
                         }
-                        return true;
                     }
-                    return false;
-                }
-            )
-                .bind('hide', function () {
+                );
+            }
+            $popupControl
+                .on('hide', function () {
                     $(this).remove();
                 });
 
@@ -84,7 +81,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 .editable('setValue', value)
                 .editable('show');
             var $textArea = $popupControl.next('div').find('textarea');
-            if (!isEdit) {
+            if (!isAllowEdit) {
                 $textArea.attr('readonly', true);
             } else if (isMarkupSupport) {
                 var editor = new wysihtml5.Editor($textArea.get(0)), eventData = {};
@@ -100,15 +97,15 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             }
             return false;
         },
-        isSystemColumnsMode: function(){
+        isSystemColumnsMode: function () {
             var key = this.model.getView();
             if (storageModule.hasSetting(key, 'globalStyle')) {
                 return storageModule.getSettingByKey(key, 'systemVisibleMode');
-            }else{
+            } else {
                 return false;
             }
         },
-        persistSystemColumnsMode: function(val){
+        persistSystemColumnsMode: function (val) {
             storageModule.persistSetting(this.model.getView(), 'systemVisibleMode', val);
             return this;
         },
@@ -188,7 +185,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             var settings = this.getFormSettingsFromStorage();
             if ($.isEmptyObject(settings)) {
                 var defaultWidth = optionsModule.getSetting('defaultColumnsWidth');
-                this.setColumnWidth(index, defaultWidth)
+                this.setColumnWidth(index, defaultWidth);
                 return defaultWidth;
             }
             return settings[index].width;
@@ -359,7 +356,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             helpersModule.leaveFocus();
         },
         change: function (opts) {
-            console.log(opts)
+            console.log(opts);
             this.getJqueryDataTable().trigger("update");
             this.getSaveButton().addClass('active');
             this.getJqueryDataTable().parent().find('.' + optionsModule.getClass('selectedArea')).remove();

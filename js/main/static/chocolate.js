@@ -449,9 +449,10 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                                     select_html += node.data.title;
                                 }
                             }
-                            var column = facade.getFactoryModule().makeChGridColumnBody($input);
+                            //todo: вернуть код
+                            //var column = facade.getFactoryModule().makeChGridColumnBody($input);
                             var name = $input.data().editable.options.name;
-                            column.setChangedValue(name, val);
+                            //column.setChangedValue(name, val);
                             $input.attr('data-value', val);
                             $input.html(select_html);
                             $checkbox.children('input').attr('checked', false);

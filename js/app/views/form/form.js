@@ -85,14 +85,8 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             var $editable = $(e.target),
                 options = $editable.data().editable.options,
                 view = options.view,
-                column = facade.getFactoryModule().makeChGridColumnBody($editable),
-                form = column.getChForm(),
-                parentID = column.getID(),
-                isNew = !$.isNumeric(parentID),
-                parentView = form.getView(),
-                tabID = ChGridColumn.createChildGridTabID(parentID, view, parentView),
+                parentID = $editable.closest('tr').attr('data-id'),
                 $tabs = $('#tabs'),
-                $currentTab = $tabs.find("[aria-controls='" + tabID + "']"),
                 toID = options.toID,
                 toName = options.toName,
                 fromID = options.fromID,
@@ -101,9 +95,9 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             if (toID && toName && fromName && fromID) {
                 isSelect = 1;
             }
-            Chocolate.leaveFocus();
+            helpersModule.leaveFocus();
             mediator.publish(optionsModule.getChannel('openForm'), {
-                $el: $('#tabs'),
+                $el: $tabs,
                 view: view,
                 parentModel: this.model,
                 parentID: parentID
