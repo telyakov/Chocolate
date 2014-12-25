@@ -5,7 +5,8 @@ var CardElement = (function ($, Backbone, _, helpersModule) {
             collection: null,
             column: null,
             key: null,
-            model: null
+            model: null,
+            view: null
         },
         id: null,
         getControlID: function () {
@@ -14,7 +15,9 @@ var CardElement = (function ($, Backbone, _, helpersModule) {
             }
             return this.id;
         },
-
+        markAsNoChanged: function ($el) {
+            $el.closest('.card-input').addClass('card-input-no-edit');
+        },
         getMinHeight: function () {
             return 42;
         },

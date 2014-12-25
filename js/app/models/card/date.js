@@ -1,22 +1,23 @@
-var DateCardElement = (function () {
+var DateCardElement = (function ($, moment, optionsModule) {
     'use strict';
     return CardElement.extend({
         getCallback: function (controlID, pk) {
             var _this = this,
                 column = _this.get('column');
             return function () {
-                var $el = $('#' + controlID);
-                var name = column.get('key'),
-                    rawEdit = column.getRawAllowEdit(),
-                    caption = column.getVisibleCaption();
+                var $el = $('#' + controlID),
+                    name = column.get('key'),
+                    view = _this.get('view'),
+                    isAllowEdit = column.isAllowEdit(view, pk);
                 var options = {
-                    'onblur': 'submit',
-                    'name': name,
-                    'title': caption,
-                    'mode': 'inline',
-                    'emptytext': '',
-                    'format': 'mm-dd-yyyy hh:ii:ss',
-                    'showbuttons': false
+                    onblur: 'submit',
+                    name: name,
+                    title: column.getVisibleCaption(),
+                    mode: 'inline',
+                    emptytext: '',
+                    disabled: !isAllowEdit,
+                    format: 'mm-dd-yyyy hh:ii:ss',
+                    showbuttons: false
 
                 };
                 if (column.getCardEditType() === 'datetime') {
@@ -35,16 +36,38 @@ var DateCardElement = (function () {
                     };
                 }
                 $el
-                    .on('init', function () {
-                        chCardFunction.dateInitFunction($(this), name, rawEdit);
-                    })
-                    .on('save', function (e, params) {
-                        chCardFunction.dateSaveFunc(e, params, name);
+                    .on('init', function dateInit() {
+                        var value = view.getActualDataFromStorage(pk)[name];
+                        if (value && typeof(value) === 'string') {
+                            value = moment(value, 'MM.DD.YYYY HH:mm:ss').toDate();
+                        }
+                        if (!isAllowEdit) {
+                            _this.markAsNoChanged($el);
+                        }
+                        setTimeout(function () {
+                            $el.editable('setValue', value);
+                        }, 0);
+
                     })
                     .on('hidden', function () {
                         $(this).focus();
-                    }).editable(options);
+                    })
+                    .editable(options);
+                if (isAllowEdit) {
+                    $el
+                        .on('save', function dateSave(e, params) {
+                            var value = moment(params.newValue)
+                                .format(optionsModule.getSetting('formatDate'));
+                            var data = {};
+                            data[name] = value;
+                            view.model.trigger('change:form', {
+                                op: 'upd',
+                                id: pk,
+                                data: data
+                            });
+                        });
+                }
             };
         }
     });
-})();
+})(jQuery, moment, optionsModule);

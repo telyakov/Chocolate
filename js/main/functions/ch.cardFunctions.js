@@ -205,13 +205,6 @@ var chCardFunction = {
             .setChangedValue(name, params.newValue)
             .setChangedValueInGrid(name, params.newValue, $target.text());
     },
-    dateSaveFunc: function (e, params, name) {
-        var $target = $(e.target);
-        var dtValue = moment(params.newValue).format(optionsModule.getSetting('formatDate'));
-        facade.getFactoryModule().makeChCardElement($target)
-            .setChangedValue(name, dtValue)
-            .setChangedValueInGrid(name, params.newValue);
-    },
     textAreaInitFunc: function (e, editable, attribute, allowEdit, caption, isNeedFormat, context, isMarkupSupport) {
         var jCell = $(context);
         var chCardElement = facade.getFactoryModule().makeChCardElement(jCell),
@@ -264,53 +257,7 @@ var chCardFunction = {
             $context.html('');
         }
     },
-    checkBoxInitFunction: function ($context, attribute, allowEdit) {
-        var cardElement = facade.getFactoryModule().makeChCardElement($context),
-            card = cardElement.getCard(),
-            value = card.getActualDataObj()[attribute],
-            isAllowEdit = this._isAllowEdit(card.getActualDataObj(), allowEdit);
-        $context.unbind('click');
-        if (isAllowEdit) {
-            $context.on('click', function () {
-                var val = $context.editable('getValue');
-                if ($.isEmptyObject(val)) {
-                    val = 1;
-                } else {
-                    val = +!parseInt(val[attribute], 10);
-                }
-                $context.editable('setValue', val);
-                cardElement
-                    .setChangedValue(attribute, val)
-                    .setChangedValueInGrid(attribute, val, $context.text());
-            });
-        } else {
-            cardElement.markAsNoChanged();
-        }
-        facade.getCardModule().addCallback(function () {
-            card.setElementValue($context, value, isAllowEdit);
-        });
-    },
-    dateInitFunction: function ($context, attribute, allowEdit) {
-        var chCardElement = facade.getFactoryModule().makeChCardElement($context);
-        var chCard = chCardElement.getCard(),
-            value = chCard.getActualDataObj()[attribute],
-            dtValue;
-        var isAllowEdit = this._isAllowEdit(chCard.getActualDataObj(), allowEdit);
 
-        if (value && typeof(value) === 'string') {
-            value = value.replace(/\./g, '/');
-            dtValue = new Date(value);
-        } else {
-            dtValue = value;
-        }
-        if (!isAllowEdit) {
-            chCardElement.markAsNoChanged();
-        }
-        setTimeout(function () {
-            chCard.setElementValue($context, dtValue, isAllowEdit);
-        }, 0);
-
-    },
     select2SaveFunction: function (e, params, attribute) {
 
         var $context = $(e.target);

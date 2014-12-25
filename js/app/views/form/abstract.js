@@ -142,11 +142,11 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 var href = '#' + tab.getPanelID(),
                     $context = $(href);
                 facade.getRepaintModule().reflowCard($context);
-                this.initCardScripts($context);
+                this.initCardScripts($context, pk);
                 $a.attr('href', href);
             }
         },
-        initCardScripts: function ($cnt) {
+        initCardScripts: function ($cnt, pk) {
             var _this = this;
             $cnt
                 .addClass(optionsModule.getClass('card'))
@@ -157,7 +157,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                                 card = _this.model.getCardROCollection().findWhere({
                                     key: key
                                 });
-                            _this.createCardPanel(card, $(ui.panel));
+                            _this.createCardPanel(card, $(ui.panel), pk);
                             ui.tab.data('loaded', 1);
                         }
                         return false;
@@ -170,11 +170,11 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
             '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
         ].join('')),
-        createCardPanel: function (card, $panel) {
+        createCardPanel: function (card, $panel, pk) {
             var html = {},
                 callbacks = [],
                 event = 'render_' + helpersModule.uniqueID(),
-                elements = this.model.getCardElements(card),
+                elements = this.model.getCardElements(card, this),
                 length = elements.length,
                 asyncTaskCompleted = 0,
                 $div = $('<div>', {
@@ -225,9 +225,9 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                     }, 0);
                 }
             });
-            var i = 0,
-                pk = this.id;
+            var i = 0;
             elements.each(function (model) {
+                console.log(pk)
                 model.render(event, i, card, pk);
                 i++;
             });

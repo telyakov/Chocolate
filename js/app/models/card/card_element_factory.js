@@ -1,13 +1,14 @@
 var CardElementFactory = (function () {
     'use strict';
     var _private = {
-        make: function (column, collection, model) {
+        make: function (column, collection, model, view) {
             var type = column.getCardEditType(),
                 options = {
                     collection: collection,
                     column: column,
                     key: column.get('key'),
-                    model: model
+                    model: model,
+                    view: view
                 };
             switch(type){
                 case 'text':
@@ -38,8 +39,8 @@ var CardElementFactory = (function () {
         }
     };
     return {
-        make: function (column, collection, model) {
-            return _private.make(column, collection, model);
+        make: function (column, collection, model, view) {
+            return _private.make(column, collection, model, view);
         }
     };
 })();

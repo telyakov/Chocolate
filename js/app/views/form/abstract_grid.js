@@ -362,6 +362,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             helpersModule.leaveFocus();
         },
         change: function (opts) {
+            console.log(opts)
             this.getJqueryDataTable().trigger("update");
             this.getSaveButton().addClass('active');
             this.getJqueryDataTable().parent().find('.' + optionsModule.getClass('selectedArea')).remove();

@@ -281,14 +281,14 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             });
             return collection;
         },
-        getCardElements: function (card) {
+        getCardElements: function (card, view) {
             var key = card.getKey(),
                 cardElements = [],
                 collection = this.getColumnsCardROCollection(),
                 _this = this;
             collection.each(function (model) {
                 if (model.getCardKey() === key) {
-                    var elem = CardElementFactory.make(model, collection, _this);
+                    var elem = CardElementFactory.make(model, collection, _this, view);
                     cardElements.push(elem);
                 }
             });
