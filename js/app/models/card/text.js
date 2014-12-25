@@ -46,7 +46,7 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule) 
                 if (isMarkupSupport) {
                     $el
                         .on('shown', function (e, editable) {
-                            chFunctions.textShownFunction(e, editable);
+                            helpersModule.textShown(e, editable);
                         });
                     options.type = 'wysihtml5';
                     options.wysihtml5 = {
@@ -114,7 +114,7 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule) 
                     });
                     if (isMarkupSupport) {
                         if ($textModal.attr('data-init') === undefined) {
-                            chFunctions.wysiHtmlInit($textModal, column.getModalTitle(pk));
+                            helpersModule.wysiHtmlInit($textModal, column.getModalTitle(pk));
                             $textModal.attr('data-init', 1);
                         }
                         if (actualValue) {
@@ -175,7 +175,7 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule) 
                         }, 0);
                     })
                     .on('shown', function (e, editable) {
-                        chFunctions.textShownFunction(e, editable);
+                        helpersModule.textShown(e, editable);
                     })
                     .editable(options);
             };

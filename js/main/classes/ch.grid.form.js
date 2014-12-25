@@ -417,7 +417,7 @@ ChGridForm.prototype.save = function (refresh) {
         }
         else {
             if (!$.isEmptyObject(deleted_obj)) {
-                chFunctions.saveAttachment(this);
+                this.saveAttachment(this);
             } else {
                 ch_messages_container.sendMessage('Данные не были изменены.', ChResponseStatus.WARNING);
             }
@@ -426,6 +426,40 @@ ChGridForm.prototype.save = function (refresh) {
     }
 
     return false;
+};
+ChGridForm.prototype.saveAttachment = function (chForm) {
+    var delData = chForm.getDeletedObj();
+    if (!$.isEmptyObject(delData)) {
+        for (var property in delData) {
+            if (!$.isNumeric(property)) {
+                delete delData[property];
+            }
+        }
+
+        var chMsgContainer = chForm.getMessagesContainer(),
+            data = {
+                jsonChangedData: {},
+                jsonDeletedData: JSON.stringify($.extend({}, delData))
+            };
+        $.ajax({
+            type: 'POST',
+            url: chForm.getSaveUrl(),
+            data: data,
+            async: false
+        }).done(function (resp) {
+            var chResp = new ChResponse(resp);
+            if (chResp.isSuccess()) {
+                //todo: вернуть код
+                //chForm
+                //    .clearChange()
+                //    .refresh();
+            }
+            chResp.sendMessage(chMsgContainer);
+        })
+            .fail(function (resp) {
+                chMsgContainer.sendMessage('Возникла непредвиденная ошибка при сохранении вложений.', ChResponseStatus.ERROR);
+            });
+    }
 };
 ChGridForm.prototype.validate = function (data) {
     var requiredFields = this.getRequiredObj(),

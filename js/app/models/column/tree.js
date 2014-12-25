@@ -18,7 +18,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                             if (isAllowEdit) {
                                 var isSingle = _this.isSingle(),
                                     dynatreeElem = new ChDynatree($this),
-                                    options = chFunctions.treeViewOptions($this, isSingle);
+                                    options = helpersModule.treeViewOptions($this, isSingle);
                                 options.title = _this.getModalTitle(pk);
                                 dynatreeElem.buildFromData(options);
                             }

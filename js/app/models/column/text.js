@@ -34,7 +34,7 @@ var TextColumnRO = (function () {
 
                     if (isMarkupSupport && isAllowEdit) {
                         $this.on('shown', function textShown(e, editable) {
-                            chFunctions.textShownFunction(e, editable);
+                            helpersModule.textShown(e, editable);
                         });
                     }
                     if (isAllowEdit) {

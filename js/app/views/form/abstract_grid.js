@@ -38,7 +38,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             helpersModule.leaveFocus();
             $popupControl.appendTo($cell.closest('section'));
             if (isMarkupSupport) {
-                chFunctions.wysiHtmlInit($popupControl, helpersModule.createTitleHtml(pk, caption));
+                helpersModule.wysiHtmlInit($popupControl, helpersModule.createTitleHtml(pk, caption));
             } else {
                 $popupControl.editable({
                     type: 'textarea',

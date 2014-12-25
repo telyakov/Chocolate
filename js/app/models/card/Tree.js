@@ -16,7 +16,7 @@ var TreeCardElement = (function ($, helpersModule, undefined) {
                         if (isAllowEdit) {
                             $el.on('click', function () {
                                 var dynatreeElem = new ChDynatree($el),
-                                    options = chFunctions.treeViewOptions($el, column.isSingle());
+                                    options = helpersModule.treeViewOptions($el, column.isSingle());
                                 options.okButton = function okButton($tree, $input) {
                                     var chDynatree = this;
                                     return {
