@@ -227,7 +227,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             });
             var i = 0;
             elements.each(function (model) {
-                console.log(pk)
                 model.render(event, i, card, pk);
                 i++;
             });

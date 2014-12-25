@@ -1,4 +1,4 @@
-var FormCardElement = (function () {
+var FormCardElement = (function ($, optionsModule) {
     'use strict';
     return CardElement.extend({
         getMinHeight: function () {
@@ -21,16 +21,14 @@ var FormCardElement = (function () {
                 column = _this.get('column'),
                 view = column.getView();
             return function () {
-                var $el = $('#' + controlID);
                 mediator.publish(optionsModule.getChannel('openForm'), {
-                    $el: $el,
+                    $el: $('#' + controlID),
                     view: view,
                     parentModel: _this.get('model'),
                     parentID: pk,
                     card: _this
                 });
-
             };
         }
     });
-})();
+})(jQuery, optionsModule);

@@ -204,10 +204,7 @@ ChCanvas.prototype.refreshData = function (data, options, model) {
         }
         ctx.stroke();
     }
-
     layout(ctx);
-
-    console.log( this.$canvas);
     this.$canvas.unbind('click');
     this.$canvas.on("click", function (e) {
         var xpos, ypos;

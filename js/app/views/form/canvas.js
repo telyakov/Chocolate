@@ -56,7 +56,7 @@ var CanvasView = (function (Backbone) {
                 });
                 deferRead.done(function (res) {
                     var data = res.data;
-                    this.persistData(data, res.order);
+                    _this.persistData(data, res.order);
                     var options = new ChCanvasOptions();
                     canvas.refreshData(data, options, _this);
                 });

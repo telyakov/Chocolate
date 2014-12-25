@@ -394,37 +394,5 @@ var chCardFunction = {
         setTimeout(function () {
             chCard.setElementValue($context, value, isAllowEdit);
         }, 0);
-    },
-    multimediaInitFunction: function (sql, id) {
-        $.get(optionsModule.getUrl('imagesUrls'), {sql: sql})
-            .done(function (response) {
-                var res = new ChResponse(response),
-                    data = res.getData();
-                if (data.length) {
-                    var $context = $('#' + id), imagesHtml = '',
-                        isFirst = true;
-                    data.forEach(function (url) {
-                        if (isFirst) {
-                            imagesHtml += '<a class="fancybox multimedia-main-image" rel="gallery"><img src="' + url + '"></img></a>';
-                            isFirst = false;
-                        } else {
-                            imagesHtml += '<a class="fancybox multimedia-image" rel="gallery" style="display:none"><img src="' + url + '"></img></a>';
-                        }
-                    });
-                    $context.append(imagesHtml);
-                    $context.find('.fancybox').fancybox({
-                        live: false,
-                        maxWidth: 800,
-                        maxHeight: 600,
-                        closeClick: false,
-                        openEffect: 'none',
-                        closeEffect: 'none'
-                    });
-                }
-            })
-            //TODO: обработчик ошибки при получении данных
-            .fail(function () {
-            })
-
     }
-}
+};

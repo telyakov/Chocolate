@@ -430,6 +430,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
         appHasChange: function(){
           return context.hasChange();
         },
+        parse: context.parse,
         init: function () {
             context.init();
         }
