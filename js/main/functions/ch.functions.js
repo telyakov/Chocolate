@@ -1,12 +1,4 @@
 var chFunctions = {
-    systemColsInit: function (sysColsID) {
-        var $btn = $('#' + sysColsID),
-            form = facade.getFactoryModule().makeChGridForm($btn.closest('form'));
-        //todo: вернуть код
-        //if (!form.chFormSettings.isSystemVisibleMode()) {
-        //    $btn.addClass(chApp.getOptions().classes.menuButtonSelected);
-        //}
-    },
     textShownFunction: function (e, editable) {
         var $body = editable.$form.find("iframe").contents().find("body");
         $body
@@ -153,41 +145,5 @@ var chFunctions = {
             options.selectMode = 1;
         }
         return options;
-    },
-    treeOnQuerySelect: function (flag, node) {
-        if (node.childList === null) {
-            return true;
-        } else {
-            for (var i in node.childList) {
-                if(node.childList.hasOwnProperty(i)){
-
-                    node.childList[i].select(flag);
-                }
-            }
-        }
-        return true;
-    },
-    initPrintActions: function (id, printActions, view) {
-        var $actionButton = $('#' + id);
-        var chForm =facade.getFactoryModule().makeChGridForm($actionButton.closest('form')),
-            rexExp = new RegExp('\[IdList\]');
-
-        $actionButton.contextmenu({
-            show: { effect: "blind", duration: 0 },
-            menu: printActions,
-            select: function (event, ui) {
-                var url = ui.cmd;
-                if (rexExp.test(url)) {
-                    var idList = '',
-                        rows = view.getSelectedRows(),
-                        lng = rows.length;
-                    for (var i = 0; i < lng; i++) {
-                        idList += rows[i].attr('data-id') + ' ';
-                    }
-                    url = url.replace(/\[IdList\]/g, idList);
-                }
-                window.open(url);
-            }
-        });
     }
 };

@@ -1,4 +1,4 @@
-var MenuView = (function (Backbone, $, _, window, helpersModule) {
+var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) {
     'use strict';
     return Backbone.View.extend({
         initialize: function (options) {
@@ -73,19 +73,49 @@ var MenuView = (function (Backbone, $, _, window, helpersModule) {
                 });
             this.$el.append(html);
             if (isAllowPrintActions) {
-                chFunctions.initPrintActions(printID, this.model.getPrintActions(), this.view);
+                this.initPrintActions(printID);
             }
             if (isAllowAudit) {
-                chFunctions.systemColsInit(auditID);
+                this.systemColsInit(auditID);
             }
-            this.initActions(actionID, this.model.getActionProperties());
+            this.initActions(actionID);
         },
-        initActions: function (id, actionsProperty) {
-            var $actionButton = $('#' + id),
+        systemColsInit: function (sysColsID) {
+            var $btn = $('#' + sysColsID);
+            if (!this.view.isSystemColumnsMode()) {
+                $btn.addClass(optionsModule.getClass('menuButtonSelected'));
+            }
+        },
+        initPrintActions: function (id) {
+            var view = this.view,
+                printActions = this.model.getPrintActions(),
+                $actionButton = $('#' + id);
+
+            $actionButton.contextmenu({
+                show: {effect: "blind", duration: 0},
+                menu: printActions,
+                select: function (event, ui) {
+                    var url = ui.cmd;
+                    if (/[IdList]/.test(url)) {
+                        var idList = '',
+                            rows = view.getSelectedRows(),
+                            lng = rows.length;
+                        for (var i = 0; i < lng; i++) {
+                            idList += rows[i].attr('data-id') + ' ';
+                        }
+                        url = url.replace(/\[IdList\]/g, idList);
+                    }
+                    window.open(url);
+                }
+            });
+        },
+        initActions: function (id) {
+            var actionsProperties = this.model.getActionProperties(),
+                $actionButton = $('#' + id),
                 view = this.view;
             $actionButton.contextmenu({
                 show: {effect: "blind", duration: 0},
-                menu: actionsProperty.getData(),
+                menu: actionsProperties.getData(),
                 select: function (event, ui) {
                     switch (ui.cmd) {
                         case 'window.print':
@@ -102,4 +132,4 @@ var MenuView = (function (Backbone, $, _, window, helpersModule) {
             });
         }
     });
-})(Backbone, jQuery, _, window, helpersModule);
+})(Backbone, jQuery, _, window, helpersModule, optionsModule);

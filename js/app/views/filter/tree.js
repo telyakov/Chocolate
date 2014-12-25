@@ -61,8 +61,17 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                                 debugLevel: 0,
                                 checkbox: true,
                                 selectMode: _this.getSelectMode(isMultiSelect),
-                                onQuerySelect: function (flag, node) {
-                                    chFunctions.treeOnQuerySelect(flag, node);
+                                onQuerySelect: function treeOnQuerySelect(flag, node) {
+                                    if (node.childList === null) {
+                                        return true;
+                                    } else {
+                                        for (var i in node.childList) {
+                                            if (node.childList.hasOwnProperty(i)) {
+                                                node.childList[i].select(flag);
+                                            }
+                                        }
+                                    }
+                                    return true;
                                 }
                             },
                             opts = $.extend({}, defaultOpts, {
