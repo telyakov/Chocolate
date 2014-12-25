@@ -55,9 +55,6 @@ ChCard.prototype.getFormID = function () {
     }
     return this._form_id;
 };
-ChCard.prototype.getFmCardCollection = function () {
-    return this.getGridForm().getFmCardsCollection();
-};
 /**
  *
  * @returns {ChGridForm}

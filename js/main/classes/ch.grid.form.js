@@ -1,6 +1,5 @@
 function ChGridForm($form) {
     this.$form = $form;
-    this.chFormSettings = new ChFormSettings(this);
     this._$table = null;
     this._$fixed_table = null;
     this._parent_form_id = null;
@@ -8,14 +7,12 @@ function ChGridForm($form) {
     this._$user_grid = null;
     this._user_grid_id = null;
     this.storage = null;
-    this._ch_filter_form = null;
     this._$grid_form = null;
     this._parent_view = null;
     this._save_url = null;
     this._$thead = null;
     this._type = null;
     this._$save_btn = null;
-    this.fmChildGridCollection = new FmChildGridCollection();
     this._chCardsCollection = null;
 }
 ChGridForm.prototype.destroy = function () {
@@ -24,9 +21,6 @@ ChGridForm.prototype.destroy = function () {
     this.getTable().floatThead('destroy');
     facade.getFormModule().removeCallbacks(this.getCallbackID());
     delete Chocolate.storage.session[this.getID()];
-    delete this.fmChildGridCollection;
-    delete this.chFormSettings.ch_grid_form;
-    delete this.chFormSettings;
     delete this._ch_messages_container;
     delete this._chCardsCollection;
     delete this._$fixed_table;
@@ -42,28 +36,6 @@ ChGridForm.prototype.getExitMessage = function () {
 };
 ChGridForm.prototype.setDefaultValue = function (key, val) {
     this.getDefaultObj()[key] = val;
-};
-/**
- *
- * @returns {FmChildGridCollection}
- */
-ChGridForm.prototype.getFmChildGridCollection = function () {
-    return this.fmChildGridCollection
-};
-
-/**
- *
- * @param chCardsCollection {FmCardsCollection}
- */
-ChGridForm.prototype.setFmCardsCollection = function (chCardsCollection) {
-    this._chCardsCollection = chCardsCollection;
-};
-/**
- *
- * @returns {null|FmCardsCollection}
- */
-ChGridForm.prototype.getFmCardsCollection = function () {
-    return this._chCardsCollection;
 };
 ChGridForm.prototype.getThead = function () {
     if (this._$thead == null) {
@@ -416,61 +388,6 @@ ChGridForm.prototype.validate = function (data) {
     }
     return errors;
 };
-/**
- * @returns {ChFilterForm}
- */
-ChGridForm.prototype.getFilterForm = function () {
-    if (this._ch_filter_form == null) {
-        var $form = this.getGridForm().closest('div').find('section[data-id=filters]').find('form');
-        if ($form.length) {
-            this._ch_filter_form = facade.getFactoryModule().makeChFilterForm($form);
-        }
-    }
-    return this._ch_filter_form;
-};
-ChGridForm.prototype.getParentPK = function () {
-    if (typeof this.$form.attr('data-parent-pk') !== 'undefined') {
-        return this.$form.attr('data-parent-pk');
-    } else {
-        return  '';
-    }
-};
-ChGridForm.prototype.getSearchData = function () {
-    var ch_filter_form = this.getFilterForm();
-    if (typeof ch_filter_form != 'undefined') {
-
-        try {
-            var filter_data = ch_filter_form.getData();
-
-        } catch (e) {
-
-            filter_data = {};
-        }
-    } else {
-        filter_data = {};
-    }
-    var parent_id = this.getParentPK();
-    if (parent_id) {
-        filter_data.ParentID = parent_id;
-    }
-    return filter_data;
-};
-ChGridForm.prototype._clearDeletedObj = function () {
-    var deletedObj = this.getDeletedObj();
-    deletedObj = {};
-};
-ChGridForm.prototype._clearChangedObj = function () {
-    if (this._isAttachmentsModel()) {
-        facade.getFilesModule().clear(this.getID());
-    } else {
-        var changeObj = this.getChangedObj();
-        for (var name in changeObj) {
-            changeObj[name] = {};
-        }
-    }
-    //todo: вернуть код
-    //this.getSaveButton().removeClass('active')
-};
 //ChGridForm.prototype.refresh = function (parentView) {
 //    console.log("refresh")
 //    var url = this.getRefreshUrl(),
@@ -612,7 +529,7 @@ ChGridForm.prototype._isAttachmentsModel = function () {
 
 ChGridForm.prototype.toggleAllCols = function () {
     var
-        isHidden = this.chFormSettings.isShortVisibleMode(),
+        //isHidden = this.chFormSettings.isShortVisibleMode(),
 //        hiddenClass = ChOptions.classes.hiddenAllColsTable,
         $th = this.getFixedTable().find('[' + optionsModule.getClass('allowHideColumn') + ']');
     //todo: вернуть код
