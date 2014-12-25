@@ -1,4 +1,4 @@
-var CardRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
+var CardRO = (function (Backbone, helpersModule) {
     'use strict';
     return Backbone.Model.extend({
         defaults: {
@@ -27,4 +27,4 @@ var CardRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
             return parseInt(this.get('card').getRows(), 10);
         }
     });
-})(Backbone, helpersModule, FilterProperties, bindModule);
+})(Backbone, helpersModule);

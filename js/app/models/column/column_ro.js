@@ -1,4 +1,4 @@
-var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
+var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule, deferredModule, optionsModule, undefined) {
     'use strict';
     return Backbone.Model.extend({
         defaults: {
@@ -6,17 +6,19 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             id: null,
             key: null
         },
-        _column_custom_properties: null,
+        initialize: function () {
+            this.set('key', this.get('columnProperties').getVisibleKey());
+        },
+        _columnCustomProperties: null,
         getColumnCustomProperties: function () {
-            if (this._column_custom_properties === null) {
-                this._column_custom_properties = new ColumnCustomProperties({
+            if (this._columnCustomProperties === null) {
+                this._columnCustomProperties = new ColumnCustomProperties({
                         expression: this.get('columnProperties').getProperties()
                     }
                 );
             }
-            return this._column_custom_properties;
+            return this._columnCustomProperties;
         },
-        readProcData: null,
         getSql: function () {
             var sql = this.get('columnProperties').getDataSource();
             if (!sql) {
@@ -27,6 +29,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         getDefault: function () {
             return helpersModule.defaultExpressionEval(this.get('columnProperties').getDefault());
         },
+        readProcData: null,
         evalReadProc: function (params) {
             var mainDefer = deferredModule.create(),
                 deferId = deferredModule.save(mainDefer);
@@ -79,7 +82,6 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         getCardHeight: function () {
             return helpersModule.intExpressionEval(this.get('columnProperties').getCardHeight(), 1);
         },
-
         getVisibleCaption: function () {
             var caption = this.getCaption();
             return caption || this.get('columnProperties').getHeaderImage() ? caption : this.get('key');
@@ -102,10 +104,10 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         getToId: function () {
             return this.get('columnProperties').getToId();
         },
-        markAsNoChanged: function($col){
+        markAsNoChanged: function ($col) {
             $col.closest('td').addClass(optionsModule.getClass('notChanged'));
         },
-        isAllowEdit: function(view, pk){
+        isAllowEdit: function (view, pk) {
             var data = view.getDBDataFromStorage(pk),
                 isAllowEdit = false,
                 allowEditLC = this.getRawAllowEdit().toLowerCase();
@@ -149,9 +151,9 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         },
         getTemplate: function (isVisible) {
             var template = [
-                    '<td style class="' + this.getClass() + ' {class}"><div class="table-td"><a data-value="{value}"',
-                    ' data-pk ="{pk}"  class="editable ' + this.getUniqueClass() + '"></a></div></td>'
-                ].join('');
+                '<td style class="' + this.getClass() + ' {class}"><div class="table-td"><a data-value="{value}"',
+                ' data-pk ="{pk}"  class="editable ' + this.getUniqueClass() + '"></a></div></td>'
+            ].join('');
             if (isVisible) {
                 template = template.replace('style', '');
             } else {
@@ -160,11 +162,11 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             return template;
         },
         getClass: function () {
-            var class_name = '';
+            var className = '';
             if (!this.isEdit()) {
-                class_name += 'not-changed';
+                className += 'not-changed';
             }
-            return class_name;
+            return className;
         },
         getRawAllowEdit: function () {
             return this.get('columnProperties').getAllowEdit();
@@ -175,11 +177,11 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         isEdit: function () {
             return helpersModule.boolEval(this.get('columnProperties').getAllowEdit(), true);
         },
-        getJsFn: function ($cnt) {
+        getJsFn: function () {
             return function () {
             };
         },
-        getModalTitle: function(pk){
+        getModalTitle: function (pk) {
             if ($.isNumeric(pk)) {
                 return this.getVisibleCaption() + ' [' + pk + ']';
             } else {
@@ -188,9 +190,6 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         },
         getEditType: function () {
             return this.get('columnProperties').getEditType();
-        },
-        initialize: function () {
-            this.set('key', this.get('columnProperties').getVisibleKey());
         },
         getHeaderCLass: function () {
             if (this.isRequired()) {
@@ -213,7 +212,6 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         isVisibleInAllField: function () {
             return helpersModule.boolEval(this.get('columnProperties').getAllFields(), false);
         },
-
         getHeaderOptions: function () {
             var options = {};
             options['data-id'] = this.get('key');
@@ -226,6 +224,5 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             options['class'] = 'sorter-text';
             return options;
         }
-
     });
-})(Backbone, helpersModule, FilterProperties, bindModule);
+})(Backbone, helpersModule, FilterProperties, bindModule, deferredModule, optionsModule, undefined);

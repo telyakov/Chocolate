@@ -1,16 +1,12 @@
-var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindModule) {
+var CardElement = (function ($, Backbone, _, helpersModule) {
     'use strict';
     return Backbone.Model.extend({
-        labelTemplate: _.template([
-                '<label for="<%= id%>"',
-                '<% if(isRequired){ %>',
-                ' class="required"><span class="required">*</span>',
-                '<% }else{ %>',
-                '>',
-                '<% }%>',
-                '<%= caption%></label>'
-            ].join('')
-        ),
+        defaults: {
+            collection: null,
+            column: null,
+            key: null,
+            model: null
+        },
         id: null,
         getControlID: function () {
             if (this.id === null) {
@@ -18,12 +14,7 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
             }
             return this.id;
         },
-        defaults: {
-            collection: null,
-            column: null,
-            key: null,
-            model: null
-        },
+
         getMinHeight: function () {
             return 42;
         },
@@ -41,6 +32,16 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
         renderEndData: function () {
             return '</div>';
         },
+        labelTemplate: _.template([
+                '<label for="<%= id%>"',
+                '<% if(isRequired){ %>',
+                ' class="required"><span class="required">*</span>',
+                '<% }else{ %>',
+                '>',
+                '<% }%>',
+                '<%= caption%></label>'
+            ].join('')
+        ),
         processBeforeRender: function (id) {
             return this.labelTemplate({
                 id: id,
@@ -54,26 +55,21 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
         isRequired: function () {
             return this.get('column').isRequired();
         },
-
         renderBeginData: function () {
             return '<div class="card-input ' + this.getEditClass() + '">';
         },
-
         getEditClass: function () {
             if (this.getAllowEdit()) {
                 return '';
             }
             return 'card-input-no-edit';
         },
-
         getAllowEdit: function () {
             return this.get('column').getRawAllowEdit();
         },
-
         getType: function () {
             return this.get('column').getCardEditType();
         },
-
         getX: function () {
             return parseInt(this.get('column').getCardX(), 10);
         },
@@ -101,26 +97,22 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
                 return curPosY + parseInt(posY, 10);
             }
         },
-
         getHeight: function () {
             return this.get('column').getCardHeight();
         },
-
         getWidth: function () {
             return this.get('column').getCardWidth();
         },
-        getCallback: function (controlID, pk) {
+        getCallback: function () {
             return function () {
             };
         },
         getHtml: function (card, tabIndex, pk, controlID) {
-            var cellWidth =  parseInt(100 / card.getCols(), 10),
+            var cellWidth = parseInt(100 / card.getCols(), 10),
                 cols = card.getCols(),
                 rows = card.getRows();
             return this.createCell(tabIndex, cellWidth, cols, rows, pk, controlID);
         },
-
-
         createCell: function (tabIndex, cellWidth, cols, rows, pk, controlID) {
             var html = [],
                 id = helpersModule.uniqueID();
@@ -175,7 +167,6 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
                 height: this.getMinHeight()
             });
         },
-
         getCellWidth: function (cellWidth, cols) {
             var width = '' + this.getWidth();
             if (width.toLowerCase() === 'max') {
@@ -184,7 +175,6 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
                 return cellWidth * parseInt(width, 10);
             }
         },
-
         getCellClass: function () {
             if (this.isStatic()) {
                 return 'card-col card-static';
@@ -199,14 +189,14 @@ var CardElement = (function ($, Backbone, helpersModule, FilterProperties, bindM
             return parseInt(countRows, 10);
         },
         render: function (event, tabIndex, card, pk) {
-            var controlID = this.getControlID();
-            var response = {
-                x: this.getX(),
-                y: this.getY(),
-                html: this.getHtml(card, tabIndex, pk, controlID),
-                callback: this.getCallback(controlID, pk)
-            };
+            var controlID = this.getControlID(),
+                response = {
+                    x: this.getX(),
+                    y: this.getY(),
+                    html: this.getHtml(card, tabIndex, pk, controlID),
+                    callback: this.getCallback(controlID, pk)
+                };
             $.publish(event, response);
         }
     });
-})(jQuery, Backbone, helpersModule, FilterProperties, bindModule);
+})(jQuery, Backbone, _, helpersModule);
