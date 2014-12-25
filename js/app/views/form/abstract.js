@@ -246,6 +246,80 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             }
 
         },
+        exportToExcel: function () {
+            var data = {
+                data: $.extend(true, this.getDBDataFromStorage(), this.getChangedDataFromStorage()),
+                view: this.model.getView(),
+                settings: this.getFormSettingsFromStorage()
+            };
+            $.fileDownload(
+                optionsModule.getUrl('export2excel'),
+                {
+                    httpMethod: "POST",
+                    data: {data: JSON.stringify(data)}
+                }
+            );
+        },
+        openFormSettings: function (e) {
+            var $dialog = $('<div/>'),
+                $content = $('<div />', {'class': 'grid-settings'}),
+                $autoUpdate = $('<div/>', {
+                    'class': 'setting-item',
+                    html: '<span class="setting-caption">Автоматические обновление данных(раз в 100 секунд)</span>'
+                }),
+                $input = $('<input/>', {
+                    type: 'checkbox'
+                }),
+                $styleSettings = $('<div/>', {
+                    'class': 'setting-item',
+                    html: '<span class="setting-caption">Выбрать дизайн(необходимо обновить страницу, после изменения)</span>'
+                }),
+            //todo: move int to constants
+                $styleInput = $('<select/>', {
+                    html: '<option value="1">Стандартный</option><option value="2">Мобильный</option>'
+                }),
+                _this = this;
+            if (this.isAutoUpdate()) {
+                $input.attr('checked', 'checked');
+            }
+            $styleInput.find('[value="' + this.getFormStyleID() + '"]').attr('selected', true);
+            $styleSettings.append($styleInput);
+            $autoUpdate.append($input);
+            $content
+                .append($styleSettings)
+                .append($autoUpdate);
+            $dialog.append($content);
+            $dialog.dialog({
+                resizable: false,
+                title: 'Настройки',
+                dialogClass: 'wizard-dialog',
+                modal: true,
+                buttons: {
+                    OK: {
+                        'text': 'OK',
+                        'class': 'wizard-active wizard-next-button',
+                        click: function () {
+                            var $this = $(this);
+                            _this.setAutoUpdate($input.is(':checked'));
+                            _this.setFormStyleID(parseInt($styleInput.val(), 10));
+                            $this.dialog("close");
+                            $this.remove();
+                        }
+                    },
+                    Отмена: {
+                        'text': 'Отмена',
+                        'class': 'wizard-cancel-button',
+                        click: function () {
+                            var $this = $(this);
+                            $this.dialog('close');
+                            $this.remove();
+                        }
+                    }
+
+                }
+            });
+            $dialog.dialog('open');
+        },
         getDBDataFromStorage: function (id) {
             if (id === undefined) {
                 return this.getStorage().data;

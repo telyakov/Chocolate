@@ -1,6 +1,14 @@
-var MenuView = (function (Backbone) {
+var MenuView = (function (Backbone, $, _, window, helpersModule) {
     'use strict';
     return Backbone.View.extend({
+        initialize: function (options) {
+            _.bindAll(this, 'render');
+            this.$el = options.$el;
+            this.view = options.view;
+            this.model = options.view.model;
+            this.render();
+        },
+        events: {},
         template: _.template([
             '<menu class="menu" type="toolbar">',
             '<% if (isAllowCreate) { %>',
@@ -46,15 +54,6 @@ var MenuView = (function (Backbone) {
             '<div class="messages-container"></div>',
             '</menu>'
         ].join('')),
-        initialize: function (options) {
-            _.bindAll(this, 'render');
-            this.$el = options.$el;
-            this.view = options.view;
-            this.model = options.view.model;
-            this.render();
-        },
-        events: {},
-
         render: function () {
             var printID = helpersModule.uniqueID(),
                 isAllowPrintActions = this.model.isAllowPrintActions(),
@@ -79,8 +78,28 @@ var MenuView = (function (Backbone) {
             if (isAllowAudit) {
                 chFunctions.systemColsInit(auditID);
             }
-            chFunctions.initActions(actionID, this.model.getActionProperties());
-
+            this.initActions(actionID, this.model.getActionProperties());
+        },
+        initActions: function (id, actionsProperty) {
+            var $actionButton = $('#' + id),
+                view = this.view;
+            $actionButton.contextmenu({
+                show: {effect: "blind", duration: 0},
+                menu: actionsProperty.getData(),
+                select: function (event, ui) {
+                    switch (ui.cmd) {
+                        case 'window.print':
+                            window.print();
+                            break;
+                        case 'ch.export2excel':
+                            view.exportToExcel();
+                            break;
+                        case 'ch.settings':
+                            view.openFormSettings();
+                            break;
+                    }
+                }
+            });
         }
     });
-})(Backbone);
+})(Backbone, jQuery, _, window, helpersModule);
