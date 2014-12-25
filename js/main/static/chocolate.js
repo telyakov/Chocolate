@@ -26,20 +26,6 @@ var Chocolate = {
         this.$page = $('#pagewrap');
         this._initStorage();
     },
-    /**
-     * @param className {string}
-     * @returns {string}
-     */
-    clsSel: function (className) {
-        return ['.', className].join('');
-    },
-    /**
-     * @param id {string}
-     * @returns {string}
-     */
-    idSel: function (id) {
-        return ['#', id].join('');
-    },
     leaveFocus: function () {
         Chocolate.$content.trigger('click');
     },
@@ -505,17 +491,17 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                 title: title
             });
         },
-        checkBoxDisplay: function (value, $context, customProperties) {
+        checkBoxDisplay: function (value, $context, customProperties, view) {
             var label = customProperties.get('label'),
                 color = customProperties.get('color'),
                 priority = customProperties.get('priority');
-            var chForm;
+            var isNeedChangeColor = false;
             if ($context.closest('tr').length && color && priority) {
-                chForm = facade.getFactoryModule().makeChGridForm($context.closest('form'));
+                isNeedChangeColor = true;
             }
             if (typeof(value) !== 'undefined' && parseInt(value, 10)) {
-                if (chForm) {
-                    chForm.addPriorityColorAndApply($context.attr('data-pk'), priority, color)
+                if (isNeedChangeColor) {
+                    view.addPriorityColorAndApply($context.attr('data-pk'), priority, color);
                 }
                 setTimeout(function () {
                     if (label === optionsModule.getSetting('attention')) {
@@ -529,8 +515,8 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                 }, 0);
 
             } else {
-                if (chForm) {
-                    chForm.removePriorityColorAndApply($context.attr('data-pk'), priority)
+                if (isNeedChangeColor) {
+                    view.removePriorityColorAndApply($context.attr('data-pk'), priority);
                 }
                 $context.html('');
             }
@@ -544,12 +530,12 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                 return null;
             }
             var result;
-            if (typeof number == 'number') {
+            if (typeof number === 'number') {
                 result = number.toString();
             } else {
                 result = number;
             }
-            return result.replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g, "\$1 ");
+            return result.replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g, "$1 ");
         },
         init: function () {
             context.init();

@@ -48,7 +48,7 @@ var CheckBoxCardElement = (function ($, helpersModule) {
                         showbuttons: false,
                         source: [{'value': 1, 'text': ''}],
                         display: function (value) {
-                            helpersModule.checkBoxDisplay(value, $(this), customProperties);
+                            helpersModule.checkBoxDisplay(value, $(this), customProperties, view);
                         }
                     });
             };

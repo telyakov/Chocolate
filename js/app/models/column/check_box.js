@@ -53,7 +53,8 @@ var CheckBoxColumnRO = (function (helpersModule) {
                             helpersModule.checkBoxDisplay(
                                 value,
                                 $(this),
-                                customProperties
+                                customProperties,
+                                view
                             );
                         }
                     });

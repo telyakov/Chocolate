@@ -3,10 +3,8 @@ function ChGridForm($form) {
     this.chFormSettings = new ChFormSettings(this);
     this._$table = null;
     this._$fixed_table = null;
-    this._refresh_url = null;
     this._parent_form_id = null;
     this._ch_messages_container = null;
-    this._is_ajax_add = null;
     this._$user_grid = null;
     this._user_grid_id = null;
     this.storage = null;
@@ -14,14 +12,11 @@ function ChGridForm($form) {
     this._$grid_form = null;
     this._parent_view = null;
     this._save_url = null;
-    this._is_card_support = null;
-    this._$footer = null;
     this._$thead = null;
     this._type = null;
     this._$save_btn = null;
     this.fmChildGridCollection = new FmChildGridCollection();
     this._chCardsCollection = null;
-    this.priorityColorCol = [];
 }
 ChGridForm.prototype.destroy = function () {
     this.getTh().find('.ui-resizable').resizable('destroy');
@@ -44,46 +39,6 @@ ChGridForm.prototype.destroy = function () {
 };
 ChGridForm.prototype.getExitMessage = function () {
     return 'В форме "' + this.getTabCaption() + '" имеются несохраненные изменения. Закрыть без сохранения?';
-};
-ChGridForm.prototype.addPriorityColorAndApply = function (id, priority, color) {
-    var priorities = this.priorityColorCol[id];
-    if (typeof priorities == 'undefined') {
-        this.priorityColorCol[id] = [];
-    }
-    this.priorityColorCol[id].push({priority: priority, color: '#' + color})
-    var prColor = this._getRowColor(id);
-    this.getTable().find('tr[data-id="' + id + '"]').css({background: prColor})
-};
-ChGridForm.prototype.removePriorityColorAndApply = function (id, priority) {
-    if (typeof this.priorityColorCol[id] != 'undefined') {
-
-        var _this = this;
-        this.priorityColorCol[id].forEach(function (item, index) {
-            if (item.priority == priority) {
-                delete _this.priorityColorCol[id][index];
-            }
-        })
-    }
-    var color = this._getRowColor(id);
-    if (color) {
-        this.getTable().find('tr[data-id="' + id + '"]').css({background: color})
-    } else {
-        this.getTable().find('tr[data-id="' + id + '"]').css({background: ''})
-    }
-};
-ChGridForm.prototype._getRowColor = function (id) {
-    var priorities = this.priorityColorCol[id];
-    if (typeof priorities != 'undefined') {
-        var color = null, prevPriority;
-        priorities.forEach(function (item) {
-            if (typeof prevPriority == 'undefined' || item.priority < prevPriority) {
-                prevPriority = item.priority;
-                color = item.color;
-            }
-        });
-        return color;
-    }
-    return null;
 };
 ChGridForm.prototype.setDefaultValue = function (key, val) {
     this.getDefaultObj()[key] = val;
@@ -124,12 +79,6 @@ ChGridForm.prototype.getType = function () {
 };
 ChGridForm.prototype.getTh = function () {
     return this.getThead().children('tr').first().children('th');
-};
-ChGridForm.prototype.getFooter = function () {
-    if (this._$footer == null) {
-        this._$footer = this.$form.siblings('footer');
-    }
-    return this._$footer;
 };
 ChGridForm.prototype.setSettingsObj = function (setting_obj) {
     var storage = this.getSettingsObj();
@@ -235,10 +184,6 @@ ChGridForm.prototype.getSaveUrl = function () {
         ].join('');
     }
     return this._save_url;
-};
-ChGridForm.prototype.getPreviewObj = function () {
-    var storage = this.getStorage();
-    return storage[this.getID()].preview;
 };
 /**
  * @returns {String}
@@ -510,15 +455,6 @@ ChGridForm.prototype.getSearchData = function () {
     }
     return filter_data;
 };
-ChGridForm.prototype.getOrderData = function () {
-    var storage = this.getStorage();
-    return storage[this.getID()].order;
-};
-ChGridForm.prototype.clearChange = function () {
-    this._clearChangedObj();
-    this._clearDeletedObj();
-    return this;
-};
 ChGridForm.prototype._clearDeletedObj = function () {
     var deletedObj = this.getDeletedObj();
     deletedObj = {};
@@ -670,61 +606,8 @@ ChGridForm.prototype.getMessagesContainer = function () {
     }
     return this._ch_messages_container;
 };
-ChGridForm.prototype.isAjaxAdd = function () {
-    if (this._is_ajax_add == null) {
-        this._is_ajax_add = this.$form.attr("data-ajax-add");
-    }
-    return this._is_ajax_add;
-};
-/**
- * Преобразует коллекцию объектов jQuery в упорядоченный список.
- * @returns {Array}
- * @private
- */
-ChGridForm.prototype._getChGridColumns = function () {
-    var $fixed_table = this.getFixedTable(),
-        $column_headers = $fixed_table.find('thead').eq(0).find('tr').eq(0).find('th'),
-        sorting_columns = [],
-        count_fixed_column = 1;
-
-    $column_headers.each(function (i) {
-        if (i >= count_fixed_column) {
-            var ch_column = facade.getFactoryModule().makeChGridColumnHeader($($column_headers[i]));
-            sorting_columns.push(ch_column);
-        }
-    })
-    return sorting_columns;
-};
-ChGridForm.prototype._getColumnTemplates = function () {
-    var columns = this._getChGridColumns(),
-        templates = [];
-    for (var key in columns) {
-        /**
-         * @type {ChGridColumnHeader}
-         */
-        var column = columns[key],
-            column_key = column.getKey(),
-            template = column.getTemplate();
-
-        templates[column_key] = template;
-    }
-    return templates;
-};
-
 ChGridForm.prototype._isAttachmentsModel = function () {
     return this.getView().indexOf(Chocolate.ATTACHMENTS_VIEW) != -1;
-};
-
-ChGridForm.prototype.saveInStorage = function (data, preview, default_values, required_fields, grid_properties, order) {
-    var storage = this.getStorage();
-    storage[this.getID()] = {data: data, preview: preview, change: {}, deleted: {}, defaultValues: default_values, required: required_fields, gridProperties: grid_properties, order: order};
-};
-ChGridForm.prototype.updateStorage = function (data, order) {
-    var storage = this.getStorage();
-    storage[this.getID()].order = order;
-    storage[this.getID()].data = data;
-    storage[this.getID()].change = {};
-    storage[this.getID()].deleted = {};
 };
 
 ChGridForm.prototype.toggleAllCols = function () {
@@ -737,4 +620,3 @@ ChGridForm.prototype.toggleAllCols = function () {
     //this.chFormSettings.setShortVisibleMode(!isHidden);
     return this;
 };
-

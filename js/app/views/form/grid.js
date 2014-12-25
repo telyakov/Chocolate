@@ -540,7 +540,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             columns.forEach(function (item) {
                 key = item.get('key');
                 var isVisible = thList.filter('[data-id="' + key + '"]').css('display') !== "none",
-                     value = '',
+                    value = '',
                     tdClass = '';
                 if (data[key] !== undefined && (key !== 'id' || isNumericID )) {
                     value = data[key];
@@ -559,6 +559,46 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             });
             rowBuilder.push('</tr>');
             return rowBuilder.join('');
+        },
+        _priorityColors: [],
+        addPriorityColorAndApply: function (id, priority, color) {
+            if (this._priorityColors[id] === undefined) {
+                this._priorityColors[id] = [];
+            }
+            this._priorityColors[id].push({priority: priority, color: '#' + color});
+            this.setRowColor(id);
+        },
+        setRowColor: function (id) {
+            var color = this.getRowColor(id);
+            this.getJqueryDataTable().find('tr[data-id="' + id + '"]').css({
+                background: color? color: ''
+            });
+            return this;
+        },
+        removePriorityColorAndApply: function (id, priority) {
+            if (this._priorityColors[id] !== undefined) {
+                var _this = this;
+                this._priorityColors[id].forEach(function (item, index) {
+                    if (item.priority === priority) {
+                        delete _this._priorityColors[id][index];
+                    }
+                });
+            }
+            this.setRowColor(id);
+        },
+        getRowColor: function (id) {
+            if (this._priorityColors[id] !== undefined) {
+                var color = null, prevPriority;
+                this._priorityColors[id].forEach(function (item) {
+                    if (prevPriority === undefined || item.priority < prevPriority) {
+                        prevPriority = item.priority;
+                        color = item.color;
+                    }
+                });
+                return color;
+            }
+            return null;
         }
+
     });
 })(AbstractGridView, jQuery, _, deferredModule, optionsModule, helpersModule, window, undefined);

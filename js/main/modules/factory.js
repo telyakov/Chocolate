@@ -63,12 +63,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
             return _private.make($el, 'ChGridColumnBody');
         },
         /**
-         * @returns {ChCardElement}
-         */
-        makeChCardElement: function ($el) {
-            return _private.make($el, 'ChCardElement');
-        },
-        /**
          * @returns {ChMessagesContainer}
          */
         makeChMessagesContainer: function ($el) {
@@ -85,12 +79,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
          */
         makeChCanvas: function ($el) {
             return _private.make($el, 'ChCanvas');
-        },
-        /**
-         * @returns {ChGridColumnHeader}
-         */
-        makeChGridColumnHeader: function ($el) {
-            return _private.make($el, 'ChGridColumnHeader');
         },
         make: function ($el, objClass) {
             var id = $el.attr('id');
@@ -152,9 +140,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         makeChGridColumnBody: function ($el) {
             return _private.makeChGridColumnBody($el);
         },
-        makeChCardElement: function ($el) {
-            return _private.makeChCardElement($el);
-        },
         makeChMessagesContainer: function ($el) {
             return _private.makeChMessagesContainer($el);
         },
@@ -163,9 +148,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         },
         makeChCanvas: function ($el) {
             return _private.makeChCanvas($el);
-        },
-        makeChGridColumnHeader: function ($el) {
-            return _private.makeChGridColumnHeader($el);
         },
         garbageCollection: function () {
             _private.garbageCollection();
