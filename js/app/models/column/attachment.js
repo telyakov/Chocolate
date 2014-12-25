@@ -5,12 +5,15 @@ var AttachmentColumnRO = (function () {
             id: null,
             key: null
         },
+        initialize: function () {
+            this.set('key', this.getKey());
+        },
         isEdit: function () {
             return true;
         },
         getJsFn: function () {
             var _this = this;
-            return function ($cnt) {
+            return function ($cnt, view) {
                 $cnt.find('.' + _this.getUniqueClass()).editable({
                     type: 'text',
                     mode: 'inline',
@@ -27,25 +30,23 @@ var AttachmentColumnRO = (function () {
                 });
             };
         },
-        getVisibleCaption: function(){
-          return 'Вложения';
+        getVisibleCaption: function () {
+            return 'Вложения';
         },
         getDefault: function () {
-            return  null;
+            return null;
         },
         getView: function () {
             return 'attachments.xml';
         },
-        initialize: function () {
-            this.set('key', this.getKey());
-        },
+
         getHeaderCLass: function () {
             return 'fa-paperclip';
         },
         getKey: function () {
             return 'numattachments';
         },
-        getCardKey: function(){
+        getCardKey: function () {
             return '';
         },
         isRequired: function () {
@@ -63,17 +64,15 @@ var AttachmentColumnRO = (function () {
         getHeaderOptions: function () {
             return {
                 'data-id': this.getKey(),
-                'data-grid-button': 1,
                 'class': 'sorter-text'
             };
         },
         getClass: function () {
-            var class_name = '';
+            var className = 'grid-button';
             if (!this.isEdit()) {
-                class_name += 'not-changed';
+                className += ' not-changed';
             }
-            class_name += ' grid-button';
-            return class_name;
+            return className;
         }
 
     });

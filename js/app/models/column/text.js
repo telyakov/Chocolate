@@ -10,6 +10,7 @@ var TextColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
                     mode: 'inline',
                     name: _this.get('key'),
                     showbuttons: false,
+                    disabled: true,
                     onblur: 'submit',
                     savenochange: false
                 };

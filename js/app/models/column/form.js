@@ -3,8 +3,6 @@ var FormColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
     return ColumnRO.extend({
         getHeaderOptions: function(){
             var options = CheckBoxColumnRO.__super__.getHeaderOptions.apply(this, arguments);
-            options['data-grid-button'] = 1;
-
             return options;
         },
         getClass: function () {

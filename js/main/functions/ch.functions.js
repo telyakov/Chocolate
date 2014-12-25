@@ -93,25 +93,7 @@ var chFunctions = {
             }
         })
     },
-    checkBoxInitFunc: function ($context, attribute, allowEdit) {
-        var column = facade.getFactoryModule().makeChGridColumnBody($context),
-            isAllowEdit = chCardFunction._isAllowEdit(column.getDataObj(), allowEdit);
-        $context.unbind('click');
-        if (isAllowEdit) {
-            $context.on('click', function () {
-                var val = $context.editable('getValue');
-                if ($.isEmptyObject(val)) {
-                    val = 1;
-                } else {
-                    val = +!val[attribute];
-                }
-                $context.editable('setValue', val);
-                column.setChangedValue(attribute, val);
-            });
-        } else {
-            column.markAsNoChanged();
-        }
-    },
+
     treeViewOptions: function ($context, isSingle) {
         var options = {
             children: $context.data().editable.options.source,
@@ -204,22 +186,6 @@ var chFunctions = {
     defaultColumnSaveFunc: function (e, params, name) {
         var chColumn = facade.getFactoryModule().makeChGridColumnBody($(e.target));
         chColumn.setChangedValue(name, params.newValue);
-    },
-    dateColumnInitFunction: function ($context, allowEdit) {
-        var column = facade.getFactoryModule().makeChGridColumnBody($context),
-            isAllowEdit = chCardFunction._isAllowEdit(column.getDataObj(), allowEdit);
-        if (!isAllowEdit) {
-            $context.unbind('click').unbind('mouseenter');
-            column.markAsNoChanged();
-        }
-    },
-    dateColumnSaveFunction: function (e, params, name) {
-        var chColumn = facade.getFactoryModule().makeChGridColumnBody($(e.target)),
-            newVal = params.newValue;
-        if (newVal) {
-            newVal = moment(newVal).format(optionsModule.getSetting('formatDate'));
-        }
-        chColumn.setChangedValue(name, newVal);
     },
     treeOnQuerySelect: function (flag, node) {
         if (node.childList === null) {

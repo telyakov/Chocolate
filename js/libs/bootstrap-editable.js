@@ -1868,9 +1868,9 @@
 //        if(typeof(this.options.autotext) == 'undefined'){
             this.options.autotext = 'auto';
 //        }
-//        if(typeof(this.options.disabled) == 'undefined'){
+        if(typeof(this.options.disabled) === 'undefined'){
             this.options.disabled = false;
-//        }
+        }
 //        }
         if(typeof this.options.display === 'undefined'){
             this.options.display = null;
@@ -1989,31 +1989,30 @@
 
             //depending on autotext run render() or just finilize init
 //            $.when(doAutotext ? this.render() : true).then($.proxy(function() {
-            this.render();
-            this.$element.triggerHandler('init', this);
-//            $.when(this.render()).then($.proxy(function() {
-////                if(this.options.disabled) {
-////                    this.disable();
-////                } else {
-////                    this.enable();
-////                }
-//                /**
-//                 Fired when element was initialized by `$().editable()` method.
-//                 Please note that you should setup `init` handler **before** applying `editable`.
-//
-//                 @event init
-//                 @param {Object} event event object
-//                 @param {Object} editable editable instance (as here it cannot accessed via data('editable'))
-//                 @since 1.2.0
-//                 @example
-//                 $('#username').on('init', function(e, editable) {
-//                   alert('initialized ' + editable.options.name);
-//               });
-//                 $('#username').editable();
-//                 **/
-//                this.$element.triggerHandler('init', this);
-//            }, this));
-//            console.timeEnd('sss')
+//            this.render();
+//            this.$element.triggerHandler('init', this);
+            $.when(this.render()).then($.proxy(function() {
+                if(this.options.disabled) {
+                    this.disable();
+                } else {
+                    this.enable();
+                }
+                /**
+                 Fired when element was initialized by `$().editable()` method.
+                 Please note that you should setup `init` handler **before** applying `editable`.
+
+                 @event init
+                 @param {Object} event event object
+                 @param {Object} editable editable instance (as here it cannot accessed via data('editable'))
+                 @since 1.2.0
+                 @example
+                 $('#username').on('init', function(e, editable) {
+                   alert('initialized ' + editable.options.name);
+               });
+                 $('#username').editable();
+                 **/
+                this.$element.triggerHandler('init', this);
+            }, this));
         },
 
         /*

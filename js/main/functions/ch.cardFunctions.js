@@ -1,10 +1,10 @@
-var ch ={
-    card:{
+var ch = {
+    card: {
         treeView: {
-            _okButton: function(){
-                return function( $tree, $input, $checkbox, $select){
+            _okButton: function () {
+                return function ($tree, $input, $checkbox, $select) {
                     var chDynatree = this;
-                    return  {
+                    return {
                         'text': 'Сохранить',
                         'class': 'wizard-active wizard-next-button',
                         click: function (bt, elem) {
@@ -15,10 +15,10 @@ var ch ={
                                 var node = selected_nodes[i];
                                 if (is_select_all || node.childList == null) {
                                     val += node.data.key;
-                                    if(!chDynatree.isSingleMode()){
+                                    if (!chDynatree.isSingleMode()) {
                                         val += chDynatree.getSeparator();
                                     }
-                                    if(i>0){
+                                    if (i > 0) {
                                         select_html += '/';
                                     }
                                     select_html += node.data.title;
@@ -26,7 +26,7 @@ var ch ={
                             }
                             $input.editable('setValue', val);
                             var chCardElement = facade.getFactoryModule().makeChCardElement($input);
-                            var name =$input.data().editable.options.name;
+                            var name = $input.data().editable.options.name;
                             $input.html(select_html);
 
                             chCardElement
@@ -35,10 +35,11 @@ var ch ={
                             chCardElement.getParentElement(name).html(select_html);
                             $(this).dialog("close");
 //                            $input.focus();
-                        }};
+                        }
+                    };
                 };
             },
-            defaultInit: function($context, attribute, allowEdit, titleKey, editable, caption, isSingle){
+            defaultInit: function ($context, attribute, allowEdit, titleKey, editable, caption, isSingle) {
                 var cardElement = facade.getFactoryModule().makeChCardElement($context),
                     card = cardElement.getCard(),
                     actualDataObj = card.getActualDataObj(),
@@ -51,19 +52,21 @@ var ch ={
                 setTimeout(function () {
                     card.setElementValue($context, value, isAllowEdit, elemText);
                     $context.html(elemText);
-                        $context.unbind('click');
-                    if(isAllowEdit){
-                        $context.on('click', function(){
+                    $context.unbind('click');
+                    if (isAllowEdit) {
+                        $context.on('click', function () {
                             var dynatreeElem = new ChDynatree($context);
                             var options = chFunctions.treeViewOptions($context, isSingle);
                             options.okButton = ch.card.treeView._okButton();
-                            options.defaultValues = function(){return this.data().editable.value};
+                            options.defaultValues = function () {
+                                return this.data().editable.value
+                            };
                             dynatreeElem.buildFromData(options);
                         });
                     }
                 }, 0);
             },
-            gridInit: function($context, attribute, allowEdit, titleKey, editable, caption, isSingle){
+            gridInit: function ($context, attribute, allowEdit, titleKey, editable, caption, isSingle) {
                 var cardElement = facade.getFactoryModule().makeChCardElement($context),
                     card = cardElement.getCard(),
                     actualDataObj = card.getActualDataObj(),
@@ -73,28 +76,30 @@ var ch ={
                     value = '';
                 }
                 var elemText = cardElement.getParentElement(attribute).html();
-                    //todo: leak memory
+                //todo: leak memory
                 facade.getCardModule().addCallback(function () {
                     card.setElementValue($context, value, isAllowEdit, elemText);
                     $context.html(elemText);
                     $context.unbind('click');
-                    if(isAllowEdit){
-                        $context.on('click', function(){
+                    if (isAllowEdit) {
+                        $context.on('click', function () {
                             var chEditable = new ChEditable($context),
                                 dynatreeElem = new ChDynatree($context),
                                 options = chFunctions.treeViewOptions($context, isSingle);
-                            options.children =  cardElement.getParentElement(attribute).data().editable.options.source;
+                            options.children = cardElement.getParentElement(attribute).data().editable.options.source;
                             options.okButton = ch.card.treeView._okButton();
                             options.title = chEditable.getTitle($context.attr('data-pk'), caption);
-                            options.defaultValues = function(){return this.data().editable.value;};
+                            options.defaultValues = function () {
+                                return this.data().editable.value;
+                            };
                             dynatreeElem.buildFromData(options);
                         });
-                    }else{
+                    } else {
                         cardElement.markAsNoChanged();
                     }
                 });
             },
-            dynamicInit: function($context, attribute, allowEdit, titleKey, editable, caption, isSingle, sql){
+            dynamicInit: function ($context, attribute, allowEdit, titleKey, editable, caption, isSingle, sql) {
                 var cardElement = facade.getFactoryModule().makeChCardElement($context),
                     card = cardElement.getCard(),
                     actualDataObj = card.getActualDataObj(),
@@ -108,36 +113,39 @@ var ch ={
                     card.setElementValue($context, value, isAllowEdit, elemText);
                     $context.html(elemText);
                     $context.unbind('click');
-                    if(isAllowEdit){
-                          var sqlDefer = bindModule.deferredBindSql(sql, cardElement.getCard().getActualDataObj());
+                    if (isAllowEdit) {
+                        var sqlDefer = bindModule.deferredBindSql(sql, cardElement.getCard().getActualDataObj());
                         sqlDefer.done(function (data) {
                             var sql = data.sql;
                             $context.uniqueId();
                             //todo: leak memory
-                            $context.on('click', function(){
+                            $context.on('click', function () {
                                 var chEditable = new ChEditable($context),
                                     dynatreeElem = new ChDynatree($context),
                                     options = chFunctions.treeViewOptions($context, isSingle);
-                                options.children =  null;
+                                options.children = null;
                                 options.sql = sql;
-                                options.getTitleValue= function (node) {return node.name;};
+                                options.getTitleValue = function (node) {
+                                    return node.name;
+                                };
                                 options.okButton = ch.card.treeView._okButton();
                                 options.title = chEditable.getTitle($context.attr('data-pk'), caption);
-                                options.defaultValues = function(){return this.data().editable.value;};
+                                options.defaultValues = function () {
+                                    return this.data().editable.value;
+                                };
                                 dynatreeElem.buildFromSql(options);
                             });
                         });
 
 
-                    }else{
+                    } else {
                         cardElement.markAsNoChanged();
                     }
                 });
             }
         }
     },
-    attachments: {
-    }
+    attachments: {}
 };
 var chCardFunction = {
     defaultValidateFunc: function ($context, value) {
@@ -159,11 +167,11 @@ var chCardFunction = {
         jCell.editable("setValue", params.newValue);
         chColumn.setChangedValue(name, new_value);
     },
-    _select2PrepareNewValue: function(rawValue){
+    _select2PrepareNewValue: function (rawValue) {
         var result = "";
-        if(typeof rawValue =='string'){
+        if (typeof rawValue == 'string') {
             result = rawValue;
-        }else{
+        } else {
             for (var i in rawValue) {
                 result += rawValue[i] + "|";
             }
@@ -181,7 +189,7 @@ var chCardFunction = {
                     if (el.id == this) {
                         option_name = el.text;
                         desc = el.desc;
-                        data.push({id: this, text: option_name, desc: desc });
+                        data.push({id: this, text: option_name, desc: desc});
 
                         break;
                     }
@@ -213,7 +221,7 @@ var chCardFunction = {
         if (isNeedFormat && value) {
             value = Chocolate.formatNumber(value);
         }
-        if(!isAllowEdit){
+        if (!isAllowEdit) {
             chCardElement.markAsNoChanged();
 
         }
@@ -227,25 +235,28 @@ var chCardFunction = {
         }, 0);
     },
     checkBoxDisplayFunction: function (value, $context, label, color, priority) {
-            var chForm;
-        if($context.closest('tr').length && color && priority){
+        var chForm;
+        if ($context.closest('tr').length && color && priority) {
             chForm = facade.getFactoryModule().makeChGridForm($context.closest('form'));
         }
         if (typeof(value) !== 'undefined' && parseInt(value, 10)) {
-               if(chForm){
-                   chForm.addPriorityColorAndApply($context.attr('data-pk'),priority, color)
-               }
-            if(label === optionsModule.getSetting('attention')){
-                $context.html('<span class="fa-exclamation"></span>');
-            }else if(label === optionsModule.getSetting('notView')){
-                $context.html('<span class="fa-question"></span>');
+            if (chForm) {
+                chForm.addPriorityColorAndApply($context.attr('data-pk'), priority, color)
             }
-            else{
-                $context.html('<span class="fa-check"></span>');
-            }
+            setTimeout(function () {
+                if (label === optionsModule.getSetting('attention')) {
+                    $context.html('<span class="fa-exclamation"></span>');
+                } else if (label === optionsModule.getSetting('notView')) {
+                    $context.html('<span class="fa-question"></span>');
+                }
+                else {
+                    $context.html('<span class="fa-check"></span>');
+                }
+            }, 0);
+
         } else {
-            if(chForm){
-                chForm.removePriorityColorAndApply($context.attr('data-pk'),priority)
+            if (chForm) {
+                chForm.removePriorityColorAndApply($context.attr('data-pk'), priority)
             }
             $context.html('');
         }
@@ -269,7 +280,7 @@ var chCardFunction = {
                     .setChangedValue(attribute, val)
                     .setChangedValueInGrid(attribute, val, $context.text());
             });
-        }else{
+        } else {
             cardElement.markAsNoChanged();
         }
         facade.getCardModule().addCallback(function () {
@@ -289,7 +300,7 @@ var chCardFunction = {
         } else {
             dtValue = value;
         }
-        if(!isAllowEdit){
+        if (!isAllowEdit) {
             chCardElement.markAsNoChanged();
         }
         setTimeout(function () {
@@ -322,7 +333,7 @@ var chCardFunction = {
         $(element.val().split(",")).each(function () {
             var id = this;
             if (id.length) {
-                var text = "", desc ='';
+                var text = "", desc = '';
                 $(parentData).each(function () {
                     if (this.id == id) {
                         text = this.text;
@@ -376,7 +387,8 @@ var chCardFunction = {
             $context.attr('data-original-title', chEditable.getTitle($context.attr('data-pk'), caption));
         });
     },
-    _isAllowEdit: function(dataObj, allowEdit){
+    _isAllowEdit: function (dataObj, allowEdit) {
+        //todo: избавиться
         var isAllowEdit = false,
             allowEditLC = allowEdit.toLowerCase();
         if (allowEditLC.indexOf('|') != -1 || allowEditLC.indexOf('editable') != -1 || allowEditLC.indexOf('role') != -1) {
@@ -388,12 +400,12 @@ var chCardFunction = {
                         value = parts[1];
                     switch (type) {
                         case 'editable':
-                            if(typeof(dataObj)!='undefined' && dataObj['editable'] == value){
+                            if (typeof(dataObj) != 'undefined' && dataObj['editable'] == value) {
                                 isAllowEdit = true;
                             }
                             break;
                         case 'role':
-                            if(facade.getUserModule().hasRole(value)){
+                            if (facade.getUserModule().hasRole(value)) {
                                 isAllowEdit = true;
                             }
                             break;
@@ -423,7 +435,7 @@ var chCardFunction = {
         var chCard = chCardElement.getCard(),
             value = chCard.getActualDataObj()[attribute];
         var isAllowEdit = this._isAllowEdit(chCard.getActualDataObj(), allowEdit)
-        if(!isAllowEdit){
+        if (!isAllowEdit) {
             $context.unbind('click');
             chCardElement.markAsNoChanged();
 
@@ -437,11 +449,11 @@ var chCardFunction = {
         $.get(optionsModule.getUrl('imagesUrls'), {sql: sql})
             .done(function (response) {
                 var res = new ChResponse(response),
-                 data = res.getData();
-                if(data.length){
+                    data = res.getData();
+                if (data.length) {
                     var $context = $('#' + id), imagesHtml = '',
                         isFirst = true;
-                    data.forEach(function(url){
+                    data.forEach(function (url) {
                         if (isFirst) {
                             imagesHtml += '<a class="fancybox multimedia-main-image" rel="gallery"><img src="' + url + '"></img></a>';
                             isFirst = false;

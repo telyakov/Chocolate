@@ -102,6 +102,48 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         getToId: function () {
             return this.get('columnProperties').getToId();
         },
+        markAsNoChanged: function($col){
+            $col.closest('td').addClass(optionsModule.getClass('notChanged'));
+        },
+        isAllowEdit: function(view, pk){
+            var data = view.getDBDataFromStorage(pk),
+                isAllowEdit = false,
+                allowEditLC = this.getRawAllowEdit().toLowerCase();
+            if (allowEditLC.indexOf('|') !== -1 || allowEditLC.indexOf('editable') !== -1 || allowEditLC.indexOf('role') !== -1) {
+                var tokens = allowEditLC.split('|');
+                tokens.forEach(function (token) {
+                    if (!isAllowEdit) {
+                        var parts = token.split('='),
+                            type = parts[0],
+                            value = parts[1];
+                        switch (type) {
+                            case 'editable':
+                                if (data !== undefined && data.editable === value) {
+                                    isAllowEdit = true;
+                                }
+                                break;
+                            case 'role':
+                                if (facade.getUserModule().hasRole(value)) {
+                                    isAllowEdit = true;
+                                }
+                                break;
+                        }
+                    }
+                });
+            } else {
+                switch (allowEditLC) {
+                    case 'true':
+                        isAllowEdit = true;
+                        break;
+                    case 'false':
+                        isAllowEdit = false;
+                        break;
+                    case '1':
+                        isAllowEdit = true;
+                }
+            }
+            return isAllowEdit;
+        },
         getUniqueClass: function () {
             return 'column-' + this.get('key');
         },

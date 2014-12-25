@@ -335,8 +335,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
 
         },
         applyCallbacks: function ($cnt) {
+            var view = this;
             this.getCallbacks().forEach(function (fn) {
-                fn($cnt);
+                fn($cnt, view);
             });
             return this;
         },
