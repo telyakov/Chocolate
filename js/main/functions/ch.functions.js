@@ -175,14 +175,6 @@ var chFunctions = {
         }
 
     },
-    selectColumnInitFunc: function ($context, allowEdit) {
-        var column = facade.getFactoryModule().makeChGridColumnBody($context),
-            isAllowEdit = chCardFunction._isAllowEdit(column.getDataObj(), allowEdit);
-        if (!isAllowEdit) {
-            $context.unbind('click');
-            column.markAsNoChanged();
-        }
-    },
     defaultColumnSaveFunc: function (e, params, name) {
         var chColumn = facade.getFactoryModule().makeChGridColumnBody($(e.target));
         chColumn.setChangedValue(name, params.newValue);

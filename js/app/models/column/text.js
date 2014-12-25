@@ -1,27 +1,20 @@
-var TextColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
+var TextColumnRO = (function () {
     'use strict';
     return ColumnRO.extend({
         getJsFn: function () {
             var _this = this,
                 customProperties = _this.getColumnCustomProperties();
-            return function ($cnt) {
-                var $elements = $cnt.find('.' + _this.getUniqueClass());
+            return function ($cnt, view) {
                 var options = {
-                    mode: 'inline',
-                    name: _this.get('key'),
-                    showbuttons: false,
-                    disabled: true,
-                    onblur: 'submit',
-                    savenochange: false
-                };
-                var isMarkupSupport = customProperties.get('markupSupport'),
-                    rawAllowEdit = _this.getRawAllowEdit();
+                        mode: 'inline',
+                        name: _this.get('key'),
+                        showbuttons: false,
+                        disabled: true,
+                        onblur: 'submit',
+                        savenochange: false
+                    },
+                    isMarkupSupport = customProperties.get('markupSupport');
                 if (isMarkupSupport) {
-                    if (rawAllowEdit) {
-                        $elements.on('shown', function (e, editable) {
-                            chFunctions.textShownFunction(e, editable);
-                        });
-                    }
                     options.type = 'wysihtml5';
                     options.wysihtml5 = {
                         'font-styles': false,
@@ -34,30 +27,42 @@ var TextColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
                     options.type = 'text';
                     options.tpl = '<textarea/>';
                 }
-                if (rawAllowEdit) {
-                    $elements
-                        .on('save', function (e, params) {
-                            chFunctions.defaultColumnSaveFunc(e, params, _this.get('key'));
-                        });
-                }
-                $elements
-                    .on('init', function (e, editable) {
-                        var $element = editable.$element,
-                            column = facade.getFactoryModule().makeChGridColumnBody($element),
-                            isEdit = chCardFunction._isAllowEdit(column.getDataObj(), rawAllowEdit);
-                        if (!isEdit) {
-                            $(this).unbind('click');
-                            column.markAsNoChanged();
-                        }
-                        var $modalBtn = $('<div/>', {
-                            'class' : 'grid-modal-open form-modal-button',
-                            'data-name': _this.get('key')
-                        });
-                        $element.parent().append($modalBtn);
+                $cnt.find('.' + _this.getUniqueClass()).each(function () {
+                    var $this = $(this),
+                        pk = $this.attr('data-pk'),
+                        isAllowEdit = _this.isAllowEdit(view, pk);
+                    $this
+                        .on('init', function textInit() {
+                            if (!isAllowEdit) {
+                                _this.markAsNoChanged($this);
+                            }
+                            var $modalBtn = $('<div/>', {
+                                'class': 'grid-modal-open form-modal-button',
+                                'data-name': _this.get('key')
+                            });
+                            $this.parent().append($modalBtn);
 
-                    })
-                    .editable(options);
+                        })
+                        .editable(options);
+                    if (isMarkupSupport && isAllowEdit) {
+                        $this.on('shown', function textShown(e, editable) {
+                            chFunctions.textShownFunction(e, editable);
+                        });
+                    }
+                    if (isAllowEdit) {
+                        $this
+                            .on('save', function (e, params) {
+                                var data = {};
+                                data[_this.get('key')] = params.newValue;
+                                view.model.trigger('change:form', {
+                                    op: 'upd',
+                                    id: pk,
+                                    data: data
+                                });
+                            });
+                    }
+                });
             };
         }
     });
-})(Backbone, helpersModule, FilterProperties, bindModule);
+})();

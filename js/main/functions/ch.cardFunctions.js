@@ -234,7 +234,10 @@ var chCardFunction = {
             ch_column.create(context, e, isAllowEdit, attribute, caption, isNeedFormat, isMarkupSupport);
         }, 0);
     },
-    checkBoxDisplayFunction: function (value, $context, label, color, priority) {
+    checkBoxDisplayFunction: function (value, $context, customProperties) {
+        var label = customProperties.get('label'),
+            color = customProperties.get('color'),
+            priority = customProperties.get('priority');
         var chForm;
         if ($context.closest('tr').length && color && priority) {
             chForm = facade.getFactoryModule().makeChGridForm($context.closest('form'));

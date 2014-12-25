@@ -14,28 +14,14 @@ var DateColumnRO = (function (optionsModule) {
             return function ($cnt, view) {
                 var selector = '.' + _this.getUniqueClass();
                 $cnt.find(selector).each(function () {
-                   var $elem = $(this),
-                       pk = $elem.attr('data-pk'),
-                       isAllowEdit = _this.isAllowEdit(view, pk);
+                    var $elem = $(this),
+                        pk = $elem.attr('data-pk'),
+                        isAllowEdit = _this.isAllowEdit(view, pk);
                     $elem
                         .on('init', function dateInit() {
                             if (!isAllowEdit) {
                                 _this.markAsNoChanged($elem);
                             }
-                        })
-                        .on('save', function dateSave(e, params) {
-                            var value = params.newValue;
-                            if (value) {
-                                value = moment(value)
-                                    .format(optionsModule.getSetting('formatDate'));
-                            }
-                            var data = {};
-                            data[_this.get('key')] = value;
-                            view.model.trigger('change:form', {
-                                op: 'upd',
-                                id: pk,
-                                data: data
-                            });
                         })
                         .editable({
                             mode: 'inline',
@@ -53,11 +39,25 @@ var DateColumnRO = (function (optionsModule) {
                             format: 'mm-dd-yyyy hh:ii:ss',
                             viewformat: 'dd.mm.yyyy hh:ii'
                         });
-                })
-
-                ;
+                    if (isAllowEdit) {
+                        $elem
+                            .on('save', function dateSave(e, params) {
+                                var value = params.newValue;
+                                if (value) {
+                                    value = moment(value)
+                                        .format(optionsModule.getSetting('formatDate'));
+                                }
+                                var data = {};
+                                data[_this.get('key')] = value;
+                                view.model.trigger('change:form', {
+                                    op: 'upd',
+                                    id: pk,
+                                    data: data
+                                });
+                            });
+                    }
+                });
             };
         }
-
     });
 })(optionsModule);

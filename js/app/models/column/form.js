@@ -1,21 +1,15 @@
-var FormColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
+var FormColumnRO = (function () {
     'use strict';
     return ColumnRO.extend({
-        getHeaderOptions: function(){
-            var options = CheckBoxColumnRO.__super__.getHeaderOptions.apply(this, arguments);
-            return options;
-        },
         getClass: function () {
-            var class_name = '';
+            var className = 'grid-button';
             if (!this.isEdit()) {
-                class_name += 'not-changed';
+                className += ' not-changed';
             }
-            class_name += ' grid-button';
-            return class_name;
+            return className;
         },
         getJsFn: function () {
-            var _this = this,
-                allowEdit = this.getRawAllowEdit();
+            var _this = this;
             return function ($cnt) {
                 $cnt.find('.' + _this.getUniqueClass())
                     .editable({
@@ -35,6 +29,5 @@ var FormColumnRO = (function (Backbone, helpersModule, FilterProperties, bindMod
                 ;
             };
         }
-
     });
-})(Backbone, helpersModule, FilterProperties, bindModule);
+})();

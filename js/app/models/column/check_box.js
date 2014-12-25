@@ -24,7 +24,7 @@ var CheckBoxColumnRO = (function () {
                             val = +!val[attribute];
                         }
                         $this.editable('setValue', val);
-                        var data ={};
+                        var data = {};
                         data[attribute] = val;
                         view.model.trigger('change:form', {
                             op: 'upd',
@@ -53,9 +53,7 @@ var CheckBoxColumnRO = (function () {
                             chCardFunction.checkBoxDisplayFunction(
                                 value,
                                 $(this),
-                                customProperties.get('label'),
-                                customProperties.get('color'),
-                                customProperties.get('priority')
+                                customProperties
                             );
                         }
                     });

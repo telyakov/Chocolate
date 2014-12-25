@@ -25,7 +25,7 @@ var CheckBoxCardElement = (function () {
                         'showbuttons': false,
                         'source': [{'value': 1, 'text': ''}],
                         'display': function (value, sourceData) {
-                            chCardFunction.checkBoxDisplayFunction(value, $(this), customProperties.get('label'), customProperties.get('color'), customProperties.get('priority'));
+                            chCardFunction.checkBoxDisplayFunction(value, $(this), customProperties);
                         }
                     });
             };
