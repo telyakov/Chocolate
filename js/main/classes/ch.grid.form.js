@@ -1,7 +1,6 @@
 function ChGridForm($form) {
     this.$form = $form;
     this._$table = null;
-    this._$fixed_table = null;
     this._parent_form_id = null;
     this._ch_messages_container = null;
     this._$user_grid = null;
@@ -21,7 +20,6 @@ ChGridForm.prototype.destroy = function () {
     facade.getFormModule().removeCallbacks(this.getCallbackID());
     delete Chocolate.storage.session[this.getID()];
     delete this._ch_messages_container;
-    delete this._$fixed_table;
     delete this._$table;
     delete this.$form;
     delete this._$thead;
@@ -50,10 +48,6 @@ ChGridForm.prototype.getType = function () {
 ChGridForm.prototype.getTh = function () {
     return this.getThead().children('tr').first().children('th');
 };
-ChGridForm.prototype.setSettingsObj = function (setting_obj) {
-    var storage = this.getSettingsObj();
-    Chocolate.storage.local.settings[this.getView()] = setting_obj
-};
 ChGridForm.prototype.getPositionColumn = function (key) {
     var settingObj = this.getSettingsObj();
     for (var i in settingObj) {
@@ -61,50 +55,6 @@ ChGridForm.prototype.getPositionColumn = function (key) {
         if (obj.key == key) {
             return obj.weight;
         }
-    }
-};
-ChGridForm.prototype.changeSettings = function (start_index, end_index) {
-    //todo: избавиться
-    var min_index = 1, setting = this.getSettingsObj();
-    if (!$.isEmptyObject(setting)) {
-        var key = this.getView(), obj, new_settings = [];
-        if (start_index < end_index) {
-            for (var i in setting) {
-                obj = setting[i];
-                if (obj.weight == 0) {
-                    new_settings[0] = {key: obj.key, weight: obj.weight, width: obj.width};
-                } else {
-                    if (obj.weight > start_index && obj.weight <= end_index) {
-                        var new_weight = obj.weight - 1;
-                        new_settings[new_weight] = {key: obj.key, weight: new_weight, width: obj.width};
-                    } else if (obj.weight == start_index) {
-                        var new_weight = Math.max(end_index, min_index);
-                        new_settings[new_weight] = {key: obj.key, weight: new_weight, width: obj.width};
-                    } else {
-                        new_settings[obj.weight] = {key: obj.key, weight: obj.weight, width: obj.width};
-                    }
-                }
-            }
-        }
-        if (start_index > end_index) {
-            for (var i in setting) {
-                obj = setting[i];
-                if (obj.weight == 0) {
-                    new_settings[0] = {key: obj.key, weight: obj.weight, width: obj.width};
-                } else {
-                    if (obj.weight < start_index && obj.weight >= Math.max(end_index, min_index)) {
-                        var new_weight = obj.weight + 1;
-                        new_settings[new_weight] = {key: obj.key, weight: new_weight, width: obj.width};
-                    } else if (obj.weight == start_index) {
-                        var new_weight = Math.max(end_index, min_index);
-                        new_settings[new_weight] = {key: obj.key, weight: new_weight, width: obj.width};
-                    } else {
-                        new_settings[obj.weight] = {key: obj.key, weight: obj.weight, width: obj.width};
-                    }
-                }
-            }
-        }
-        this.setSettingsObj(new_settings);
     }
 };
 ChGridForm.prototype.getSettingsObj = function () {
@@ -490,12 +440,6 @@ ChGridForm.prototype.getTable = function () {
         this._$table = this._getUserGrid().find('table');
     }
     return this._$table;
-};
-ChGridForm.prototype.getFixedTable = function () {
-    if (this._$fixed_table == null) {
-        this._$fixed_table = this.$form.find('section[data-id=grid]').find('table.floatThead-table');
-    }
-    return this._$fixed_table;
 };
 ChGridForm.prototype.getParentFormID = function () {
     if (this._parent_form_id == null) {

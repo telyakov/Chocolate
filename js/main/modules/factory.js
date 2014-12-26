@@ -33,12 +33,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
             return _private.make($el, 'ChDynatree');
         },
         /**
-         * @returns {ChFilterForm}
-         */
-        makeChFilterForm: function ($el) {
-            return _private.make($el, 'ChFilterForm');
-        },
-        /**
          * @returns {ChGridForm}
          */
         makeChGridForm: function ($el) {
@@ -49,12 +43,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
          */
         makeChMessagesContainer: function ($el) {
             return _private.make($el, 'ChMessagesContainer');
-        },
-        /**
-         * @returns {ChFilter}
-         */
-        makeChFilter: function ($el) {
-            return _private.make($el, 'ChFilter');
         },
         /**
          * @returns {ChCanvas}
@@ -107,18 +95,14 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         makeChDynatree: function ($el) {
             return _private.makeChDynatree($el);
         },
-        makeChFilterForm: function ($el) {
-            return _private.makeChFilterForm($el);
-        },
+
         makeChGridForm: function ($el) {
             return _private.makeChGridForm($el);
         },
         makeChMessagesContainer: function ($el) {
             return _private.makeChMessagesContainer($el);
         },
-        makeChFilter: function ($el) {
-            return _private.makeChFilter($el);
-        },
+
         makeChCanvas: function ($el) {
             return _private.makeChCanvas($el);
         },

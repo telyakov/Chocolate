@@ -4,6 +4,7 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         defaults: {
             model: null,
             filter: null,
+            view: null,
             id: null,
             key: null
         },

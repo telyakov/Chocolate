@@ -92,6 +92,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 fromID = options.fromID,
                 fromName = options.fromName,
                 isSelect = '';
+            console.log(parentID)
             if (toID && toName && fromName && fromID) {
                 isSelect = 1;
             }
@@ -259,7 +260,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 var html = [],
                     callbacks = [],
                     event = 'render_' + helpersModule.uniqueID(),
-                    ROCollections = this.model.getFiltersROCollection(),
+                    ROCollections = this.model.getFiltersROCollection(this),
                     length = ROCollections.length,
                     asyncTaskCompleted = 0;
                 $.subscribe(event, function (e, data) {

@@ -64,8 +64,9 @@ var TreeCardElement = (function ($, helpersModule, undefined) {
                             });
                         }
                         $el.on('init', function () {
-                            var value = view.getActualDataFromStorage(pk)[name],
-                                text = view.getActualDataFromStorage(pk)[column.getFromKey()];
+                            var dbData = view.getActualDataFromStorage(pk),
+                                value = dbData ? dbData[name] : '';
+                            var text = dbData ? dbData[column.getFromKey()] : '';
                             if (value === undefined || value === null) {
                                 value = '';
                             }

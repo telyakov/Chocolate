@@ -28,25 +28,45 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             '</li>'
         ].join('')),
         events: {},
+        getValue: function () {
+            return this.view.getFilterData()[this.model.get('key')];
+        },
+        deferVisibleValue: function () {
+            var defer = deferredModule.create(),
+                values = this.getValue().split('|');
+            this.model.deferData()
+                .done(function (res) {
+                    var data = res.data;
+                    var response = [];
+                    values.forEach(function(item){
+                        if(item !== ''){
+                            response.push(data[item].name);
+                        }
+                    });
+                    defer.resolve({
+                        value: response.join('/')
+                    });
+                });
+            return defer;
+        },
         render: function (event, i, collection) {
             var _this = this,
                 model = this.model,
                 visibleDf = deferredModule.create(),
-                dataDf = deferredModule.create(),
                 nextRowDf = deferredModule.create(),
                 multiSelectDf = deferredModule.create(),
                 multiSelectId = deferredModule.save(multiSelectDf),
-                dataId = deferredModule.save(dataDf),
                 visibleId = deferredModule.save(visibleDf),
                 nextRowId = deferredModule.save(nextRowDf);
             var changeHandler = model.getEventChange();
             //if (changeHandler) {
             var selector = 'change ' + '#' + _this.id + ' input';
             this.events[selector] = function (e) {
+                var val = _this.getValue();
                 if (changeHandler) {
-                    helpersModule.scriptExpressionEval(changeHandler, e, _this.form);
+                    helpersModule.scriptExpressionEval(changeHandler, val, _this);
                 }
-                this.model.trigger('change:value', $(e.target).val());
+                this.model.trigger('change:value', val);
                 e.stopImmediatePropagation();
             };
             this.delegateEvents();
@@ -54,7 +74,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             model.isVisibleEval(visibleId);
             model.isNextRowEval(nextRowId);
             model.isMultiSelectEval(multiSelectId);
-            model.dataEval(dataId);
+            var dataDf = model.deferData();
             $.when(visibleDf, nextRowDf, multiSelectDf, dataDf).done(function (visible, nextRow, multiSelect, dataRes) {
                 var isVisible = visible.value,
                     isNextRow = nextRow.value,
@@ -95,16 +115,16 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                             if (value) {
                                 var refreshDf = deferredModule.create(),
                                     refreshDeferId = deferredModule.save(refreshDf),
-                                    defer =_this.model.readProcEval({'parentfilter.id': value});
+                                    defer = _this.model.readProcEval({'parentfilter.id': value});
                                 defer.done(function (data) {
                                     var sql = data.sql;
-                                    mediator.publish(optionsModule.getChannel('socketRequest'),{
+                                    mediator.publish(optionsModule.getChannel('socketRequest'), {
                                         query: sql,
                                         type: optionsModule.getRequestType('deferred'),
                                         id: refreshDeferId
                                     });
                                 });
-                                $.when(refreshDf).done(function(res){
+                                $.when(refreshDf).done(function (res) {
                                     var data = res.data;
                                     var prepareData2 = [],
                                         j,

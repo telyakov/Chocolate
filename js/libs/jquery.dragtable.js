@@ -1,6 +1,5 @@
 (function ($) {
     $.widget("jb.dragtable", {
-        //TODO: implement this
         eventWidgetPrefix: 'dragtable',
         options: {
             //used to the col headers, data contained in here is used to set / get the name of the col
@@ -57,15 +56,15 @@
             }
             //grab the ths and the handles and bind them
             el.delegate(o.items, 'mousedown.' + self.widgetEventPrefix + ' touchstart', function (e) {
-                if ((e.which == 1 && e.target.nodeName != 'DIV') || (e.which == 0 && e.target.nodeName == 'SPAN')) {
+                if ((e.which === 1 && e.target.nodeName !== 'DIV') || (e.which === 0 && e.target.nodeName === 'SPAN')) {
                     var $handle = $(this),
                     //Поправка на смешение по высоте
-                        elementOffsetTop =  self.element.offset().top -30;
+                        elementOffsetTop = self.element.offset().top - 30;
                     //make sure we are working with a th instead of a handle
                     if ($handle.hasClass(o.handle)) {
                         $handle = $handle.closest('th');
                         //change the target to the th, so the handler can pick up the offsetleft
-                        e.currentTarget = $handle[0]
+                        e.currentTarget = $handle[0];
                     }
                     self._mousemoveHandler(e, elementOffsetTop, $handle, self);
                     //############
@@ -79,41 +78,40 @@
          * getCol must be called before this is
          *
          */
-        _mousemoveHandler: function (e, elementOffsetTop,$handle, context) {
-            if(!e.pageX &&  e.originalEvent.touches){
+        _mousemoveHandler: function (e, elementOffsetTop, $handle, context) {
+            if (!e.pageX && e.originalEvent.touches) {
                 e.pageX = e.originalEvent.touches[0].pageX;
             }
-            if($(e.target).attr('data-id') === optionsModule.getSetting('controlColumn')){
+            if ($(e.target).attr('data-id') === optionsModule.getSetting('controlColumn')) {
                 return false;
             }
             //call this first, catch any drag display issues
             this._start(e);
-            var offsetLeft = $(e.target).closest('form').offset().left;
-            var self = this,
+            var offsetLeft = $(e.target).closest('form').offset().left,
+                self = this,
                 o = self.options,
                 prevMouseX = e.pageX,
                 dragDisplayWidth = self.dragDisplay.outerWidth(),
                 halfDragDisplayWidth = dragDisplayWidth / 2,
                 scroll = o.scroll,
             //get the col count, used to contain col swap
-                colCount = self.element[ 0 ]
-                    .getElementsByTagName('thead')[ 0 ]
-                    .getElementsByTagName('tr')[ 0 ]
-                    .getElementsByTagName('th')
-                    .length - 1;
-            var view  = context.options.view;
-            $(document).bind('mousemove.' + self.widgetEventPrefix +' touchmove', function (e) {
-                if(!e.pageX &&  e.originalEvent.touches){
+                colCount = self.element[0]
+                        .getElementsByTagName('thead')[0]
+                        .getElementsByTagName('tr')[0]
+                        .getElementsByTagName('th')
+                        .length - 1,
+                view = context.options.view;
+            $(document).bind('mousemove.' + self.widgetEventPrefix + ' touchmove', function (e) {
+                if (!e.pageX && e.originalEvent.touches) {
                     e.pageX = e.originalEvent.touches[0].pageX;
                 }
-                if(self.is_drag_enabled == false){
+                if (self.is_drag_enabled === false) {
                     self.getCol($handle.index())
                         .attr('tabindex', -1)
                         .focus()
                         .disableSelection()
                         .css({
                             top: elementOffsetTop,
-
                             left: e.pageX
                         })
                         .appendTo(o.appendTarget);
@@ -123,7 +121,7 @@
                 var columnPos = self._setCurrentColumnCollectionOffset(),
                     mouseXDiff = e.pageX - prevMouseX,
                     appendTarget = o.appendTarget[0],
-                    left = ( parseInt(self.dragDisplay[0].style.left) + mouseXDiff  );
+                    left = ( parseInt(self.dragDisplay[0].style.left, 10) + mouseXDiff  );
 
                 self.dragDisplay.css('left', left);
 
@@ -133,17 +131,18 @@
                  * it should only swap cols when the col dragging is half over the prev/next col
                  */
                 left = left - offsetLeft;
+                var threshold, scrollLeft;
                 if (e.pageX < prevMouseX) {
                     //move left
-                    var threshold = columnPos.left - halfDragDisplayWidth;
+                    threshold = columnPos.left - halfDragDisplayWidth;
 
                     //scroll left
                     if (left < ( appendTarget.clientWidth - dragDisplayWidth ) && scroll == true) {
-                        var scrollLeft = appendTarget.scrollLeft + mouseXDiff
+                        scrollLeft = appendTarget.scrollLeft + mouseXDiff
                         /*
                          * firefox does scroll the body with target being body but chome does
                          */
-                        if (appendTarget.tagName == 'BODY') {
+                        if (appendTarget.tagName === 'BODY') {
                             window.scroll(window.scrollX + scrollLeft, window.scrollY);
                         } else {
                             appendTarget.scrollLeft = scrollLeft;
@@ -153,10 +152,10 @@
 
 
                     if (left < threshold) {
-                        if(self.start_index == null){
+                        if (self.start_index === null) {
                             self.start_index = self.startIndex;
                         }
-                        self.end_index =self.startIndex - 1;
+                        self.end_index = self.startIndex - 1;
 
                         self._swapHeaderCol(self.startIndex - 1);
                     }
@@ -164,15 +163,15 @@
                 } else {
                     //move right
 
-                    var threshold = columnPos.left + halfDragDisplayWidth;
+                    threshold = columnPos.left + halfDragDisplayWidth;
 
                     //scroll right
                     if (left > (appendTarget.clientWidth - dragDisplayWidth ) && scroll == true) {
-                        var scrollLeft = appendTarget.scrollLeft + mouseXDiff
+                        scrollLeft = appendTarget.scrollLeft + mouseXDiff;
                         /*
                          * firefox does scroll the body with target being body but chome does
                          */
-                        if (appendTarget.tagName == 'BODY') {
+                        if (appendTarget.tagName === 'BODY') {
                             window.scroll(window.scrollX + scrollLeft, window.scrollY);
                         } else {
                             appendTarget.scrollLeft = scrollLeft;
@@ -181,10 +180,10 @@
                     }
                     //move to the right only if x is greater than threshold and the current col isn' the last one
                     if (left > threshold && colCount != self.startIndex) {
-                        if(self.start_index == null){
+                        if (self.start_index == null) {
                             self.start_index = self.startIndex;
                         }
-                        self.end_index =self.startIndex + 1;
+                        self.end_index = self.startIndex + 1;
                         self._swapHeaderCol(self.startIndex + 1);
                     }
                 }
@@ -199,7 +198,7 @@
                 });
 
         },
-        _clearVars: function(){
+        _clearVars: function () {
             this.start_index = null;
             this.end_index = null;
             this.is_drag_enabled = false;
@@ -220,21 +219,21 @@
 
         },
         _stop: function (e, view) {
-            if(this.start_index !== null &&  this.end_index !== null){
+            if (this.start_index !== null && this.end_index !== null) {
                 var $th = view.getJqueryFloatHeadTable().children('thead').find('th'),
                     start,
                     end;
-                if(this.start_index < this.end_index){
+                if (this.start_index < this.end_index) {
                     start = this.end_index;
-                    end = this.end_index - 1 ;
-                }else{
-                    if( this.end_index ==0){
-                        this.end_index =1;
+                    end = this.end_index - 1;
+                } else {
+                    if (this.end_index == 0) {
+                        this.end_index = 1;
                     }
-                    start = this.end_index ;
-                    end = this.end_index +1;
+                    start = this.end_index;
+                    end = this.end_index + 1;
                 }
-                view.changeSettings( view.getPositionColumn( $th.eq(start).attr('data-id')), view.getPositionColumn( $th.eq(end).attr('data-id')));
+                view.changeSettings(view.getPositionColumn($th.eq(start).attr('data-id')), view.getPositionColumn($th.eq(end).attr('data-id')));
                 this._swapBodyCol(this.start_index, this.end_index);
             }
             this._clearVars();
@@ -259,7 +258,7 @@
         /*
          * get the selected index cell out of table row
          * needs to work as fast as possible. and performance gains in this method are worth the time
-         * 	because its used to build the drag display and get the cells on col swap
+         * because its used to build the drag display and get the cells on col swap
          * http://jsperf.com/binary-regex-vs-string-equality/4
          */
         _getCells: function (elem, index) {
@@ -287,13 +286,13 @@
                 return tds;
             }
 
-            var count = 0;
-            for (var i = 0, length = elem.rows.length; i < length; i++) {
+            var count = 0, i = 0, length = elem.rows.length;
+            for (; i < length; i++) {
 
                 var td = elem.rows[i].cells[index];
 
                 //if the row has no cells dont error out;
-                if (td == undefined) {
+                if (td === undefined) {
                     continue;
                 }
                 var parentNodeName = td.parentNode.parentNode.nodeName;
@@ -465,7 +464,7 @@
             if (to < this.options.notDraggableCount) {
                 to = this.options.notDraggableCount
             }
-            if(from!=to){
+            if (from != to) {
                 facade.getTableModule().swapCols(this.parentElement[0], from, to);
                 this._eventHelper('change', {});
 

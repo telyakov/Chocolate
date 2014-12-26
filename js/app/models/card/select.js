@@ -26,7 +26,8 @@ var SelectCardElement = (function ($, helpersModule) {
                         }
                         $el
                             .on('init', function () {
-                                var value = view.getActualDataFromStorage(pk)[name];
+                                var dbData = view.getActualDataFromStorage(pk),
+                                    value = dbData ? dbData[name] : '';
                                 if (!isAllowEdit) {
                                     _this.markAsNoChanged($el);
                                 }

@@ -294,12 +294,11 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                     return expr;
             }
         },
-        scriptExpressionEval: function (expr, e, model) {
+        scriptExpressionEval: function (expr, val, view) {
             var exprInLowerCase = expr.toLowerCase();
+            var model = view.form;
             if (exprInLowerCase.indexOf('script') === 0) {
                 var script = expr.substr(6),
-                    $this = $(e.target),
-                    filter = facade.getFactoryModule().makeChFilter($this),
                     commands = script.split(';');
                 commands.forEach(function (cmd) {
                     var prepareCmd = $.trim(cmd).toLowerCase(),
@@ -309,19 +308,20 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                             model.trigger('refresh:form', {isLazy: true});
                             break;
                         case prepareCmd.indexOf(defaultKey) === 0:
+                            //console.log(view, 'зашло');
                             var args = prepareCmd.substr(defaultKey.length + 1),
                                 tokens = args.split('='),
                                 key = $.trim(tokens[0]),
-                                filterForm,
                                 value = $.trim(tokens[1]);
                             if (value === 'this.val') {
-                                filterForm = filter.getChFilterForm();
-                                var val = filterForm.getValueByKey(filter.getKey());
-                                filter.getChForm().setDefaultValue(key, val);
+                                console.log(val);
+                                model.setDynamicDefaultValue(key, val);
                             } else if (value === 'this.caption') {
-                                filterForm = filter.getChFilterForm();
-                                var caption = filterForm.getCaptionByKey(filter.getKey());
-                                filter.getChForm().setDefaultValue(key, caption);
+                                view.deferVisibleValue()
+                                    .done(function (res) {
+                                        var value = res.value;
+                                        model.setDynamicDefaultValue(key, value);
+                                    });
                             }
                             break;
                         default:
@@ -429,7 +429,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                 checkbox: true,
                 okButton: function ($tree, $input, $checkbox, $select) {
                     var chDynatree = this;
-                    return  {
+                    return {
                         'text': 'Сохранить',
                         'class': 'wizard-active wizard-next-button',
                         click: function (bt, elem) {
@@ -457,7 +457,8 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                             $input.html(select_html);
                             $checkbox.children('input').attr('checked', false);
                             $(this).dialog("close");
-                        }};
+                        }
+                    };
                 }
             };
             if (isSingle) {

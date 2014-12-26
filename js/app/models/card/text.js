@@ -159,7 +159,8 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule) 
                 });
                 $el
                     .on('init', function () {
-                        var value = view.getActualDataFromStorage(pk)[name];
+                        var dbData = view.getActualDataFromStorage(pk),
+                            value = dbData ? dbData[name] : '';
                         if (isNeedFormat && value) {
                             value = helpersModule.formatNumber(value);
                         }

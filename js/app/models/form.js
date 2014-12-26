@@ -14,6 +14,13 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             parentModel: null,
             parentId: null
         },
+        _dynamicDefaultValues: {},
+        getDynamicDefaultValues: function () {
+            return this._dynamicDefaultValues;
+        },
+        setDynamicDefaultValue: function (key, val) {
+            this._dynamicDefaultValues[key] = val;
+        },
         getColumnsDefaultValues: function () {
             var defaults = {},
                 def;
@@ -24,7 +31,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                     defaults[column.get('key')] = def;
                 }
             });
-            return defaults;
+            return $.extend({}, defaults, this.getDynamicDefaultValues());
         },
         hasCardHeader: function () {
             return this.getCardHeaderText() || this.getCardHeaderImage();
@@ -318,7 +325,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         hasFilters: function () {
             return this.getFiltersCollections().length !== 0 && !this.isDiscussionView();
         },
-        getFiltersROCollection: function () {
+        getFiltersROCollection: function (view) {
             if (this._filter_ro_collection !== null) {
                 return this._filter_ro_collection;
             }
@@ -326,7 +333,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             var filtersCollection = this.getFiltersCollections(),
                 filtersROCollection = new FiltersROCollection();
             filtersCollection.each(function (item) {
-                filtersROCollection.push(FilterRoFactory.make(item, _this));
+                filtersROCollection.push(FilterRoFactory.make(item, view));
             });
             this._filter_ro_collection = filtersROCollection;
             return this._filter_ro_collection;

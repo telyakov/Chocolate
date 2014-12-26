@@ -37,7 +37,8 @@ var DateCardElement = (function ($, moment, optionsModule) {
                 }
                 $el
                     .on('init', function dateInit() {
-                        var value = view.getActualDataFromStorage(pk)[name];
+                        var dbData = view.getActualDataFromStorage(pk),
+                            value = dbData ? dbData[name] : '';
                         if (value && typeof(value) === 'string') {
                             value = moment(value, 'MM.DD.YYYY HH:mm:ss').toDate();
                         }
