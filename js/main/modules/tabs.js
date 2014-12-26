@@ -55,7 +55,7 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
         close: function ($a) {
             var activeTab = factoryModule.makeChTab($a);
             if (activeTab.isCardTypePanel()) {
-                var card = factoryModule.makeChCard(activeTab.getPanel().children('[data-id=grid-tabs]'));
+                //var card = factoryModule.makeChCard(activeTab.getPanel().children('[data-id=grid-tabs]'));
                 //todo: вернуть код
                 //card._undoChange();
             } else {

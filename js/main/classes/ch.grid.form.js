@@ -13,7 +13,6 @@ function ChGridForm($form) {
     this._$thead = null;
     this._type = null;
     this._$save_btn = null;
-    this._chCardsCollection = null;
 }
 ChGridForm.prototype.destroy = function () {
     this.getTh().find('.ui-resizable').resizable('destroy');
@@ -22,7 +21,6 @@ ChGridForm.prototype.destroy = function () {
     facade.getFormModule().removeCallbacks(this.getCallbackID());
     delete Chocolate.storage.session[this.getID()];
     delete this._ch_messages_container;
-    delete this._chCardsCollection;
     delete this._$fixed_table;
     delete this._$table;
     delete this.$form;
@@ -56,12 +54,6 @@ ChGridForm.prototype.setSettingsObj = function (setting_obj) {
     var storage = this.getSettingsObj();
     Chocolate.storage.local.settings[this.getView()] = setting_obj
 };
-ChGridForm.prototype.setColumnWidth = function (index, width) {
-    var settingObj = this.getSettingsObj();
-    if (!$.isEmptyObject(settingObj)) {
-        settingObj[index].width = width;
-    }
-};
 ChGridForm.prototype.getPositionColumn = function (key) {
     var settingObj = this.getSettingsObj();
     for (var i in settingObj) {
@@ -72,6 +64,7 @@ ChGridForm.prototype.getPositionColumn = function (key) {
     }
 };
 ChGridForm.prototype.changeSettings = function (start_index, end_index) {
+    //todo: избавиться
     var min_index = 1, setting = this.getSettingsObj();
     if (!$.isEmptyObject(setting)) {
         var key = this.getView(), obj, new_settings = [];
@@ -527,13 +520,3 @@ ChGridForm.prototype._isAttachmentsModel = function () {
     return this.getView().indexOf(Chocolate.ATTACHMENTS_VIEW) != -1;
 };
 
-ChGridForm.prototype.toggleAllCols = function () {
-    var
-        //isHidden = this.chFormSettings.isShortVisibleMode(),
-//        hiddenClass = ChOptions.classes.hiddenAllColsTable,
-        $th = this.getFixedTable().find('[' + optionsModule.getClass('allowHideColumn') + ']');
-    //todo: вернуть код
-    //this.toggleColls(isHidden, $th);
-    //this.chFormSettings.setShortVisibleMode(!isHidden);
-    return this;
-};

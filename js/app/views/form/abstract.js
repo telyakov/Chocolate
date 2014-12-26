@@ -27,7 +27,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             );
         },
-        saveCard: function(opts){
+        saveCard: function (opts) {
             mediator.publish(optionsModule.getChannel('logError'),
                 {
                     model: this,
@@ -340,6 +340,13 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             } else {
                 return false;
             }
+        },
+        isShortMode: function () {
+            var key = this.model.getView();
+            return storageModule.getSettingByKey(key, 'shortVisibleMode') ? true : false;
+        },
+        setShortMode: function(val){
+            storageModule.persistSetting(this.model.getView(), 'shortVisibleMode', val);
         },
         getFormStyleID: function () {
             var key = this.model.getView();

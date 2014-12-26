@@ -41,7 +41,7 @@ var optionsModule = (function () {
             titleRowHeight: 26,
             systemCols: ['lastmodifier', 'lastmodifydate', 'insdate', 'username', 'userid'],
             topsViews: ['tasksfortops.xml'],
-            viewsWithoutFilters: ['tasks/tasksfortops.xml', 'attachments.xml', 'framework/attachments/attachments.xml'],
+            viewsWithoutFilters: [' tasksfortops.xml', 'attachmentstasks.xml'],
             keyCaption: 'ключ',
             controlColumn: 'chocolate-control-column',
             attention: 'attention',

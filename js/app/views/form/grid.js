@@ -1,4 +1,4 @@
-var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule, helpersModule, window, undefined) {
+var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule, helpersModule, window, undefined, Math) {
     'use strict';
     return AbstractGridView.extend({
         template: _.template([
@@ -103,6 +103,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             $table.width(newWidth);
             $fixedTable.width(newWidth);
             $table.floatThead('reflow');
+            return this;
         },
         searchColumnsHandler: function (e) {
             var opm = optionsModule,
@@ -373,14 +374,168 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 rows: rows,
                 tableID: tableID
             }));
-            var $table = $('#' + tableID);
-            this.initTableScript($table);
+            this.initTableScript();
             this.refreshData();
-
-
         },
-        initTableScript: function ($table) {
-            facade.getFactoryModule().makeChTable($table).initScript(this);
+        initContextMenu: function ($table) {
+            var $fixedTable = this.getJqueryFloatHeadTable(),
+                $th = $fixedTable.children('thead').find('th'),
+                $sortedTh = $th.filter(function (i) {
+                    return i > 0;
+                }),
+                _this = this,
+                count = Object.keys(this.getFormSettingsFromStorage()).length - 1,
+                realCount = $th.length - 1,
+                tables = [$table.eq(0)[0], $fixedTable.eq(0)[0]];
+            $sortedTh.contextmenu({
+                show: {effect: 'blind', duration: 0},
+                menu: [
+                    {title: '< Сделать первой', cmd: 'to-first'},
+                    {title: 'Сделать последней >', cmd: 'to-last'},
+                    {title: 'Все колонки', cmd: 'toggle-cols'}
+                ],
+                select: function (event, ui) {
+                    var fromReal = ui.target.closest('th').get(0).cellIndex,
+                        from = _this.getPositionColumn(ui.target.closest('th').attr('data-id'));
+                    switch (ui.cmd) {
+                        case 'to-first':
+                            facade.getTableModule().swapTableCols(tables, fromReal, 1);
+                            $table.floatThead('reflow');
+                            _this.changeSettings(from, 1);
+                            break;
+                        case 'to-last':
+                            facade.getTableModule().swapTableCols(tables, fromReal, realCount);
+                            $table.floatThead('reflow');
+                            _this.changeSettings(from, count);
+                            break;
+                        case 'toggle-cols':
+                            _this
+                                .toggleAllCols()
+                                .clearSelectedArea();
+                            break;
+                        default :
+                            break;
+                    }
+                }
+            });
+        },
+        changeSettings: function (start, end) {
+            var min = 1, settings = this.getFormSettingsFromStorage();
+            if (!$.isEmptyObject(settings)) {
+                var obj,
+                    newSettings = [],
+                    i,
+                    hasOwn = Object.prototype.hasOwnProperty,
+                    newWeight;
+                if (start < end) {
+                    for (i in settings) {
+                        if (hasOwn.call(settings, i)) {
+                            obj = settings[i];
+                            if (obj.weight === 0) {
+                                newSettings[0] = {
+                                    key: obj.key,
+                                    weight: obj.weight,
+                                    width: obj.width
+                                };
+                            } else {
+                                if (obj.weight > start && obj.weight <= end) {
+                                    newWeight = obj.weight - 1;
+                                    newSettings[newWeight] = {
+                                        key: obj.key,
+                                        weight: newWeight,
+                                        width: obj.width
+                                    };
+                                } else if (obj.weight === start) {
+                                    newWeight = Math.max(end, min);
+                                    newSettings[newWeight] = {
+                                        key: obj.key,
+                                        weight: newWeight,
+                                        width: obj.width
+                                    };
+                                } else {
+                                    newSettings[obj.weight] = {
+                                        key: obj.key,
+                                        weight: obj.weight,
+                                        width: obj.width
+                                    };
+                                }
+                            }
+                        }
+                    }
+                }
+                if (start > end) {
+                    for (i in settings) {
+                        if (hasOwn.call(settings, i)) {
+                            obj = settings[i];
+                            if (obj.weight === 0) {
+                                newSettings[0] = {
+                                    key: obj.key,
+                                    weight: obj.weight,
+                                    width: obj.width
+                                };
+                            } else {
+                                if (obj.weight < start && obj.weight >= Math.max(end, min)) {
+                                    newWeight = obj.weight + 1;
+                                    newSettings[newWeight] = {
+                                        key: obj.key,
+                                        weight: newWeight,
+                                        width: obj.width
+                                    };
+                                } else if (obj.weight === start) {
+                                    newWeight = Math.max(end, min);
+                                    newSettings[newWeight] = {
+                                        key: obj.key,
+                                        weight: newWeight,
+                                        width: obj.width
+                                    };
+                                } else {
+                                    newSettings[obj.weight] = {
+                                        key: obj.key,
+                                        weight: obj.weight,
+                                        width: obj.width
+                                    };
+                                }
+                            }
+                        }
+                    }
+                }
+                this.persistColumnsSettings(newSettings);
+            }
+        },
+        toggleAllCols: function () {
+            var
+                isHidden = this.isShortMode(),
+                $th = this.getJqueryFloatHeadTable().find('[' + optionsModule.getClass('allowHideColumn') + ']');
+            this
+                .toggleColumns(isHidden, $th)
+                .setShortMode(!isHidden);
+            return this;
+        },
+        initDragTable: function () {
+            this.getJqueryFloatHeadTable().dragtable();
+        },
+        initTableScript: function () {
+            var $table = this.getJqueryDataTable();
+            this.initSettings();
+            this.initTableSorter($table);
+            this.initResize($table);
+            this.initFloatThead($table);
+            this.initContextMenu($table);
+            this.initDragTable();
+            if (this.isShortMode()) {
+                var $shortCols = this.getJqueryFloatHeadTable()
+                    .find('[' + optionsModule.getClass('allowHideColumn') + ']');
+                this.toggleColumns(false, $shortCols);
+            }
+            if (this.isSystemColumnsMode()) {
+                var $systemCols = this.getJqueryFloatHeadTable().find('th')
+                    .filter(function () {
+                        return optionsModule.getSetting('systemCols')
+                            .indexOf($(this).attr('data-id')) !== -1;
+                    });
+                this.toggleColumns(false, $systemCols);
+            }
+
             this.initContextFormMenuEvent();
         },
         initContextFormMenuEvent: function () {
@@ -571,7 +726,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
         setRowColor: function (id) {
             var color = this.getRowColor(id);
             this.getJqueryDataTable().find('tr[data-id="' + id + '"]').css({
-                background: color? color: ''
+                background: color ? color : ''
             });
             return this;
         },
@@ -601,4 +756,4 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
         }
 
     });
-})(AbstractGridView, jQuery, _, deferredModule, optionsModule, helpersModule, window, undefined);
+})(AbstractGridView, jQuery, _, deferredModule, optionsModule, helpersModule, window, undefined, Math);

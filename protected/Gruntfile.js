@@ -65,7 +65,6 @@ module.exports = function (grunt) {
                     '../js/main/classes/ch.filter.form.js',
                     '../js/main/classes/ch.filter.js',
                     '../js/main/classes/ch.grid.form.js',
-                    '../js/main/classes/ch.card.js',
                     '../js/main/classes/ch.canvas.options.js',
                     '../js/main/classes/ch.canvas.js',
                     '../js/main/modules/storage.js',

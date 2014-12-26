@@ -219,7 +219,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             return this.getThead().children('tr').first().children('th');
         },
         getThead: function () {
-            return this.getJqueryFloatHeadTable().children('thead');
+            return this.getJqueryDataTable().children('thead');
         },
         getRowClass: function () {
             switch (this.getFormStyleID()) {
@@ -391,6 +391,188 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                     }
                 }
             }
+        },
+        initSettings: function () {
+            this.setDefaultSettings();
+            if (this.isAutoUpdate()) {
+                this.startAutoUpdate();
+            }
+        },
+        setDefaultSettings: function () {
+            var $th = this.getTh(),
+                settings = [],
+                defaultWidth = optionsModule.getSetting('defaultColumnsWidth');
+            if (this.hasSettings()) {
+                var $tr = this.getThead().children('tr'),
+                    $trSorted = $('<tr/>'),
+                    controlColumn = optionsModule.getSetting('controlColumn');
+                settings = this.getFormSettingsFromStorage();
+                var unsavedSettings = settings.sort(function (a, b) {
+                    if (a.key === controlColumn) {
+                        return -1;
+                    }
+                    if (b.key === controlColumn) {
+                        return 1;
+                    }
+                    if (a.weight > b.weight) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                });
+                var oldKeys = [], i, hasOwn = Object.prototype.hasOwnProperty;
+                for (i in unsavedSettings) {
+                    if (hasOwn.call(unsavedSettings, i)) {
+                        var column = unsavedSettings[i];
+                        $trSorted.append($th.filter('[data-id="' + column.key + '"]'));
+                        oldKeys.push(column.key);
+                    }
+                }
+                $th.each(function () {
+                    var $this = $(this),
+                        id = $this.attr('data-id');
+                    if (oldKeys.indexOf(id) === -1) {
+                        var weight = unsavedSettings.length;
+                        unsavedSettings.push({
+                            key: id,
+                            weight: weight,
+                            width: defaultWidth
+                        });
+                        $trSorted.append($this);
+                    }
+                });
+                this.persistColumnsSettings(unsavedSettings);
+                $tr.replaceWith($trSorted);
+            } else {
+                $th.each(function (i, elem) {
+                    var key = $(elem).attr('data-id');
+                    if (i === 0) {
+                        settings[i] = {
+                            key: key,
+                            weight: i,
+                            width: '28'
+                        };
+                    } else {
+                        settings[i] = {
+                            key: key,
+                            weight: i,
+                            width: defaultWidth
+                        };
+                    }
+                });
+                this.persistColumnsSettings(settings);
+            }
+        },
+        initTableSorter: function ($table) {
+            var options = {
+                headers: {
+                    0: {sorter: false}
+                },
+                dateFormat: 'ddmmyyyy',
+                emptyTo: 'zero',
+                widgetOptions: {
+                    filter_hideEmpty: false,
+                    savePages: false
+                }
+            };
+            if (optionsModule.getSetting('viewsWithoutFilters').indexOf(this.model.getView()) === -1) {
+                options.widgets = ['filter'];
+            }
+            $table.tablesorter(options);
+        },
+        setColumnWidth: function (index, width) {
+            var settings = this.getFormSettingsFromStorage();
+            if (!$.isEmptyObject(settings)) {
+                settings[index].width = width;
+            }
+        },
+        initResize: function ($table) {
+            var $headers = this.getTh()
+                    .filter(function (i) {
+                        return i > 0;
+                    }).children('div'),
+                startWidth = 0,
+                _this = this;
+            $headers.each(function () {
+                var $columnResize, $bodyResize;
+                $(this).resizable({
+                    handles: 'e',
+                    containment: 'parent',
+                    distance: 1,
+                    stop: function (event, ui) {
+                        try {
+                            var index = ui.element.parent().get(0).cellIndex,
+                                uiWidth = ui.size.width,
+                                $fixedTable = _this.getJqueryFloatHeadTable(),
+                                $userGrid = $table.parent();
+
+                            _this.setColumnWidth(index, uiWidth);
+                            $table.children("colgroup").children("col").eq(index).width(uiWidth);
+                            $fixedTable.children("colgroup").children("col").eq(index).width(uiWidth);
+                            ui.element.width(uiWidth);
+
+                            var endWidth = ui.element.width(),
+                                deltaWidth = endWidth - startWidth,
+                                selWidth = $fixedTable.get(0).offsetWidth;
+                            if (deltaWidth < 0) {
+                                selWidth += deltaWidth;
+                            }
+                            $userGrid.find('.sel-right').css({left: selWidth});
+                            $userGrid.find('.sel-bottom, .sel-top').css({width: selWidth - 28});
+                            if (deltaWidth < 0) {
+                                var tableWidth = $fixedTable.get(0).offsetWidth + deltaWidth;
+                                $fixedTable.width(tableWidth);
+                                $table.width(tableWidth);
+                            }
+                        } catch (e) {
+                            mediator.publish(optionsModule.getChannel('logError'),
+                                {
+                                    view: _this,
+                                    error: e
+                                }
+                            );
+                        } finally {
+                            $columnResize.remove();
+                            $bodyResize.remove();
+                        }
+                    },
+                    resize: function (event, ui) {
+                        var position = ui.element.offset();
+                        $columnResize.css({left: position.left + ui.size.width});
+                        $bodyResize.css({left: position.left + ui.size.width});
+                    },
+                    start: function (event, ui) {
+                        var position = ui.element.offset(),
+                            header_height = 24,
+                            real_height = $table.closest("div").height() - header_height,
+                            visible_height = $table.height() - header_height;
+
+                        $columnResize = $("<span>", {'class': "column-resize column-resize-header"})
+                            .css({
+                                'top': position.top,
+                                'left': position.left
+                            });
+                        $bodyResize = $("<span>", {'class': "column-resize column-resize-body"})
+                            .css({
+                                'top': position.top + header_height,
+                                'left': position.left,
+                                'height': Math.min(visible_height, real_height)
+                            });
+
+                        Chocolate.$content.append($columnResize).append($bodyResize);
+                        startWidth = ui.element.width();
+                    }
+                });
+            });
+        },
+        initFloatThead: function ($table) {
+            var _this = this;
+            $table.floatThead({
+                view: this,
+                scrollContainer: function () {
+                    return _this.getJqueryGridView();
+                }
+            });
         }
     });
 })

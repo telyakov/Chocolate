@@ -1,4 +1,4 @@
-var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsModule) {
+var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsModule, window) {
     'use strict';
     return AbstractGridView.extend({
         template: _.template(
@@ -25,7 +25,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 '<% } %>',
                 '<section data-id="grid">',
                 '<div class="grid-view" data-id="user-grid" id="<%= gridViewID %>"">',
-                '<table class="items table-bordered" tabindex="0"><thead>',
+                '<table class="items table-bordered" tabindex="0" ><thead>',
                 '<th data-id="chocolate-control-column"><div></div></th>',
                 '<th data-id="name"><div><a>',
                 '<span class="grid-caption">Скачать</span><span class="grid-sorting"></span>',
@@ -121,9 +121,9 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                             filesModule.clearErrors(_this.getFormID());
                         } else {
                             if (_this.hasChange()) {
-                               _this.model.trigger('save:form');
+                                _this.model.trigger('save:form');
                             } else {
-                               _this.model.trigger('refresh:form');
+                                _this.model.trigger('refresh:form');
                             }
                         }
                     },
@@ -182,8 +182,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                         type: optionsModule.getRequestType('chFormRefresh'),
                         id: deferID
                     });
-                    var table = facade.getFactoryModule().makeChTable($form.find('table'));
-                    table.initAttachmentScript(_this);
+                    _this.initTableScript();
                     defer.done(function (data) {
                         _this.persistData(data.data, data.order);
                         var files = [];
@@ -201,6 +200,13 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                             .setRowCount(Object.keys(data.data).length);
                     });
                 });
+        },
+        initTableScript: function () {
+            var $table = this.getJqueryDataTable();
+            this.initSettings();
+            this.initTableSorter($table);
+            this.initResize($table);
+            this.initFloatThead($table);
         }
     });
-})(AbstractGridView, jQuery, _, deferredModule, optionsModule);
+})(AbstractGridView, jQuery, _, deferredModule, optionsModule, window);

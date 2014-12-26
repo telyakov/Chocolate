@@ -15,22 +15,10 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
             _private.storage[id] = obj;
         },
         /**
-         * @returns {ChTable}
-         */
-        makeChTable: function ($el) {
-            return _private.make($el, 'ChTable');
-        },
-        /**
          * @returns {ChMap}
          */
         makeChMap: function ($el) {
             return _private.make($el, 'ChMap');
-        },
-        /**
-         * @returns {ChCard}
-         */
-        makeChCard: function (el) {
-            return _private.make(el, 'ChCard');
         },
         /**
          * @returns {ChTab}
@@ -110,14 +98,8 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         }
     };
     return {
-        makeChTable: function ($el) {
-            return _private.makeChTable($el);
-        },
         makeChMap: function ($el) {
             return _private.makeChMap($el);
-        },
-        makeChCard: function ($el) {
-            return _private.makeChCard($el);
         },
         makeChTab: function ($el) {
             return _private.makeChTab($el);

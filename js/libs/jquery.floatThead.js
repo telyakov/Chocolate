@@ -219,9 +219,8 @@
                 layoutAuto = {'table-layout': $table.css('tableLayout') || 'auto'};
 
             function setHeaderHeight() {
-                var view = $header.closest('form').attr('data-id'),
-                    headerHgh;
-                if (optionsModule.getSetting('viewsWithoutFilters').indexOf(view) !== -1){
+                var headerHgh;
+                if (optionsModule.getSetting('viewsWithoutFilters').indexOf(opts.view.model.getView()) !== -1){
                     headerHgh = optionsModule.getSetting('titleRowHeight');
                 }
                 else{
