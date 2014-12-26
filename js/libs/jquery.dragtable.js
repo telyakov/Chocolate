@@ -17,7 +17,8 @@
             appendTarget: $(document.body),
             //if true,this will scroll the appendTarget offsetParent when the dragDisplay is dragged past its boundaries
             scroll: false,
-            notDraggableCount: 1
+            notDraggableCount: 1,
+            view: null
 
         },
         // when a col is dragged use this to find the semantic elements, for speed
@@ -66,7 +67,7 @@
                         //change the target to the th, so the handler can pick up the offsetleft
                         e.currentTarget = $handle[0]
                     }
-                    self._mousemoveHandler(e, elementOffsetTop, $handle);
+                    self._mousemoveHandler(e, elementOffsetTop, $handle, self);
                     //############
                 }
             });
@@ -78,12 +79,12 @@
          * getCol must be called before this is
          *
          */
-        _mousemoveHandler: function (e, elementOffsetTop,$handle) {
+        _mousemoveHandler: function (e, elementOffsetTop,$handle, context) {
             if(!e.pageX &&  e.originalEvent.touches){
                 e.pageX = e.originalEvent.touches[0].pageX;
             }
             if($(e.target).attr('data-id') === optionsModule.getSetting('controlColumn')){
-                return false
+                return false;
             }
             //call this first, catch any drag display issues
             this._start(e);
@@ -93,7 +94,6 @@
                 prevMouseX = e.pageX,
                 dragDisplayWidth = self.dragDisplay.outerWidth(),
                 halfDragDisplayWidth = dragDisplayWidth / 2,
-                appendTargetOP = o.appendTarget.offsetParent()[0],
                 scroll = o.scroll,
             //get the col count, used to contain col swap
                 colCount = self.element[ 0 ]
@@ -101,7 +101,7 @@
                     .getElementsByTagName('tr')[ 0 ]
                     .getElementsByTagName('th')
                     .length - 1;
-
+            var view  = context.options.view;
             $(document).bind('mousemove.' + self.widgetEventPrefix +' touchmove', function (e) {
                 if(!e.pageX &&  e.originalEvent.touches){
                     e.pageX = e.originalEvent.touches[0].pageX;
@@ -116,7 +116,7 @@
 
                             left: e.pageX
                         })
-                        .appendTo(o.appendTarget)
+                        .appendTo(o.appendTarget);
                     self.is_drag_enabled = true;
                 }
 
@@ -125,7 +125,7 @@
                     appendTarget = o.appendTarget[0],
                     left = ( parseInt(self.dragDisplay[0].style.left) + mouseXDiff  );
 
-                self.dragDisplay.css('left', left)
+                self.dragDisplay.css('left', left);
 
                 /*
                  * when moving left and e.pageX and prevMouseX are the same it will trigger right when moving left
@@ -195,7 +195,7 @@
 
             })
                 .one('mouseup.' + self.widgetEventPrefix + ' touchend', function (e) {
-                    self._stop(e);
+                    self._stop(e, view);
                 });
 
         },
@@ -210,7 +210,7 @@
             $(document)
                 //move disableselection and cursor to default handlers of the start event
                 .disableSelection()
-                .css('cursor', 'move')
+                .css('cursor', 'move');
 
 
             return this._eventHelper('start', e, {
@@ -219,10 +219,9 @@
 
 
         },
-        _stop: function (e) {
+        _stop: function (e, view) {
             if(this.start_index !== null &&  this.end_index !== null){
-                var form = facade.getFactoryModule().makeChGridForm($(this.element).closest('form')),
-                    $th = form.getFixedTable().children('thead').find('th'),
+                var $th = view.getJqueryFloatHeadTable().children('thead').find('th'),
                     start,
                     end;
                 if(this.start_index < this.end_index){
@@ -235,7 +234,7 @@
                     start = this.end_index ;
                     end = this.end_index +1;
                 }
-                form.changeSettings( form.getPositionColumn( $th.eq(start).attr('data-id')), form.getPositionColumn( $th.eq(end).attr('data-id')));
+                view.changeSettings( view.getPositionColumn( $th.eq(start).attr('data-id')), view.getPositionColumn( $th.eq(end).attr('data-id')));
                 this._swapBodyCol(this.start_index, this.end_index);
             }
             this._clearVars();

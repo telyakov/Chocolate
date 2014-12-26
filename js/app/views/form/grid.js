@@ -512,7 +512,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             return this;
         },
         initDragTable: function () {
-            this.getJqueryFloatHeadTable().dragtable();
+            this.getJqueryFloatHeadTable().dragtable({
+                view: this
+            });
         },
         initTableScript: function () {
             var $table = this.getJqueryDataTable();
