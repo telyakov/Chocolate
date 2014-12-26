@@ -314,7 +314,6 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
                                 key = $.trim(tokens[0]),
                                 value = $.trim(tokens[1]);
                             if (value === 'this.val') {
-                                console.log(val);
                                 model.setDynamicDefaultValue(key, val);
                             } else if (value === 'this.caption') {
                                 view.deferVisibleValue()
