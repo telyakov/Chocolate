@@ -44,10 +44,7 @@ var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math,
                         $formSection = $form.children('section'),
                         formSectionHgt = formHeight - $menu.outerHeight(true);
                     $formSection.height(formSectionHgt);
-                    if ($formSection.attr('data-id') === 'map') {
-                        var map = factoryModule.makeChMap($formSection.children('.map'));
-                        map.map.container.fitToViewport();
-                    } else {
+                    if ($formSection.attr('data-id') !== 'map') {
                         var $userGrid = $formSection.find('.grid-view');
                         $userGrid.height(formSectionHgt);
                     }

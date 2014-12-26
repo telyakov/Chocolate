@@ -33,15 +33,17 @@ ChCanvas.prototype.prepareData = function (data) {
     return data2storage;
 };
 /**
- * Прорисовка начинает
  * @param data array
- * @param options {ChCanvasOptions}
  */
-ChCanvas.prototype.refreshData = function (data, options, model) {
+ChCanvas.prototype.refreshData = function (data, model) {
+    var options = {
+        cellWidth: 150,
+        cellHeight: 100
+    };
     data = this.prepareData(data);
     var
-        cell_height = options.cell_height,
-        cell_width = options.cell_width;
+        cell_height = options.cellHeight,
+        cell_width = options.cellWidth;
 
     var floor_width = 30;
     var canvas = this.$canvas.get(0),
@@ -204,6 +206,7 @@ ChCanvas.prototype.refreshData = function (data, options, model) {
         }
         ctx.stroke();
     }
+
     layout(ctx);
     this.$canvas.unbind('click');
     this.$canvas.on("click", function (e) {

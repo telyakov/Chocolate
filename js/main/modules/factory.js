@@ -15,12 +15,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
             _private.storage[id] = obj;
         },
         /**
-         * @returns {ChMap}
-         */
-        makeChMap: function ($el) {
-            return _private.make($el, 'ChMap');
-        },
-        /**
          * @returns {ChTab}
          */
         makeChTab: function ($el) {
@@ -80,9 +74,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         }
     };
     return {
-        makeChMap: function ($el) {
-            return _private.makeChMap($el);
-        },
         makeChTab: function ($el) {
             return _private.makeChTab($el);
         },
