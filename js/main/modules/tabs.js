@@ -59,10 +59,15 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
                 //todo: вернуть код
                 //card._undoChange();
             } else {
-                var form = factoryModule.makeChGridForm(activeTab.getPanel().find('.section-grid>form'));
-                if (form.isHasChange !== undefined && form.$form.length && form.isHasChange() && !confirm(form.getExitMessage())) {
-                    return;
-                }
+                //todo: вернуть код
+                //var form = factoryModule.makeChGridForm(activeTab.getPanel().find('.section-grid>form'));
+                //if (form.isHasChange !== undefined && form.$form.length && form.isHasChange() && !confirm(form.getExitMessage())) {
+                //    return;
+                //}
+
+                //.getExitMessage = function () {
+                //    return 'В форме "' + this.getTabCaption() + '" имеются несохраненные изменения. Закрыть без сохранения?';
+                //};
             }
             var $tab = activeTab.getLi();
             if ($tab.hasClass(optionsModule.getClass('activeTab'))) {

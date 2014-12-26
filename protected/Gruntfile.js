@@ -61,7 +61,6 @@ module.exports = function (grunt) {
                     '../js/main/classes/ch.messages.container.js',
                     '../js/main/classes/response/ch.response.js',
                     '../js/main/classes/response/ch.grid.response.js',
-                    '../js/main/classes/ch.grid.form.js',
                     '../js/main/classes/ch.canvas.options.js',
                     '../js/main/classes/ch.canvas.js',
                     '../js/main/modules/storage.js',

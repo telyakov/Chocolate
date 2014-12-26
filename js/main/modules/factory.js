@@ -33,12 +33,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
             return _private.make($el, 'ChDynatree');
         },
         /**
-         * @returns {ChGridForm}
-         */
-        makeChGridForm: function ($el) {
-            return _private.make($el, 'ChGridForm');
-        },
-        /**
          * @returns {ChMessagesContainer}
          */
         makeChMessagesContainer: function ($el) {
@@ -94,10 +88,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         },
         makeChDynatree: function ($el) {
             return _private.makeChDynatree($el);
-        },
-
-        makeChGridForm: function ($el) {
-            return _private.makeChGridForm($el);
         },
         makeChMessagesContainer: function ($el) {
             return _private.makeChMessagesContainer($el);

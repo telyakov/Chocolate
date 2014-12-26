@@ -74,13 +74,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             return this.jqueryForm;
         },
         _chForm: null,
-        getChForm: function () {
-            //todo: for support legacy code
-            if (this._chForm === null) {
-                this._chForm = facade.getFactoryModule().makeChGridForm(this.getJqueryForm());
-            }
-            return this._chForm;
-        },
         footerTemplate: _.template([
                 '<footer class="grid-footer" data-id="grid-footer">',
                 '<div class="footer-info" data-id="info"></div>',
@@ -427,6 +420,190 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             return !$.isEmptyObject(this.getChangedDataFromStorage()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
         },
         save: function (opts) {
+
+
+            //destroy = function () {
+            //    this.getTh().find('.ui-resizable').resizable('destroy');
+            //    this.getTable().trigger("destroy");
+            //    this.getTable().floatThead('destroy');
+            //    delete Chocolate.storage.session[this.getID()];
+            //    delete this._ch_messages_container;
+            //    delete this._$table;
+            //    delete this.$form;
+            //    delete this._$thead;
+            //    delete this._$save_btn;
+            //    delete this._$grid_form;
+            //    delete this._$user_grid;
+            //}
+//            save = function (refresh) {
+//                this._resetErrors();
+//                var userGridID = this.getUserGridID(),
+//                    ch_messages_container = this.getMessagesContainer(),
+//                    _this = this,
+//                    deleted_obj = $.extend({}, this.getDeletedObj());
+//
+//                if (!this._isAttachmentsModel()) {
+//                    var change_obj = this.getChangedObj(),
+//                        data_obj = this.getDataObj(),
+//                        response_change_obj = {};
+//
+//                    for (var name in change_obj) {
+//                        if (!$.isEmptyObject(change_obj[name])) {
+//                            if (typeof(deleted_obj[name]) == 'undefined') {
+//                                response_change_obj[name] = Chocolate.mergeObj(data_obj[name], change_obj[name]);
+//                            }
+//                        }
+//                    }
+//
+//                    if (!$.isEmptyObject(response_change_obj) && !$.isEmptyObject(deleted_obj)) {
+//                        for (var row_id in deleted_obj) {
+//                            delete response_change_obj[row_id];
+//                        }
+//                    }
+//
+//                    for (var property in deleted_obj) {
+//                        if (!$.isNumeric(property)) {
+//                            delete deleted_obj[property];
+//                        }
+//                    }
+//
+//                    if (!$.isEmptyObject(response_change_obj) || !$.isEmptyObject(deleted_obj)) {
+//                        //отсекаем изменения в уже удаленных строках, они нам не нужны
+//                        var errors = [];
+//                        for (var index in response_change_obj) {
+//                            var error = this.validate(response_change_obj[index]);
+//                            if (!$.isEmptyObject(error)) {
+//                                errors[index] = error;
+//                            }
+//                        }
+//
+//                        if ($.isEmptyObject(errors)) {
+//                            var changed_data = JSON.stringify(response_change_obj),
+//                                deleted_data = JSON.stringify(deleted_obj),
+//                                url = this.getSaveUrl(),
+//                                data = {
+//                                    jsonChangedData: changed_data,
+//                                    jsonDeletedData: deleted_data
+//                                };
+//
+//                            $.post(url, data)
+//                                .done(function (response) {
+//                                    var ch_response = new ChResponse(response);
+//                                    //TODO: вроде здесь сообщения можно удалять;
+////                            ch_response.sendMessage(ch_messages_container);
+//                                    if (ch_response.isSuccess()) {
+//                                        //todo: вернуть код
+//
+//                                        //_this.getSaveButton().removeClass('active');
+//                                        if (refresh) {
+//                                            //todo: вернуть код
+//                                            //_this.refresh();
+//                                        }
+//                                    } else {
+//                                        ch_response.sendMessage(ch_messages_container);
+//                                    }
+//                                })
+//                                .fail(function (response) {
+//                                    ch_messages_container.sendMessage('Возникла непредвиденная ошибка при сохраненнии сетки.', ChResponseStatus.ERROR);
+//                                });
+//                            return [];
+//                        } else {
+//                            for (var pk_key in errors) {
+//                                for (var column_key in errors[pk_key]) {
+//                                    this.$form.find('a[data-pk=' + pk_key + '][rel=' + userGridID + '_' + errors[pk_key][column_key] + ']').closest('td').addClass('grid-error')
+//                                }
+//                            }
+//                            ch_messages_container.sendMessage('Заполните обязательные поля( ошибки подсвечены в сетке).', ChResponseStatus.ERROR)
+//                            return errors;
+//                        }
+//                    } else {
+//                        if (refresh) {
+//                            ch_messages_container.sendMessage('Данные не были изменены.', ChResponseStatus.WARNING)
+//                        }
+//                        return [];
+//                    }
+//                } else {
+//                    var formID = this.getID(),
+//                        fileModule = facade.getFilesModule();
+//
+//                    if (fileModule.isNotEmpty(formID)) {
+//                        var isEmpty = $.isEmptyObject(deleted_obj);
+//                        while (fileModule.isNotEmpty(formID)) {
+//                            var defObj = this.getDefaultObj(),
+//                                ownerLock = defObj['ownerlock'],
+//                                file = fileModule.pop(formID);
+//                            var rowID = file[0].rowID;
+//                            if (isEmpty || !deleted_obj[rowID]) {
+//                                this.$form.fileupload({
+//                                    formData: {FilesTypesID: 4, OwnerLock: ownerLock}
+//                                });
+//                                this.$form.fileupload('send', {files: file});
+//                            }
+//                        }
+//                    }
+//                    else {
+//                        if (!$.isEmptyObject(deleted_obj)) {
+//                            this.saveAttachment(this);
+//                        } else {
+//                            ch_messages_container.sendMessage('Данные не были изменены.', ChResponseStatus.WARNING);
+//                        }
+//                    }
+//                    return [];
+//                }
+//
+//                return false;
+//            };
+//            saveAttachment = function (chForm) {
+//                var delData = chForm.getDeletedObj();
+//                if (!$.isEmptyObject(delData)) {
+//                    for (var property in delData) {
+//                        if (!$.isNumeric(property)) {
+//                            delete delData[property];
+//                        }
+//                    }
+//
+//                    var chMsgContainer = chForm.getMessagesContainer(),
+//                        data = {
+//                            jsonChangedData: {},
+//                            jsonDeletedData: JSON.stringify($.extend({}, delData))
+//                        };
+//                    $.ajax({
+//                        type: 'POST',
+//                        url: chForm.getSaveUrl(),
+//                        data: data,
+//                        async: false
+//                    }).done(function (resp) {
+//                        var chResp = new ChResponse(resp);
+//                        if (chResp.isSuccess()) {
+//                            //todo: вернуть код
+//                            //chForm
+//                            //    .clearChange()
+//                            //    .refresh();
+//                        }
+//                        chResp.sendMessage(chMsgContainer);
+//                    })
+//                        .fail(function (resp) {
+//                            chMsgContainer.sendMessage('Возникла непредвиденная ошибка при сохранении вложений.', ChResponseStatus.ERROR);
+//                        });
+//                }
+//            };
+//            validate = function (data) {
+//                var requiredFields = this.getRequiredObj(),
+//                    errors = [];
+//                for (var field in requiredFields) {
+//                    if (typeof(data[field]) == 'undefined' || !data[field]) {
+//                        errors.push(field);
+//                    }
+//                }
+//                return errors;
+//            };
+//            getMessagesContainer = function () {
+//                if (this._ch_messages_container === null) {
+//                    this._ch_messages_container = facade.getFactoryModule().makeChMessagesContainer(this.$form.find(".messages-container"));
+//                }
+//                return this._ch_messages_container;
+//            };
+
             mediator.publish(optionsModule.getChannel('logError'),
                 {
                     model: this,

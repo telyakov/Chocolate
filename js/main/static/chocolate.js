@@ -101,10 +101,25 @@ var Chocolate = {
         var session = Chocolate.storage.session, chForm;
         for (var formID in session) {
             if (formID != 'user' && session.hasOwnProperty(formID)) {
-                chForm = facade.getFactoryModule().makeChGridForm($('#' + formID));
-                if (chForm.isHasChange()) {
-                    return true;
-                }
+                //todo: вернуть код
+                //chForm = facade.getFactoryModule().makeChGridForm($('#' + formID));
+                //if (chForm.isHasChange()) {
+                //    return true;
+                //}
+
+
+                //resetErrors = function () {
+                //    this.$form.find('td.grid-error').removeClass('grid-error');
+                //};
+                //isHasChange = function () {
+                //    Chocolate.leaveFocus();
+                //    if (this._isAttachmentsModel()) {
+                //        return facade.getFilesModule().isNotEmpty(this.getID()) || !$.isEmptyObject(this.getDeletedObj());
+                //    } else {
+                //        return !$.isEmptyObject(this.getChangedObj()) || !$.isEmptyObject(this.getDeletedObj());
+                //    }
+                //}
+
             }
         }
         return false;
