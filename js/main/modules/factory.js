@@ -32,12 +32,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         makeChMessagesContainer: function ($el) {
             return _private.make($el, 'ChMessagesContainer');
         },
-        /**
-         * @returns {ChCanvas}
-         */
-        makeChCanvas: function ($el) {
-            return _private.make($el, 'ChCanvas');
-        },
         make: function ($el, objClass) {
             var id = $el.attr('id');
             if (!id) {
@@ -82,10 +76,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         },
         makeChMessagesContainer: function ($el) {
             return _private.makeChMessagesContainer($el);
-        },
-
-        makeChCanvas: function ($el) {
-            return _private.makeChCanvas($el);
         },
         garbageCollection: function () {
             _private.garbageCollection();

@@ -553,6 +553,24 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
             }
             return result.replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g, "$1 ");
         },
+        wrapText: function (cnt, text, marginLeft, marginTop, maxWidth, lineHeight) {
+            var words = text.split(' '),
+                countWords = words.length,
+                line = "";
+            for (var n = 0; n < countWords; n++) {
+                var newLine = line + words[n] + ' ',
+                    newWidth = cnt.measureText(newLine).width;
+                if (newWidth > maxWidth) {
+                    cnt.fillText(line, marginLeft, marginTop);
+                    line = words[n] + " ";
+                    marginTop += lineHeight;
+                }
+                else {
+                    line = newLine;
+                }
+            }
+            cnt.fillText(line, marginLeft, marginTop);
+        },
         init: function () {
             context.init();
         }
