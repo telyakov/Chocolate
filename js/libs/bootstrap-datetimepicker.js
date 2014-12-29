@@ -780,7 +780,7 @@
                                     this.hide();
                                 }
                                 //fix for tabindex
-                                Chocolate.leaveFocus()
+                                helpersModule.leaveFocus()
 
 //                                this.element.closest('.table-td'). children('a').editable('toggle')
                             } else {

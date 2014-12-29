@@ -559,7 +559,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                                 'height': Math.min(visible_height, real_height)
                             });
 
-                        Chocolate.$content.append($columnResize).append($bodyResize);
+                        helpersModule.getContentObj().append($columnResize).append($bodyResize);
                         startWidth = ui.element.width();
                     }
                 });

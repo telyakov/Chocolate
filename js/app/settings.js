@@ -3,23 +3,21 @@ $(function () {
      * http://benalman.com/
      * Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT, GPL */
     (function ($) {
-
         var o = $({});
-
         $.subscribe = function () {
             o.on.apply(o, arguments);
         };
-
         $.unsubscribe = function () {
             o.off.apply(o, arguments);
         };
-
         $.publish = function () {
             o.trigger.apply(o, arguments);
         };
-
     }(jQuery));
 
+    /**
+     * x-editable buttons template
+     */
     if (typeof $.fn.editableform === 'function') {
         $.fn.editableform.buttons =
             [
@@ -63,7 +61,7 @@ $(function () {
                                 sel.addRange(range);
                             }
                         }
-                    } else if (w.document.selection && w.document.selection.type != "Control") {
+                    } else if (w.document.selection && w.document.selection.type !== "Control") {
                         // IE < 9
                         w.document.selection.createRange().pasteHTML(val);
                     }
@@ -97,4 +95,37 @@ $(function () {
             });
         }
     });
+
+    /**
+     * tablesorter checkbox parser
+     * Copyright (c) 2014 by Tselishev Semen
+     */
+    $.tablesorter.addParser({
+        id: 'checkbox',
+        is: function () {
+            return false;
+        },
+        format: function (s, table, cell) {
+            return $(cell).find('a').attr('data-value');
+        },
+        parsed: false,
+        type: 'text'
+    });
+    /**
+     * for ie lt 8
+     */
+    if (!Object.create) {
+        Object.create = (function () {
+            function F() {
+            }
+
+            return function (o) {
+                if (arguments.length !== 1) {
+                    throw new Error('Object.create implementation only accepts one parameter.');
+                }
+                F.prototype = o;
+                return new F();
+            };
+        })();
+    }
 });

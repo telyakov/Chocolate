@@ -24,7 +24,7 @@ var CardView = (function (Backbone, $) {
         },
         closeTab: function () {
             var id = this.$el.attr('id'),
-                $li = Chocolate.$content.find('li[aria-controls=' + id + ']');
+                $li = helpersModule.getContentObj().find('li[aria-controls=' + id + ']');
             facade.getTabsModule().close($li.children('a'));
         },
         undoChange: function () {

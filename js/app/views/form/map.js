@@ -54,7 +54,7 @@ var MapView = (function (Backbone) {
         _objects: null,
         init: function (ymaps, encoded_data, map) {
             mediator.publish(optionsModule.getChannel('reflowTab'));
-            var points = json_parse(encoded_data, Chocolate.parse);
+            var points = json_parse(encoded_data, helpersModule.parse);
             map.controls
                 .add('zoomControl', {left: 5, top: 5});
             this.setPoints(points, map);

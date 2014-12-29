@@ -102,7 +102,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                     'acceptFileTypes': /(.*)$/i,
                     'added': function (e, data) {
                         if (data.isValidated) {
-                            var rowID = Chocolate.uniqueID();
+                            var rowID = helpersModule.uniqueID();
                             data.files[0].rowID = rowID;
                             facade.getFilesModule().push(_this.getFormID(), data.files);
                             data.context.attr("data-id", rowID);
