@@ -89,8 +89,13 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                                 infoPanel: true
                             });
                         _this.events[selector] = function (e) {
-                            var dnt = facade.getFactoryModule().makeChDynatree($(e.target));
-                            dnt.buildFromSql(opts);
+                            var model = new DynatreeModel({
+                                $el: $(e.target)
+                            });
+                            var view = new FilterDynatreeView({
+                                model: model
+                            });
+                            view.render(opts);
                             e.stopImmediatePropagation();
                         };
                         _this.delegateEvents();

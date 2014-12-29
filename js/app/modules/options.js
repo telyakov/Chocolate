@@ -61,7 +61,6 @@ var optionsModule = (function () {
                 jquery: 'jquery',
                 wizardServices: 'wizard_services',
                 wizardExecutors: 'wizard_executors',
-                treeControls: ' tree_controls',
                 chFormRefresh: 'ch_form_refresh',
                 deferred: 'deferred'
             }

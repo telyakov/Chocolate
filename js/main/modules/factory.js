@@ -20,18 +20,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
         makeChTab: function ($el) {
             return _private.make($el, 'ChTab');
         },
-        /**
-         * @returns {ChDynatree}
-         */
-        makeChDynatree: function ($el) {
-            return _private.make($el, 'ChDynatree');
-        },
-        /**
-         * @returns {ChMessagesContainer}
-         */
-        makeChMessagesContainer: function ($el) {
-            return _private.make($el, 'ChMessagesContainer');
-        },
         make: function ($el, objClass) {
             var id = $el.attr('id');
             if (!id) {
@@ -70,12 +58,6 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
     return {
         makeChTab: function ($el) {
             return _private.makeChTab($el);
-        },
-        makeChDynatree: function ($el) {
-            return _private.makeChDynatree($el);
-        },
-        makeChMessagesContainer: function ($el) {
-            return _private.makeChMessagesContainer($el);
         },
         garbageCollection: function () {
             _private.garbageCollection();

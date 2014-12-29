@@ -102,25 +102,15 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                 commandObj = $cnt.data('chWizard').commandObj,
                 $select = $('<div>', {
                     'class': 'wizard-select2'
-                }),
-                dynatreeElem = facade.getFactoryModule().makeChDynatree($select),
-                options = {};
-
-            options.getInput = function () {
-                return $select;
-            };
-            options.isDialogEvent = false;
-            options.defaultValues = function () {
-                return commandObj.usersidlist;
-            };
-            options.column_title = 'name';
-            options.root_id = 'parentid';
-            options.column_id = 'id';
-            options.infoPanel = true;
-            options.separator = '|';
-            options.children = data;
-            options.checkbox = true;
-            var $newCont = dynatreeElem.buildFromData(options);
+                });
+            var model = new DynatreeModel({
+                $el: $select
+            });
+            var view = new WizardDynatreeView({
+                model: model
+            });
+            var $newCont =  view.render(commandObj, $select, data);
+            //todo: вернуть значение
             _private.dialogOpen($newCont, $cnt, true, commandObj, function (commandObj, $content) {
                 commandObj.usersidlist = '';
                 commandObj.usersTitle = '';

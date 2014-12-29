@@ -418,68 +418,6 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule) {
         newLineSymbolsToBr: function (str) {
             return str.replace(/\r\n|\r|\n/g, '<br>');
         },
-        treeViewOptions: function ($context, isSingle) {
-            var options = {
-                children: $context.data().editable.options.source,
-                getInput: function () {
-                    return this;
-                },
-                getTitleValue: function (node) {
-                    return node.text;
-                },
-                getKey: function (node) {
-                    return node.id;
-                },
-                getParentID: function (node) {
-                    return null;
-                },
-                restore_state: true,
-                expand_nodes: true,
-                defaultValues: function () {
-                    return this.attr('data-value');
-                },
-                infoPanel: true,
-                separator: '|',
-                checkbox: true,
-                okButton: function ($tree, $input, $checkbox, $select) {
-                    var chDynatree = this;
-                    return {
-                        'text': 'Сохранить',
-                        'class': 'wizard-active wizard-next-button',
-                        click: function (bt, elem) {
-                            var selected_nodes = $tree.dynatree("getSelectedNodes");
-                            var val = '', select_html = '';
-                            var is_select_all = chDynatree.isSelectAll();
-                            for (var i in selected_nodes) {
-                                var node = selected_nodes[i];
-                                if (is_select_all || node.childList === null) {
-                                    val += node.data.key;
-                                    if (!chDynatree.isSingleMode()) {
-                                        val += chDynatree.getSeparator();
-                                    }
-                                    if (i > 0) {
-                                        select_html += '/';
-                                    }
-                                    select_html += node.data.title;
-                                }
-                            }
-                            //todo: вернуть код
-                            //var column = facade.getFactoryModule().makeChGridColumnBody($input);
-                            var name = $input.data().editable.options.name;
-                            //column.setChangedValue(name, val);
-                            $input.attr('data-value', val);
-                            $input.html(select_html);
-                            $checkbox.children('input').attr('checked', false);
-                            $(this).dialog("close");
-                        }
-                    };
-                }
-            };
-            if (isSingle) {
-                options.selectMode = 1;
-            }
-            return options;
-        },
         textShown: function (e, editable) {
             var $body = editable.$form.find("iframe").contents().find("body");
             $body

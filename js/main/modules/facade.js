@@ -164,11 +164,6 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
                 case optionsModule.getRequestType('wizardExecutors'):
                     taskWizard.onExecutorsCommand(resData, data.id);
                     break;
-                case optionsModule.getRequestType('treeControls'):
-                    var $el = $('#' + data.id),
-                        dnt = new ChDynatree($el);
-                    dnt.generateContent($el.data().ChDynatree.options, resData);
-                    break;
                 case optionsModule.getRequestType('chFormRefresh'):
                     //todo: migrate ro defer
                     var reg = /"(.*?)":\{.*?\}.?/gim,

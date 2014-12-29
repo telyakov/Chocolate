@@ -6,7 +6,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
         },
         getJsFn: function () {
             var _this = this;
-            return function ($cnt, view) {
+            return function ($cnt, viewProperty) {
                 _this.evalReadProc()
                     .done(function (res) {
                         var data = helpersModule.prepareTreeSource(res.data),
@@ -14,23 +14,26 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                         $cnt.on('click', selector, function () {
                             var $this = $(this),
                                 pk = $this.attr('data-pk'),
-                                isAllowEdit = _this.isAllowEdit(view, pk);
+                                isAllowEdit = _this.isAllowEdit(viewProperty, pk);
                             if (isAllowEdit) {
-                                var isSingle = _this.isSingle(),
-                                    dynatreeElem = new ChDynatree($this),
-                                    options = helpersModule.treeViewOptions($this, isSingle);
-                                options.title = _this.getModalTitle(pk);
-                                dynatreeElem.buildFromData(options);
+                                var isSingle = _this.isSingle();
+                                var model = new DynatreeModel({
+                                    $el: $this
+                                });
+                                var view = new ColumnDynatreeView({
+                                    model: model
+                                });
+                                view.render($this, isSingle,_this.getModalTitle(pk));
                             }
                         });
                         $cnt.find(selector).each(function () {
                             var $this = $(this),
                                 pk = $this.attr('data-pk'),
-                                isAllowEdit = _this.isAllowEdit(view, pk);
+                                isAllowEdit = _this.isAllowEdit(viewProperty, pk);
                             $this
                                 .on('init', function treeInit() {
                                     var dataKey = _this.getFromKey(),
-                                        dbData = view.getDBDataFromStorage(pk);
+                                        dbData = viewProperty.getDBDataFromStorage(pk);
                                     if (dbData !== undefined) {
                                         $this.html(dbData[dataKey]);
                                     }
@@ -53,7 +56,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                     .on('save', function treeSave(e, params) {
                                         var data = {};
                                         data[_this.get('key')] = params.newValue;
-                                        view.model.trigger('change:form', {
+                                        viewProperty.model.trigger('change:form', {
                                             op: 'upd',
                                             id: pk,
                                             data: data
