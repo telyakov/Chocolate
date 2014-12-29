@@ -131,7 +131,11 @@ var storageModule = (function (undefined) {
                 return _private.getLocal().grid_settings;
             },
             getSettingByKey: function(key, attr){
-                return _private.getSettings()[key][attr];
+                var data = _private.getSettings()[key];
+                if(data === undefined){
+                    return undefined;
+                }
+                return data[attr];
             },
             persistSetting: function(key, attr, val){
                _private.getSettings()[key][attr] = val;

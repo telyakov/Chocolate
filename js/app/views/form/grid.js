@@ -346,6 +346,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     width: '28'
                 };
             }
+            var newColumns = [];
             roCollection.each(function (column) {
                 if (!hasSetting) {
                     setting[iterator] = {
@@ -356,18 +357,24 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     iterator++;
                 }
                 var index = hasSetting ? _this.getPositionColumn(column.get('key')) : iterator - 1;
-                rows[index] = {
+                var config = {
                     options: column.getHeaderOptions(),
                     header: _this.columnHeaderTemplate({
                         'class': column.getHeaderCLass(),
                         caption: column.getCaption()
                     })
                 };
+                if(index === undefined){
+                    newColumns.push(config);
+                }
+                rows[index] = config;
             });
-
-            if (!hasSetting) {
-                this.persistColumnsSettings(setting);
-            }
+            newColumns.forEach(function(item){
+               rows.push(item);
+            });
+            //if (!hasSetting) {
+            this.persistColumnsSettings(setting);
+            //}
             var tableID = helpersModule.uniqueID();
             $form.append(this.gridTemplate({
                 userGridID: userGridID,
