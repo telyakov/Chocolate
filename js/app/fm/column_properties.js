@@ -4,104 +4,109 @@ var ColumnProperties = (function (Backbone) {
         defaults: {
             $obj: null
         },
+        /**
+         * @returns {jQuery}
+         */
+        getJqueryObj: function(){
+            return this.get('$obj');
+        },
         getHeaderImage: function(){
-            return this.get('$obj').children('headerimage').text();
+            return this.getJqueryObj().children('headerimage').text();
         },
         getCaption: function () {
-            return this.get('$obj').children('caption').text();
+            return this.getJqueryObj().children('caption').text();
         },
         getDataSource: function () {
-            return this.get('$obj').children('dataSource').text();
+            return this.getJqueryObj().children('dataSource').text();
         },
         getAllFields: function () {
-            return this.get('$obj').children('allFields').text();
+            return this.getJqueryObj().children('allFields').text();
         },
         getFromDataSource: function () {
-            return this.get('$obj').children('fromDataSource').text();
+            return this.getJqueryObj().children('fromDataSource').text();
         },
         getAllowEdit: function () {
-            return this.get('$obj').children('allowEdit').text();
+            return this.getJqueryObj().children('allowEdit').text();
         },
-
         getViewBind: function () {
-            return this.get('$obj').children('viewBind').text();
+            return this.getJqueryObj().children('viewBind').text();
         },
         getFromName: function () {
-            return this.get('$obj').children('fromName').text();
+            return this.getJqueryObj().children('fromName').text();
         },
         getToName: function () {
-            return this.get('$obj').children('toName').text();
+            return this.getJqueryObj().children('toName').text();
         },
         getFromId: function () {
-            return this.get('$obj').children('fromId').text();
+            return this.getJqueryObj().children('fromId').text();
         },
         getToId: function () {
-            return this.get('$obj').children('toId').text().toLowerCase();
+            return this.getJqueryObj().children('toId').text().toLowerCase();
         },
         getKey: function () {
-            return this.get('$obj').children('key').text().toLowerCase();
+            return this.getJqueryObj().children('key').text().toLowerCase();
         },
         getVisible: function () {
-            return this.get('$obj').children('visible').text();
+            return this.getJqueryObj().children('visible').text();
         },
         getEditType: function () {
-            var type = $.trim(this.get('$obj').children('editType').text().toLowerCase());
+            var type = $.trim(this.getJqueryObj().children('editType').text());
             if(type){
-                return type;
+                return type.toLowerCase();
             }else{
                 return this.getCardEditType();
             }
         },
         getCardEditType: function () {
-            return  $.trim(this.get('$obj').children('cardEditType').text().toLowerCase());
+            return  $.trim(this.getJqueryObj().children('cardEditType').text().toLowerCase());
         },
         getRequired: function () {
-            return this.get('$obj').children('required').text();
+            return this.getJqueryObj().children('required').text();
         },
         getDefault: function () {
-            return this.get('$obj').children('default').text();
+            return this.getJqueryObj().children('default').text();
         },
         getShowInRowDisplay: function () {
-            return this.get('$obj').children('showInRowDisplay').text();
+            return this.getJqueryObj().children('showInRowDisplay').text();
         },
         getTabId: function () {
-            return this.get('$obj').children('tabId').text();
+            return this.getJqueryObj().children('tabId').text();
         },
         getFormat: function () {
-            return this.get('$obj').children('format').text();
+            return this.getJqueryObj().children('format').text();
         },
         getSingleValueMode: function () {
-            return this.get('$obj').children('singleValueMode').text();
+            return this.getJqueryObj().children('singleValueMode').text();
         },
         getCardKey: function () {
-            return this.get('$obj').children('cardKey').text();
+            return this.getJqueryObj().children('cardKey').text();
         },
         getCardVisible: function () {
-            return this.get('$obj').children('cardVisible').text();
+            return this.getJqueryObj().children('cardVisible').text();
         },
         getCardX: function () {
-            return this.get('$obj').children('cardX').text();
+            return this.getJqueryObj().children('cardX').text();
         },
         getProperties: function () {
-            return this.get('$obj').children('properties').text();
+            return this.getJqueryObj().children('properties').text();
         },
         getEditBehavior: function () {
-            return this.get('$obj').children('editBehavior').text();
+            return this.getJqueryObj().children('editBehavior').text();
         },
         getViewName: function () {
-            return this.get('$obj').children('viewName').text();
+            return this.getJqueryObj().children('viewName').text();
         },
         getCardMultiLine: function () {
-            return this.get('$obj').children('cardMultiLine').text();
+            return this.getJqueryObj().children('cardMultiLine').text();
         },
         getCardHeight: function () {
-            return this.get('$obj').children('cardHeight').text();
+            return this.getJqueryObj().children('cardHeight').text();
         },
         getCardWidth: function () {
-            return this.get('$obj').children('cardWidth').text();
+            return this.getJqueryObj().children('cardWidth').text();
         },
         getCardY: function () {
-            return this.get('$obj').children('cardY').text();
+            return this.getJqueryObj().children('cardY').text();
         },
         getVisibleKey: function(){
             var toID = this.getToId();

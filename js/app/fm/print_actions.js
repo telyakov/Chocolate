@@ -1,29 +1,29 @@
 var PrintActions = (function (Backbone) {
     'use strict';
     return Backbone.Model.extend({
-        KEYS_DELIMITER: ' ',
-        ACTION_DELIMITER: '|',
-        TITLE_DELIMITER: '=',
         defaults: {
-            printActionsXml: null
+            printActionsXml: null,
+            actionDelimiter: '|',
+            titleDelimiter: '='
         },
         getActions: function () {
-            var actions = [];
-            var text = this.get('printActionsXml');
+            var actions = [],
+                text = this.get('printActionsXml');
             if (text) {
                 actions = this.parse(text);
             }
             return actions;
         },
         parse: function (text) {
-            var _this = this,
-                result = [],
-                actions = text.split(this.ACTION_DELIMITER);
+            var result = [],
+                actions = text.split(this.get('actionDelimiter')),
+                titleDelimiter = this.get('titleDelimiter');
+
             actions.forEach(function (action) {
-                var index = action.indexOf(_this.TITLE_DELIMITER);
+                var index = action.indexOf(titleDelimiter);
                 if (index !== -1) {
                     var title = $.trim(action.substring(0, index)),
-                        cmd = $.trim(action.substr(index + _this.TITLE_DELIMITER.length));
+                        cmd = $.trim(action.substr(index + titleDelimiter.length));
                     result.push({
                         title: title,
                         cmd: cmd

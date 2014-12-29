@@ -1,9 +1,9 @@
-var ColumnsPropertiesCollection = (function (Backbone, $) {
+var ColumnsPropertiesCollection = (function (Backbone, ColumnProperties) {
     'use strict';
     return Backbone.Collection.extend({
         model: ColumnProperties,
         $obj: null,
-        initialize: function(models, opts) {
+        initialize: function (models, opts) {
             this.$obj = opts.$obj;
         },
         getRowColorColumnName: function () {
@@ -13,4 +13,4 @@ var ColumnsPropertiesCollection = (function (Backbone, $) {
             return this.$obj.children('rowColorColumnNameAlternate').text().toLowerCase();
         }
     });
-})(Backbone, jQuery);
+})(Backbone, ColumnProperties);

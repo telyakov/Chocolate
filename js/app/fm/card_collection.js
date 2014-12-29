@@ -1,4 +1,4 @@
-var CardCollections = (function (Backbone) {
+var CardCollections = (function (Backbone, Card) {
     'use strict';
     return Backbone.Collection.extend({
         model: Card,
@@ -13,7 +13,7 @@ var CardCollections = (function (Backbone) {
             return this.$obj.children('Header').text();
         },
         getButtonWidth: function () {
-            return this.$obj.children('uttonWidth').text();
+            return this.$obj.children('buttonWidth').text();
         },
         getButtonHeight: function () {
             return this.$obj.children('buttonHeight').text();
@@ -40,4 +40,4 @@ var CardCollections = (function (Backbone) {
             return this.$obj.children('autoopen').text();
         }
     });
-})(Backbone);
+})(Backbone, Card);

@@ -14,7 +14,7 @@ ChTab.prototype.getCardContent = function () {
  * @returns {boolean}
  */
 ChTab.prototype.isCardTypePanel = function () {
-    return this.getPanel().hasClass(optionsModule.getClass('card'));
+    return this.getPanel().hasClass(facade.getOptionsModule().getClass('card'));
 };
 /**
  * @returns {jQuery}

@@ -4,41 +4,47 @@ var Card = (function (Backbone) {
         defaults: {
             $obj: null
         },
+        /**
+         * @returns {jQuery}
+         */
+        getJqueryObj: function(){
+            return this.get('$obj');
+        },
         getCaption: function () {
-            return this.get('$obj').children('caption').text();
+            return this.getJqueryObj().children('caption').text();
         },
         getKey: function () {
-            return this.get('$obj').children('key').text();
+            return this.getJqueryObj().children('key').text();
         },
         getCols: function () {
-            return this.get('$obj').children('cols').text();
+            return this.getJqueryObj().children('cols').text();
         },
         getRows: function () {
-            return this.get('$obj').children('rows').text();
+            return this.getJqueryObj().children('rows').text();
         },
         getCol: function () {
-            return this.get('$obj').children('col').text();
+            return this.getJqueryObj().children('col').text();
         },
         getRow: function () {
-            return this.get('$obj').children('row').text();
+            return this.getJqueryObj().children('row').text();
         },
         getCellWidth: function () {
-            return this.get('$obj').children('cellWidth').text();
+            return this.getJqueryObj().children('cellWidth').text();
         },
         getCellHeight: function () {
-            return this.get('$obj').children('cellHeight').text();
+            return this.getJqueryObj().children('cellHeight').text();
         },
         getFixedWidth: function () {
-            return this.get('$obj').children('fixedWidth').text();
+            return this.getJqueryObj().children('fixedWidth').text();
         },
         getFixedHeight: function () {
-            return this.get('$obj').children('fixedHeight').text();
+            return this.getJqueryObj().children('fixedHeight').text();
         },
         getCaptionReadProc: function () {
-            return this.get('$obj').children('captionReadProc').text();
+            return this.getJqueryObj().children('captionReadProc').text();
         },
         getVisible: function () {
-            return this.get('$obj').children('visible').text();
+            return this.getJqueryObj().children('visible').text();
         }
     });
 })(Backbone);

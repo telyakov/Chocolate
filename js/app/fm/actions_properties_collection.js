@@ -1,9 +1,9 @@
-var ActionsPropertiesCollection = (function (Backbone) {
+var ActionsPropertiesCollection = (function (Backbone, ActionProperties) {
     'use strict';
     return Backbone.Collection.extend({
         model: ActionProperties,
         getData: function(){
-            var result = []
+            var result = [];
             this.each(function(action){
                 result.push({
                    title: action.getCaption(),
@@ -21,4 +21,4 @@ var ActionsPropertiesCollection = (function (Backbone) {
             return result;
         }
     });
-})(Backbone);
+})(Backbone, ActionProperties);

@@ -4,14 +4,20 @@ var ActionProperties = (function (Backbone) {
         defaults: {
             $obj: null
         },
+        /**
+         * @returns {jQuery}
+         */
+        getJqueryObj: function(){
+          return this.get('$obj');
+        },
         getCaption: function () {
-            return this.get('$obj').children('caption').text();
+            return this.getJqueryObj().children('caption').text();
         },
         getAction: function () {
-            return this.get('$obj').children('action').text();
+            return this.getJqueryObj().children('action').text();
         },
         getRequiredRole: function () {
-            return this.get('$obj').children('requiredRole').text();
+            return this.getJqueryObj().children('requiredRole').text();
         }
     });
 })(Backbone);

@@ -1,4 +1,4 @@
-var AgileFiltersCollections = (function (Backbone) {
+var AgileFiltersCollections = (function (Backbone, AgileFilter) {
     'use strict';
     return Backbone.Collection.extend({
         model: AgileFilter,
@@ -7,4 +7,4 @@ var AgileFiltersCollections = (function (Backbone) {
             this.$obj = opts.$obj;
         }
     });
-})(Backbone);
+})(Backbone, AgileFilter);

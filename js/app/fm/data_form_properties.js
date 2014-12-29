@@ -4,62 +4,68 @@ var DataFormProperties = (function (Backbone) {
         defaults: {
             $obj: null
         },
+        /**
+         * @returns {jQuery}
+         */
+        getJqueryObj: function(){
+            return this.get('$obj');
+        },
         getKey: function(){
-            return this.get('$obj').children('Key').text().toLowerCase();
+            return this.getJqueryObj().children('Key').text().toLowerCase();
         },
         getReadProc: function () {
-            return this.get('$obj').children('readProc').text();
+            return this.getJqueryObj().children('readProc').text();
         },
         getDeleteProc: function () {
-            return this.get('$obj').children('deleteProc').text();
+            return this.getJqueryObj().children('deleteProc').text();
         },
         getUpdateProc: function () {
-            return this.get('$obj').children('updateProc').text();
+            return this.getJqueryObj().children('updateProc').text();
         },
         getCreateProc: function () {
-            return this.get('$obj').children('createProc').text();
+            return this.getJqueryObj().children('createProc').text();
         },
         getCreateEmptyProc: function () {
-            return this.get('$obj').children('createEmptyProc').text();
+            return this.getJqueryObj().children('createEmptyProc').text();
         },
         getValidationProc: function () {
-            return this.get('$obj').children('validationProc').text();
+            return this.getJqueryObj().children('validationProc').text();
         },
         getAttachmentsSupport: function () {
-            return this.get('$obj').children('attachmentsSupport').text();
+            return this.getJqueryObj().children('attachmentsSupport').text();
         },
         getAttachmentsEntityType: function () {
-            return this.get('$obj').children('attachmentsEntityType').text();
+            return this.getJqueryObj().children('attachmentsEntityType').text();
         },
         getHeaderText: function () {
-            return this.get('$obj').children('headerText').text();
+            return this.getJqueryObj().children('headerText').text();
         },
         getStateProc: function () {
-            return this.get('$obj').children('StateProc').text();
+            return this.getJqueryObj().children('StateProc').text();
         },
         getHeaderImage: function () {
-            return this.get('$obj').children('HeaderImage').text();
+            return this.getJqueryObj().children('HeaderImage').text();
         },
         getWindowCaption: function () {
-            return this.get('$obj').children('WindowCaption').text();
+            return this.getJqueryObj().children('WindowCaption').text();
         },
         getAllowAddNew: function () {
-            return this.get('$obj').children('allowAddNew').text();
+            return this.getJqueryObj().children('allowAddNew').text();
         },
         getSaveButtonVisible: function () {
-            return this.get('$obj').children('saveButtonVisible').text();
+            return this.getJqueryObj().children('saveButtonVisible').text();
         },
         getAllowRemove: function () {
-            return this.get('$obj').children('allowRemove').text();
+            return this.getJqueryObj().children('allowRemove').text();
         },
         getPrintActionsXml: function () {
-            return this.get('$obj').children('printActionsXml').text();
+            return this.getJqueryObj().children('printActionsXml').text();
         },
         getRefreshButtonVisible: function () {
-            return this.get('$obj').children('refreshButtonVisible').text();
+            return this.getJqueryObj().children('refreshButtonVisible').text();
         },
         getAllowAuditButton: function () {
-            return this.get('$obj').children('allowAuditButton').text();
+            return this.getJqueryObj().children('allowAuditButton').text();
         }
     });
 })(Backbone);
