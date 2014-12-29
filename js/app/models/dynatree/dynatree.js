@@ -1,229 +1,153 @@
-var DynatreeModel = (function (Backbone) {
+var DynatreeModel = (function (Backbone, undefined) {
     'use strict';
     return Backbone.Model.extend({
         defaults: {
-            $el: null
+            $el: null,
+            options: null
         },
-        getDefaultOptions: function ($context, isSingle) {
-            var options = {
-                children: $context.data().editable.options.source,
-                getInput: function () {
-                    return this;
-                },
-                getTitleValue: function (node) {
-                    return node.text;
-                },
-                getKey: function (node) {
-                    return node.id;
-                },
-                getParentID: function (node) {
-                    return null;
-                },
-                restore_state: true,
-                expand_nodes: true,
-                defaultValues: function () {
-                    return this.attr('data-value');
-                },
-                infoPanel: true,
-                separator: '|',
-                checkbox: true,
-                okButton: function ($tree, $input, $checkbox, $select) {
-                    var chDynatree = this;
-                    return {
-                        'text': 'Сохранить',
-                        'class': 'wizard-active wizard-next-button',
-                        click: function (bt, elem) {
-                            var selected_nodes = $tree.dynatree("getSelectedNodes");
-                            var val = '', select_html = '';
-                            var is_select_all = chDynatree.isSelectAll();
-                            for (var i in selected_nodes) {
-                                var node = selected_nodes[i];
-                                if (is_select_all || node.childList === null) {
-                                    val += node.data.key;
-                                    if (!chDynatree.isSingleMode()) {
-                                        val += chDynatree.getSeparator();
-                                    }
-                                    if (i > 0) {
-                                        select_html += '/';
-                                    }
-                                    select_html += node.data.title;
-                                }
-                            }
-                            //todo: вернуть код
-                            //var column = facade.getFactoryModule().makeChGridColumnBody($input);
-                            var name = $input.data().editable.options.name;
-                            //column.setChangedValue(name, val);
-                            $input.attr('data-value', val);
-                            $input.html(select_html);
-                            $checkbox.children('input').attr('checked', false);
-                            $(this).dialog("close");
-                        }
-                    };
-                }
-            };
-            if (isSingle) {
-                options.selectMode = 1;
+        hasInfoPanel: function () {
+            var options = this.get('options');
+            if (options.infoPanel === undefined) {
+                return false;
+            } else {
+                return options.infoPanel;
             }
-            return options;
         },
-        options: null,
-        data: [],
-        autoCompleteData: [],
-        defaultsElements: [],
-        init: function (options) {
-            this.options = options;
-            this.hasInfoPanel = function () {
-                if (typeof options.infoPanel === 'undefined') {
-                    return false;
-                } else {
-                    return options.infoPanel;
-                }
-            };
-            this.getNodes = function () {
-                return options.children;
-            };
-            this.getSql = function () {
-                return options.sql;
-            };
-            this.isExpandNodes = function () {
-                return options.expand_nodes;
-            };
-            this.isSelectAll = function () {
-                return options.select_all;
-            };
-            this.isRestoreState = function () {
-                return options.restore_state;
-            };
-            this.getSeparator = function () {
-                return options.separator;
-            };
-            this.getRootID = function () {
-                return options.root_id;
-            };
-            this.getTitle = function () {
-                return options.title;
-            };
-            this.getColumnTitle = function () {
-                return options.column_title;
-            };
-            this.getColumnID = function () {
-                return options.column_id;
-            };
-            this.getColumnParentID = function () {
-                return options.column_parent_id;
-            };
-            this.isSingleMode = function () {
-                return this.options.selectMode === 1;
-            };
-            var _this = this;
-            this.getInput = function () {
-                if (typeof options.getInput === 'undefined') {
-                    return _this.get('$el').parent().children('input[type=hidden]');
-                } else {
-                    return options.getInput.apply(_this.get('$el'));
-                }
-            };
-            this.isDialogEvent = function () {
-                if (typeof options.isDialogEvent === 'undefined') {
-                    return true;
-                } else {
-                    return options.isDialogEvent;
-                }
-            };
-            this.getTitleValue = function (node) {
-                if (typeof options.getTitleValue === 'undefined') {
-                    return node[this.getColumnTitle()];
-                } else {
-                    return options.getTitleValue.apply(this, [node]);
-                }
-            };
-            this.getKey = function (node) {
-                if (typeof options.getKey === 'undefined') {
-                    return node[this.getColumnID()];
-                } else {
-                    return options.getKey.apply(this, [node]);
-                }
-            };
-            this.getParentID = function (node) {
-                if (typeof options.getParentID === 'undefined') {
-                    return node[this.getColumnParentID()];
-                } else {
-                    return options.getParentID.apply(this, [node]);
-                }
-            };
-            this.defaultValues = function () {
-                if (typeof options.defaultValues === 'undefined') {
-                    return false;
-                } else {
-                    return options.defaultValues.apply(_this.get('$el'));
-                }
-            };
-            this.okButton = function ($tree, $input, $checkbox, $select) {
-                if (typeof options.okButton === 'undefined') {
-                    var _this = this;
-                    return {
-                        'text': 'OK',
-                        'class': 'wizard-active wizard-next-button',
-                        click: function () {
-                            var selectedNodes = $tree.dynatree("getSelectedNodes"),
-                                val = '',
-                                selectHtml = '',
-                                isSelectAll = _this.isSelectAll();
-                            for (var i in selectedNodes) {
-                                if (selectedNodes.hasOwnProperty(i)) {
-                                    var node = selectedNodes[i];
-                                    if (isSelectAll || node.childList === null) {
-                                        val += node.data.key + _this.getSeparator();
-                                        selectHtml += "<option>" + node.data.title + "</option>";
-                                    }
+        getNodes: function () {
+            return this.get('options').children ?
+                this.get('options').children :
+                this.get('$el').data().editable.options.source;
+        },
+        getSql: function () {
+            return this.get('options').sql;
+        },
+        isExpandNodes: function () {
+            return this.get('options').expand_nodes?
+                this.get('options').expand_nodes:
+                true;
+        },
+        isSelectAll: function () {
+            return this.get('options').select_all;
+        },
+        isRestoreState: function () {
+            return this.get('options').restore_state ?
+                this.get('options').restore_state :
+                true;
+        },
+        getSeparator: function () {
+            return this.get('options').separator?
+                this.get('options').separator:
+                '|';
+        },
+        getRootID: function () {
+            return this.get('options').root_id;
+        },
+        getTitle: function () {
+            return this.get('options').title;
+        },
+        getColumnTitle: function () {
+            return this.get('options').column_title ?
+                this.get('options').column_title :
+                'text';
+        },
+        getColumnID: function () {
+            return this.get('options').column_id ?
+                this.get('options').column_id :
+                'id';
+        },
+        getColumnParentID: function () {
+            return this.get('options').column_parent_id;
+        },
+        isSingleMode: function () {
+            return this.get('options').selectMode === 1;
+        },
+        getInput: function () {
+            var options = this.get('options');
+            if (options.getInput === undefined) {
+                return this.get('$el');
+            } else {
+                return options.getInput.apply(this.get('$el'));
+            }
+        },
+        isDialogEvent: function () {
+            var options = this.get('options');
+            if (options.isDialogEvent === undefined) {
+                return true;
+            } else {
+                return options.isDialogEvent;
+            }
+        },
+        getTitleValue: function (node) {
+            var options = this.get('options');
+
+            if (options.getTitleValue === undefined) {
+                return node[this.getColumnTitle()];
+            } else {
+                return options.getTitleValue.apply(this, [node]);
+            }
+        },
+        getKey: function (node) {
+            var options = this.get('options');
+            if (options.getKey === undefined) {
+                return node[this.getColumnID()];
+            } else {
+                return options.getKey.apply(this, [node]);
+            }
+        },
+        getParentID: function (node) {
+            var options = this.get('options');
+            if (options.getParentID === undefined) {
+                return node[this.getColumnParentID()];
+            } else {
+                return options.getParentID.apply(this, [node]);
+            }
+        },
+        defaultValues: function () {
+            var options = this.get('options');
+            if (options.defaultValues === undefined) {
+                return false;
+            } else {
+                return options.defaultValues.apply(this.get('$el'));
+            }
+        },
+        okButton: function ($tree, $input, $checkbox, $select) {
+            var options = this.get('options');
+            if (options.okButton === undefined) {
+                var _this = this;
+                return {
+                    'text': 'OK',
+                    'class': 'wizard-active wizard-next-button',
+                    click: function () {
+                        var selectedNodes = $tree.dynatree("getSelectedNodes"),
+                            val = '',
+                            selectHtml = '',
+                            isSelectAll = _this.isSelectAll();
+                        for (var i in selectedNodes) {
+                            if (selectedNodes.hasOwnProperty(i)) {
+                                var node = selectedNodes[i];
+                                if (isSelectAll || node.childList === null) {
+                                    val += node.data.key + _this.getSeparator();
+                                    selectHtml += "<option>" + node.data.title + "</option>";
                                 }
                             }
-                            $input.val(val);
-                            $select.html(selectHtml);
-                            $checkbox.children('input').attr('checked', false);
-                            $(this).dialog("close");
                         }
-                    };
-                } else {
-                    return options.okButton.apply(this, [$tree, $input, $checkbox, $select]);
-                }
-            };
+                        $input.val(val);
+                        $select.html(selectHtml);
+                        $checkbox.children('input').attr('checked', false);
+                        $(this).dialog("close");
+                    }
+                };
+            } else {
+                return options.okButton.apply(this, [$tree, $input, $checkbox, $select]);
+            }
         },
         buildFromData: function (options) {
-            this.init(options);
+            this.set('options', options);
             var rawData = this.getNodes();
-            return this.generateContent(options, rawData);
+            return this.generateContent(rawData);
         },
-        buildFromSql: function (options) {
-            this.init(options);
-            var $input = this.getInput(),
-                $dialog = $.data($input.get(0), 'dialog');
-            if (typeof $dialog !== 'undefined') {
-                console.log('dialog');
-                this.loadFromCache($dialog);
-            } else {
-                //$.data(this.$elm.get(0), 'ChDynatree', {
-                //    options: options
-                //});
-                //emit event
-                //recive response
-                var optionsModule = facade.getOptionsModule();
-                var defer = deferredModule.create(),
-                    deferID = deferredModule.save(defer);
-                mediator.publish(optionsModule.getChannel('socketRequest'), {
-                    query: options.sql,
-                    id: deferID,
-                    type: optionsModule.getRequestType('deferred')
-                });
-                var _this = this;
-                defer.done(function (res) {
-                    var rawData = res.data;
-                    _this.generateContent(options, rawData);
-                });
-            }
-        },
-        generateContent: function (options, rawData) {
-            this.init(options);
+        generateContent: function (rawData) {
+            var options = this.get('options');
             var $content = $('<div>');
             var $input = this.getInput();
             var map = {},
@@ -233,7 +157,7 @@ var DynatreeModel = (function (Backbone) {
                 $tree = $('<div>', {'class': 'widget-tree'}),
                 _this = this,
                 $panel;
-            var defaultValues = this._getDefaultValues(), node;
+            var defaultValues = this._getDefaultValues(), node, autoCompleteData= [], defaultsElements = [];
             for (var i in rawData) {
 
                 if (rawData.hasOwnProperty(i)) {
@@ -243,7 +167,7 @@ var DynatreeModel = (function (Backbone) {
                     node.desc = node.description;
                     if (defaultValues && ( (defaultValues.length > 1 || defaultValues[0]) || this.isSingleMode()) && $.inArray(node.key, defaultValues) !== -1) {
                         node.select = true;
-                        this.defaultsElements.push(node);
+                        defaultsElements.push(node);
                     } else {
                         node.select = false;
                     }
@@ -252,29 +176,30 @@ var DynatreeModel = (function (Backbone) {
                     node.parentid = this.getParentID(node);
                     node.children = [];
                     map[node.key] = node.index;
-                    this.autoCompleteData.push({label: node.title, id: node.key});
+                    autoCompleteData.push({label: node.title, id: node.key});
                 }
             }
-
+            var data = [];
             for (var k in rawData) {
                 if (rawData.hasOwnProperty(k)) {
                     node = rawData[k];
                     if (typeof node.parentid !== 'undefined' && node.parentid !== rootID && node.parentid) {
                         rawData[map[node.parentid]].children.push(node);
                     } else {
-                        this.data.push(node);
+                        data.push(node);
                     }
                 }
             }
-            this.options.children = this.data;
+            //todo: wtf?
+            options.children = data;
             if (this.hasInfoPanel()) {
                 $panel = $('<div class="widget-panel"></div>');
-                this.options.onActivate = function (node) {
+                options.onActivate = function (node) {
                     $panel.html(_this.createPanelElement(node.data));
                 };
 
             }
-            $tree.dynatree(this.options);
+            $tree.dynatree(options);
             if (this.isExpandNodes()) {
                 $tree.dynatree("getRoot").visit(function (node) {
                     node.expand(true);
@@ -289,9 +214,9 @@ var DynatreeModel = (function (Backbone) {
             if (this.hasInfoPanel()) {
                 $tree.addClass('widget-tree-compact');
                 var panelContent = '';
-                for (var i in this.defaultsElements) {
-                    if (this.defaultsElements.hasOwnProperty(i)) {
-                        var node = this.defaultsElements[i];
+                for (var i in defaultsElements) {
+                    if (defaultsElements.hasOwnProperty(i)) {
+                        var node = defaultsElements[i];
                         panelContent += _this.createPanelElement(node);
                     }
                 }
@@ -310,7 +235,7 @@ var DynatreeModel = (function (Backbone) {
             $checkBoxWrapper.append($checkbox);
             $content.append($checkBoxWrapper);
             this
-                .autoCompleteEvent($search, $tree, $content)
+                .autoCompleteEvent($search, $tree, $content, autoCompleteData)
                 .checkboxClickEvent($checkbox, $tree);
             $.data(this.getInput().get(0), 'dialog', $content);
 
@@ -409,13 +334,13 @@ var DynatreeModel = (function (Backbone) {
             });
             return this;
         },
-        autoCompleteEvent: function ($search, $tree, $content) {
+        autoCompleteEvent: function ($search, $tree, $content, autoCompleteData) {
             var dynatree = this;
             $search.autocomplete({
                 delay: 100,
                 source: function (request, response) {
                     var search = helpersModule.engToRus(request.term.toLowerCase()),
-                        prepareResp = dynatree.autoCompleteData.filter(function (item) {
+                        prepareResp = autoCompleteData.filter(function (item) {
                             var source = item.label.toLowerCase();
                             return source.indexOf(search) !== -1;
                         });
@@ -448,4 +373,4 @@ var DynatreeModel = (function (Backbone) {
             return dynatree;
         }
     });
-})(Backbone);
+})(Backbone, undefined);

@@ -86,16 +86,20 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                                 column_title: filterProperties.get('columnTitle'),
                                 column_id: filterProperties.get('columnID'),
                                 column_parent_id: filterProperties.get('columnParentID'),
-                                infoPanel: true
+                                infoPanel: true,
+                                getInput: function(){
+                                    return this.parent().children('input[type=hidden]');
+                                }
                             });
                         _this.events[selector] = function (e) {
                             var model = new DynatreeModel({
-                                $el: $(e.target)
+                                $el: $(e.target),
+                                options: opts
                             });
                             var view = new FilterDynatreeView({
                                 model: model
                             });
-                            view.render(opts);
+                            view.render();
                             e.stopImmediatePropagation();
                         };
                         _this.delegateEvents();

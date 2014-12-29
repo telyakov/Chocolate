@@ -23,7 +23,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                 var view = new ColumnDynatreeView({
                                     model: model
                                 });
-                                view.render($this, isSingle,_this.getModalTitle(pk));
+                                view.render(isSingle,_this.getModalTitle(pk));
                             }
                         });
                         $cnt.find(selector).each(function () {

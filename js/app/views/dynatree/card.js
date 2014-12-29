@@ -8,52 +8,60 @@ var CardDynatreeView = (function (Backbone, $) {
             //this.render();
         },
         events: {},
-        render: function ($el, isSingle, name, view) {
-            console.log('render tree card');
-            var options = this.model.getDefaultOptions($el, isSingle);
-            options.okButton = function okButton($tree, $input) {
-                var chDynatree = this;
-                return {
-                    'text': 'Сохранить',
-                    'class': 'wizard-active wizard-next-button',
-                    click: function () {
-                        var selectedNodes = $tree.dynatree('getSelectedNodes'),
-                            val = '',
-                            selectedHtml = '',
-                            isSelectAll = chDynatree.isSelectAll(),
-                            i,
-                            hasOwn = Object.prototype.hasOwnProperty;
-                        for (i in selectedNodes) {
-                            if (hasOwn.call(selectedNodes, i)) {
-                                var node = selectedNodes[i];
-                                if (isSelectAll || node.childList === null) {
-                                    val += node.data.key;
-                                    if (!chDynatree.isSingleMode()) {
-                                        val += chDynatree.getSeparator();
+        render: function (isSingle, name, view) {
+            var options = {
+                getParentID: function () {
+                    return null;
+                },
+                checkbox: true,
+                infoPanel: true,
+                defaultValues: function () {
+                    return this.data().editable.value;
+                },
+                okButton: function okButton($tree, $input) {
+                    var chDynatree = this;
+                    return {
+                        'text': 'Сохранить',
+                        'class': 'wizard-active wizard-next-button',
+                        click: function () {
+                            var selectedNodes = $tree.dynatree('getSelectedNodes'),
+                                val = '',
+                                selectedHtml = '',
+                                isSelectAll = chDynatree.isSelectAll(),
+                                i,
+                                hasOwn = Object.prototype.hasOwnProperty;
+                            for (i in selectedNodes) {
+                                if (hasOwn.call(selectedNodes, i)) {
+                                    var node = selectedNodes[i];
+                                    if (isSelectAll || node.childList === null) {
+                                        val += node.data.key;
+                                        if (!chDynatree.isSingleMode()) {
+                                            val += chDynatree.getSeparator();
+                                        }
+                                        if (i > 0) {
+                                            selectedHtml += '/';
+                                        }
+                                        selectedHtml += node.data.title;
                                     }
-                                    if (i > 0) {
-                                        selectedHtml += '/';
-                                    }
-                                    selectedHtml += node.data.title;
                                 }
                             }
+                            $input.editable('setValue', val);
+                            var data = {};
+                            data[name] = val;
+                            view.model.trigger('change:form', {
+                                op: 'upd',
+                                id: pk,
+                                data: data
+                            });
+                            $input.html(selectedHtml);
+                            $(this).dialog('close');
                         }
-                        $input.editable('setValue', val);
-                        var data = {};
-                        data[name] = val;
-                        view.model.trigger('change:form', {
-                            op: 'upd',
-                            id: pk,
-                            data: data
-                        });
-                        $input.html(selectedHtml);
-                        $(this).dialog('close');
-                    }
-                };
+                    };
+                }
             };
-            options.defaultValues = function () {
-                return this.data().editable.value;
-            };
+            if (isSingle) {
+                options.selectMode = 1;
+            }
             this.model.buildFromData(options);
         }
     });
