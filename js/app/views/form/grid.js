@@ -259,7 +259,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             if (model.isAutoOpenCard()) {
                 this.openCardHandler(id);
             }
-
+        },
+        save: function(){
+          console.log('save grid')
         },
         applyCallbacks: function ($cnt) {
             var view = this;

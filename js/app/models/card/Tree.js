@@ -16,17 +16,18 @@ var TreeCardElement = (function ($, helpersModule, undefined, CardElement) {
                             var model = new DynatreeModel({
                                 $el: $el
                             });
-                            var view = new CardDynatreeView({
-                                model: model
+                            var view = new FormDynatreeView({
+                                model: model,
+                                dataModel: viewProperty.model
                             });
                             $el.on('click', function () {
-                                view.render($el, column.isSingle(), name, viewProperty);
+                                view.render(column.isSingle(), _this.getCaption(), name, pk);
                             });
                         }
                         $el.on('init', function () {
                             var dbData = viewProperty.getActualDataFromStorage(pk),
-                                value = dbData ? dbData[name] : '';
-                            var text = dbData ? dbData[column.getFromKey()] : '';
+                                value = dbData ? dbData[name] : '',
+                                text = dbData ? dbData[column.getFromKey()] : '';
                             if (value === undefined || value === null) {
                                 value = '';
                             }

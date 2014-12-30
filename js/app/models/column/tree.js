@@ -16,14 +16,14 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                 pk = $this.attr('data-pk'),
                                 isAllowEdit = _this.isAllowEdit(viewProperty, pk);
                             if (isAllowEdit) {
-                                var isSingle = _this.isSingle();
                                 var model = new DynatreeModel({
-                                    $el: $this
-                                });
-                                var view = new ColumnDynatreeView({
-                                    model: model
-                                });
-                                view.render(isSingle,_this.getModalTitle(pk));
+                                        $el: $this
+                                    }),
+                                    view = new FormDynatreeView({
+                                        model: model,
+                                        dataModel: viewProperty.model
+                                    });
+                                view.render(_this.isSingle(), _this.getModalTitle(pk), pk, _this.get('key'));
                             }
                         });
                         $cnt.find(selector).each(function () {
@@ -51,18 +51,6 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                     type: 'text',
                                     'data-from-id': _this.getFromKey()
                                 });
-                            if (isAllowEdit) {
-                                $this
-                                    .on('save', function treeSave(e, params) {
-                                        var data = {};
-                                        data[_this.get('key')] = params.newValue;
-                                        viewProperty.model.trigger('change:form', {
-                                            op: 'upd',
-                                            id: pk,
-                                            data: data
-                                        });
-                                    });
-                            }
                         });
                     });
             };
