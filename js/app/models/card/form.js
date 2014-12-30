@@ -10,7 +10,7 @@ var FormCardElement = (function ($, optionsModule) {
         renderBeginData: function () {
             return '<div class="card-input card-grid ' + this.getEditClass() + '">';
         },
-        processBeforeRender: function () {
+        renderLabel: function () {
             return '';
         },
         renderControl: function (pk, controlID, tabindex) {

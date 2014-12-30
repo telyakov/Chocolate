@@ -13,7 +13,7 @@ var MultimediaCardElement = (function (bindModule, optionsModule, json_parse) {
         renderControl: function (pk, controlID, tabindex) {
             return '<div class="card-multimedia" id=' + controlID + '></div>';
         },
-        processBeforeRender: function () {
+        renderLabel: function () {
             return '';
         },
         getCallback: function (controlID, pk) {
