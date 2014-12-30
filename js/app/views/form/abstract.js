@@ -231,11 +231,10 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                     this.getChangedDataFromStorage()
                 );
             } else {
-                //todo: как будет переделано хранилище - оптимизировать код
                 return helpersModule.merge(
-                    this.getDBDataFromStorage(),
-                    this.getChangedDataFromStorage()
-                )[id];
+                    this.getDBDataFromStorage()[id],
+                    this.getChangedDataFromStorage()[id]
+                );
             }
 
         },
