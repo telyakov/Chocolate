@@ -1,4 +1,4 @@
-var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsModule, window) {
+var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsModule, window, helpersModule) {
     'use strict';
     return AbstractGridView.extend({
         template: _.template(
@@ -74,6 +74,74 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
         hasChange: function () {
             return facade.getFilesModule().isNotEmpty(this.getFormID()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
         },
+        //save: function () {
+        //    console.log('save attahcments')
+        //    var userGridID = this.getUserGridID(),
+        //        ch_messages_container = this.getMessagesContainer(),
+        //        _this = this,
+        //        deleted_obj = $.extend({}, this.getDeletedObj());
+        //
+        //    var formID = this.getID(),
+        //        fileModule = facade.getFilesModule();
+        //
+        //    if (fileModule.isNotEmpty(formID)) {
+        //        var isEmpty = $.isEmptyObject(deleted_obj);
+        //        while (fileModule.isNotEmpty(formID)) {
+        //            var defObj = this.getDefaultObj(),
+        //                ownerLock = defObj['ownerlock'],
+        //                file = fileModule.pop(formID);
+        //            var rowID = file[0].rowID;
+        //            if (isEmpty || !deleted_obj[rowID]) {
+        //                this.$form.fileupload({
+        //                    formData: {FilesTypesID: 4, OwnerLock: ownerLock}
+        //                });
+        //                this.$form.fileupload('send', {files: file});
+        //            }
+        //        }
+        //    }
+        //    else {
+        //        if (!$.isEmptyObject(deleted_obj)) {
+        //            this.saveAttachment(this);
+        //        } else {
+        //            ch_messages_container.sendMessage('Данные не были изменены.', ChResponseStatus.WARNING);
+        //        }
+        //    }
+        //    return [];
+        //},
+        //saveAttachment: function (chForm) {
+        //    var delData = chForm.getDeletedObj();
+        //    if (!$.isEmptyObject(delData)) {
+        //        for (var property in delData) {
+        //            if (!$.isNumeric(property)) {
+        //                delete delData[property];
+        //            }
+        //        }
+        //
+        //        var chMsgContainer = chForm.getMessagesContainer(),
+        //            data = {
+        //                jsonChangedData: {},
+        //                jsonDeletedData: JSON.stringify($.extend({}, delData))
+        //            };
+        //        $.ajax({
+        //            type: 'POST',
+        //            url: chForm.getSaveUrl(),
+        //            data: data,
+        //            async: false
+        //        }).done(function (resp) {
+        //            var chResp = new ChResponse(resp);
+        //            if (chResp.isSuccess()) {
+        //                //todo: вернуть код
+        //                //chForm
+        //                //    .clearChange()
+        //                //    .refresh();
+        //            }
+        //            chResp.sendMessage(chMsgContainer);
+        //        })
+        //            .fail(function (resp) {
+        //                chMsgContainer.sendMessage('Возникла непредвиденная ошибка при сохранении вложений.', ChResponseStatus.ERROR);
+        //            });
+        //    }
+        //},
         initScript: function ($form) {
             var $dropZone = false;
             if (!this.model.isNotSaved()) {
@@ -97,10 +165,11 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                     return false;
                 })
                 .fileupload({
-                    'autoUpload': false,
-                    'maxFileSize': 50000000,
-                    'acceptFileTypes': /(.*)$/i,
-                    'added': function (e, data) {
+                    autoUpload: false,
+                    maxFileSize: 50000000,
+                    acceptFileTypes: /(.*)$/i,
+                    added: function (e, data) {
+                        console.log('added')
                         if (data.isValidated) {
                             var rowID = helpersModule.uniqueID();
                             data.files[0].rowID = rowID;
@@ -114,7 +183,8 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                             _this.showMessage("Слишком большой размер файла (максисмум 50мб.)");
                         }
                     },
-                    'stop': function () {
+                    stop: function () {
+                        console.log('stop')
                         var filesModule = facade.getFilesModule();
                         if (filesModule.hasErrors(_this.getFormID())) {
                             _this.showMessage("Возникли ошибки при добавлении вложений");
@@ -127,13 +197,13 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                             }
                         }
                     },
-                    'fail': function (e, data) {
+                    fail: function (e, data) {
                         var filesModule = facade.getFilesModule();
                         filesModule.pushError(_this.getFormID(), data.errorThrown);
                         filesModule.push(_this.getFormID(), data.files);
                     },
-                    'dropZone': $dropZone,
-                    'url': '/Attachment/upload?view=attachments.xml&ParentView=' + this.model.getParentView() + '&ParentID=' + this.model.get('parentId')
+                    dropZone: $dropZone,
+                    url: '/Attachment/upload?view=attachments.xml&ParentView=' + this.model.getParentView() + '&ParentID=' + this.model.get('parentId')
                 });
             this.initContextFormMenuEvent();
         },
@@ -209,4 +279,4 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
             this.initFloatThead($table);
         }
     });
-})(AbstractGridView, jQuery, _, deferredModule, optionsModule, window);
+})(AbstractGridView, jQuery, _, deferredModule, optionsModule, window, helpersModule);

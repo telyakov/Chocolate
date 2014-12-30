@@ -92,7 +92,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 fromID = options.fromID,
                 fromName = options.fromName,
                 isSelect = '';
-            console.log(parentID)
             if (toID && toName && fromName && fromID) {
                 isSelect = 1;
             }
