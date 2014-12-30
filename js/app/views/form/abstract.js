@@ -320,6 +320,15 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 return this.getStorage().data[id];
             }
         },
+        addDeletedToStorage: function(id){
+            this.getDeletedDataFromStorage()[id] = true;
+        },
+        addChangeToStorage: function(id, data){
+            if(this.getChangedDataFromStorage()[id] !== undefined){
+                data = $.extend({}, this.getChangedDataFromStorage()[id], data);
+            }
+          this.getChangedDataFromStorage()[id] = data;
+        },
         getChangedDataFromStorage: function () {
             return this.getStorage().changed;
         },

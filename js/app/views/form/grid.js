@@ -251,7 +251,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             var model = this.model,
                 id = data.id;
             model.trigger('change:form', {
-                op: 'upd',
+                op: 'ins',
                 id: id,
                 data: $.extend({}, data)
             });

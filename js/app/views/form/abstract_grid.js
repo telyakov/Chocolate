@@ -356,11 +356,25 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             helpersModule.leaveFocus();
         },
         change: function (opts) {
-            console.log(opts);
-            this.getJqueryDataTable().trigger("update");
+            var operation = opts.op;
+            if (['ins', 'del'].indexOf(operation) !== -1) {
+                this.getJqueryDataTable().trigger('update');
+                this.getJqueryDataTable().parent().find('.' + optionsModule.getClass('selectedArea')).remove();
+            }
+            if (['ins', 'upd'].indexOf(operation) !== -1) {
+                this.addChangeToStorage(opts.id, opts.data)
+            }
+            if (operation === 'del') {
+                var i,
+                    hasOwn = Object.prototype.hasOwnProperty,
+                    data = opts.data;
+                for (i in data) {
+                    if (hasOwn.call(data, i)) {
+                        this.addDeletedToStorage(data[i].id);
+                    }
+                }
+            }
             this.getSaveButton().addClass('active');
-            this.getJqueryDataTable().parent().find('.' + optionsModule.getClass('selectedArea')).remove();
-            //todo: Реализовать изменение данных
         },
         getSaveButton: function () {
             return this.$('menu').children('.menu-button-save');
