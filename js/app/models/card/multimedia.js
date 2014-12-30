@@ -1,4 +1,4 @@
-var MultimediaCardElement = (function (bindModule, optionsModule, json_parse) {
+var MultimediaCardElement = (function (bindModule, optionsModule, json_parse, CardElement, helpersModule, mediator) {
     'use strict';
     return CardElement.extend({
         getMinHeight: function () {
@@ -65,4 +65,4 @@ var MultimediaCardElement = (function (bindModule, optionsModule, json_parse) {
             };
         }
     });
-})(bindModule, optionsModule, json_parse);
+})(bindModule, optionsModule, json_parse, CardElement, helpersModule, mediator);

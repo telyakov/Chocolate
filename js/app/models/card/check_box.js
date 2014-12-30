@@ -1,4 +1,4 @@
-var CheckBoxCardElement = (function ($, helpersModule) {
+var CheckBoxCardElement = (function ($, helpersModule, CardElement) {
     'use strict';
     return CardElement.extend({
         getCallback: function (controlID, pk) {
@@ -54,4 +54,4 @@ var CheckBoxCardElement = (function ($, helpersModule) {
             };
         }
     });
-})(jQuery, helpersModule);
+})(jQuery, helpersModule, CardElement);

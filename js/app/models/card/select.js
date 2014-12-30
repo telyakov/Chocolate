@@ -1,4 +1,4 @@
-var SelectCardElement = (function ($, helpersModule) {
+var SelectCardElement = (function ($, helpersModule, CardElement) {
     'use strict';
     return CardElement.extend({
         getCallback: function (controlID, pk) {
@@ -56,4 +56,4 @@ var SelectCardElement = (function ($, helpersModule) {
             };
         }
     });
-})(jQuery, helpersModule);
+})(jQuery, helpersModule, CardElement);

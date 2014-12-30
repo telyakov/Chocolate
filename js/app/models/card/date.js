@@ -1,4 +1,4 @@
-var DateCardElement = (function ($, moment, optionsModule) {
+var DateCardElement = (function ($, moment, optionsModule, CardElement) {
     'use strict';
     return CardElement.extend({
         getCallback: function (controlID, pk) {
@@ -71,4 +71,4 @@ var DateCardElement = (function ($, moment, optionsModule) {
             };
         }
     });
-})(jQuery, moment, optionsModule);
+})(jQuery, moment, optionsModule, CardElement);

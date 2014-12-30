@@ -1,4 +1,4 @@
-var TreeCardElement = (function ($, helpersModule, undefined) {
+var TreeCardElement = (function ($, helpersModule, undefined, CardElement) {
     'use strict';
     return CardElement.extend({
         getCallback: function (controlID, pk) {
@@ -52,4 +52,4 @@ var TreeCardElement = (function ($, helpersModule, undefined) {
             };
         }
     });
-})(jQuery, helpersModule, undefined);
+})(jQuery, helpersModule, undefined, CardElement);

@@ -1,4 +1,4 @@
-var FormCardElement = (function ($, optionsModule) {
+var FormCardElement = (function ($, optionsModule, mediator, CardElement) {
     'use strict';
     return CardElement.extend({
         getMinHeight: function () {
@@ -31,4 +31,4 @@ var FormCardElement = (function ($, optionsModule) {
             };
         }
     });
-})(jQuery, optionsModule);
+})(jQuery, optionsModule, mediator, CardElement);

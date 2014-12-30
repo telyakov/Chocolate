@@ -1,4 +1,4 @@
-var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule) {
+var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, CardElement, wysihtml5) {
     'use strict';
     return CardElement.extend({
         controlTemplate: _.template(
@@ -185,4 +185,4 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule) 
             return this.getHeight() === 1;
         }
     });
-})(jQuery, _, helpersModule, undefined, optionsModule);
+})(jQuery, _, helpersModule, undefined, optionsModule, CardElement, wysihtml5);
