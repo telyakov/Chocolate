@@ -77,7 +77,7 @@ $(function () {
                     sel.text = val;
                     this.focus();
                 }
-                else if (this.selectionStart || this.selectionStart == '0') {
+                else if (this.selectionStart || this.selectionStart === 0) {
                     //For browsers like Firefox and Webkit based
                     var startPos = this.selectionStart,
                         endPos = this.selectionEnd,

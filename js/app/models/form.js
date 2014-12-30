@@ -1,20 +1,22 @@
-var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory) {
+var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROCollection, ColumnsRoFactory, Card, CardElementFactory, CardROCollection, CardRO, ActionProperties, AgileFilter, PrintActions, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory, deferredModule, optionsModule, bindModule, helpersModule, MapView, CanvasView, AttachmentView, DiscussionView, GridView) {
     'use strict';
     return Backbone.Model.extend({
-        _columnsCollection: null,
-        _dataFormProperties: null,
-        _agileFilters: null,
-        _actionProperties: null,
-        _card_collection: null,
-        _filter_ro_collection: null,
-        _print_actions: null,
-        _columns_ro_collection: null,
         defaults: {
             $xml: null,
             parentModel: null,
             parentId: null
         },
+        _columnsCollection: null,
+        _dataFormProperties: null,
+        _agileFilters: null,
+        _actionProperties: null,
+        _cardCollection: null,
+        _filterRoCollection: null,
+        _printActions: null,
+        _columnsRoCollection: null,
         _dynamicDefaultValues: {},
+        _columnsCardRoCollection: null,
+        _preview: null,
         getDynamicDefaultValues: function () {
             return this._dynamicDefaultValues;
         },
@@ -22,11 +24,9 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             this._dynamicDefaultValues[key] = val;
         },
         getColumnsDefaultValues: function () {
-            var defaults = {},
-                def;
-
+            var defaults = {};
             this.getColumnsROCollection().each(function (column) {
-                def = column.getDefault();
+                var def = column.getDefault();
                 if (def !== '' && def !== null) {
                     defaults[column.get('key')] = def;
                 }
@@ -43,15 +43,15 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return this.getCardCollection().getHeader();
         },
         getPrintActions: function () {
-            if (this._print_actions !== null) {
-                return this._print_actions;
+            if (this._printActions !== null) {
+                return this._printActions;
             }
 
             var printActions = new PrintActions({
                 printActionsXml: this.getDataFormProperties().getPrintActionsXml()
             });
-            this._print_actions = printActions.getActions();
-            return this._print_actions;
+            this._printActions = printActions.getActions();
+            return this._printActions;
         },
         isAllowAudit: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAllowAuditButton(), false);
@@ -63,19 +63,17 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return this.getDataFormProperties().getCreateEmptyProc();
         },
         deferDefaultData: function () {
-            var defaultDefer = deferredModule.create(),
-                defaultDeferID = deferredModule.save(defaultDefer),
-                defer = bindModule.deferredBindSql(this.getCreateEmptyProc());
-            defer.done(function (res) {
-                var sql = res.sql;
-                mediator.publish(optionsModule.getChannel('socketRequest'), {
-                    query: sql,
-                    type: optionsModule.getRequestType('deferred'),
-                    id: defaultDeferID
+            var defer = deferredModule.create(),
+                deferID = deferredModule.save(defer);
+            bindModule.deferredBindSql(this.getCreateEmptyProc())
+                .done(function (res) {
+                    mediator.publish(optionsModule.getChannel('socketRequest'), {
+                        query: res.sql,
+                        type: optionsModule.getRequestType('deferred'),
+                        id: deferID
+                    });
                 });
-            });
-            return defaultDefer;
-
+            return defer;
         },
         getCreateProc: function () {
             return this.getDataFormProperties().getCreateProc();
@@ -91,20 +89,20 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             var defer = deferredModule.create(),
                 deferID = deferredModule.save(defer),
                 sql;
-            if ($.isNumeric(data.id)) {
+            if (helpersModule.isNewRow(data.id)) {
                 sql = this.getUpdateProc();
             } else {
                 sql = this.getCreateProc();
             }
-            var extendedData = $.extend({}, this.getParamsForBind(), data),
-                paramDefer = bindModule.deferredBindSql(sql, extendedData, true);
-            paramDefer.done(function (res) {
-                mediator.publish(optionsModule.getChannel('socketRequest'), {
-                    query: res.sql,
-                    type: optionsModule.getRequestType('deferred'),
-                    id: deferID
+            var extendedData = $.extend({}, this.getParamsForBind(), data);
+            bindModule.deferredBindSql(sql, extendedData, true)
+                .done(function (res) {
+                    mediator.publish(optionsModule.getChannel('socketRequest'), {
+                        query: res.sql,
+                        type: optionsModule.getRequestType('deferred'),
+                        id: deferID
+                    });
                 });
-            });
             return defer;
         },
         deferReadData: function (sql) {
@@ -155,7 +153,7 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         },
         isNotSaved: function () {
             var parentID = this.get('parentId');
-            return parentID && !$.isNumeric(parentID);
+            return parentID && !helpersModule.isNewRow(parentID);
         },
         getFormView: function () {
             switch (true) {
@@ -179,9 +177,8 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 $xml = this.get('$xml');
             if ($xml) {
                 var $gridLayout = $xml.find('GridLayoutXml'),
-                    $columns;
-                $columns = $($.parseXML($.trim($gridLayout.text())));
-                var $gridProperties = $columns.find('GridProperties');
+                    $columns = $($.parseXML($.trim($gridLayout.text()))),
+                    $gridProperties = $columns.find('GridProperties');
                 $columns.find('Column').each(function () {
                     columns.push(new ColumnProperties({
                             $obj: $(this)
@@ -216,9 +213,8 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 $xml = this.get('$xml');
             if ($xml) {
                 var $filtersPanel = $xml.find('FiltersPanelXml'),
-                    $filters;
-                $filters = $($.parseXML($.trim($filtersPanel.text())));
-                var $agileFilters = $filters.find('AgileFilters');
+                    $filters = $($.parseXML($.trim($filtersPanel.text()))),
+                    $agileFilters = $filters.find('AgileFilters');
                 $agileFilters.find('AgileFilter').each(function () {
                     filters.push(new AgileFilter({
                             $obj: $(this)
@@ -240,8 +236,8 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                 $xml = this.get('$xml');
             if ($xml) {
                 var $actions = $xml.find('ActionsXml');
-                $actions = $.parseXML($.trim($actions.text()));
-                $($actions).find('MenuAction').each(function () {
+                $actions = $($.parseXML($.trim($actions.text())));
+                $actions.find('MenuAction').each(function () {
                     actions.push(new ActionProperties({
                             $obj: $(this)
                         }
@@ -255,8 +251,8 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return this.getCardCollection().length > 0;
         },
         getCardCollection: function () {
-            if (this._card_collection) {
-                return this._card_collection;
+            if (this._cardCollection) {
+                return this._cardCollection;
             }
             var cards = [],
                 $xml = this.get('$xml');
@@ -269,11 +265,11 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                         }
                     ));
                 });
-                this._card_collection = new CardCollections(cards, {
+                this._cardCollection = new CardCollections(cards, {
                     $obj: $cards.children('Cards').children('Style')
                 });
             }
-            return this._card_collection;
+            return this._cardCollection;
         },
         getCardROCollection: function () {
             var collection = new CardROCollection();
@@ -326,21 +322,20 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             return this.getFiltersCollections().length !== 0 && !this.isDiscussionView();
         },
         getFiltersROCollection: function (view) {
-            if (this._filter_ro_collection !== null) {
-                return this._filter_ro_collection;
+            if (this._filterRoCollection !== null) {
+                return this._filterRoCollection;
             }
-            var _this = this;
             var filtersCollection = this.getFiltersCollections(),
                 filtersROCollection = new FiltersROCollection();
             filtersCollection.each(function (item) {
                 filtersROCollection.push(FilterRoFactory.make(item, view));
             });
-            this._filter_ro_collection = filtersROCollection;
-            return this._filter_ro_collection;
+            this._filterRoCollection = filtersROCollection;
+            return this._filterRoCollection;
         },
         getColumnsROCollection: function () {
-            if (this._columns_ro_collection !== null) {
-                return this._columns_ro_collection;
+            if (this._columnsRoCollection !== null) {
+                return this._columnsRoCollection;
             }
             var columnsCollection = this.getColumnsCollection(),
                 columnsROCollection = new ColumnsROCollection();
@@ -350,16 +345,15 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                     columnsROCollection.push(columnRO);
                 }
             });
-            this._columns_ro_collection = columnsROCollection;
+            this._columnsRoCollection = columnsROCollection;
             if (this.isAttachmentSupport()) {
                 columnsROCollection.push(new AttachmentColumnRO());
             }
-            return this._columns_ro_collection;
+            return this._columnsRoCollection;
         },
-        _columns_card_ro_collection: null,
         getColumnsCardROCollection: function () {
-            if (this._columns_card_ro_collection !== null) {
-                return this._columns_card_ro_collection;
+            if (this._columnsCardRoCollection !== null) {
+                return this._columnsCardRoCollection;
             }
             var columnsCollection = this.getColumnsCollection(),
                 columnsROCollection = new ColumnsROCollection();
@@ -369,8 +363,8 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
                     columnsROCollection.push(columnRO);
                 }
             });
-            this._columns_card_ro_collection = columnsROCollection;
-            return this._columns_card_ro_collection;
+            this._columnsCardRoCollection = columnsROCollection;
+            return this._columnsCardRoCollection;
         },
         isAttachmentSupport: function () {
             return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);
@@ -417,7 +411,6 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
             }
             return bindModule.deferredBindSql(sql, data);
         },
-        _preview: null,
         getPreview: function () {
             if (this._preview === null) {
                 var preview = {};
@@ -444,4 +437,4 @@ var FormModel = (function ($, Backbone, ActionsPropertiesCollection, CardCollect
         }
 
     });
-})(jQuery, Backbone, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory);
+})(jQuery, Backbone, mediator, AttachmentColumnRO, ColumnsROCollection, ColumnsRoFactory, Card, CardROCollection, CardRO, CardElementFactory, ActionProperties, AgileFilter, PrintActions, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory, deferredModule, optionsModule, bindModule, helpersModule, MapView, CanvasView, AttachmentView, DiscussionView, GridView);

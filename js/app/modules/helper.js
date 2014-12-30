@@ -449,6 +449,9 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             }
             cnt.fillText(line, marginLeft, marginTop);
         },
+        isNewRow: function(pk){
+            return $.isNumeric(pk)? true: false;
+        },
         init: function () {
             _private.createJqueryElements();
         }
