@@ -74,74 +74,57 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
         hasChange: function () {
             return facade.getFilesModule().isNotEmpty(this.getFormID()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
         },
-        //save: function () {
-        //    console.log('save attahcments')
-        //    var userGridID = this.getUserGridID(),
-        //        ch_messages_container = this.getMessagesContainer(),
-        //        _this = this,
-        //        deleted_obj = $.extend({}, this.getDeletedObj());
-        //
-        //    var formID = this.getID(),
-        //        fileModule = facade.getFilesModule();
-        //
-        //    if (fileModule.isNotEmpty(formID)) {
-        //        var isEmpty = $.isEmptyObject(deleted_obj);
-        //        while (fileModule.isNotEmpty(formID)) {
-        //            var defObj = this.getDefaultObj(),
-        //                ownerLock = defObj['ownerlock'],
-        //                file = fileModule.pop(formID);
-        //            var rowID = file[0].rowID;
-        //            if (isEmpty || !deleted_obj[rowID]) {
-        //                this.$form.fileupload({
-        //                    formData: {FilesTypesID: 4, OwnerLock: ownerLock}
-        //                });
-        //                this.$form.fileupload('send', {files: file});
-        //            }
-        //        }
-        //    }
-        //    else {
-        //        if (!$.isEmptyObject(deleted_obj)) {
-        //            this.saveAttachment(this);
-        //        } else {
-        //            ch_messages_container.sendMessage('Данные не были изменены.', ChResponseStatus.WARNING);
-        //        }
-        //    }
-        //    return [];
-        //},
-        //saveAttachment: function (chForm) {
-        //    var delData = chForm.getDeletedObj();
-        //    if (!$.isEmptyObject(delData)) {
-        //        for (var property in delData) {
-        //            if (!$.isNumeric(property)) {
-        //                delete delData[property];
-        //            }
-        //        }
-        //
-        //        var chMsgContainer = chForm.getMessagesContainer(),
-        //            data = {
-        //                jsonChangedData: {},
-        //                jsonDeletedData: JSON.stringify($.extend({}, delData))
-        //            };
-        //        $.ajax({
-        //            type: 'POST',
-        //            url: chForm.getSaveUrl(),
-        //            data: data,
-        //            async: false
-        //        }).done(function (resp) {
-        //            var chResp = new ChResponse(resp);
-        //            if (chResp.isSuccess()) {
-        //                //todo: вернуть код
-        //                //chForm
-        //                //    .clearChange()
-        //                //    .refresh();
-        //            }
-        //            chResp.sendMessage(chMsgContainer);
-        //        })
-        //            .fail(function (resp) {
-        //                chMsgContainer.sendMessage('Возникла непредвиденная ошибка при сохранении вложений.', ChResponseStatus.ERROR);
-        //            });
-        //    }
-        //},
+        save: function () {
+            if (this.hasChange()) {
+                var fileModule = facade.getFilesModule(),
+                    formID = this.getFormID(),
+                    $form = this.getJqueryForm(),
+                    deletedData = this.getDeletedDataFromStorage();
+                if (fileModule.isNotEmpty(formID)) {
+                    var isEmpty = $.isEmptyObject(deletedData),
+                        ownerLock = this.model.getColumnsDefaultValues().ownerlock;
+                    while (fileModule.isNotEmpty(formID)) {
+                        var file = fileModule.pop(formID),
+                            rowID = file[0].rowID;
+                        if (isEmpty || !deletedData[rowID]) {
+                            $form.fileupload({
+                                formData: {FilesTypesID: 4, OwnerLock: ownerLock}
+                            });
+                            $form.fileupload('send', {files: file});
+                        }
+                    }
+                }
+                else {
+                    if (!$.isEmptyObject(this.getDeletedDataFromStorage())) {
+                        this.saveDeletedData();
+                    } else {
+                        this.sendMessage('Данные не были изменены');
+                    }
+                }
+                return [];
+            } else {
+                this.showMessage('Данные не были изменены');
+            }
+        },
+
+        saveDeletedData: function () {
+            var deletedData = this.getDeletedDataFromStorage(),
+                key,
+                hasOwn = Object.prototype.hasOwnProperty;
+            for (key in deletedData) {
+                if (hasOwn.call(deletedData, key)) {
+                    if (!$.isNumeric(key)) {
+                        delete deletedData[key];
+                    }
+                }
+            }
+            var model = this.model;
+            model
+                .deferSave({}, deletedData)
+                .done(function(){
+                    model.trigger('refresh:form');
+                });
+        },
         initScript: function ($form) {
             var $dropZone = false;
             if (!this.model.isNotSaved()) {
@@ -169,7 +152,6 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                     maxFileSize: 50000000,
                     acceptFileTypes: /(.*)$/i,
                     added: function (e, data) {
-                        console.log('added')
                         if (data.isValidated) {
                             var rowID = helpersModule.uniqueID();
                             data.files[0].rowID = rowID;
@@ -184,7 +166,6 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                         }
                     },
                     stop: function () {
-                        console.log('stop')
                         var filesModule = facade.getFilesModule();
                         if (filesModule.hasErrors(_this.getFormID())) {
                             _this.showMessage("Возникли ошибки при добавлении вложений");

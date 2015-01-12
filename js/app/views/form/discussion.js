@@ -34,10 +34,10 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
 
             var html = this.renderMessage(data);
             this.getJqueryForm().find('.discussion-content').append(html);
-            var dateToSave = {
-                id: helpersModule.uniqueID(),
+            var dateToSave = [{
+                op: 'ins',
                 textmessage: msg
-            };
+            }];
             this.model.trigger('save:form', dateToSave);
         },
         scrollToBottom: function () {

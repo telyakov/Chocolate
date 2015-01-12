@@ -13,27 +13,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
 
             this.render();
         },
-        headerTemplate: _.template([
-            '<section class="section-header" data-id="header">',
-            '<div class="top-header">',
-            '<div class="left-header">',
-            '<%= image %>',
-            '</div>',
-            '<div class="right-header">',
-            '<%= title %>',
-            '</div>',
-            '</div>',
-            '<div class="bottom-header" id="<%= asyncId %>">',
-            '</div>',
-            '</section>'
-        ].join('')),
-        filterTemplate: _.template([
-            '<div class="filters-content">',
-            '<form class="form-vertical filter-form" id="<%= formID %>">',
-            '<%= html %>',
-            '</form>',
-            '</div>'
-        ].join('')),
         events: {
             'click .grid-button .editable': 'openChildForm',
             'click .menu-button-refresh': function (e) {
@@ -81,6 +60,28 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 }
             }
         },
+
+        headerTemplate: _.template([
+            '<section class="section-header" data-id="header">',
+            '<div class="top-header">',
+            '<div class="left-header">',
+            '<%= image %>',
+            '</div>',
+            '<div class="right-header">',
+            '<%= title %>',
+            '</div>',
+            '</div>',
+            '<div class="bottom-header" id="<%= asyncId %>">',
+            '</div>',
+            '</section>'
+        ].join('')),
+        filterTemplate: _.template([
+            '<div class="filters-content">',
+            '<form class="form-vertical filter-form" id="<%= formID %>">',
+            '<%= html %>',
+            '</form>',
+            '</div>'
+        ].join('')),
         openChildForm: function (e) {
             var $editable = $(e.target),
                 options = $editable.data().editable.options,

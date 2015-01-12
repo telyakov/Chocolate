@@ -85,7 +85,7 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
             }
             return sql;
         },
-        deferSave: function (data) {
+        deferSave: function (data, deletedData) {
             var defer = deferredModule.create(),
                 deferID = deferredModule.save(defer),
                 sql;
