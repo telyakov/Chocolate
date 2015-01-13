@@ -147,7 +147,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
             return isAllowEdit;
         },
         getUniqueClass: function () {
-            return 'column-' + this.get('key');
+            return helpersModule.uniqueColumnClass(this.get('key'));
         },
         getTemplate: function (isVisible) {
             var template = [

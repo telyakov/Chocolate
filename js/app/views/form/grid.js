@@ -260,8 +260,101 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this.openCardHandler(id);
             }
         },
-        save: function(){
-          console.log('save grid')
+        save: function (opts) {
+            if (this.hasChange()) {
+
+                var changedObj = this.getChangedDataFromStorage(),
+                    dataObj = this.getDBDataFromStorage(),
+                    deletedData = this.getDeletedDataFromStorage(),
+                    responseChangeObj = {},
+                    name,
+                    hasOwn = Object.prototype.hasOwnProperty;
+                for (name in changedObj) {
+                    if (hasOwn.call(changedObj, name)) {
+                        if (!$.isEmptyObject(changedObj[name])) {
+                            if (deletedData[name] === undefined) {
+                                responseChangeObj[name] = helpersModule.merge(dataObj[name], changedObj[name]);
+                            }
+                        }
+                    }
+                }
+
+                if (!$.isEmptyObject(responseChangeObj) && !$.isEmptyObject(deletedData)) {
+                    var rowID;
+                    for (rowID in deletedData) {
+                        if (hasOwn.call(deletedData, rowID)) {
+                            delete responseChangeObj[rowID];
+                        }
+                    }
+                }
+
+                var key;
+                for (key in deletedData) {
+                    if (hasOwn.call(deletedData, key)) {
+                        if (!$.isNumeric(key)) {
+                            delete deletedData[key];
+                        }
+                    }
+                }
+
+                if (!$.isEmptyObject(responseChangeObj) || !$.isEmptyObject(deletedData)) {
+                    //отсекаем изменения в уже удаленных строках, они нам не нужны
+                    var errors = [], index;
+                    for (index in responseChangeObj) {
+                        if (hasOwn.call(responseChangeObj, index)) {
+                            var error = this.validate(responseChangeObj[index]);
+                            if (!$.isEmptyObject(error)) {
+                                errors[index] = error;
+                            }
+                        }
+                    }
+                    if ($.isEmptyObject(errors)) {
+                        var model = this.model;
+                        model
+                            .deferSave(responseChangeObj, deletedData)
+                            .done(function () {
+                                if (opts.refresh) {
+                                    model.trigger('refresh:form');
+                                }
+                            });
+                    } else {
+                        var pk,
+                            $table = this.getJqueryDataTable();
+                        for (pk in errors) {
+                            if (hasOwn.call(errors, pk)) {
+                                var iterator,
+                                    $tr = $table.find('[data-id="' + pk + '"]');
+                                    $tr.children('.grid-menu').addClass('grid-error');
+                                for (iterator in errors[pk]) {
+                                    if (hasOwn.call(errors[pk]), iterator) {
+                                        var columnKey =  errors[pk][iterator];
+                                        $tr.find('.' + helpersModule.uniqueColumnClass(columnKey)).closest('td').addClass('grid-error');
+                                    }
+                                }
+                            }
+                        }
+                        this.showMessage('Заполните обязательные поля( ошибки подсвечены в сетке).')
+                    }
+                } else {
+                    if (opts.refresh) {
+                        this.showMessage('Данные не были изменены.');
+                    }
+                }
+            } else {
+                if (opts.refresh) {
+                    this.showMessage('Данные не были изменены.');
+                }
+            }
+        },
+        validate: function (data) {
+            var requiredFields = this.model.getRequiredFields(),
+                errors = [];
+            requiredFields.forEach(function (key) {
+                if (data[key] === undefined || !data[key]) {
+                    errors.push(key);
+                }
+            });
+            return errors;
         },
         applyCallbacks: function ($cnt) {
             var view = this;
@@ -366,13 +459,13 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         caption: column.getCaption()
                     })
                 };
-                if(index === undefined){
+                if (index === undefined) {
                     newColumns.push(config);
                 }
                 rows[index] = config;
             });
-            newColumns.forEach(function(item){
-               rows.push(item);
+            newColumns.forEach(function (item) {
+                rows.push(item);
             });
             //if (!hasSetting) {
             this.persistColumnsSettings(setting);
@@ -767,4 +860,5 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
         }
 
     });
-})(AbstractGridView, jQuery, _, deferredModule, optionsModule, helpersModule, window, undefined, Math);
+})
+(AbstractGridView, jQuery, _, deferredModule, optionsModule, helpersModule, window, undefined, Math);

@@ -35,7 +35,7 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
             var html = this.renderMessage(data);
             this.getJqueryForm().find('.discussion-content').append(html);
             var dateToSave = [{
-                op: 'ins',
+                id: helpersModule.uniqueID(),
                 textmessage: msg
             }];
             this.model.trigger('save:form', dateToSave);

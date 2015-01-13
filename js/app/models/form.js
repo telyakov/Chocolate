@@ -17,11 +17,24 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
         _dynamicDefaultValues: {},
         _columnsCardRoCollection: null,
         _preview: null,
+        _requiredFields: null,
         getDynamicDefaultValues: function () {
             return this._dynamicDefaultValues;
         },
         setDynamicDefaultValue: function (key, val) {
             this._dynamicDefaultValues[key] = val;
+        },
+        getRequiredFields: function(){
+            if(this._requiredFields === null){
+                var required = [];
+                this.getColumnsROCollection().each(function (column) {
+                    if(column.isRequired()){
+                        required.push(column.get('key'));
+                    }
+                });
+                this._requiredFields = required;
+            }
+            return this._requiredFields;
         },
         getColumnsDefaultValues: function () {
             var defaults = {};
@@ -89,20 +102,21 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
             var defer = deferredModule.create(),
                 deferID = deferredModule.save(defer),
                 sql;
-            if (helpersModule.isNewRow(data.id)) {
-                sql = this.getUpdateProc();
-            } else {
-                sql = this.getCreateProc();
-            }
-            var extendedData = $.extend({}, this.getParamsForBind(), data);
-            bindModule.deferredBindSql(sql, extendedData, true)
-                .done(function (res) {
-                    mediator.publish(optionsModule.getChannel('socketRequest'), {
-                        query: res.sql,
-                        type: optionsModule.getRequestType('deferred'),
-                        id: deferID
-                    });
-                });
+            console.log('todo: реализовать');
+            //if (helpersModule.isNewRow(data.id)) {
+            //    sql = this.getUpdateProc();
+            //} else {
+            //    sql = this.getCreateProc();
+            //}
+            //var extendedData = $.extend({}, this.getParamsForBind(), data);
+            //bindModule.deferredBindSql(sql, extendedData, true)
+            //    .done(function (res) {
+            //        mediator.publish(optionsModule.getChannel('socketRequest'), {
+            //            query: res.sql,
+            //            type: optionsModule.getRequestType('deferred'),
+            //            id: deferID
+            //        });
+            //    });
             return defer;
         },
         deferReadData: function (sql) {

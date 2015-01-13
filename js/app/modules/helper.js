@@ -1,4 +1,5 @@
 var helpersModule = (function ($, deferredModule, optionsModule, bindModule, document, undefined, window) {
+    'use strict';
     var _private = {
         $window: null,
         $tabs: null,
@@ -451,6 +452,9 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         },
         isNewRow: function(pk){
             return $.isNumeric(pk)? true: false;
+        },
+        uniqueColumnClass: function(key){
+            return 'column-' + key;
         },
         init: function () {
             _private.createJqueryElements();

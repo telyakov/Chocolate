@@ -67,7 +67,6 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
             }));
             var $form = this.getJqueryForm();
             this.layoutFooter($form);
-            this.layoutFooter($form);
             this.initScript($form);
             this.refreshData();
         },
@@ -75,6 +74,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
             return facade.getFilesModule().isNotEmpty(this.getFormID()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
         },
         save: function () {
+            console.log('save')
             if (this.hasChange()) {
                 var fileModule = facade.getFilesModule(),
                     formID = this.getFormID(),
