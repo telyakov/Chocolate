@@ -119,8 +119,8 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 }
             }
             var model = this.model;
-            model
-                .deferSave({}, deletedData)
+            var tasks = model.deferSave({}, deletedData);
+            $.when.apply($, tasks)
                 .done(function(){
                     model.trigger('refresh:form');
                 });

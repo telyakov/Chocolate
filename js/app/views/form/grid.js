@@ -310,9 +310,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     }
                     if ($.isEmptyObject(errors)) {
                         var model = this.model;
-                        model
-                            .deferSave(responseChangeObj, deletedData)
-                            .done(function () {
+                           var tasks = model.deferSave(responseChangeObj, deletedData);
+                        $.when.apply($, tasks)
+                            .done(function(){
                                 if (opts.refresh) {
                                     model.trigger('refresh:form');
                                 }

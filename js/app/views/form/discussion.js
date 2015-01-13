@@ -34,10 +34,13 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
 
             var html = this.renderMessage(data);
             this.getJqueryForm().find('.discussion-content').append(html);
-            var dateToSave = [{
-                id: helpersModule.uniqueID(),
-                textmessage: msg
-            }];
+            var id = helpersModule.uniqueID();
+            var dateToSave = {
+                id: {
+                    id: id,
+                    textmessage: msg
+                }
+            };
             this.model.trigger('save:form', dateToSave);
         },
         scrollToBottom: function () {
@@ -45,7 +48,7 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
             $form.scrollTop($form.height());
             return this;
         },
-        focusToInput: function(){
+        focusToInput: function () {
             this.getJqueryForm()
                 .next('.discussion-footer')
                 .children('.discussion-input').focus();
@@ -55,7 +58,8 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
             var _this = this;
             $('#' + this.getFormID())
                 .next('.discussion-footer').children('.discussion-input').val('');
-            this.model.deferSave(data)
+            var tasks = this.model.deferSave(data);
+            $.when.apply($, tasks)
                 .done(function () {
                     _this.scrollToBottom();
                 });

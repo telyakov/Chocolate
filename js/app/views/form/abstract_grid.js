@@ -355,6 +355,9 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             }
             helpersModule.leaveFocus();
         },
+        getJqueryRow: function(id){
+            return this.getJqueryTbody().children('[data-id="' + id + '"]');
+        },
         change: function (opts) {
             var operation = opts.op;
             if (['ins', 'del'].indexOf(operation) !== -1) {
@@ -362,7 +365,8 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 this.getJqueryDataTable().parent().find('.' + optionsModule.getClass('selectedArea')).remove();
             }
             if (['ins', 'upd'].indexOf(operation) !== -1) {
-                this.addChangeToStorage(opts.id, opts.data)
+                this.addChangeToStorage(opts.id, opts.data);
+                this.getJqueryRow(opts.id).addClass('grid-row-changed');
             }
             if (operation === 'del') {
                 var i,

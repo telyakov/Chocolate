@@ -13,11 +13,12 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
 
             this.render();
         },
+        view: null,
         events: {
             'click .grid-button .editable': 'openChildForm',
             'click .menu-button-refresh': function (e) {
                 var _this = this;
-                if (this.hasChange()) {
+                if (this.view.hasChange()) {
                     var $dialog = $('<div>' + optionsModule.getMessage('refreshForm') + '</div>');
                     $dialog.dialog({
                         title: optionsModule.getMessage('projectName'),
@@ -316,6 +317,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     model: this.model,
                     view: this
                 });
+            this.view = view;
 
         }
     });
