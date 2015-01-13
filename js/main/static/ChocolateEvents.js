@@ -695,8 +695,8 @@ var ChocolateEvents = {
         form.save(true);
     },
     cardSaveEvent: function ($context) {
-//            .on('click', '.card-menu-save', this.cardSaveFromMenuHandler)
         $context
+            .on('click', '.card-menu-save', this.cardSaveFromMenuHandler)
             .on('click', '.card-save', this.cardSaveButtonHandler);
     },
     cardSaveFromMenuHandler: function () {
