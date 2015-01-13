@@ -33,23 +33,10 @@ class GridController extends Controller
         ];
     }
 
-    public function actionIndex()
-    {
-        $model = Controller::loadForm($this->view);
-        $this->renderPartial('index', ['model' => $model], false, true);
-    }
-
     public function actionSearchByID($id)
     {
         $model = Controller::loadForm($this->view);
         $model->filters['idlist'] = $id;
         $this->render('index', ['model' => $model]);
-    }
-
-    public function actionSave($parentView = null, $parentID = null)
-    {
-        $model = Controller::loadForm($this->view, $parentView, $parentID);
-        $response = $model->save();
-        $response->send();
     }
 }
