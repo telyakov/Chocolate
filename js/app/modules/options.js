@@ -18,6 +18,7 @@ var optionsModule = (function () {
         },
         channels = {
             socketRequest: 'socket_request',
+            socketMultiplyExec: 'socket_multiply_exec',
             socketResponse: 'socket_response',
             socketFileRequest: 'socket_file_request',
             socketFileResponse: 'socket_file_response',

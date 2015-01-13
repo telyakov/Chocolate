@@ -24,11 +24,11 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
         setDynamicDefaultValue: function (key, val) {
             this._dynamicDefaultValues[key] = val;
         },
-        getRequiredFields: function(){
-            if(this._requiredFields === null){
+        getRequiredFields: function () {
+            if (this._requiredFields === null) {
                 var required = [];
                 this.getColumnsROCollection().each(function (column) {
-                    if(column.isRequired()){
+                    if (column.isRequired()) {
                         required.push(column.get('key'));
                     }
                 });
@@ -91,7 +91,7 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
         getCreateProc: function () {
             return this.getDataFormProperties().getCreateProc();
         },
-        getDeleteProc: function(){
+        getDeleteProc: function () {
             return this.getDataFormProperties().getDeleteProc();
         },
         getUpdateProc: function () {
@@ -102,71 +102,65 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
             return sql;
         },
         deferSave: function (data, deletedData) {
-            var deferredTasks = [];
-            console.log(data, deletedData);
-
-            console.log('todo: реализовать');
-
-            var i,
+            var deferredTasks = [],
+                mainDefer = deferredModule.create(),
+                i,
+                sqlList = [],
                 hasOwn = Object.prototype.hasOwnProperty,
-                paramsForBind = this.getParamsForBind();
-            if(data){
-                for(i in data){
-                    if(hasOwn.call(data, i)){
-                        var defer = deferredModule.create();
-                        deferredTasks.push(defer);
+                paramsForBind = this.getParamsForBind(),
+                defer,
+                currentData,
+                extendedData;
+            if (data) {
+                for (i in data) {
+                    if (hasOwn.call(data, i)) {
                         var sql;
-                        var currentData = data[i];
+                        currentData = data[i];
                         if (helpersModule.isNewRow(currentData.id)) {
                             sql = this.getUpdateProc();
                         } else {
                             sql = this.getCreateProc();
                         }
-                        var extendedData = $.extend({}, paramsForBind, currentData);
-                        var helpedDefer = deferredModule.create(),
-                            helperDeferId = deferredModule.save(helpedDefer);
-                        bindModule.deferredBindSql(sql, extendedData, true)
+                        extendedData = $.extend({}, paramsForBind, currentData);
+                        defer = bindModule.deferredBindSql(sql, extendedData, true);
+                        deferredTasks.push(defer);
+                        defer
                             .done(function (res) {
-                                mediator.publish(optionsModule.getChannel('socketRequest'), {
-                                    query: res.sql,
-                                    type: optionsModule.getRequestType('deferred'),
-                                    id: helperDeferId
-                                });
+                                sqlList.push(res.sql);
                             });
-                        helpedDefer.done(function(){
-                            console.log('sdsad');
-                            defer.resolve();
-                        })
                     }
                 }
             }
-            if(deletedData){
+            if (deletedData) {
                 var deletedID,
                     deleteSql = this.getDeleteProc();
-                for(deletedID in deletedData){
-                    if(hasOwn.call(deletedData, deletedID)){
-                        var defer = deferredModule.create();
+                for (deletedID in deletedData) {
+                    if (hasOwn.call(deletedData, deletedID)) {
+                        currentData = {id: deletedID};
+                        extendedData = $.extend({}, paramsForBind, currentData);
+                        defer = bindModule.deferredBindSql(deleteSql, extendedData, true);
                         deferredTasks.push(defer);
-                        var currentData = {id: deletedID};
-                        var extendedData = $.extend({}, paramsForBind, currentData);
-                        var helpedDefer = deferredModule.create(),
-                            helperDeferId = deferredModule.save(helpedDefer);
-                        bindModule.deferredBindSql(deleteSql, extendedData, true)
+                        defer
                             .done(function (res) {
-                                mediator.publish(optionsModule.getChannel('socketRequest'), {
-                                    query: res.sql,
-                                    type: optionsModule.getRequestType('deferred'),
-                                    id: helperDeferId
-                                });
+                                sqlList.push(res.sql);
                             });
-                        helpedDefer.done(function(){
-                            console.log('sdsa21221d');
-                            defer.resolve();
-                        })
                     }
                 }
             }
-            return deferredTasks;
+                    var mainDeferID = deferredModule.save(mainDefer);
+            $.when.apply($, deferredTasks)
+                .done(function () {
+                    mediator.publish(optionsModule.getChannel('socketMultiplyExec'), {
+                        sqlList: sqlList,
+                        type: optionsModule.getRequestType('deferred'),
+                        id: mainDeferID
+                    });
+                })
+                .fail(function (error) {
+                    console.log('fdafd');
+                    mainDefer.reject(error);
+                });
+            return mainDefer;
         },
         deferReadData: function (sql) {
             var defer = deferredModule.create(),

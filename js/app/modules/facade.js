@@ -129,6 +129,11 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
             }
         }
     });
+
+    mediator.subscribe(optionsModule.getChannel('socketMultiplyExec'), function(data){
+        data.key = optionsModule.getSetting('key');
+        socketModule.emit('execMultiply', data);
+    });
     var responseChannel = optionsModule.getChannel('socketResponse');
     mediator.subscribe(responseChannel, function (data) {
         var error = data.error,
@@ -142,9 +147,13 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
             );
             if (type === deferredType) {
                 defer = deferredModule.pop(data.id);
-                defer.resolve();
+                defer.reject(error);
+                //console.log(data.id)
+                //defer.fail(function(){
+                //    console.log('fail')
+                //})
+                //console.log(error)
             }
-
         } else {
             var resData = json_parse(data.data);
             switch (type) {

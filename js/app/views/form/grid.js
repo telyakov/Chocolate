@@ -263,7 +263,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
         save: function (opts) {
             if (this.hasChange()) {
 
-                var changedObj = this.getChangedDataFromStorage(),
+                var _this = this,
+                    changedObj = this.getChangedDataFromStorage(),
                     dataObj = this.getDBDataFromStorage(),
                     deletedData = this.getDeletedDataFromStorage(),
                     responseChangeObj = {},
@@ -310,12 +311,15 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     }
                     if ($.isEmptyObject(errors)) {
                         var model = this.model;
-                           var tasks = model.deferSave(responseChangeObj, deletedData);
-                        $.when.apply($, tasks)
+                         model
+                             .deferSave(responseChangeObj, deletedData)
                             .done(function(){
                                 if (opts.refresh) {
                                     model.trigger('refresh:form');
                                 }
+                            })
+                            .fail(function(error){
+                                 _this.showMessage(error);
                             });
                     } else {
                         var pk,
