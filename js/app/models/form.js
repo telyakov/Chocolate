@@ -101,6 +101,21 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
             }
             return sql;
         },
+        deferCreateProc: function (data) {
+            var extendedData = $.extend({}, this.getParamsForBind(), data),
+                sql = this.getCreateProc();
+            return bindModule.deferredBindSql(sql, extendedData, true);
+        },
+        deferUpdateProc: function (data) {
+            var extendedData = $.extend({}, this.getParamsForBind(), data),
+                sql = this.getUpdateProc();
+            return bindModule.deferredBindSql(sql, extendedData, true);
+        },
+        deferDeleteProc: function (data) {
+            var extendedData = $.extend({}, this.getParamsForBind(), data),
+                sql = this.getDeleteProc();
+            return bindModule.deferredBindSql(sql, extendedData, true);
+        },
         deferSave: function (data, deletedData) {
             var deferredTasks = [],
                 mainDefer = deferredModule.create(),
@@ -116,13 +131,12 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
                     if (hasOwn.call(data, i)) {
                         var sql;
                         currentData = data[i];
-                        if (helpersModule.isNewRow(currentData.id)) {
-                            sql = this.getUpdateProc();
-                        } else {
-                            sql = this.getCreateProc();
-                        }
                         extendedData = $.extend({}, paramsForBind, currentData);
-                        defer = bindModule.deferredBindSql(sql, extendedData, true);
+                        if (helpersModule.isNewRow(currentData.id)) {
+                            defer = this.deferUpdateProc(extendedData);
+                        } else {
+                            defer = this.deferCreateProc(extendedData);
+                        }
                         deferredTasks.push(defer);
                         defer
                             .done(function (res) {
@@ -132,13 +146,12 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
                 }
             }
             if (deletedData) {
-                var deletedID,
-                    deleteSql = this.getDeleteProc();
+                var deletedID;
                 for (deletedID in deletedData) {
                     if (hasOwn.call(deletedData, deletedID)) {
                         currentData = {id: deletedID};
                         extendedData = $.extend({}, paramsForBind, currentData);
-                        defer = bindModule.deferredBindSql(deleteSql, extendedData, true);
+                        defer = this.deferDeleteProc(extendedData);
                         deferredTasks.push(defer);
                         defer
                             .done(function (res) {
@@ -147,7 +160,7 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
                     }
                 }
             }
-                    var mainDeferID = deferredModule.save(mainDefer);
+            var mainDeferID = deferredModule.save(mainDefer);
             $.when.apply($, deferredTasks)
                 .done(function () {
                     mediator.publish(optionsModule.getChannel('socketMultiplyExec'), {
@@ -157,7 +170,6 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
                     });
                 })
                 .fail(function (error) {
-                    console.log('fdafd');
                     mainDefer.reject(error);
                 });
             return mainDefer;

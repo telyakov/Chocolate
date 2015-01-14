@@ -450,11 +450,20 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             }
             cnt.fillText(line, marginLeft, marginTop);
         },
-        isNewRow: function(pk){
-            return $.isNumeric(pk)? true: false;
+        isNewRow: function (pk) {
+            return $.isNumeric(pk) ? true : false;
         },
-        uniqueColumnClass: function(key){
+        uniqueColumnClass: function (key) {
             return 'column-' + key;
+        },
+        arrayBufferToBase64: function (buffer) {
+            var binary = '';
+            var bytes = new Uint8Array(buffer);
+            var len = bytes.byteLength;
+            for (var i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return window.btoa(binary);
         },
         init: function () {
             _private.createJqueryElements();

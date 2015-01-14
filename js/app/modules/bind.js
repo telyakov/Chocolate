@@ -12,13 +12,14 @@ var bindModule = (function (userModule, undefined) {
         },
         _private = {
             createKeySearch: function (key) {
-                var expr = '\\[' + key + '\\]';
+                var expr = '\'?\\[' + key + '\\]\'?';
                 return new RegExp(expr, 'gi');
             },
             createDataSearch: function () {
-                return (/\[.*?\]/g);
+                return (/'?\[.*?\]\'?/gi);
             },
             bindCardSql: function (sql, card) {
+                //todo: fix error link
                 var search = _private.createKeySearch,
                     parentID = card.getKey(),
                     entityTypeID = card.getGridForm().getEntityTypeID();
@@ -64,9 +65,12 @@ var bindModule = (function (userModule, undefined) {
             bind: function (sql, data) {
                 var search = _private.createDataSearch();
                 return sql.replace(search, function (param) {
+                    if(param[0] === "'" && param[param.length -1] === "'"){
+                        param = param.substring(1, param.length - 1);
+                    }
                     var prop = param.substring(1, param.length - 1).toLowerCase();
                     if (data.hasOwnProperty(prop)) {
-                        return "'" + data[prop] + "'";
+                        return "'" + data[prop].replace(/\'/g, '\'\'') + "'";
                     }
                     return param;
                 });

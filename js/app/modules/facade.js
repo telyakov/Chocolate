@@ -18,6 +18,10 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
         data.key = optionsModule.getSetting('key');
         socketModule.emit('request', data);
     });
+    mediator.subscribe(optionsModule.getChannel('socketFileUpload'), function (data) {
+        data.key = optionsModule.getSetting('key');
+        socketModule.emit('fileUpload', data);
+    });
 
     mediator.subscribe(optionsModule.getChannel('xmlRequest'), function (data) {
         data.key = optionsModule.getSetting('key');
@@ -148,11 +152,6 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
             if (type === deferredType) {
                 defer = deferredModule.pop(data.id);
                 defer.reject(error);
-                //console.log(data.id)
-                //defer.fail(function(){
-                //    console.log('fail')
-                //})
-                //console.log(error)
             }
         } else {
             var resData = json_parse(data.data);

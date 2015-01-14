@@ -74,7 +74,6 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
             return facade.getFilesModule().isNotEmpty(this.getFormID()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
         },
         save: function () {
-            console.log('save')
             if (this.hasChange()) {
                 var fileModule = facade.getFilesModule(),
                     formID = this.getFormID(),
@@ -84,14 +83,47 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                     var isEmpty = $.isEmptyObject(deletedData),
                         ownerLock = this.model.getColumnsDefaultValues().ownerlock;
                     while (fileModule.isNotEmpty(formID)) {
-                        var file = fileModule.pop(formID),
-                            rowID = file[0].rowID;
+                        var files = fileModule.pop(formID),
+                            file = files[0],
+                            rowID = file.rowID,
+                            model = this.model;
                         if (isEmpty || !deletedData[rowID]) {
-                            $form.fileupload({
-                                formData: {FilesTypesID: 4, OwnerLock: ownerLock}
+                            var defer = deferredModule.create();
+                            defer.done(function(file){
+                                var reader = new FileReader();
+                                reader.onload = function (evt) {
+                                    var data = evt.target.result;
+                                    var prepare  = helpersModule.arrayBufferToBase64(data);
+                                    model.deferCreateProc({
+                                        filestypesid: '4',
+                                        ownerlock: ownerLock,
+                                        source: '',
+                                        description: 'загружено через web-service',
+                                        userid: userModule.getID(),
+                                        name: file.name,
+                                        filedatetime: moment().format('YYYY-MM-DD HH:mm:ss')
+                                    })
+                                        .done(function (res) {
+                                            var sql = res.sql;
+                                            mediator.publish(optionsModule.getChannel('socketFileUpload'), {
+                                                data:  prepare,
+                                                sql: sql
+                                            });
+                                        });
+                                };
+                                reader
+                                    .readAsArrayBuffer(file);
                             });
-                            $form.fileupload('send', {files: file});
+                            defer.resolve(file);
+
+
                         }
+                        //if (isEmpty || !deletedData[rowID]) {
+                        //    $form.fileupload({
+                        //        formData: {FilesTypesID: 4, OwnerLock: ownerLock}
+                        //    });
+                        //    $form.fileupload('send', {files: file});
+                        //}
                     }
                 }
                 else {
@@ -121,7 +153,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
             var model = this.model;
             model
                 .deferSave({}, deletedData)
-                .done(function(){
+                .done(function () {
                     model.trigger('refresh:form');
                 });
         },
@@ -183,8 +215,8 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                         filesModule.pushError(_this.getFormID(), data.errorThrown);
                         filesModule.push(_this.getFormID(), data.files);
                     },
-                    dropZone: $dropZone,
-                    url: '/Attachment/upload?view=attachments.xml&ParentView=' + this.model.getParentView() + '&ParentID=' + this.model.get('parentId')
+                    dropZone: $dropZone
+                    //url: '/Attachment/upload?view=attachments.xml&ParentView=' + this.model.getParentView() + '&ParentID=' + this.model.get('parentId')
                 });
             this.initContextFormMenuEvent();
         },
