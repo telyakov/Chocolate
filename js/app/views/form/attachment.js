@@ -68,28 +68,33 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
             var $form = this.getJqueryForm();
             this.layoutFooter($form);
             this.initScript($form);
-            this.refreshData();
+            this.refreshData(true);
         },
         hasChange: function () {
             return facade.getFilesModule().isNotEmpty(this.getFormID()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
         },
         save: function () {
             if (this.hasChange()) {
+                var _this = this;
                 var fileModule = facade.getFilesModule(),
                     formID = this.getFormID(),
                     $form = this.getJqueryForm(),
                     deletedData = this.getDeletedDataFromStorage();
                 if (fileModule.isNotEmpty(formID)) {
                     var isEmpty = $.isEmptyObject(deletedData),
-                        ownerLock = this.model.getColumnsDefaultValues().ownerlock;
+                        ownerLock = this.model.getColumnsDefaultValues().ownerlock,
+                        filesTasks = [];
                     while (fileModule.isNotEmpty(formID)) {
+                        var taskDefer = deferredModule.create(),
+                            taskDeferID = deferredModule.save(taskDefer);
+                        filesTasks.push(taskDefer);
                         var files = fileModule.pop(formID),
                             file = files[0],
                             rowID = file.rowID,
                             model = this.model;
                         if (isEmpty || !deletedData[rowID]) {
                             var defer = deferredModule.create();
-                            defer.done(function(file){
+                            defer.done(function(file, taskDeferID){
                                 var reader = new FileReader();
                                 reader.onload = function (evt) {
                                     var data = evt.target.result;
@@ -106,24 +111,24 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                                         .done(function (res) {
                                             var sql = res.sql;
                                             mediator.publish(optionsModule.getChannel('socketFileUpload'), {
+                                                type: optionsModule.getRequestType('deferred'),
                                                 data:  prepare,
-                                                sql: sql
+                                                sql: sql,
+                                                name: taskDeferID
                                             });
                                         });
                                 };
                                 reader
                                     .readAsArrayBuffer(file);
                             });
-                            defer.resolve(file);
+                            defer.resolve(file, taskDeferID);
 
 
                         }
-                        //if (isEmpty || !deletedData[rowID]) {
-                        //    $form.fileupload({
-                        //        formData: {FilesTypesID: 4, OwnerLock: ownerLock}
-                        //    });
-                        //    $form.fileupload('send', {files: file});
-                        //}
+                        $.when.apply($, filesTasks).done(function () {
+                            _this.saveDeletedData();
+
+                        });
                     }
                 }
                 else {
@@ -246,7 +251,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
         refresh: function () {
             this.refreshData();
         },
-        refreshData: function () {
+        refreshData: function (isInitJs) {
             var $form = this.getJqueryForm(),
                 model = this.model,
                 _this = this,
@@ -265,7 +270,9 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                         type: optionsModule.getRequestType('chFormRefresh'),
                         id: deferID
                     });
-                    _this.initTableScript();
+                    if(isInitJs){
+                        _this.initTableScript();
+                    }
                     defer.done(function (data) {
                         _this.persistData(data.data, data.order);
                         var files = [];
