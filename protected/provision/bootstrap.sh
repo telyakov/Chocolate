@@ -38,7 +38,7 @@ sudo chkconfig --level 345 nginx on
 sudo cp  /vagrant/protected/provision/nginx.conf /etc/nginx/nginx.conf
 
 #php install from source
-sudo rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-2.noarch.rpm
+sudo rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
 sudo yum install -y libxml2 libxml2-devel curl-devel libXpm-devel libc-client-devel bzip2 bzip2-devel bison re2c freetype-devel libmcrypt libmcrypt-devel postgresql-devel
 
 #for empty centos7
