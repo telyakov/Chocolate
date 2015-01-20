@@ -3,15 +3,13 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
     return Backbone.View.extend({
         initialize: function (options) {
             _.bindAll(this, 'render');
-            this.$el = options.$el;
+            this.$el = this.createPanel();
             this.model = options.model;
             if (options.card) {
                 this.card = options.card;
             } else {
                 this.card = null;
             }
-
-            this.render();
         },
         view: null,
         events: {
@@ -88,7 +86,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 options = $editable.data().editable.options,
                 view = options.view,
                 parentID = $editable.closest('tr').attr('data-id'),
-                $tabs = $('#tabs'),
                 toID = options.toID,
                 toName = options.toName,
                 fromID = options.fromID,
@@ -99,7 +96,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             }
             helpersModule.leaveFocus();
             mediator.publish(optionsModule.getChannel('openForm'), {
-                $el: $tabs,
                 view: view,
                 parentModel: this.model,
                 parentID: parentID
@@ -109,7 +105,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
         },
 
         render: function () {
-            var $panel = this.createPanel(),
+            var $panel = this.$el,
                 _this = this,
                 panelDefer = $.Deferred();
             if (this.model.isAttachmentView()) {
@@ -192,7 +188,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 $panel = $('<div>', {
                     id: id
                 });
-            this.$el.append($panel);
+            $('#tabs').append($panel);
             facade.getTabsModule().addAndSetActive(id, this.model.getCaption());
             this.delegateEvents();
             return $panel;

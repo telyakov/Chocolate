@@ -45,9 +45,9 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
                             $xml: $xml
                         });
                         var view = new FormView({
-                            model: model,
-                            $el: $('#tabs')
+                            model: model
                         });
+                        view.render();
                         break;
                     case optionsModule.getRequestType('deferred'):
                         var defer = deferredModule.pop(data.id);
@@ -68,8 +68,7 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
     });
 
     mediator.subscribe(optionsModule.getChannel('openForm'), function (opts) {
-        var $el = opts.$el,
-            card = opts.card,
+        var card = opts.card,
             view = opts.view,
             parentModel = opts.parentModel,
             parentID = opts.parentID;
@@ -93,11 +92,12 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
                 parentModel: parentModel,
                 parentId: parentID
             });
+            console.log(opts)
             var view = new FormView({
                 model: model,
-                $el: $el,
                 card: card
             });
+            view.render()
         });
     });
 

@@ -22,7 +22,6 @@ var FormCardElement = (function ($, optionsModule, mediator, CardElement) {
                 view = column.getView();
             return function () {
                 mediator.publish(optionsModule.getChannel('openForm'), {
-                    $el: $('#' + controlID),
                     view: view,
                     parentModel: _this.get('model'),
                     parentID: pk,
