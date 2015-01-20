@@ -6,7 +6,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 '<form id="<%= formID %>" class="grid-form" data-id="attachments.xml" ',
                 'parent-data-id="<%= parentView %>" ',
                 'data-parent-pk="<%= parentID %>" enctype="multipart/form-data" multiple="multiple" ',
-                ' action="/Attachment/upload?view=attachments.xml&amp;ParentView=<%= parentView %>&amp;ParentID=<%= parentID %>" method="post">',
+                '  method="post">',
                 '<% if (isSaved) { %>',
                 '<div class="fileupload-buttonbar"><menu class="menu" type="toolbar">',
                 '<span class="fileinput-button menu-button active">',
@@ -221,7 +221,6 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                         filesModule.push(_this.getFormID(), data.files);
                     },
                     dropZone: $dropZone
-                    //url: '/Attachment/upload?view=attachments.xml&ParentView=' + this.model.getParentView() + '&ParentID=' + this.model.get('parentId')
                 });
             this.initContextFormMenuEvent();
         },

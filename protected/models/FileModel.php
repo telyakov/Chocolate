@@ -95,53 +95,6 @@ class FileModel extends CFormModel
         }
     }
 
-    public function uploadFile($parentView, $parentID)
-    {
-        $response = new UploadResponse();
-        try {
-            if ($file = CUploadedFile::getInstance(new FileModel(), 'files')) {
-                $attachmentsModel = Controller::loadForm(Attachments::VIEW, $parentView, $parentID);
-                $data = $this->getFileInfo($file, $parentID, $attachmentsModel->getParentDataFormProperties()->getAttachmentsEntityTypeID());
-                $routine = $attachmentsModel->getDataFormProperties()->getCreateProc();
-                $routine = Yii::app()->bind->bindProcedureFromData($routine, new DataBaseParameters($data));
-                Yii::app()->erp->attachmentIns($routine, $this->read($file));
-                $response->setStatus('Файл успешно загружен на сервер.', Response::SUCCESS);
-
-            } else {
-                new HttpException('Не найден файл, загружаемый на сервер.');
-            }
-            return $response;
-
-        } catch (Exception $e) {
-            $response->setStatus('Возникла ошибка при загрузке вложения.', Response::ERROR);
-            return $response;
-        }
-    }
-
-    private function getFileInfo(CUploadedFile $file, $parentID, $entityTypeID)
-    {
-        return [
-            'name' => $file->getName(),
-            'Source' => $file->getTempName(),
-            'description' => 'загружено через web-service',
-            'FilesTypesID' => Yii::app()->request->getPost('FilesTypesID'),
-            'FileDateTime' => date(Yii::app()->params['dateTimeFormat']),
-            'OwnerLock' => Yii::app()->request->getPost('OwnerLock'),
-            'userid' => Yii::app()->user->id,
-            'ParentId' => $parentID,
-            'EntityTypeID' => $entityTypeID
-        ];
-    }
-
-    private function read(CUploadedFile $file)
-    {
-        $source = $file->getTempName();
-        $handle = fopen($source, "r");
-        $contents = fread($handle, filesize($source));
-        fclose($handle);
-        return $contents;
-    }
-
     public function rules()
     {
         return array(
