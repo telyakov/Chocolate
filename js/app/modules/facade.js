@@ -37,7 +37,7 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
 
             if (data.data) {
                 var type = data.type,
-                    xml = helpersModule.winToUnicode(atob(data.data)),
+                    xml = helpersModule.winToUnicode(atob(helpersModule.arrayBufferToBase64(data.data))),
                     $xml = $($.parseXML(xml));
                 switch (type) {
                     case optionsModule.getRequestType('mainForm'):
@@ -110,7 +110,7 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
         } else {
             if (data.data) {
                 //https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
-                var byteCharacters = atob(data.data),
+                var byteCharacters = atob(helpersModule.arrayBufferToBase64(data.data)),
                     charactersLength = byteCharacters.length,
                     byteArrays = [],
                     sliceSize = 512,
