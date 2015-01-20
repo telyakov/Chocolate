@@ -101,17 +101,19 @@ var facade = (function (navBarModule, AppModel, AppView, Blob, saveAs, json_pars
     });
 
     mediator.subscribe(optionsModule.getChannel('setIdentity'), function (id, name) {
-        storageModule.saveUser(id, name);
-        var rolesSql = bindModule.bindSql(optionsModule.getSql('getRoles')),
-            formsSql = bindModule.bindSql(optionsModule.getSql('getForms'));
-        mediator.publish(requestChannel, {
-            query: rolesSql,
-            type: optionsModule.getRequestType('roles')
-        });
-        mediator.publish(requestChannel, {
-            query: formsSql,
-            type: optionsModule.getRequestType('forms')
-        });
+        setTimeout(function(){
+            storageModule.saveUser(id, name);
+            var rolesSql = bindModule.bindSql(optionsModule.getSql('getRoles')),
+                formsSql = bindModule.bindSql(optionsModule.getSql('getForms'));
+            mediator.publish(requestChannel, {
+                query: rolesSql,
+                type: optionsModule.getRequestType('roles')
+            });
+            mediator.publish(requestChannel, {
+                query: formsSql,
+                type: optionsModule.getRequestType('forms')
+            });
+        }, 300);
     });
     mediator.subscribe(setRolesChannel, function (roles) {
         storageModule.saveRoles(roles);
