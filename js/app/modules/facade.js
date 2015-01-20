@@ -202,23 +202,26 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
     });
 
     mediator.subscribe(optionsModule.getChannel('setIdentity'), function (id, employeeId, name) {
-        storageModule.saveUser(id,employeeId,  name);
-        var rolesDefer  = bindModule.deferredBindSql(optionsModule.getSql('getRoles')),
-            formsDefer = bindModule.deferredBindSql(optionsModule.getSql('getForms'));
-        rolesDefer.done(function (data) {
-            var rolesSql = data.sql;
-            mediator.publish(requestChannel, {
-                query: rolesSql,
-                type: optionsModule.getRequestType('roles')
+        setTimeout(function(){
+            storageModule.saveUser(id,employeeId,  name);
+            var rolesDefer  = bindModule.deferredBindSql(optionsModule.getSql('getRoles')),
+                formsDefer = bindModule.deferredBindSql(optionsModule.getSql('getForms'));
+            rolesDefer.done(function (data) {
+                var rolesSql = data.sql;
+                mediator.publish(requestChannel, {
+                    query: rolesSql,
+                    type: optionsModule.getRequestType('roles')
+                });
             });
-        });
-        formsDefer.done(function (data) {
-            var formsSql = data.sql;
-            mediator.publish(requestChannel, {
-                query: formsSql,
-                type: optionsModule.getRequestType('forms')
+            formsDefer.done(function (data) {
+                var formsSql = data.sql;
+                mediator.publish(requestChannel, {
+                    query: formsSql,
+                    type: optionsModule.getRequestType('forms')
+                });
             });
-        });
+        }, 300);
+
     });
     mediator.subscribe(setRolesChannel, function (roles) {
         storageModule.saveRoles(roles);
