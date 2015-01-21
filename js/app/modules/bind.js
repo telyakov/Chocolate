@@ -18,17 +18,6 @@ var bindModule = (function (userModule, undefined) {
             createDataSearch: function () {
                 return (/'?\[.*?\]\'?/gi);
             },
-            bindCardSql: function (sql, card) {
-                //todo: fix error link
-                var search = _private.createKeySearch,
-                    parentID = card.getKey(),
-                    entityTypeID = card.getGridForm().getEntityTypeID();
-                return sql
-                    .replace(search(keys.parentID), parentID)
-                    .replace(search(keys.entityID), parentID)
-                    .replace(search(keys.entityTypeID), entityTypeID)
-                    .replace(search(keys.entityType), entityTypeID);
-            },
             evalProcedureParameters: function (sql) {
                 var defer = deferredModule.create();
                 var parts = sql.split(' '),
@@ -56,7 +45,8 @@ var bindModule = (function (userModule, undefined) {
                     mediator.publish(optionsModule.getChannel('socketRequest'), {
                         query: paramsSql,
                         type: optionsModule.getRequestType('deferred'),
-                        id: deferId
+                        id: deferId,
+                        isCache: true
                     });
                 }
                 return defer;
@@ -143,14 +133,6 @@ var bindModule = (function (userModule, undefined) {
             }
         };
     return {
-        /**
-         * @param sql {string}
-         * @param card {ChCard}
-         * @returns {string}
-         */
-        bindCardSql: function (sql, card) {
-            return _private.bindCardSql(sql, card);
-        },
         deferredBindSql: function (sql, data, isFull) {
             var defer = deferredModule.create(),
                 deferID = deferredModule.save(defer);
