@@ -2,7 +2,6 @@
 
 class GridController extends Controller
 {
-//    public $navigation = array();
     protected $view;
 
     public function __construct($id, $module = null)

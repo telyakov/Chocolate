@@ -17,20 +17,6 @@ class MajesticController extends Controller
         ];
     }
 
-    public function actionFilterLayout($name, $view, $parentID)
-    {
-        $model = Controller::loadForm($view);
-        $collection = $model->getFilterSettingsCollection();
-        $setting = $collection->getByKey($name);
-        $this->renderPartial('//_filters/_fast', [
-            'form' => new ChFilterForm(),
-            'model' => $model,
-            'settings' => $setting,
-            'parentID' => $parentID
-        ]);
-
-    }
-
     public function actionImages($sql)
     {
 
