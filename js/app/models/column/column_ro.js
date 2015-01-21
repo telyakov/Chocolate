@@ -49,7 +49,8 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
                         mediator.publish(optionsModule.getChannel('socketRequest'), {
                             query: prepareSql,
                             type: optionsModule.getRequestType('deferred'),
-                            id: columnDeferID
+                            id: columnDeferID,
+                            isCache: true
                         });
                     });
                 } else {

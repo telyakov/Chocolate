@@ -248,7 +248,8 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                 mediator.publish(channel, {
                     type: optionsModule.getRequestType('wizardServices'),
                     query: optionsModule.getSql('getServices'),
-                    id: $cnt.attr('id')
+                    id: $cnt.attr('id'),
+                    isCache: true
                 });
             };
         },
@@ -265,7 +266,8 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                     mediator.publish(channel, {
                         type: optionsModule.getRequestType('wizardExecutors'),
                         query: optionsModule.getSql('getExecutors'),
-                        id: $cnt.attr('id')
+                        id: $cnt.attr('id'),
+                        isCache: true
                     });
                 }
             };

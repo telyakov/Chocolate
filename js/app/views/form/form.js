@@ -222,8 +222,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         this.delegateEvents();
                     }
                     if (title.indexOf('fm-wizard-task') !== -1) {
-
-                        this.events['click #' + this.getPanelID() + ' .fm-wizard-task'] = function (e) {
+                        this.events['click .fm-wizard-task'] = function (e) {
                             e.preventDefault();
                             model.trigger('openWizardTask', e);
                         };

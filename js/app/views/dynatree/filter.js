@@ -16,6 +16,7 @@ var FilterDynatreeView = (function (Backbone, $, optionsModule, deferredModule, 
             } else {
                 var defer = deferredModule.create(),
                     deferID = deferredModule.save(defer);
+                console.log( model.getSql())
                 mediator.publish(optionsModule.getChannel('socketRequest'), {
                     query: model.getSql(),
                     id: deferID,
