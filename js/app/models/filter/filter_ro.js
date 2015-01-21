@@ -9,6 +9,21 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             key: null,
             value: null
         },
+        getViewId: function(){
+            if(this._id === null){
+                this._id = helpersModule.uniqueID();
+            }
+            return  this._id;
+        },
+        refresh: function(collection){
+            var _this = this;
+            var event = 'event' + helpersModule.uniqueID();
+            this.render(event, 0, collection);
+            $.subscribe(event, function (e, data) {
+                $('#' + _this.getViewId()).replaceWith(data.text);
+                $.unsubscribe(event);
+            })
+        },
         initialize: function () {
             this.set('key', this.get('filter').getName());
         },
@@ -52,7 +67,14 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         isNextRowEval: function (deferID) {
             return helpersModule.boolExpressionEval(this.get('filter').getToNextRow(), deferID, false);
         },
+        isAutoRefresh: function(){
+          return this.getProperties().get('isAutoRefresh');
+        },
+        _properties: null,
         getProperties: function () {
+            if(this._properties){
+                return this._properties;
+            }
             return new FilterProperties({
                 expression: this.get('filter').getProperties()
             });

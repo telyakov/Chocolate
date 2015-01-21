@@ -5,7 +5,7 @@ var CheckBoxFilterRO = (function (FilterRO) {
             var view = new CheckBoxView({
                 form: this.get('model'),
                 model: this,
-                id: helpersModule.uniqueID(),
+                id: this.getViewId(),
                 $el: $('body')
 
             });

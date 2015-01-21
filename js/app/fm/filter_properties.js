@@ -44,7 +44,7 @@ var FilterProperties = (function (Backbone) {
                                 _this.set('parentFilter', tokens[1].toLowerCase());
                             }
                             break;
-                        case propInLower.indexOf('autoRefresh') !== -1:
+                        case propInLower.indexOf('autorefresh') !== -1:
                             _this.set('isAutoRefresh', true);
                             break;
                         default:

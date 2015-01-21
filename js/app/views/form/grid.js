@@ -398,6 +398,12 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
         },
         refresh: function () {
             this.refreshData();
+            var collection = this.model.getFiltersROCollection(this);
+            collection.each(function(filter){
+                if(filter.isAutoRefresh()){
+                    filter.refresh(collection);
+                }
+            })
         },
         _callbacks: null,
         getCallbacks: function () {

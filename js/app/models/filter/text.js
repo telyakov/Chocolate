@@ -5,7 +5,7 @@ var TextFilterRO = (function (FilterRO, helpersModule) {
             var view = new TextFilterView({
                 form: this.get('model'),
                 model: this,
-                id: helpersModule.uniqueID()
+                id: this.getViewId()
             });
             view.render(event, i);
         }

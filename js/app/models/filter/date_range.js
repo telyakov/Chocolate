@@ -5,7 +5,7 @@ var DateRangeFilterRO = (function (FilterRO) {
             var view = new DateRangeView({
                 form: this.get('model'),
                 model: this,
-                id: helpersModule.uniqueID(),
+                id: this.getViewId(),
                 $el: $('body')
 
             });

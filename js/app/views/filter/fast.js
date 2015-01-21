@@ -74,7 +74,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             model.isVisibleEval(visibleId);
             model.isNextRowEval(nextRowId);
             model.isMultiSelectEval(multiSelectId);
-            var dataDf = model.deferData();
+            var dataDf = model.deferData(true);
             $.when(visibleDf, nextRowDf, multiSelectDf, dataDf).done(function (visible, nextRow, multiSelect, dataRes) {
                 var isVisible = visible.value,
                     isNextRow = nextRow.value,
@@ -99,7 +99,6 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                         isNextRow: isNextRow,
                         parentFilterKey: parentFilter,
                         isMultiSelect: isMultiSelect,
-                        isAutoRefresh: model.getProperties().get('isAutoRefresh'),
                         data: prepareData,
                         containerID: _this.id
                     });
@@ -144,7 +143,6 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                                             isNextRow: isNextRow,
                                             parentFilterKey: parentFilter,
                                             isMultiSelect: isMultiSelect,
-                                            isAutoRefresh: model.getProperties().get('isAutoRefresh'),
                                             data: prepareData2,
                                             containerID: _this.id,
                                             force: true
@@ -156,7 +154,6 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                         }
                     );
                 }
-
                 $.publish(event, {
                     text: text,
                     counter: i

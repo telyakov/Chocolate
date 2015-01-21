@@ -2,10 +2,10 @@ var FastFilterRO = (function (FilterRO, helpersModule, optionsModule) {
     'use strict';
     return FilterRO.extend({
         _data: null,
-        deferData: function () {
+        deferData: function (forceRefresh) {
             var dataDefer = deferredModule.create(),
                 _this = this;
-            if (this._data === null) {
+            if (this._data === null || forceRefresh) {
                 this.readProcEval()
                     .done(function (data) {
                         var sql = data.sql;
@@ -26,12 +26,14 @@ var FastFilterRO = (function (FilterRO, helpersModule, optionsModule) {
             }
             return dataDefer;
         },
+        _id: null,
+
         render: function (event, i, collection) {
             var view = new FastFilterView({
                 model: this,
                 form: this.get('model'),
                 view: this.get('view'),
-                id: helpersModule.uniqueID(),
+                id: this.getViewId(),
                 $el: $('body')
 
             });
