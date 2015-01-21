@@ -3,9 +3,8 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location, window,
     return Backbone.View.extend({
         initialize: function (options) {
             _.bindAll(this, 'render', '_renderAnimateIndicator', '_renderNavBar');
-            this.$el = options.$el;
+            this.$el = $('body');
             this.model = options.model;
-            this.render();
         },
         events: {
             'click .link-form, .link-profile': 'openForm',
@@ -259,11 +258,54 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location, window,
             } else {
                 tasksName = optionsModule.getConstants('tasksXml');
             }
-            if (host !== '10.0.5.2' && path !== optionsModule.getUrl('openFromEmail')) {
-                mediator.publish(optionsModule.getChannel('xmlRequest'), {
-                    name: tasksName,
-                    type: optionsModule.getRequestType('childForm')
+            var isOpenFromEmail = (path === optionsModule.getUrl('openFromEmail'))
+            if (host !== '10.0.5.2' && !isOpenFromEmail) {
+                //todo: сделать поддержку настройки автозапуска форм
+                setTimeout(function () {
+                    mediator.publish(optionsModule.getChannel('xmlRequest'), {
+                        name: tasksName,
+                        type: optionsModule.getRequestType('mainForm')
+                    });
+                }, 300);
+            }
+            if (isOpenFromEmail) {
+                var rawParams = location.search.split('&'),
+                    params = {};
+                rawParams.forEach(function (par) {
+                    var tokens = par.split('='),
+                        name = tokens[0],
+                        value = tokens[1];
+                    if (name.indexOf('?') === 0) {
+                        name = name.substr(1);
+                    }
+                    params[name] = value;
                 });
+                var view = params.view,
+                    idList = params.id;
+                setTimeout(function () {
+                    var defer = deferredModule.create(),
+                        deferId = deferredModule.save(defer);
+                    mediator.publish(optionsModule.getChannel('xmlRequest'), {
+                        name: view,
+                        type: optionsModule.getRequestType('deferred'),
+                        id: deferId
+                    });
+                    defer.done(function (res) {
+                        var $xml = res.data,
+                            model = new FormModel({
+                                $xml: $xml
+                            }),
+                            view = new FormView({
+                                model: model
+                            }),
+                            filterModel = model.getFiltersROCollection(view).findWhere({key: 'idlist'});
+                        if (filterModel) {
+                            filterModel.set('value', idList);
+                        }
+
+                        view.render();
+                    })
+                }, 300);
             }
 
             var options = {

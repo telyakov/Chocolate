@@ -38,7 +38,7 @@ var TextFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                         tooltip: model.getTooltip(),
                         disabled: isDisabled,
                         isNextRow: isNextRow,
-                        value: model.getDefaultValue(),
+                        value:  model.getValue(),
                         valueFormat: model.getValueFormat(),
                         containerID: _this.id
                     });

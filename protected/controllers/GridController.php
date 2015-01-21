@@ -33,10 +33,8 @@ class GridController extends Controller
         ];
     }
 
-    public function actionSearchByID($id)
+    public function actionSearchByID()
     {
-        $model = Controller::loadForm($this->view);
-        $model->filters['idlist'] = $id;
-        $this->render('index', ['model' => $model]);
+        $this->render('//site/default');
     }
 }

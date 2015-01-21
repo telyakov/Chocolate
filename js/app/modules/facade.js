@@ -288,9 +288,9 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
                     userName: userName
                 }),
                 view = new AppView({
-                    model: appModel,
-                   $el: $('body')
+                    model: appModel
                 });
+            view.render();
         }
     };
 
