@@ -2,8 +2,7 @@
     "require": {
         "php": ">=5.5.4",
         "rmk135/Rmk-Framework": "*",
-        "yiisoft/yii": ">=1.1.15",
-        "phpoffice/phpexcel": "dev-master"
+        "yiisoft/yii": ">=1.1.15"
     },
     "require-dev": {
         "nusphere/nusoap": "0.9.5",

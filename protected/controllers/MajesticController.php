@@ -24,17 +24,6 @@ class MajesticController extends Controller
         $resp->send();
     }
 
-    public function actionExport2Excel()
-    {
-
-        $data = json_decode(Yii::app()->request->getParam('data'), true);
-        ExcelModel::export(
-            Controller::loadForm($data['view']),
-            $data['data'],
-            $data['settings']
-        );
-        Yii::app()->end();
-    }
 //    public function actionTest(){
 //        ini_set("soap.wsdl_cache_enabled", 0);
 //        ini_set("soap.wsdl_cache_ttl", 1);
