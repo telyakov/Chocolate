@@ -3,7 +3,6 @@
  * Controller is the customized base controller class.
  * All controller classes for this application should extend from this base class.
  */
-use FrameWork\DataForm\DataFormModel\DataFormProperties as DataFormProperties;
 class Controller extends CController
 {
 
@@ -24,20 +23,4 @@ class Controller extends CController
 	 * for more details on how to specify this property.
 	 */
 	public $breadcrumbs=array();
-
-    /**
-     * @param DataFormProperties $parentDataFormProperties
-     * @return GridForm
-     */
-    //TODO: нужно ли рекурсировное созжание моделей?
-    public static function loadForm($view, $parentView = null, $parentID = null)
-    {
-        if($parentView){
-            $parentModel = new GridForm($parentView);
-        }else{
-            $parentModel = null;
-        }
-
-        return new GridForm($view, null, null, $parentModel, $parentID);
-    }
 }

@@ -1,4 +1,5 @@
 <?
+use Chocolate\Exceptions\FileSystemException;
 use Chocolate\Http\Response;
 use FrameWork\DataBase\DataBaseRoutine;
 use \FrameWork\DataBase\RecordsetRow;
