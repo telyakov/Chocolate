@@ -66,7 +66,9 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
         data.key = optionsModule.getSetting('key');
         socketModule.emit('fileRequest', data);
     });
-
+    mediator.subscribe(optionsModule.getChannel('socketExportToExcel'), function (data) {
+        socketModule.emit('exportToExcel', data);
+    });
     mediator.subscribe(optionsModule.getChannel('openForm'), function (opts) {
         var card = opts.card,
             view = opts.view,

@@ -2,8 +2,7 @@ var SelectColumnRO = (function (Backbone, helpersModule) {
     'use strict';
     return ColumnRO.extend({
         getJsFn: function () {
-            var _this = this,
-                allowEdit = this.getRawAllowEdit();
+            var _this = this;
 
             return function ($cnt, view) {
                 _this.evalReadProc()

@@ -21,6 +21,7 @@ var optionsModule = (function () {
             socketMultiplyExec: 'socket_multiply_exec',
             socketResponse: 'socket_response',
             socketFileRequest: 'socket_file_request',
+            socketExportToExcel: 'socket_export_to_excel',
             socketFileResponse: 'socket_file_response',
             socketFileUpload: 'socket_file_upload',
             logError: 'log_error',

@@ -31,7 +31,6 @@ module.exports = function (grunt) {
                     '../js/libs/tmpl.min.js',
                     '../js/libs/jquery-file-upload/js/jquery.fileupload.js',
                     '../js/libs/jquery-file-upload/js/jquery.fileupload-ui.js',
-                    '../js/libs/fileDownload/index.js',
                     '../js/libs/fancyBox/index.js',
                     '../js/libs/throttle-debounce/index.js',
                     '../js/libs/classie/index.js',

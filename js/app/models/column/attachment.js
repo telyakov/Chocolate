@@ -11,6 +11,9 @@ var AttachmentColumnRO = (function () {
         isEdit: function () {
             return true;
         },
+        getFromKey: function(){
+            return this.getKey();
+        },
         getJsFn: function () {
             var _this = this;
             return function ($cnt, view) {

@@ -12,7 +12,6 @@ css/libs/erp.css
 js/erp.js
 js/erp.min.js
 js/main.js
-js/libs/fileDownload
 js/libs/jquery
 js/libs/fancyBox
 js/libs/jquery-ui

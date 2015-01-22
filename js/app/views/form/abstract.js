@@ -239,18 +239,71 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
 
         },
         exportToExcel: function () {
-            var data = {
-                data: $.extend(true, this.getDBDataFromStorage(), this.getChangedDataFromStorage()),
-                view: this.model.getView(),
-                settings: this.getFormSettingsFromStorage()
-            };
-            $.fileDownload(
-                optionsModule.getUrl('export2excel'),
-                {
-                    httpMethod: "POST",
-                    data: {data: JSON.stringify(data)}
+            var settings = this.getFormSettingsFromStorage(),
+                prepareSettings = {},
+                model = this.model,
+                collection = model.getColumnsROCollection(),
+                deferTasks = [];
+            settings.forEach(function (item) {
+                var key = item.key,
+                    column = collection.findWhere({key: key});
+                if (column) {
+                    prepareSettings[key] = $.extend({}, item);
+                    prepareSettings[key].key = column.getFromKey();
+                    prepareSettings[key].caption = column.getVisibleCaption();
+                    if (column.getEditType().indexOf('valuelist') !== -1) {
+                        var defer = deferredModule.create();
+                        deferTasks.push(defer);
+                        (function (defer) {
+                            column.evalReadProc().done(function (res) {
+                                defer.resolve({
+                                    data: res.data,
+                                    key: key
+                                });
+                            })
+                        })(defer);
+                    }
                 }
-            );
+            });
+            var recordset = $.extend(true, {}, this.getDBDataFromStorage(), this.getChangedDataFromStorage());
+            $.when.apply($, deferTasks).done(function (data) {
+                var listData = {};
+                Array.prototype.slice.call(arguments).forEach(function (res) {
+                    listData[res.key] = res.data;
+                });
+                if (!$.isEmptyObject(listData)) {
+                    var hasOwn = Object.prototype.hasOwnProperty,
+                        i,
+                        k
+                    for(i in recordset){
+                        if(hasOwn.call(recordset, i)){
+                            for(k in recordset[i]){
+                                if(hasOwn.call(recordset[i], k)){
+                                    if (listData.hasOwnProperty(k)){
+                                        var oldVal = recordset[i][k];
+                                        recordset[i][k] = listData[k][oldVal].name;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                mediator.publish(optionsModule.getChannel('socketExportToExcel'), {
+                    name: model.getCaption() + '.xls',
+                    settings: JSON.stringify(prepareSettings),
+                    data: JSON.stringify(recordset),
+                    id: 1
+                });
+            });
+
+
+            //$.fileDownload(
+            //    optionsModule.getUrl('export2excel'),
+            //    {
+            //        httpMethod: "POST",
+            //        data: {data: JSON.stringify(data)}
+            //    }
+            //);
         },
         openFormSettings: function (e) {
             var $dialog = $('<div/>'),
@@ -319,14 +372,14 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 return this.getStorage().data[id];
             }
         },
-        addDeletedToStorage: function(id){
+        addDeletedToStorage: function (id) {
             this.getDeletedDataFromStorage()[id] = true;
         },
-        addChangeToStorage: function(id, data){
-            if(this.getChangedDataFromStorage()[id] !== undefined){
+        addChangeToStorage: function (id, data) {
+            if (this.getChangedDataFromStorage()[id] !== undefined) {
                 data = $.extend({}, this.getChangedDataFromStorage()[id], data);
             }
-          this.getChangedDataFromStorage()[id] = data;
+            this.getChangedDataFromStorage()[id] = data;
         },
         getChangedDataFromStorage: function () {
             return this.getStorage().changed;
@@ -346,7 +399,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             var key = this.model.getView();
             return storageModule.getSettingByKey(key, 'shortVisibleMode') ? true : false;
         },
-        setShortMode: function(val){
+        setShortMode: function (val) {
             storageModule.persistSetting(this.model.getView(), 'shortVisibleMode', val);
         },
         getFormStyleID: function () {
