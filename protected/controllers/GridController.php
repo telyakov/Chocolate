@@ -2,26 +2,9 @@
 
 class GridController extends Controller
 {
-    protected $view;
-
-    public function __construct($id, $module = null)
-    {
-        parent::__construct($id, $module);
-        if (isset($_GET['view'])) {
-            $this->view = $_GET['view'];
-        } else {
-            throw new CHttpException(400,
-                'Некорректный запрос. Не указано имя xml-файла для построения сетки.'
-            );
-        }
-    }
-
     public function filters()
     {
-        return [
-            'accessControl',
-            'ajaxOnly +index, save, upload'
-        ];
+        return ['accessControl'];
     }
 
     public function accessRules()

@@ -6,7 +6,7 @@ class MajesticController extends Controller
     {
         return [
             'accessControl',
-            'ajaxOnly -export2Excel, images, test'];
+            'ajaxOnly images, test'];
     }
 
     public function accessRules()
