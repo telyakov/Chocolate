@@ -295,15 +295,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                     id: 1
                 });
             });
-
-
-            //$.fileDownload(
-            //    optionsModule.getUrl('export2excel'),
-            //    {
-            //        httpMethod: "POST",
-            //        data: {data: JSON.stringify(data)}
-            //    }
-            //);
         },
         openFormSettings: function (e) {
             var $dialog = $('<div/>'),
