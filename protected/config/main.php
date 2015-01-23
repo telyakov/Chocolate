@@ -30,7 +30,6 @@ return CMap::mergeArray(
             'application.models.*',
             'application.components.*',
             'application.components.Chocolate.Widgets.*',
-            'editable.*',
         ),
 
         'theme' => 'bootstrap', // requires you to copy the theme under your themes directory
@@ -40,14 +39,6 @@ return CMap::mergeArray(
                 // enable cookie-based authentication
                 'allowAutoLogin' => true,
             ),
-            'editable' => array(
-                'class' => 'editable.EditableConfig',
-                'form' => 'bootstrap', //form style: 'bootstrap', 'jqueryui', 'plain'
-                'mode' => 'popup', //mode: 'popup' or 'inline'
-                'defaults' => array( //default settings for all editable elements
-                    'emptytext' => '',
-                )
-            ),
             'bootstrap' => array(
                 'class' => 'ext.bootstrap.components.ChBootstrap',
                 'responsiveCss' => false,
@@ -56,10 +47,6 @@ return CMap::mergeArray(
             ),
             'erp' => array(
                 'class' => '\FrameWork\DataBase\DataBaseAccessor',
-            ),
-            'bind' => array(
-                'class' => '\Chocolate\Binding\BindingService',
-
             ),
             'session' => array(
                 'autoStart' => true,
@@ -142,12 +129,7 @@ return CMap::mergeArray(
         // using Yii::app()->params['paramName']
         'params' => array(
             'adminEmail' => 'tselishchev@78stroy.ru',
-            'dateFormat' => 'Y-m-d',
-            'dateTimeFormat' => 'Y-m-d H:i:s',
-            'soap_date_format' => 'mm-dd-yyyy hh:ii:ss',
             'date_form_soap_format' => 'd.m.Y H:i:s',
-            'editable_date_time_format' => 'dd.mm.yyyy hh:ii',
-            'editable_date_format' => 'dd.mm.yyyy',
 
         ),
     ),

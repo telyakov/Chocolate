@@ -2,7 +2,6 @@
 
 namespace Chocolate\WebService;
 
-
 use Chocolate\Exceptions\ConnException;
 use FrameWork\DataBase\ConnectionInterface;
 use FrameWork\DataBase\Recordset;
@@ -27,20 +26,13 @@ class WebService extends \SoapClient implements ConnectionInterface
         return $recordset;
     }
 
-    protected static function log($sql){
-        \Yii::log(
-            var_export([
-                'sql' =>$sql,
-                'userid' => \Yii::app()->user->id,
-                'ip' => \Yii::app()->request->getUserHostAddress(),
-                'host' => \Yii::app()->request->getHostInfo(),
-                'browser' => $_SERVER['HTTP_USER_AGENT']
-            ], true),
-            \CLogger::LEVEL_INFO,
-            'webservice'
-        );
-    }
-
+    /**
+     * @param string $sql
+     * @param null $fields
+     * @return Recordset|void
+     * @throws ConnException
+     * @return Recordset
+     */
     function exec($sql, $fields = null)
     {
         try {
@@ -52,7 +44,6 @@ class WebService extends \SoapClient implements ConnectionInterface
 
     private function execute($funcName, $sql, $fields)
     {
-        self::log($sql);
         $response = $this->soapClient->{$funcName}(array(
             'securityKey' => \Yii::app()->params['soapSecurityKey'],
             'sql' => $sql,
@@ -63,6 +54,7 @@ class WebService extends \SoapClient implements ConnectionInterface
         $recordset = $this->parse($response->{$header}->string);
         return $recordset;
     }
+
 
     private function parse(array $soapResponse)
     {

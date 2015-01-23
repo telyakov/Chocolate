@@ -58,6 +58,12 @@ class DataBaseAccessor extends \CApplicationComponent
     }
 
 
+    /**
+     * @param $username
+     * @param $password
+     * @throws DataBaseException
+     * @return Array
+     */
     public function getUserIdentity($username, $password)
     {
         try {

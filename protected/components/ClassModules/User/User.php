@@ -3,7 +3,6 @@ namespace ClassModules\User;
 
 class User extends \CFormModel
 {
-    const MENU_ITEM_CLASS = 'link-form';
     public $userID;
     public $firstName;
     public $lastName;
@@ -20,12 +19,19 @@ class User extends \CFormModel
 
     public function getFullName()
     {
-        return $this->lastName . ' ' . $this->firstName . ' ' . $this->patronymic;
+        return sprintf('%s %s %s', $this->lastName, $this->firstName, $this->patronymic);
     }
 
     public function getEmployeeID(){
         return $this->_employeeID;
     }
+
+    /**
+     * @param $username
+     * @param $password
+     * @throws \Exception
+     * @return boolean
+     */
     public function authenticate($username, $password)
     {
         try {

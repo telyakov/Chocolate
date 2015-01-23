@@ -1,13 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tselishchev
- * Date: 19.06.14
- * Time: 9:50
- */
-
 namespace ClassModules\User;
-
 
 class UserIdentity extends \CUserIdentity
 {
