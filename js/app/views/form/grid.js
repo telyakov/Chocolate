@@ -108,7 +108,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
         searchColumnsHandler: function (e) {
             var opm = optionsModule,
                 $this = $(e.target),
-                $th = this.getTh(),
+                $th = this.getJqueryFloatHeadTable().find('.tablesorter-headerRow').children('th'),
                 searchedClass = opm.getClass('searchedColumn'),
                 $fixedTable = this.getJqueryFloatHeadTable(),
                 $table = this.getJqueryDataTable(),
