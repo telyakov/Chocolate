@@ -3,7 +3,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
     return Backbone.View.extend({
         initialize: function (options) {
             _.bindAll(this, 'render');
-            if(options.$card){
+            if (options.$card) {
                 this.$card = options.$card;
             }
             this.$el = this.createPanel();
@@ -184,6 +184,24 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             }
             return this._panelID;
         },
+        addTab: function (id, name) {
+            var tabsModule = facade.getTabsModule();
+            var $item = $('<li>', {
+                    html: tabsModule.createTabLink(id, name)
+                }),
+                $tabs = helpersModule.getTabsObj();
+            $tabs.children('ul').append($item);
+            $tabs.tabs();
+            $tabs.tabs('refresh');
+            tabsModule.push($item);
+            return $item;
+        },
+        addTabAndSetActive: function (id, name) {
+            var $item = this.addTab(id, name);
+            helpersModule.getTabsObj().tabs({active: $item.index()});
+            return $item;
+        },
+
         createPanel: function () {
             if (this.$card) {
                 return this.$card;
@@ -193,10 +211,32 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     id: id
                 });
             $('#tabs').append($panel);
-            facade.getTabsModule().addAndSetActive(id, this.model.getCaption());
+            var $closeLink = this.addTabAndSetActive(id, this.model.getCaption());
+            this.addCloseEventListener($closeLink);
             this.delegateEvents();
             return $panel;
 
+        },
+        $closeLink: null,
+        addCloseEventListener: function ($closeLink) {
+            this.$closeLink = $closeLink;
+            var _this = this;
+            this.$closeLink
+                .on('click', '.tab-closed', function () {
+                    _this.destroy();
+                    facade.getTabsModule().close($(this));
+                    return false;
+                })
+                .on('touchmove', function(){
+                    _this.destroy();
+                    facade.getTabsModule().close($(this));
+                });
+        },
+        destroyCloseEventListener: function () {
+            this.$closeLink.off('click');
+        },
+        destroy: function(){
+            this.destroyCloseEventListener();
         },
         layoutHeader: function ($panel) {
             var title;

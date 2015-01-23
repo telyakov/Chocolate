@@ -83,33 +83,6 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
         destroy: function ($panel) {
             $panel.find('.editable').editable('destroy').remove();
             $panel.remove();
-        },
-        createTabLink: function (targetID, name) {
-            return [
-                '<a id="',
-                helpersModule.uniqueID(),
-                '" href="#',
-                targetID,
-                '">',
-                name,
-                '</a><span class="tab-closed fa fa-times"></span>'
-            ].join('');
-        },
-        add: function (id, name) {
-            var $item = $('<li>', {
-                    html: _private.createTabLink(id, name)
-                }),
-                $tabs = helpersModule.getTabsObj();
-            $tabs.children('ul').append($item);
-            $tabs.tabs();
-            $tabs.tabs('refresh');
-            history.push($item);
-            return $item;
-        },
-        addAndSetActive: function (id, name) {
-            var $item = _private.add(id, name);
-            helpersModule.getTabsObj().tabs({ active: $item.index() });
-            return $item;
         }
     };
     return {
@@ -120,6 +93,7 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
             return history.pop();
         },
         closeActiveTab: function () {
+            //todo: close card by escape
             _private.close(_private.getActiveChTab().$a);
         },
         /**
@@ -134,29 +108,16 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
         close: function ($a) {
             _private.close($a);
         },
-        /**
-         * @param id {string}
-         * @param name {string}
-         * @returns {jQuery}
-         */
-        add: function (id, name) {
-            return _private.add(id, name);
+        createTabLink: function(targetID, name){
+            return [
+                '<a id="',
+                helpersModule.uniqueID(),
+                '" href="#',
+                targetID,
+                '">',
+                name,
+                '</a><span class="tab-closed fa fa-times"></span>'
+            ].join('');
         },
-        /**
-         * @param targetID {string}
-         * @param name {string}
-         * @returns {string}
-         */
-        createTabLink: function (targetID, name) {
-            return _private.createTabLink(targetID, name);
-        },
-        /**
-         * @param id {string}
-         * @param name {string}
-         * @returns {jQuery}
-         */
-        addAndSetActive: function (id, name) {
-            return _private.addAndSetActive(id, name);
-        }
     };
 })(jQuery, helpersModule, optionsModule, factoryModule, undefined);

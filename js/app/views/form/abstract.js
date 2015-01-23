@@ -112,6 +112,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                         'data-view': view,
                         'html': facade.getTabsModule().createTabLink('', caption)
                     });
+                this.addCloseCardEventListener($li);
                 facade.getTabsModule().push($li);
                 $tabs.children('ul').append($li);
                 $tabs.tabs('refresh');
@@ -139,6 +140,29 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 $a.attr('href', href);
             }
         },
+        $closeLink: null,
+        addCloseCardEventListener: function ($li) {
+            var _this = this;
+            _this.$closeLink = $li;
+            this.$closeLink
+                .on('click', '.tab-closed', function () {
+                    _this.destroy();
+                    facade.getTabsModule().close($(this));
+                    return false;
+                })
+                .on('touchmove', function(){
+                    _this.destroy();
+                    facade.getTabsModule().close($(this));
+                    return false;
+                });
+        },
+        destroyCloseCardEventListener: function () {
+            this.$closeLink.off('click');
+        },
+        destroy: function(){
+            this.destroyCloseCardEventListener();
+        },
+
         initCardScripts: function ($cnt, pk) {
             var _this = this;
             $cnt
