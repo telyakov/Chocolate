@@ -4,9 +4,7 @@ class MajesticController extends Controller
 {
     public function filters()
     {
-        return [
-            'accessControl',
-            'ajaxOnly images, test'];
+        return ['accessControl'];
     }
 
     public function accessRules()

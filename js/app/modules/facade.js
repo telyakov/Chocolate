@@ -94,8 +94,8 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
                 parentModel: parentModel,
                 parentId: parentID
             });
-            console.log(opts)
             var view = new FormView({
+                $card: opts.$el,
                 model: model,
                 card: card
             });

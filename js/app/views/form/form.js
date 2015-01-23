@@ -3,8 +3,12 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
     return Backbone.View.extend({
         initialize: function (options) {
             _.bindAll(this, 'render');
+            if(options.$card){
+                this.$card = options.$card;
+            }
             this.$el = this.createPanel();
             this.model = options.model;
+
             if (options.card) {
                 this.card = options.card;
             } else {
@@ -181,8 +185,8 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             return this._panelID;
         },
         createPanel: function () {
-            if (this.card) {
-                return this.$el;
+            if (this.$card) {
+                return this.$card;
             }
             var id = this.getPanelID(),
                 $panel = $('<div>', {

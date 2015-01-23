@@ -295,7 +295,7 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location, window,
                             model = new FormModel({
                                 $xml: $xml
                             }),
-                            view = new FormView({
+                            view =  new FormView({
                                 model: model
                             }),
                             filterModel = model.getFiltersROCollection(view).findWhere({key: 'idlist'});
