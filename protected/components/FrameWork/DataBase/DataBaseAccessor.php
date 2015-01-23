@@ -6,7 +6,6 @@ namespace FrameWork\DataBase;
 
 use Chocolate\Exceptions\ConnException;
 use Chocolate\Exceptions\DataBaseException;
-use FrameWork\DataBase\DataBaseRoutines;
 use Chocolate\WebService\WebService;
 
 class DataBaseAccessor extends \CApplicationComponent

@@ -5,8 +5,6 @@ namespace Chocolate\WebService;
 
 use Chocolate\Exceptions\ConnException;
 use FrameWork\DataBase\ConnectionInterface;
-use FrameWork\DataBase\DataBaseRoutine;
-use FrameWork\DataBase\DataBaseRoutines;
 use FrameWork\DataBase\Recordset;
 use FrameWork\DataBase\RecordsetRow;
 
@@ -24,8 +22,8 @@ class WebService extends \SoapClient implements ConnectionInterface
 
     function getUserIdentity($username, $password)
     {
-        $routine = new DataBaseRoutine("core.UserIdentityGet '$username', '$password'");
-        $recordset = $this->exec($routine);
+        $sql = "core.UserIdentityGet '$username', '$password'";
+        $recordset = $this->exec($sql);
         return $recordset;
     }
 
@@ -72,7 +70,6 @@ class WebService extends \SoapClient implements ConnectionInterface
         if (!empty($soapResponse)) {
             $columnsCount = array_shift($soapResponse);
             $columns = new \SplFixedArray($columnsCount);
-//            $types = [];
             array_shift($soapResponse);
             $metaCount = array_shift($soapResponse);
             $metaLength = $columnsCount * $metaCount;
@@ -81,7 +78,6 @@ class WebService extends \SoapClient implements ConnectionInterface
             while ($i < $metaLength) {
                 if ($i % $metaCount == 0) {
                     $columns[$columnIndex] = $soapResponse[$i];
-//                    $types[$soapResponse[$i]] = $soapResponse[$i+1];
                     ++$columnIndex;
                 }
                 unset($soapResponse[$i]);
@@ -109,39 +105,9 @@ class WebService extends \SoapClient implements ConnectionInterface
             if (!empty($row)) {
                 $recordset->add(new RecordsetRow($row));
             }
-//            $recordset->setTypes($types);
         }
 
         return $recordset;
-    }
-
-    function getXmlData($name)
-    {
-        $routine = new DataBaseRoutine("core.XmlFileGet '$name'");
-        $recordset = $this->exec($routine);
-        $fileData = $recordset->toArray();
-
-        if (isset($fileData[0]['id'])) {
-            return $this->FileGet($fileData[0]['id']);
-        } else {
-            return null;
-        }
-    }
-
-    function execImmutable(DataBaseRoutine $routine, $fields = null)
-    {
-        try {
-
-            if ($recordset = \Yii::app()->cache->getRoutineData($routine)) {
-                return $recordset;
-            } else {
-                $recordset = $this->execute('Exec2_Immutable', $routine, $fields);
-                \Yii::app()->cache->setRoutineData($routine, $recordset);
-                return $recordset;
-            }
-        } catch (\SoapFault $e) {
-            throw new ConnException($e->getMessage(), $e->getCode(), $e);
-        }
     }
 
     function fileGet($id)
@@ -155,53 +121,4 @@ class WebService extends \SoapClient implements ConnectionInterface
         $fileData = $response->{$funcName . 'Result'}->FileModel->FileData;
         return $fileData;
     }
-
-    function execMultiply(DataBaseRoutines $routines)
-    {
-        try {
-
-            foreach($routines as $routine){
-                self::log($routine);
-            }
-            $funcName = 'ExecMultiply';
-            $status = $this->soapClient->{$funcName}([
-                'securityKey' => \Yii::app()->params['soapSecurityKey'],
-                'sqlList' => $routines->toArray()
-            ]);
-            return $status;
-        } catch (\SoapFault $e) {
-            throw new ConnException($e->getMessage(), $e->getCode(), $e);
-        }
-    }
-
-    function attachmentIns(DataBaseRoutine $sql, $fileData, $userID = null)
-    {
-//        self::log($sql);
-        $funcName = 'AttachmentIns';
-        $response = $this->soapClient->{$funcName}(array(
-            'securityKey' => \Yii::app()->params['soapSecurityKey'],
-            'sql' => $sql,
-            'fileData' => $fileData
-        ));
-        $recordset = $this->parse($response->{$funcName . 'Result'}->string);
-        return $recordset;
-    }
-
-    function execScalar(DataBaseRoutine $sql, $userID = null)
-    {
-        try {
-
-            self::log($sql);
-
-            $response = $this->soapClient->ExecScalar(array(
-                'securityKey' => \Yii::app()->params['soapSecurityKey'],
-                'sql' => $sql,
-            ));
-            $result = $response->ExecScalarResult;
-            return $result;
-        } catch (\SoapFault $e) {
-            throw new ConnException($e->getMessage(), $e->getCode(), $e);
-        }
-    }
-
 }

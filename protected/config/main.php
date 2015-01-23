@@ -48,11 +48,6 @@ return CMap::mergeArray(
                     'emptytext' => '',
                 )
             ),
-            'cache' => array(
-//            'class'=>'system.caching.CFileCache',
-                'class' => '\Chocolate\Cache\Cache',
-//                'class' => 'system.caching.CDummyCache',
-            ),
             'bootstrap' => array(
                 'class' => 'ext.bootstrap.components.ChBootstrap',
                 'responsiveCss' => false,
