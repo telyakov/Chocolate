@@ -42,7 +42,7 @@ interface ConnectionInterface {
      * @param string|int $fields
      * @return Recordset
      */
-    function exec(DataBaseRoutine $sql, $fields = null);
+    function exec($sql, $fields = null);
 
     /**
      * @param $sql String

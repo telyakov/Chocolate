@@ -25,7 +25,7 @@ var MultimediaCardElement = (function (bindModule, optionsModule, json_parse, Ca
                     .done(function (res) {
                         $.get(optionsModule.getUrl('imagesUrls'), {sql: res.sql})
                             .done(function (response) {
-                                var data = json_parse(response, helpersModule.parse).data;
+                                var data = json_parse(response, helpersModule.parse);
                                 if (data.length) {
                                     var $context = $('#' + controlID),
                                         html = [],

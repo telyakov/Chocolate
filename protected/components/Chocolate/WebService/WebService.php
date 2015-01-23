@@ -29,10 +29,10 @@ class WebService extends \SoapClient implements ConnectionInterface
         return $recordset;
     }
 
-    protected static function log(DataBaseRoutine $routine){
+    protected static function log($sql){
         \Yii::log(
             var_export([
-                'sql' => $routine->__toString(),
+                'sql' =>$sql,
                 'userid' => \Yii::app()->user->id,
                 'ip' => \Yii::app()->request->getUserHostAddress(),
                 'host' => \Yii::app()->request->getHostInfo(),
@@ -43,7 +43,7 @@ class WebService extends \SoapClient implements ConnectionInterface
         );
     }
 
-    function exec(DataBaseRoutine $sql, $fields = null)
+    function exec($sql, $fields = null)
     {
         try {
             return $this->execute('Exec2', $sql, $fields);
@@ -52,7 +52,7 @@ class WebService extends \SoapClient implements ConnectionInterface
         }
     }
 
-    private function execute($funcName,DataBaseRoutine $sql, $fields)
+    private function execute($funcName, $sql, $fields)
     {
         self::log($sql);
         $response = $this->soapClient->{$funcName}(array(

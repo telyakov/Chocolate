@@ -94,7 +94,6 @@ var optionsModule = (function () {
             openFromEmail: '/grid/searchbyid',
             webSocketServer: 'http://crm.78stroy.ru',
             imagesUrls: '/majestic/images',
-            formSave: '/grid/save',
             bpOneTask: 'http://bp.78stroy.ru/grid/searchByID?view=tasks%5Ctasksfortops.xml&id='
         },
         messages = {

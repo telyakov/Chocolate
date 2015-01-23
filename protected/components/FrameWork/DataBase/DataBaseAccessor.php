@@ -98,10 +98,16 @@ class DataBaseAccessor extends \CApplicationComponent
         }
     }
 
-    public function exec(DataBaseRoutine $routine, $fields = null)
+    /**
+     * @param $sql
+     * @param null $fields
+     * @return Recordset
+     * @throws DataBaseException
+     */
+    public function exec($sql, $fields = null)
     {
         try {
-            $recordset = $this->conn->exec($routine, $fields);
+            $recordset = $this->conn->exec($sql, $fields);
             return $recordset;
         } catch (ConnException $e) {
             self::handleException($e->getMessage(), $e->getCode(), $e);
@@ -158,6 +164,11 @@ class DataBaseAccessor extends \CApplicationComponent
         }
     }
 
+    /**
+     * @param $fileID
+     * @throws DataBaseException
+     * @return Recordset
+     */
     public function fileMetaDataGet($fileID){
         try{
             $dependencyRoutine = new DataBaseRoutine('Attachments.MetaDataGet', new DataBaseParameters(['FileID' => $fileID]));
@@ -166,6 +177,12 @@ class DataBaseAccessor extends \CApplicationComponent
             throw new DataBaseException($e->getMessage(), 500, $e);
         }
     }
+
+    /**
+     * @param $id
+     * @throws DataBaseException
+     * @return mixed
+     */
     public function fileGet($id)
     {
         try {
