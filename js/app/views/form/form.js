@@ -1,4 +1,4 @@
-var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
+var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule, storageModule) {
     'use strict';
     return Backbone.View.extend({
         initialize: function (options) {
@@ -6,16 +6,14 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             if (options.$card) {
                 this.$card = options.$card;
             }
-            this.$el = this.createPanel();
             this.model = options.model;
-
             if (options.card) {
                 this.card = options.card;
             } else {
                 this.card = null;
             }
+            this.$el = this.createPanel();
         },
-        view: null,
         events: {
             'click .grid-button .editable': 'openChildForm',
             'click .menu-button-refresh': function (e) {
@@ -63,7 +61,9 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 }
             }
         },
-
+        view: null,
+        _panelID: null,
+        $closeLink: null,
         headerTemplate: _.template([
             '<section class="section-header" data-id="header">',
             '<div class="top-header">',
@@ -177,7 +177,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 return {};
             }
         },
-        _panelID: null,
         getPanelID: function () {
             if (this._panelID === null) {
                 this._panelID = helpersModule.uniqueID();
@@ -217,7 +216,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             return $panel;
 
         },
-        $closeLink: null,
         addCloseEventListener: function ($closeLink) {
             this.$closeLink = $closeLink;
             var _this = this;
@@ -227,7 +225,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     facade.getTabsModule().close($(this));
                     return false;
                 })
-                .on('touchmove', function(){
+                .on('touchmove', function () {
                     _this.destroy();
                     facade.getTabsModule().close($(this));
                 });
@@ -235,8 +233,13 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
         destroyCloseEventListener: function () {
             this.$closeLink.off('click');
         },
-        destroy: function(){
+        destroy: function () {
             this.destroyCloseEventListener();
+            storageModule.removeFromSession(this.model.cid);
+            this.model.destroy();
+            //    this.getTh().find('.ui-resizable').resizable('destroy');
+            //    this.getTable().trigger("destroy");
+            //    this.getTable().floatThead('destroy');
         },
         layoutHeader: function ($panel) {
             var title;
@@ -360,4 +363,4 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
 
         }
     });
-})(Backbone, jQuery, optionsModule, mediator, helpersModule);
+})(Backbone, jQuery, optionsModule, mediator, helpersModule, storageModule);

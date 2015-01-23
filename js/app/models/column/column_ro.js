@@ -29,6 +29,9 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
         getDefault: function () {
             return helpersModule.defaultExpressionEval(this.get('columnProperties').getDefault());
         },
+        destroy: function(){
+          delete this.readProcData;
+        },
         readProcData: null,
         evalReadProc: function (params) {
             var mainDefer = deferredModule.create(),

@@ -165,6 +165,9 @@ var storageModule = (function (undefined) {
         addToSession: function (key, obj) {
             _private.addToSession(key, obj);
         },
+        removeFromSession: function(key){
+          delete this.getSession()[key];
+        },
         getSession: function (id) {
             if (id === undefined) {
                 return _private.getSession();

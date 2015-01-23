@@ -471,7 +471,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             return settings[key];
         },
         persistData: function (data, order) {
-            storageModule.addToSession(this.getFormID(), {
+            storageModule.addToSession(this.model.cid, {
                 data: data,
                 order: order,
                 changed: {},
@@ -479,16 +479,16 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             });
         },
         getStorage: function () {
-            var formID = this.getFormID();
-            if (!storageModule.hasSession(formID)) {
-                storageModule.addToSession(formID, {
+            var cid = this.model.cid;
+            if (!storageModule.hasSession(cid)) {
+                storageModule.addToSession(cid, {
                     data: {},
                     order: [],
                     changed: {},
                     deleted: {}
                 });
             }
-            return storageModule.getSession(formID);
+            return storageModule.getSession(cid);
 
         },
         hasChange: function () {
@@ -496,21 +496,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             return !$.isEmptyObject(this.getChangedDataFromStorage()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
         },
         save: function (opts) {
-
-
-            //destroy = function () {
-            //    this.getTh().find('.ui-resizable').resizable('destroy');
-            //    this.getTable().trigger("destroy");
-            //    this.getTable().floatThead('destroy');
-            //    delete Chocolate.storage.session[this.getID()];
-            //    delete this._ch_messages_container;
-            //    delete this._$table;
-            //    delete this.$form;
-            //    delete this._$thead;
-            //    delete this._$save_btn;
-            //    delete this._$grid_form;
-            //    delete this._$user_grid;
-            //}
 //            validate = function (data) {
 //                var requiredFields = this.getRequiredObj(),
 //                    errors = [];

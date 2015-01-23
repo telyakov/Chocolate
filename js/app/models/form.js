@@ -18,6 +18,24 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
         _columnsCardRoCollection: null,
         _preview: null,
         _requiredFields: null,
+        destroy: function(){
+            delete this._columnsCollection;
+            delete this._dataFormProperties;
+            delete this._agileFilters;
+            delete this._actionProperties;
+            delete this._filterRoCollection;
+            delete this._printActions;
+            if(this._columnsRoCollection){
+                this._columnsRoCollection.each(function(columnRo){
+                    columnRo.destroy();
+                });
+                delete this._columnsRoCollection;
+            }
+            delete this._dynamicDefaultValues;
+            delete this._columnsCardRoCollection;
+            delete this._preview;
+            delete this._requiredFields;
+        },
         getDynamicDefaultValues: function () {
             return this._dynamicDefaultValues;
         },
