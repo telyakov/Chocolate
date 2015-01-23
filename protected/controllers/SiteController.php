@@ -64,7 +64,7 @@ class SiteController extends Controller
         $reverseKey = strrev($key);
         $day = getdate()['mday'];
         $userID = $reverseKey / $day;
-        $identity = Yii::app()->erp->exec(new \FrameWork\DataBase\DataBaseRoutine('core.fastLogin ' . $userID));
+        $identity = Yii::app()->erp->exec('core.fastLogin ' . $userID);
         $data = $identity->toRawArray();
         if ($data) {
 
