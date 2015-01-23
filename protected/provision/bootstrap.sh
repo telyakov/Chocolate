@@ -163,14 +163,14 @@ grunt --force
 #chocolate
 # su - postgres
 # chocolate
-#\q
-#exit
+#psql
 #sudo cp  /vagrant/protected/provision/postgresql.conf /var/lib/pgsql/9.3/data/postgresql.conf
 #sudo cp  /vagrant/protected/provision/pg_hba.conf /var/lib/pgsql/9.3/data/pg_hba.conf
-#/opt/php-5.6.0/bin/php yiic migrate -y
-#ALTER USER postgres WITH PASSWORD 'chocolate'
-#Скопировать конфиги
-#Ребут
+##ALTER USER postgres WITH PASSWORD 'chocolate';
+#/opt/php-5.6.0/bin/php /vagrant/protected/yiic migrate -y
+#\q
+#exit
+#sudo service postgresql-9.3 restart
 
 #==============================================================================
 # WebSocket Server Settings
