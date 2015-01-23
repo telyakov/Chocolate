@@ -29,7 +29,7 @@ class ImagesModel
      * @throws FileSystemException
      * @return String
      */
-    static function getFileSrc($id)
+    private static function getFileSrc($id)
     {
         self::save($id);
         /**
@@ -43,7 +43,7 @@ class ImagesModel
         }
     }
 
-    static function save($id)
+    private static function save($id)
     {
         $row = Yii::app()->erp->fileMetaDataGet($id)->getFirst();
         $rawDate = $row['date'];
