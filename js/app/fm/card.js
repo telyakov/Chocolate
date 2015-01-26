@@ -1,50 +1,95 @@
 var Card = (function (Backbone) {
     'use strict';
-    return Backbone.Model.extend({
-        defaults: {
-            $obj: null
-        },
-        /**
-         * @returns {jQuery}
-         */
-        getJqueryObj: function(){
-            return this.get('$obj');
-        },
-        getCaption: function () {
-            return this.getJqueryObj().children('caption').text();
-        },
-        getKey: function () {
-            return this.getJqueryObj().children('key').text();
-        },
-        getCols: function () {
-            return this.getJqueryObj().children('cols').text();
-        },
-        getRows: function () {
-            return this.getJqueryObj().children('rows').text();
-        },
-        getCol: function () {
-            return this.getJqueryObj().children('col').text();
-        },
-        getRow: function () {
-            return this.getJqueryObj().children('row').text();
-        },
-        getCellWidth: function () {
-            return this.getJqueryObj().children('cellWidth').text();
-        },
-        getCellHeight: function () {
-            return this.getJqueryObj().children('cellHeight').text();
-        },
-        getFixedWidth: function () {
-            return this.getJqueryObj().children('fixedWidth').text();
-        },
-        getFixedHeight: function () {
-            return this.getJqueryObj().children('fixedHeight').text();
-        },
-        getCaptionReadProc: function () {
-            return this.getJqueryObj().children('captionReadProc').text();
-        },
-        getVisible: function () {
-            return this.getJqueryObj().children('visible').text();
-        }
-    });
+    return Backbone.Model.extend(
+        /** @lends Card */
+        {
+            defaults: {
+                $obj: null
+            },
+            /**
+             * @method destroy
+             */
+            destroy: function () {
+                this.set('$obj', null);
+            },
+            /**
+             * @private
+             * @returns {jQuery}
+             */
+            _getJqueryObj: function () {
+                return this.get('$obj');
+            },
+            /**
+             * @returns {String}
+             */
+            getCaption: function () {
+                return this._getJqueryObj().children('caption').text();
+            },
+            /**
+             * @returns {String}
+             */
+            getKey: function () {
+                return this._getJqueryObj().children('key').text();
+            },
+            /**
+             * @returns {String}
+             */
+            getCols: function () {
+                return this._getJqueryObj().children('cols').text();
+            },
+            /**
+             * @returns {String}
+             */
+            getRows: function () {
+                return this._getJqueryObj().children('rows').text();
+            },
+            /**
+             * @returns {String}
+             */
+            getCol: function () {
+                return this._getJqueryObj().children('col').text();
+            },
+            /**
+             * @returns {String}
+             */
+            getRow: function () {
+                return this._getJqueryObj().children('row').text();
+            },
+            /**
+             * @returns {String}
+             */
+            getCellWidth: function () {
+                return this._getJqueryObj().children('cellWidth').text();
+            },
+            /**
+             * @returns {String}
+             */
+            getCellHeight: function () {
+                return this._getJqueryObj().children('cellHeight').text();
+            },
+            /**
+             * @returns {String}
+             */
+            getFixedWidth: function () {
+                return this._getJqueryObj().children('fixedWidth').text();
+            },
+            /**
+             * @returns {String}
+             */
+            getFixedHeight: function () {
+                return this._getJqueryObj().children('fixedHeight').text();
+            },
+            /**
+             * @returns {String}
+             */
+            getCaptionReadProc: function () {
+                return this._getJqueryObj().children('captionReadProc').text();
+            },
+            /**
+             * @returns {String}
+             */
+            getVisible: function () {
+                return this._getJqueryObj().children('visible').text();
+            }
+        });
 })(Backbone);
