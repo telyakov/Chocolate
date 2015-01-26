@@ -1,6 +1,17 @@
+/**
+ * Class TextColumnRO
+ * @class
+ * @augments ColumnRO
+ */
 var TextColumnRO = (function () {
     'use strict';
-    return ColumnRO.extend({
+    return ColumnRO.extend(
+        /** @lends TextColumnRO */
+        {
+        /**
+         * @override
+         * @returns {Function}
+         */
         getJsFn: function () {
             var _this = this,
                 customProperties = _this.getColumnCustomProperties();
@@ -27,7 +38,7 @@ var TextColumnRO = (function () {
                     options.type = 'text';
                     options.tpl = '<textarea/>';
                 }
-                $cnt.find('.' + _this.getUniqueClass()).each(function () {
+                $cnt.find('.' + _this._getUniqueClass()).each(function () {
                     var $this = $(this),
                         pk = $this.attr('data-pk'),
                         isAllowEdit = _this.isAllowEdit(view, pk);

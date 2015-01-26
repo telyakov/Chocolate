@@ -1,3 +1,7 @@
+/**
+ * @module ColumnsRoFactory
+ * @static
+ */
 var ColumnsRoFactory = (function () {
     'use strict';
     var _private = {
@@ -33,6 +37,10 @@ var ColumnsRoFactory = (function () {
         }
     };
     return {
+        /**
+         * @param column {ColumnProperties}
+         * @returns {ColumnRO}
+         */
         make: function (column) {
             return _private.make(column);
         }
