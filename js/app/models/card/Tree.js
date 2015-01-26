@@ -20,7 +20,7 @@ var TreeCardElement = (function ($, helpersModule, undefined, CardElement) {
                 var _this = this,
                     column = _this.get('column');
                 return function () {
-                    column.evalReadProc()
+                    column.receiveData()
                         .done(function (res) {
                             var data = helpersModule.prepareTreeSource(res.data),
                                 $el = $('#' + controlID),

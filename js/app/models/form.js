@@ -53,7 +53,12 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
                     delete this._columnsRoCollection;
                 }
                 delete this._dynamicDefaultValues;
-                delete this._columnsCardRoCollection;
+                if(this._columnsCardRoCollection){
+                    this._columnsCardRoCollection.each(function (object) {
+                        object.destroy();
+                    });
+                    delete this._columnsCardRoCollection;
+                }
                 delete this._preview;
                 delete this._requiredFields;
             },

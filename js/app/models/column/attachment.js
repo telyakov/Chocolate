@@ -1,82 +1,162 @@
+/**
+ * Class AttachmentColumnRO
+ * @class
+ * @augments ColumnRO
+ */
 var AttachmentColumnRO = (function () {
     'use strict';
-    return ColumnRO.extend({
-        defaults: {
-            id: null,
-            key: null
-        },
-        initialize: function () {
-            this.set('key', this.getKey());
-        },
-        isEdit: function () {
-            return true;
-        },
-        getFromKey: function(){
-            return this.getKey();
-        },
-        getJsFn: function () {
-            var _this = this;
-            return function ($cnt, view) {
-                $cnt.find('.' + _this.getUniqueClass()).editable({
-                    type: 'text',
-                    mode: 'inline',
-                    name: _this.getKey(),
-                    showbuttons: false,
-                    disabled: true,
-                    title: _this.getCaption(),
-                    view: _this.getView(),
-                    fromID: null,
-                    fromName: null,
-                    toName: null,
-                    toID: null
+    return ColumnRO.extend(
+        /** @lends AttachmentColumnRO */
+        {
+            defaults: {
+                id: null,
+                key: null
+            },
+            /**
+             * @constructs
+             */
+            initialize: function () {
+                this.set('key', this.getKey());
+            },
+            /**
+             * @method destroy
+             */
+            destroy: function () {
+                delete this._readData;
+                delete this._columnCustomProperties;
+                this.set('columnProperties', null);
+                this.set('id', null);
+                this.set('key', null);
+            },
+            /**
+             * @override
+             * @returns {Boolean}
+             */
+            isEdit: function () {
+                return true;
+            },
+            /**
+             * @override
+             * @returns {string}
+             */
+            getFromKey: function () {
+                return this.getKey();
+            },
+            /**
+             * @override
+             * @returns {Function}
+             */
+            getJsFn: function () {
+                var _this = this;
+                return function ($cnt, view) {
+                    $cnt.find('.' + _this._getUniqueClass()).editable({
+                        type: 'text',
+                        mode: 'inline',
+                        name: _this.getKey(),
+                        showbuttons: false,
+                        disabled: true,
+                        title: _this.getCaption(),
+                        view: _this.getView(),
+                        fromID: null,
+                        fromName: null,
+                        toName: null,
+                        toID: null
 
-                });
-            };
-        },
-        getVisibleCaption: function () {
-            return 'Вложения';
-        },
-        getDefault: function () {
-            return null;
-        },
-        getView: function () {
-            return 'attachments.xml';
-        },
-
-        getHeaderCLass: function () {
-            return 'fa-paperclip';
-        },
-        getKey: function () {
-            return 'numattachments';
-        },
-        getCardKey: function () {
-            return '';
-        },
-        isRequired: function () {
-            return false;
-        },
-        getCaption: function () {
-            return 'Вложения';
-        },
-        getEditType: function () {
-            return 'attachments_edit_type';
-        },
-        isVisibleInAllField: function () {
-            return false;
-        },
-        getHeaderOptions: function () {
-            return {
-                'data-id': this.getKey(),
-                'class': 'sorter-text'
-            };
-        },
-        getClass: function () {
-            var className = 'grid-button';
-            if (!this.isEdit()) {
-                className += ' not-changed';
+                    });
+                };
+            },
+            /**
+             * @override
+             * @returns {string}
+             */
+            getVisibleCaption: function () {
+                return 'Вложения';
+            },
+            /**
+             * @override
+             * @returns {string|null}
+             */
+            getDefault: function () {
+                return null;
+            },
+            /**
+             * @override
+             * @returns {string}
+             */
+            getView: function () {
+                return 'attachments.xml';
+            },
+            /**
+             * @override
+             * @returns {string}
+             */
+            getHeaderCLass: function () {
+                return 'fa-paperclip';
+            },
+            /**
+             * @override
+             * @returns {string}
+             */
+            getKey: function () {
+                return 'numattachments';
+            },
+            /**
+             * @override
+             * @returns {string}
+             */
+            getCardKey: function () {
+                return '';
+            },
+            /**
+             * @override
+             * @returns {Boolean}
+             */
+            isRequired: function () {
+                return false;
+            },
+            /**
+             * @override
+             * @returns {string}
+             */
+            getCaption: function () {
+                return 'Вложения';
+            },
+            /**
+             * @override
+             * @returns {string}
+             */
+            getEditType: function () {
+                return 'attachments_edit_type';
+            },
+            /**
+             * @override
+             * @returns {Object}
+             */
+            getHeaderOptions: function () {
+                return {
+                    'data-id': this.getKey(),
+                    'class': 'sorter-text'
+                };
+            },
+            /**
+             * @override
+             * @returns {string}
+             */
+            getClass: function () {
+                var className = 'grid-button';
+                if (!this.isEdit()) {
+                    className += ' not-changed';
+                }
+                return className;
+            },
+            /**
+             * @override
+             * @returns {boolean}
+             * @protected
+             */
+            _isVisibleInAllField: function () {
+                return false;
             }
-            return className;
-        }
 
-    });
+        });
 })();

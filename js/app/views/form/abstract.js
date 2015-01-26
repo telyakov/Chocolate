@@ -296,7 +296,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                         var defer = deferredModule.create();
                         deferTasks.push(defer);
                         (function (defer) {
-                            column.evalReadProc().done(function (res) {
+                            column.receiveData().done(function (res) {
                                 defer.resolve({
                                     data: res.data,
                                     key: key

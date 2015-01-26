@@ -12,7 +12,10 @@ var ColumnCustomProperties = (function (Backbone, helpersModule) {
                 priority: 1,
                 markupSupport: false
             },
-            /** @constructs */
+            /**
+             *  @constructs
+             *  @private
+             *  */
             initialize: function () {
                 var expression = this.get('expression'),
                     properties = expression.split(this.get('propDelimiter')),
