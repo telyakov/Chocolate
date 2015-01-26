@@ -1,3 +1,7 @@
+/**
+ * @module CardElementFactory
+ * @static
+ */
 var CardElementFactory = (function () {
     'use strict';
     var _private = {
@@ -39,6 +43,13 @@ var CardElementFactory = (function () {
         }
     };
     return {
+        /**
+         * @param column {ColumnRO}
+         * @param collection {ColumnsROCollection}
+         * @param model {FormModel}
+         * @param view {String}
+         * @returns {CardElement}
+         */
         make: function (column, collection, model, view) {
             return _private.make(column, collection, model, view);
         }
