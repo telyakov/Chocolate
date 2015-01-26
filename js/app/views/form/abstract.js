@@ -1,10 +1,6 @@
 var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersModule, optionsModule) {
     'use strict';
     return Backbone.View.extend({
-        $el: null,
-        model: null,
-        view: null,
-        formID: null,
         initialize: function (options) {
             _.bindAll(this);
             this.$el = options.$el;
@@ -19,6 +15,26 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             this.listenTo(this.model, 'openWizardTask', this.openWizardTask);
             this.render();
         },
+        $el: null,
+        model: null,
+        view: null,
+        formID: null,
+        _refreshTimerID: null,
+        _autoUpdateTimerID: null,
+        jqueryForm: null,
+        $closeLink: null,
+        footerTemplate: _.template([
+                '<footer class="grid-footer" data-id="grid-footer">',
+                '<div class="footer-info" data-id="info"></div>',
+                '<div class="footer-counter"></div>',
+                '</footer>'
+            ].join('')
+        ),
+        cardButtonsTemplate: _.template([
+            '<div class="card-action-button" data-id="action-button-panel">',
+            '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
+            '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
+        ].join('')),
         openWizardTask: function () {
             mediator.publish(optionsModule.getChannel('logError'),
                 {
@@ -48,7 +64,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             }
             mediator.publish(optionsModule.getChannel('reflowTab'), true);
         },
-        _refreshTimerID: null,
         lazyRefresh: function (opts) {
             var isLazy = opts && opts.isLazy ? true : false;
             if (isLazy) {
@@ -66,21 +81,12 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
         getFormID: function () {
             return this.formID;
         },
-        jqueryForm: null,
         getJqueryForm: function () {
             if (this.jqueryForm === null) {
                 this.jqueryForm = $('#' + this.formID);
             }
             return this.jqueryForm;
         },
-        _chForm: null,
-        footerTemplate: _.template([
-                '<footer class="grid-footer" data-id="grid-footer">',
-                '<div class="footer-info" data-id="info"></div>',
-                '<div class="footer-counter"></div>',
-                '</footer>'
-            ].join('')
-        ),
         generateCardID: function (id) {
             return ['card_', this.model.getView(), id].join('');
         },
@@ -140,7 +146,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 $a.attr('href', href);
             }
         },
-        $closeLink: null,
+
         addCloseCardEventListener: function ($li) {
             var _this = this;
             _this.$closeLink = $li;
@@ -150,19 +156,35 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                     facade.getTabsModule().close($(this));
                     return false;
                 })
-                .on('touchmove', function(){
+                .on('touchmove', function () {
                     _this.destroy();
                     facade.getTabsModule().close($(this));
                     return false;
                 });
         },
         destroyCloseCardEventListener: function () {
-            this.$closeLink.off('click');
+            if(this.$closeLink){
+                this.$closeLink.off('click');
+            }
         },
-        destroy: function(){
+        destroy: function () {
+            storageModule.removeFromSession(this.model.cid);
             this.destroyCloseCardEventListener();
+            this.getTh().find('.ui-resizable').resizable('destroy');
+            this.getJqueryDataTable().trigger("destroy");
+            this.getJqueryDataTable().floatThead('destroy');
+            this.model.stopListening();
+            delete this.$el;
+            delete this.model;
+            delete this.view;
+            delete this.formID;
+            delete this._refreshTimerID;
+            delete this._autoUpdateTimerID;
+            delete this.jqueryForm;
+            delete this.$closeLink;
+            delete this.footerTemplate;
+            delete this.cardButtonsTemplate;
         },
-
         initCardScripts: function ($cnt, pk) {
             var _this = this;
             $cnt
@@ -182,11 +204,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                     cache: true
                 });
         },
-        cardButtonsTemplate: _.template([
-            '<div class="card-action-button" data-id="action-button-panel">',
-            '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
-            '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
-        ].join('')),
         createCardPanel: function (card, $panel, pk) {
             var html = {},
                 callbacks = [],
@@ -299,11 +316,11 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                     var hasOwn = Object.prototype.hasOwnProperty,
                         i,
                         k
-                    for(i in recordset){
-                        if(hasOwn.call(recordset, i)){
-                            for(k in recordset[i]){
-                                if(hasOwn.call(recordset[i], k)){
-                                    if (listData.hasOwnProperty(k)){
+                    for (i in recordset) {
+                        if (hasOwn.call(recordset, i)) {
+                            for (k in recordset[i]) {
+                                if (hasOwn.call(recordset[i], k)) {
+                                    if (listData.hasOwnProperty(k)) {
                                         var oldVal = recordset[i][k];
                                         recordset[i][k] = listData[k][oldVal].name;
                                     }
@@ -432,7 +449,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
         setFormStyleID: function (val) {
             storageModule.persistSetting(this.model.getView(), 'globalStyle', val);
         },
-        _autoUpdateTimerID: null,
         startAutoUpdate: function () {
             if (this._autoUpdateTimerID === null) {
                 var _this = this;

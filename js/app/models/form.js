@@ -23,11 +23,16 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
             delete this._dataFormProperties;
             delete this._agileFilters;
             delete this._actionProperties;
-            delete this._filterRoCollection;
+            if(this._filterRoCollection){
+                this._filterRoCollection.each(function(object){
+                    object.destroy();
+                });
+                delete this._filterRoCollection;
+            }
             delete this._printActions;
             if(this._columnsRoCollection){
-                this._columnsRoCollection.each(function(columnRo){
-                    columnRo.destroy();
+                this._columnsRoCollection.each(function(object){
+                    object.destroy();
                 });
                 delete this._columnsRoCollection;
             }

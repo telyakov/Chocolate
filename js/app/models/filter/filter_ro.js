@@ -9,13 +9,13 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             key: null,
             value: null
         },
-        getViewId: function(){
-            if(this._id === null){
+        getViewId: function () {
+            if (this._id === null) {
                 this._id = helpersModule.uniqueID();
             }
-            return  this._id;
+            return this._id;
         },
-        refresh: function(collection){
+        refresh: function (collection) {
             var _this = this;
             var event = 'event' + helpersModule.uniqueID();
             this.render(event, 0, collection);
@@ -38,7 +38,7 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         },
         isEnabledEval: function (deferID) {
             var evaluatedValue = this.get('filter').getEnabled();
-            if(this.get('value')){
+            if (this.get('value')) {
                 evaluatedValue = 'true';
             }
             return helpersModule.boolExpressionEval(evaluatedValue, deferID, true);
@@ -67,12 +67,12 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         isNextRowEval: function (deferID) {
             return helpersModule.boolExpressionEval(this.get('filter').getToNextRow(), deferID, false);
         },
-        isAutoRefresh: function(){
-          return this.getProperties().get('isAutoRefresh');
+        isAutoRefresh: function () {
+            return this.getProperties().get('isAutoRefresh');
         },
         _properties: null,
         getProperties: function () {
-            if(this._properties){
+            if (this._properties) {
                 return this._properties;
             }
             return new FilterProperties({
@@ -81,6 +81,9 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         },
         getEventChange: function () {
             return this.get('filter').getEvent_change();
+        },
+        destroy: function(){
+            delete this._properties;
         }
     });
 })(Backbone, helpersModule, FilterProperties, bindModule);

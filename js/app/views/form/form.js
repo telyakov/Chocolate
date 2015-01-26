@@ -235,11 +235,17 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule, s
         },
         destroy: function () {
             this.destroyCloseEventListener();
-            storageModule.removeFromSession(this.model.cid);
+            delete this._panelID;
+            delete this.$closeLink;
+            delete this.$card;
+            delete this.card;
+            delete this.$el;
+            if(this.view){
+                this.view.destroy();
+                delete this.view;
+            }
             this.model.destroy();
-            //    this.getTh().find('.ui-resizable').resizable('destroy');
-            //    this.getTable().trigger("destroy");
-            //    this.getTable().floatThead('destroy');
+            delete this.model;
         },
         layoutHeader: function ($panel) {
             var title;

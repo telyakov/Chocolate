@@ -29,8 +29,12 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
         getDefault: function () {
             return helpersModule.defaultExpressionEval(this.get('columnProperties').getDefault());
         },
-        destroy: function(){
-          delete this.readProcData;
+        destroy: function () {
+            delete this.readProcData;
+            delete this._columnCustomProperties;
+            this.set('columnProperties', null);
+            this.set('id', null);
+            this.set('key', null);
         },
         readProcData: null,
         evalReadProc: function (params) {
@@ -63,7 +67,6 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
                 deferredModule.pop(deferId).resolve(this.readProcData);
             }
             return mainDefer;
-
         },
         isSingle: function () {
             return helpersModule.boolEval(this.get('columnProperties').getSingleValueMode(), false);
