@@ -80,7 +80,7 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             });
         },
         getEventChange: function () {
-            return this.get('filter').getEvent_change();
+            return this.get('filter').getEventChange();
         },
         destroy: function(){
             delete this._properties;

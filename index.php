@@ -20,8 +20,6 @@ class Yii extends YiiBase
     }
 }
 // remove the following lines when in production mode
-use Chocolate\Binding\BindingService;
-
 class WebApplication extends CWebApplication
 {
     /**
@@ -32,14 +30,6 @@ class WebApplication extends CWebApplication
      * @var $user WebUser
      */
     public $user;
-    /**
-     * @var $bind BindingService
-     */
-    public $bind;
-    /**
-     * @var Chocolate\Cache\Cache
-     */
-    public $cache;
 }
 
 defined('YII_DEBUG') or define('YII_DEBUG', true);
