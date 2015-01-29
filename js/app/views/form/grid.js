@@ -63,6 +63,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             _menuView: null,
             _callbacks: null,
             _$contextMenu: null,
+            _priorityColors: [],
             /**
              * @override
              */
@@ -71,14 +72,23 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 delete this.gridTemplate;
                 delete this.columnHeaderTemplate;
                 delete this._callbacks;
+                delete this._priorityColors;
+                this._unsubscribeRefreshEvent();
                 if(this._menuView){
                     this._menuView.destroy();
                     delete this._menuView;
                 }
+                try{
+                    this.$el.contextmenu('destroy');
+                }catch(e){
+                    mediator.publish(optionsModule.getChannel('logError'), e);
+                }
+                this._destroyDragTableWidget();
                 this._destroyContextMenuWidget();
                 this.undelegateEvents();
                 this._destroyTaskWizard();
                 AbstractGridView.prototype.destroy.apply(this);
+                delete this.$el;
             },
             /**
              * @param $taskWizard {jQuery|null}
@@ -754,11 +764,24 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     .setShortMode(!isHidden);
                 return this;
             },
+            /**
+             * @private
+             */
+            _destroyDragTableWidget: function(){
+                //todo: check destroy view
+                this.getJqueryFloatHeadTable().dragtable('destroy');
+            },
+            /**
+             * @method initDragTable
+             */
             initDragTable: function () {
                 this.getJqueryFloatHeadTable().dragtable({
                     view: this
                 });
             },
+            /**
+             * @method initTableScript
+             */
             initTableScript: function () {
                 var $table = this.getJqueryDataTable();
                 this.initSettings();
@@ -783,6 +806,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
 
                 this.initContextFormMenuEvent();
             },
+            /**
+             * @method initContextFormMenuEvent
+             */
             initContextFormMenuEvent: function () {
                 var _this = this;
                 this.$el.contextmenu({
@@ -806,6 +832,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     }
                 });
             },
+            /**
+             * @method refreshData
+             */
             refreshData: function () {
                 var _this = this,
                     mainSql;
@@ -821,12 +850,20 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         });
                     });
             },
+            /**
+             * @private
+             */
+            _unsubscribeRefreshEvent: function(){
+                $.unsubscribe(this.getLayoutSubscribeName());
+            },
+            /**
+             * @param data {Object}
+             */
             refreshDone: function (data) {
                 var sortedColumnCollection = this.getSortedColumns(),
                     order = data.order,
                     recordset = data.data;
                 this.persistData(recordset, order);
-
                 var html = this.generateRows(recordset, order, sortedColumnCollection),
                     $table = this.getJqueryDataTable(),
                     $tbody = this.getJqueryTbody(),
@@ -835,7 +872,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     cacheVisible = [],
                     $userGrid = this.getJqueryGridView(),
                     subscribeName = this.getLayoutSubscribeName();
-                $.unsubscribe(subscribeName);
+                this._unsubscribeRefreshEvent();
                 $.subscribe(subscribeName, function (e, refreshCache) {
                     var scrollTop = $userGrid.scrollTop();
                     if (refreshCache || !$tr) {
@@ -899,6 +936,13 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 $.publish(subscribeName, true);
                 this.setRowCount(Object.keys(recordset).length);
             },
+            /**
+             *
+             * @param data {Object}
+             * @param order {Array}
+             * @param sortedColumnCollection {Array}
+             * @returns {string}
+             */
             generateRows: function (data, order, sortedColumnCollection) {
                 var stringBuilder = [];
                 var _this = this;
@@ -908,6 +952,11 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 });
                 return stringBuilder.join('');
             },
+            /**
+             * @param data {Object}
+             * @param columns {Array}
+             * @returns {string}
+             */
             generateRow: function (data, columns) {
                 var style = '',
                     idClass = '',
@@ -960,7 +1009,12 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 rowBuilder.push('</tr>');
                 return rowBuilder.join('');
             },
-            _priorityColors: [],
+            /**
+             *
+             * @param id {String}
+             * @param priority {String}
+             * @param color {String}
+             */
             addPriorityColorAndApply: function (id, priority, color) {
                 if (this._priorityColors[id] === undefined) {
                     this._priorityColors[id] = [];
@@ -968,6 +1022,11 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this._priorityColors[id].push({priority: priority, color: '#' + color});
                 this.setRowColor(id);
             },
+            /**
+             *
+             * @param id {String}
+             * @returns {*}
+             */
             setRowColor: function (id) {
                 var color = this.getRowColor(id);
                 this.getJqueryDataTable().find('tr[data-id="' + id + '"]').css({
@@ -975,6 +1034,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 });
                 return this;
             },
+            /**
+             * @param id {string}
+             * @param priority {int}
+             */
             removePriorityColorAndApply: function (id, priority) {
                 if (this._priorityColors[id] !== undefined) {
                     var _this = this;
@@ -986,6 +1049,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 }
                 this.setRowColor(id);
             },
+            /**
+             * @param id {string}
+             * @returns {String|null}
+             */
             getRowColor: function (id) {
                 if (this._priorityColors[id] !== undefined) {
                     var color = null, prevPriority;
