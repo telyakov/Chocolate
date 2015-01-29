@@ -97,6 +97,14 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
             _private.close(_private.getActiveChTab().$a);
         },
         /**
+         *
+         * @param $tabLink {jQuery}
+         * @return {Number}
+         */
+        getIndex: function($tabLink){
+           return  $tabLink.closest('ul').find('li').index($tabLink.parent());
+        },
+        /**
          * @returns {ChTab}
          */
         getActiveChTab: function () {

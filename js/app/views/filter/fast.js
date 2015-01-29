@@ -34,7 +34,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
         deferVisibleValue: function () {
             var defer = deferredModule.create(),
                 values = this.getValue().split('|');
-            this.model.deferData()
+            this.model.receiveData()
                 .done(function (res) {
                     var data = res.data;
                     var response = [];
@@ -74,7 +74,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             model.isVisibleEval(visibleId);
             model.isNextRowEval(nextRowId);
             model.isMultiSelectEval(multiSelectId);
-            var dataDf = model.deferData(true);
+            var dataDf = model.receiveData(true);
             $.when(visibleDf, nextRowDf, multiSelectDf, dataDf).done(function (visible, nextRow, multiSelect, dataRes) {
                 var isVisible = visible.value,
                     isNextRow = nextRow.value,

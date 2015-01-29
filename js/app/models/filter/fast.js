@@ -1,43 +1,64 @@
-var FastFilterRO = (function (FilterRO, helpersModule, optionsModule) {
+/**
+ * Class FastFilterRO
+ * @class
+ * @augments FilterRO
+ */
+var FastFilterRO = (function (FilterRO, helpersModule, optionsModule, deferredModule) {
     'use strict';
-    return FilterRO.extend({
-        _data: null,
-        deferData: function (forceRefresh) {
-            var dataDefer = deferredModule.create(),
-                _this = this;
-            if (this._data === null || forceRefresh) {
-                this.readProcEval()
-                    .done(function (data) {
-                        var sql = data.sql;
-                        var helpersDefer = deferredModule.create(),
-                            helpDeferId = deferredModule.save(helpersDefer);
-                        mediator.publish(optionsModule.getChannel('socketRequest'), {
-                            query: sql,
-                            type: optionsModule.getRequestType('deferred'),
-                            id: helpDeferId
+    return FilterRO.extend(
+        /** @lends FastFilterRO */
+        {
+            _data: null,
+            /**
+             * @method destroy
+             */
+            destroy: function () {
+                delete this._data;
+                this.constructor.__super__.destroy.apply(this, arguments);
+            },
+            /**
+             * @param forceRefresh {Boolean}
+             * @returns {Deferred}
+             */
+            receiveData: function (forceRefresh) {
+                var deferred = deferredModule.create(),
+                    _this = this;
+                if (this._data === null || forceRefresh) {
+                    this.readProcEval()
+                        .done(function (data) {
+                            var sql = data.sql,
+                                helpersDefer = deferredModule.create(),
+                                helpDeferId = deferredModule.save(helpersDefer);
+                            mediator.publish(optionsModule.getChannel('socketRequest'), {
+                                query: sql,
+                                type: optionsModule.getRequestType('deferred'),
+                                id: helpDeferId
+                            });
+                            helpersDefer.done(function (res) {
+                                _this._data = res;
+                                deferred.resolve(res);
+                            });
                         });
-                        helpersDefer.done(function(res){
-                            _this._data = res;
-                            dataDefer.resolve(res);
-                        });
-                    });
-            }else{
-                dataDefer.resolve(this._data);
+                } else {
+                    deferred.resolve(this._data);
+                }
+                return deferred;
+            },
+            /**
+             * @param event {String}
+             * @param i {int}
+             * @param collection {FiltersROCollection}
+             */
+            render: function (event, i, collection) {
+                var view = new FastFilterView({
+                    model: this,
+                    form: this.get('model'),
+                    view: this.get('view'),
+                    id: this.getViewId(),
+                    $el: $('body')
+                });
+                this.persistLinkToView(view);
+                view.render(event, i, collection);
             }
-            return dataDefer;
-        },
-        _id: null,
-
-        render: function (event, i, collection) {
-            var view = new FastFilterView({
-                model: this,
-                form: this.get('model'),
-                view: this.get('view'),
-                id: this.getViewId(),
-                $el: $('body')
-
-            });
-            view.render(event, i, collection);
-        }
-    });
-})(FilterRO, helpersModule, optionsModule);
+        });
+})(FilterRO, helpersModule, optionsModule, deferredModule);

@@ -9,6 +9,8 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             key: null,
             value: null
         },
+        _view: null,
+        _properties: null,
         getViewId: function () {
             if (this._id === null) {
                 this._id = helpersModule.uniqueID();
@@ -70,7 +72,6 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         isAutoRefresh: function () {
             return this.getProperties().get('isAutoRefresh');
         },
-        _properties: null,
         getProperties: function () {
             if (this._properties) {
                 return this._properties;
@@ -82,8 +83,16 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         getEventChange: function () {
             return this.get('filter').getEventChange();
         },
-        destroy: function(){
+        destroy: function () {
             delete this._properties;
+            //todo: call destroy view
+            delete this._view;
+        },
+        /**
+         * @param view {FilterView|null}
+         */
+        persistLinkToView: function (view) {
+            this._view = view;
         }
     });
 })(Backbone, helpersModule, FilterProperties, bindModule);

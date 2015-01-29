@@ -103,11 +103,10 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 $tabs = $('#tabs'),
                 cardID = this.generateCardID(pk),
                 $a = $tabs.find("li[data-tab-id='" + cardID + "']").children('a'),
-                tab,
+                tabsModule = facade.getTabsModule(),
                 _this = this;
             if ($a.length) {
-                tab = facade.getFactoryModule().makeChTab($a);
-                $tabs.tabs({active: tab.getIndex()});
+                $tabs.tabs({active: tabsModule.getIndex($a)});
             } else {
                 var viewID = this.getFormID(),
                     caption = this.getCardCaption(pk),
@@ -135,9 +134,8 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 });
 
                 $a = $li.children('a');
-                tab = facade.getFactoryModule().makeChTab($a);
-                $tabs.tabs({active: tab.getIndex()});
-                var href = '#' + tab.getPanelID(),
+                $tabs.tabs({active: tabsModule.getIndex($a)});
+                var href = '#' + $a.parent().attr('aria-controls'),
                     $context = $(href);
                 facade.getRepaintModule().reflowCard($context);
                 this.initCardScripts($context, pk);
