@@ -17,12 +17,14 @@ var CardView = (function (Backbone, $) {
             'click .card-save': 'cardSaveHandler',
             'click .card-cancel': 'cardCancel'
         },
+        $closeCardLink: null,
         cardCancel: function () {
             this.undoChange();
             this.closeTab();
 
         },
         closeTab: function () {
+            console.log('close tab')
             var id = this.$el.attr('id'),
                 $li = helpersModule.getContentObj().find('li[aria-controls=' + id + ']');
             facade.getTabsModule().close($li.children('a'));
@@ -104,7 +106,33 @@ var CardView = (function (Backbone, $) {
             });
             $this.contextmenu('open', $this);
         },
-        render: function (view, pk, viewID) {
+        addCloseCardEventListener: function ($li) {
+            var _this = this;
+            _this.$closeCardLink = $li;
+            this.$closeCardLink
+                .on('click', '.tab-closed', function () {
+                    _this.destroy();
+                    console.log(_this)
+                    facade.getTabsModule().close($(this));
+                    return false;
+                })
+                .on('touchmove', function () {
+                    _this.destroy();
+                    facade.getTabsModule().close($(this));
+                    return false;
+                });
+        },
+        destroyCloseCardEventListener: function () {
+            if(this.$closeCardLink){
+                this.$closeCardLink.off('click');
+            }
+        },
+        destroy: function () {
+            this.destroyCloseCardEventListener();
+            delete this.$closeCardLink;
+        },
+        render: function (view, pk, viewID, $li) {
+            this.addCloseCardEventListener($li);
             this.$el.html(this.generateHeader(view));
             this.generateList(view, pk, viewID);
 

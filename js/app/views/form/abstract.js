@@ -22,7 +22,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
         _refreshTimerID: null,
         _autoUpdateTimerID: null,
         jqueryForm: null,
-        $closeCardLink: null,
         footerTemplate: _.template([
                 '<footer class="grid-footer" data-id="grid-footer">',
                 '<div class="footer-info" data-id="info"></div>',
@@ -118,7 +117,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                         'data-view': view,
                         'html': facade.getTabsModule().createTabLink('', caption)
                     });
-                this.addCloseCardEventListener($li);
                 facade.getTabsModule().push($li);
                 $tabs.children('ul').append($li);
                 $tabs.tabs('refresh');
@@ -132,7 +130,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                             id: pk,
                             $el: ui.panel
                         });
-                        cardView.render(view, pk, viewID);
+                        cardView.render(view, pk, viewID, $li);
                     }
                 });
 
@@ -146,30 +144,8 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 $a.attr('href', href);
             }
         },
-
-        addCloseCardEventListener: function ($li) {
-            var _this = this;
-            _this.$closeCardLink = $li;
-            this.$closeCardLink
-                .on('click', '.tab-closed', function () {
-                    _this.destroy();
-                    facade.getTabsModule().close($(this));
-                    return false;
-                })
-                .on('touchmove', function () {
-                    _this.destroy();
-                    facade.getTabsModule().close($(this));
-                    return false;
-                });
-        },
-        destroyCloseCardEventListener: function () {
-            if(this.$closeCardLink){
-                this.$closeCardLink.off('click');
-            }
-        },
         destroy: function () {
             storageModule.removeFromSession(this.model.cid);
-            this.destroyCloseCardEventListener();
             this.model.stopListening();
             delete this.$el;
             delete this.model;
@@ -178,7 +154,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             delete this._refreshTimerID;
             delete this._autoUpdateTimerID;
             delete this.jqueryForm;
-            delete this.$closeCardLink;
             delete this.footerTemplate;
             delete this.cardButtonsTemplate;
         },
