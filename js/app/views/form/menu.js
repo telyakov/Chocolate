@@ -53,12 +53,22 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
             '<div class="messages-container"></div>',
             '</menu>'
         ].join('')),
+        _$printActionButton : null,
         /**
          * @method destroy
          */
         destroy: function(){
-          console.log('destroy menu');
+            this.undelegateEvents();
+            this._destroyPrintActionsEvent();
+            this._destroyActionsButtonEvent();
+            delete this.template;
+            delete this.$el;
+            delete this.view;
+            delete this.model;
         },
+        /**
+         * @method remder
+         */
         render: function () {
             var printID = helpersModule.uniqueID(),
                 isAllowPrintActions = this.model.isAllowPrintActions(),
@@ -85,17 +95,39 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
             }
             this.initActions(actionID);
         },
+        /**
+         * @param sysColsID {string}
+         */
         systemColsInit: function (sysColsID) {
             var $btn = $('#' + sysColsID);
             if (!this.view.isSystemColumnsMode()) {
                 $btn.addClass(optionsModule.getClass('menuButtonSelected'));
             }
         },
+        /**
+         * @param $button {jQuery|null}
+         * @private
+         */
+        _persistLinkToPrintActionButton: function($button){
+            this._$printActionButton = $button;
+        },
+        /**
+         * @private
+         */
+        _destroyPrintActionsEvent: function(){
+            if(this._$printActionButton){
+                this._$printActionButton.contextmenu('destroy');
+                delete this._$printActionButton;
+            }
+        },
+        /**
+         * @param id {string}
+         */
         initPrintActions: function (id) {
             var view = this.view,
                 printActions = this.model.getPrintActions(),
                 $actionButton = $('#' + id);
-
+            this._persistLinkToPrintActionButton($actionButton);
             $actionButton.contextmenu({
                 show: {effect: "blind", duration: 0},
                 menu: printActions,
@@ -114,10 +146,31 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 }
             });
         },
+        _$actionButton: null,
+        /**
+         * @private
+         */
+        _destroyActionsButtonEvent: function(){
+            if(this._$actionButton){
+                this._$actionButton.contextmenu('destroy');
+                delete this._$actionButton;
+            }
+        },
+        /**
+         * @param $button {jQuery|null}
+         * @private
+         */
+        _persistLinkToActionButton: function($button){
+            this._$actionButton = $button;
+        },
+        /**
+         * @param id {string}
+         */
         initActions: function (id) {
             var actionsProperties = this.model.getActionProperties(),
                 $actionButton = $('#' + id),
                 view = this.view;
+            this._persistLinkToActionButton($actionButton);
             $actionButton.contextmenu({
                 show: {effect: "blind", duration: 0},
                 menu: actionsProperties.getData(),
