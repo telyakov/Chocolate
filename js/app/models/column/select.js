@@ -8,6 +8,25 @@ var SelectColumnRO = (function (Backbone, helpersModule) {
     return ColumnRO.extend(
         /** @lends SelectColumnRO */
         {
+            _$editableElements: null,
+            /**
+             * @method destroy
+             * @override
+             */
+            destroy: function () {
+                if (this._$editableElements) {
+                    this._$editableElements.off('init').off('save').editable('destroy');
+                }
+                this.constructor.__super__.destroy.apply(this, arguments);
+            },
+            /**
+             * @param $editableElements {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToEditableElements: function ($editableElements) {
+                this._$editableElements = $editableElements;
+            },
             /**
              * @override
              * @returns {Function}
@@ -16,10 +35,14 @@ var SelectColumnRO = (function (Backbone, helpersModule) {
                 var _this = this;
 
                 return function ($cnt, view) {
+                    //todo: fix leak memory - destroy view
+
                     _this.receiveData()
                         .done(function (res) {
                             var data = helpersModule.prepareSelectSource(res.data);
-                            $cnt.find('.' + _this._getUniqueClass()).each(function () {
+                            var $editableElements = $cnt.find('.' + _this._getUniqueClass());
+                            _this._persistLinkToEditableElements($editableElements);
+                            $editableElements.each(function () {
                                 var $this = $(this),
                                     pk = $this.attr('data-pk'),
                                     isAllowEdit = _this.isAllowEdit(view, pk);

@@ -17,9 +17,9 @@ var WizardDynatreeView = (function (Backbone, $) {
                 getInput: function () {
                     return $select;
                 },
-                column_title: 'name',
-                root_id: 'parentid',
-                column_id: 'id',
+                columnTitle: 'name',
+                rootID: 'parentid',
+                columnID: 'id',
                 infoPanel: true,
                 separator: '|',
                 children: data,

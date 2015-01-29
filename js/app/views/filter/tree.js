@@ -77,15 +77,15 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                             opts = $.extend({}, defaultOpts, {
                                 children: [],
                                 sql: sql,
-                                expand_nodes: filterProperties.get('expandNodes'),
-                                select_all: filterProperties.get('selectAllNodes'),
-                                restore_state: filterProperties.get('restoreState'),
+                                expandNodes: filterProperties.get('expandNodes'),
+                                selectAll: filterProperties.get('selectAllNodes'),
+                                restoreState: filterProperties.get('restoreState'),
                                 separator: filterProperties.get('delimiter'),
-                                root_id: filterProperties.get('rootID'),
+                                rootID: filterProperties.get('rootID'),
                                 title: model.getCaption(),
-                                column_title: filterProperties.get('columnTitle'),
-                                column_id: filterProperties.get('columnID'),
-                                column_parent_id: filterProperties.get('columnParentID'),
+                                columnTitle: filterProperties.get('columnTitle'),
+                                columnID: filterProperties.get('columnID'),
+                                columnParentID: filterProperties.get('columnParentID'),
                                 infoPanel: true,
                                 getInput: function(){
                                     return this.parent().children('input[type=hidden]');

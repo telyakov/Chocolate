@@ -81,7 +81,7 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
             factoryModule.garbageCollection();
         },
         destroy: function ($panel) {
-            $panel.find('.editable').editable('destroy').remove();
+            //$panel.find('.editable').editable('destroy').remove();
             $panel.remove();
         }
     };

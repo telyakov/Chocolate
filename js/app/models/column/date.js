@@ -8,6 +8,25 @@ var DateColumnRO = (function (optionsModule) {
     return ColumnRO.extend(
         /** @lends DateColumnRO */
         {
+            _$editableElements: null,
+            /**
+             * @method destroy
+             * @override
+             */
+            destroy: function () {
+                if (this._$editableElements) {
+                    this._$editableElements.off('init').off('save').editable('destroy');
+                }
+                this.constructor.__super__.destroy.apply(this, arguments);
+            },
+            /**
+             * @param $editableElements {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToEditableElements: function ($editableElements) {
+                this._$editableElements = $editableElements;
+            },
             /**
              * @override
              * @returns {Object}
@@ -23,12 +42,14 @@ var DateColumnRO = (function (optionsModule) {
              */
             getJsFn: function () {
                 var _this = this,
-                    isTime = _this.getEditType() === 'date',
-                    allowEdit = this.getRawAllowEdit();
+                    isTime = _this.getEditType() === 'date';
 
                 return function ($cnt, view) {
+                    //todo: fix leak memory - destroy view
                     var selector = '.' + _this._getUniqueClass();
-                    $cnt.find(selector).each(function () {
+                    var $editableElements = $cnt.find(selector);
+                    _this._persistLinkToEditableElements($editableElements);
+                    $editableElements.each(function () {
                         var $elem = $(this),
                             pk = $elem.attr('data-pk'),
                             isAllowEdit = _this.isAllowEdit(view, pk);

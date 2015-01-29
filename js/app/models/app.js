@@ -1,7 +1,5 @@
 /**
- * @function
- * @name Deferred.done
- * @param {function(element:jQuery)} callback
+ * @class AppModel
  */
 var AppModel = (function (Backbone) {
     'use strict';

@@ -18,10 +18,23 @@ var AttachmentColumnRO = (function () {
             initialize: function () {
                 this.set('key', this.getKey());
             },
+            _$editableElements: null,
+            /**
+             * @param $editableElements {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToEditableElements: function ($editableElements) {
+                this._$editableElements = $editableElements;
+            },
+
             /**
              * @method destroy
              */
             destroy: function () {
+                if (this._$editableElements) {
+                    this._$editableElements.off('init').off('save').editable('destroy');
+                }
                 delete this._readData;
                 delete this._columnCustomProperties;
                 this.set('columnProperties', null);
@@ -49,7 +62,9 @@ var AttachmentColumnRO = (function () {
             getJsFn: function () {
                 var _this = this;
                 return function ($cnt, view) {
-                    $cnt.find('.' + _this._getUniqueClass()).editable({
+                    var $editableElements = $cnt.find('.' + _this._getUniqueClass());
+                    _this._persistLinkToEditableElements($editableElements);
+                    $editableElements.editable({
                         type: 'text',
                         mode: 'inline',
                         name: _this.getKey(),

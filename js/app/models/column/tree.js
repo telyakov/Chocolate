@@ -8,6 +8,38 @@ var TreeColumnRO = (function (helpersModule, undefined) {
     return ColumnRO.extend(
         /** @lends TreeColumnRO */
         {
+            _$cnt: null,
+            _$editableElements: null,
+            /**
+             * @method destroy
+             * @override
+             */
+            destroy: function(){
+                if(this._$cnt){
+                    this._$cnt.off('click');
+                    delete this._$cnt;
+                }
+                if(this._$editableElements){
+                    this._$editableElements.off('init').editable('destroy');
+                }
+                this.constructor.__super__.destroy.apply(this, arguments);
+            },
+            /**
+             * @param $cnt {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToContext: function($cnt){
+                this._$cnt = $cnt;
+            },
+            /**
+             * @param $editableElements {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToEditableElements: function($editableElements){
+                this._$editableElements = $editableElements;
+            },
             /**
              * @override
              * @returns {Function}
@@ -17,6 +49,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                 return function ($cnt, viewProperty) {
                     _this.receiveData()
                         .done(function (res) {
+                            _this._persistLinkToContext($cnt);
                             var data = helpersModule.prepareTreeSource(res.data),
                                 selector = '.' + _this._getUniqueClass();
                             $cnt.on('click', selector, function () {
@@ -24,6 +57,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                     pk = $this.attr('data-pk'),
                                     isAllowEdit = _this.isAllowEdit(viewProperty, pk);
                                 if (isAllowEdit) {
+                                    //todo: fix leak memory && destroy viewProperty
                                     var model = new DynatreeModel({
                                             $el: $this
                                         }),
@@ -34,7 +68,9 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                     view.render(_this.isSingle(), _this.getModalTitle(pk), pk, _this.get('key'));
                                 }
                             });
-                            $cnt.find(selector).each(function () {
+                            var $editableElements = $cnt.find(selector);
+                            _this._persistLinkToEditableElements($editableElements);
+                            $editableElements.each(function () {
                                 var $this = $(this),
                                     pk = $this.attr('data-pk'),
                                     isAllowEdit = _this.isAllowEdit(viewProperty, pk);
