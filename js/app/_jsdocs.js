@@ -15,6 +15,11 @@
 
 /**
  * @function
+ * @name jQuery.floatThead
+ */
+
+/**
+ * @function
  * @name jQuery.autocomplete
  */
 
@@ -23,3 +28,5 @@
  * @name Deferred.done
  * @param {function(element:jQuery)} callback
  */
+
+//Поддержка типа Deferred, jquery, custom object Types, Event
