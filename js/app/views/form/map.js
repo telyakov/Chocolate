@@ -17,6 +17,7 @@ var MapView = (function (Backbone) {
                 view: this,
                 $el: $form
             });
+            menuView.render();
             var $sectionMap = $('<section>', {
                 'data-id': 'map'
             });

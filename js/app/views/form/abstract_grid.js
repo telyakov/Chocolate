@@ -142,7 +142,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 }
             },
             /**
-             * @param val {String}
+             * @param val {Boolean}
              * @returns {*}
              */
             persistSystemColumnsMode: function (val) {

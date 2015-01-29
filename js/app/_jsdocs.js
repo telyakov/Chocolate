@@ -29,4 +29,4 @@
  * @param {function(element:jQuery)} callback
  */
 
-//Поддержка типа Deferred, jquery, custom object Types, Event
+//todo: 1)Поддержка типа Deferred,  2)jquery, 3)custom object Types, 4)Event

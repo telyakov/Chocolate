@@ -56,6 +56,7 @@ var CanvasView = (function (Backbone) {
                 view: this,
                 $el: $form
             });
+            menuView.render();
             var $sectionCanvas = $('<section>', {
                 'data-id': 'canvas',
                 'class': 'canvas'

@@ -6,7 +6,6 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
             this.$el = options.$el;
             this.view = options.view;
             this.model = options.view.model;
-            this.render();
         },
         events: {},
         template: _.template([
@@ -54,6 +53,12 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
             '<div class="messages-container"></div>',
             '</menu>'
         ].join('')),
+        /**
+         * @method destroy
+         */
+        destroy: function(){
+          console.log('destroy menu');
+        },
         render: function () {
             var printID = helpersModule.uniqueID(),
                 isAllowPrintActions = this.model.isAllowPrintActions(),
