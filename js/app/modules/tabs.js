@@ -118,6 +118,6 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
                 name,
                 '</a><span class="tab-closed fa fa-times"></span>'
             ].join('');
-        },
+        }
     };
 })(jQuery, helpersModule, optionsModule, factoryModule, undefined);

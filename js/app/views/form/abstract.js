@@ -22,7 +22,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
         _refreshTimerID: null,
         _autoUpdateTimerID: null,
         jqueryForm: null,
-        $closeLink: null,
+        $closeCardLink: null,
         footerTemplate: _.template([
                 '<footer class="grid-footer" data-id="grid-footer">',
                 '<div class="footer-info" data-id="info"></div>',
@@ -149,8 +149,8 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
 
         addCloseCardEventListener: function ($li) {
             var _this = this;
-            _this.$closeLink = $li;
-            this.$closeLink
+            _this.$closeCardLink = $li;
+            this.$closeCardLink
                 .on('click', '.tab-closed', function () {
                     _this.destroy();
                     facade.getTabsModule().close($(this));
@@ -163,16 +163,13 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 });
         },
         destroyCloseCardEventListener: function () {
-            if(this.$closeLink){
-                this.$closeLink.off('click');
+            if(this.$closeCardLink){
+                this.$closeCardLink.off('click');
             }
         },
         destroy: function () {
             storageModule.removeFromSession(this.model.cid);
             this.destroyCloseCardEventListener();
-            this.getTh().find('.ui-resizable').resizable('destroy');
-            this.getJqueryDataTable().trigger("destroy");
-            this.getJqueryDataTable().floatThead('destroy');
             this.model.stopListening();
             delete this.$el;
             delete this.model;
@@ -181,7 +178,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             delete this._refreshTimerID;
             delete this._autoUpdateTimerID;
             delete this.jqueryForm;
-            delete this.$closeLink;
+            delete this.$closeCardLink;
             delete this.footerTemplate;
             delete this.cardButtonsTemplate;
         },

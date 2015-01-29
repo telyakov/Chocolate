@@ -10,6 +10,12 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             'click .menu-button-action': 'menuContextHandler',
             'click .menu-button-print': 'menuContextHandler'
         },
+        destroy: function(){
+            this.getTh().find('.ui-resizable').resizable('destroy');
+            this.getJqueryDataTable().trigger("destroy");
+            this.getJqueryDataTable().floatThead('destroy');
+            AbstractView.prototype.destroy.apply(this);
+        },
         menuContextHandler: function (e) {
             var $this = $(e.target).closest('button');
             $this.contextmenu('open', $this);
