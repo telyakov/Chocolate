@@ -15,13 +15,10 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             this.listenTo(this.model, 'openWizardTask', this.openWizardTask);
             this.render();
         },
-        $el: null,
-        model: null,
-        view: null,
-        formID: null,
         _refreshTimerID: null,
         _autoUpdateTimerID: null,
-        jqueryForm: null,
+        _$form: null,
+        _$settings: null,
         footerTemplate: _.template([
                 '<footer class="grid-footer" data-id="grid-footer">',
                 '<div class="footer-info" data-id="info"></div>',
@@ -34,23 +31,9 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
             '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
         ].join('')),
-        openWizardTask: function () {
-            mediator.publish(optionsModule.getChannel('logError'),
-                {
-                    model: this,
-                    error: 'not implemented openWizardTask method'
-                }
-            );
-        },
-        saveCard: function (opts) {
-            mediator.publish(optionsModule.getChannel('logError'),
-                {
-                    model: this,
-                    opts: opts,
-                    error: 'not implemented saveCard method'
-                }
-            );
-        },
+        /**
+         * @param e {Event}
+         */
         contentExpandHandler: function (e) {
             var $this = $(e.target).closest('button'),
                 $expandSection = $this.closest('section');
@@ -63,6 +46,9 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             }
             mediator.publish(optionsModule.getChannel('reflowTab'), true);
         },
+        /**
+         * @param opts {Object}
+         */
         lazyRefresh: function (opts) {
             var isLazy = opts && opts.isLazy ? true : false;
             if (isLazy) {
@@ -77,18 +63,32 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 this.refresh();
             }
         },
+        /**
+         * @returns {String}
+         */
         getFormID: function () {
             return this.formID;
         },
+        /**
+         * @returns {jQuery}
+         */
         getJqueryForm: function () {
-            if (this.jqueryForm === null) {
-                this.jqueryForm = $('#' + this.formID);
+            if (this._$form === null) {
+                this._$form = $('#' + this.formID);
             }
-            return this.jqueryForm;
+            return this._$form;
         },
+        /**
+         * @param id {string}
+         * @returns {string}
+         */
         generateCardID: function (id) {
             return ['card_', this.model.getView(), id].join('');
         },
+        /**
+         * @param pk {String|int}
+         * @returns {String}
+         */
         getCardCaption: function (pk) {
             var caption = this.model.getCardTabCaption();
             if ($.isNumeric(pk)) {
@@ -98,6 +98,10 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             }
             return caption;
         },
+        /**
+         *
+         * @param pk {String}
+         */
         openCardHandler: function (pk) {
             var view = this.model.getView(),
                 $tabs = $('#tabs'),
@@ -142,7 +146,28 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 $a.attr('href', href);
             }
         },
+        /**
+         * @param $settings {jQuery|null}
+         * @private
+         */
+        _persistLinkToJquerySettings: function ($settings) {
+            this._$settings = $settings;
+        },
+
+        /**
+         * @private
+         */
+        _destroyDialogSettings: function () {
+            if (this._$settings) {
+                this._$settings.dialog('destroy');
+                delete this._$settings;
+            }
+        },
+        /**
+         * @method destroy
+         */
         destroy: function () {
+            this._destroyDialogSettings();
             storageModule.removeFromSession(this.model.cid);
             this.model.stopListening();
             delete this.$el;
@@ -151,10 +176,15 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             delete this.formID;
             delete this._refreshTimerID;
             delete this._autoUpdateTimerID;
-            delete this.jqueryForm;
+            delete this._$form;
             delete this.footerTemplate;
             delete this.cardButtonsTemplate;
         },
+        /**
+         *
+         * @param $cnt {jQuery}
+         * @param pk {String}
+         */
         initCardScripts: function ($cnt, pk) {
             var _this = this;
             $cnt
@@ -174,6 +204,12 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                     cache: true
                 });
         },
+        /**
+         *
+         * @param card {CardRO}
+         * @param $panel {jQuery}
+         * @param pk {string}
+         */
         createCardPanel: function (card, $panel, pk) {
             var html = {},
                 callbacks = [],
@@ -204,7 +240,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 if (data.callback) {
                     callbacks.push(data.callback);
                 }
-                asyncTaskCompleted++;
+                asyncTaskCompleted += 1;
                 if (asyncTaskCompleted === length) {
                     $.unsubscribe(event);
                     var cardHtml = '';
@@ -232,9 +268,13 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             var i = 0;
             elements.each(function (model) {
                 model.render(event, i, card, pk);
-                i++;
+                i += 1;
             });
         },
+        /**
+         * @param id {string|undefined}
+         * @returns {Object}
+         */
         getActualDataFromStorage: function (id) {
             if (id === undefined) {
                 return helpersModule.merge(
@@ -249,6 +289,9 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             }
 
         },
+        /**
+         * @method exportToExcel
+         */
         exportToExcel: function () {
             var settings = this.getFormSettingsFromStorage(),
                 prepareSettings = {},
@@ -285,7 +328,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 if (!$.isEmptyObject(listData)) {
                     var hasOwn = Object.prototype.hasOwnProperty,
                         i,
-                        k
+                        k;
                     for (i in recordset) {
                         if (hasOwn.call(recordset, i)) {
                             for (k in recordset[i]) {
@@ -307,7 +350,11 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 });
             });
         },
-        openFormSettings: function (e) {
+        /**
+         * @method openFormSettings
+         */
+        openFormSettings: function () {
+            this._destroyDialogSettings();
             var $dialog = $('<div/>'),
                 $content = $('<div />', {'class': 'grid-settings'}),
                 $autoUpdate = $('<div/>', {
@@ -320,10 +367,16 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 $styleSettings = $('<div/>', {
                     'class': 'setting-item',
                     html: '<span class="setting-caption">Выбрать дизайн(необходимо обновить страницу, после изменения)</span>'
-                }),
-            //todo: move int to constants
+                });
+            var styleHtml = [
+                    '<option value="',
+                    optionsModule.getConstants('standardDesignType'),
+                    '">Стандартный</option><option value="',
+                    optionsModule.getConstants('mobileDesignType'),
+                    '">Мобильный</option>'
+                ].join(''),
                 $styleInput = $('<select/>', {
-                    html: '<option value="1">Стандартный</option><option value="2">Мобильный</option>'
+                    html: styleHtml
                 }),
                 _this = this;
             if (this.isAutoUpdate()) {
@@ -346,27 +399,28 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                         'text': 'OK',
                         'class': 'wizard-active wizard-next-button',
                         click: function () {
-                            var $this = $(this);
                             _this.setAutoUpdate($input.is(':checked'));
                             _this.setFormStyleID(parseInt($styleInput.val(), 10));
-                            $this.dialog("close");
-                            $this.remove();
+                            $(this).dialog("close");
                         }
                     },
                     Отмена: {
                         'text': 'Отмена',
                         'class': 'wizard-cancel-button',
                         click: function () {
-                            var $this = $(this);
-                            $this.dialog('close');
-                            $this.remove();
+                            $(this).dialog('close');
                         }
                     }
 
                 }
             });
             $dialog.dialog('open');
+            this._persistLinkToJquerySettings($dialog);
         },
+        /**
+         * @param id {string|undefined}
+         * @returns {Object}
+         */
         getDBDataFromStorage: function (id) {
             if (id === undefined) {
                 return this.getStorage().data;
@@ -374,21 +428,38 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 return this.getStorage().data[id];
             }
         },
+        /**
+         * @param id {String|int}
+         */
         addDeletedToStorage: function (id) {
             this.getDeletedDataFromStorage()[id] = true;
         },
+        /**
+         *
+         * @param id {string}
+         * @param data {object}
+         */
         addChangeToStorage: function (id, data) {
             if (this.getChangedDataFromStorage()[id] !== undefined) {
                 data = $.extend({}, this.getChangedDataFromStorage()[id], data);
             }
             this.getChangedDataFromStorage()[id] = data;
         },
+        /**
+         * @returns {Object}
+         */
         getChangedDataFromStorage: function () {
             return this.getStorage().changed;
         },
+        /**
+         * @returns {Object}
+         */
         getDeletedDataFromStorage: function () {
             return this.getStorage().deleted;
         },
+        /**
+         * @returns {boolean}
+         */
         isAutoUpdate: function () {
             var key = this.model.getView();
             if (storageModule.hasSetting(key, 'auto_update')) {
@@ -397,13 +468,22 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 return false;
             }
         },
+        /**
+         * @returns {boolean}
+         */
         isShortMode: function () {
             var key = this.model.getView();
             return storageModule.getSettingByKey(key, 'shortVisibleMode') ? true : false;
         },
+        /**
+         * @param val {boolean}
+         */
         setShortMode: function (val) {
             storageModule.persistSetting(this.model.getView(), 'shortVisibleMode', val);
         },
+        /**
+         * @returns {Number}
+         */
         getFormStyleID: function () {
             var key = this.model.getView();
             if (storageModule.hasSetting(key, 'globalStyle')) {
@@ -416,9 +496,15 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             }
         },
+        /**
+         * @param val {Number}
+         */
         setFormStyleID: function (val) {
             storageModule.persistSetting(this.model.getView(), 'globalStyle', val);
         },
+        /**
+         * @method startAutoUpdate
+         */
         startAutoUpdate: function () {
             if (this._autoUpdateTimerID === null) {
                 var _this = this;
@@ -429,11 +515,17 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }, optionsModule.getSetting('defaultAutoUpdateMS'));
             }
         },
+        /**
+         * @method stopAutoUpdate
+         */
         stopAutoUpdate: function () {
             if (this._autoUpdateTimerID !== null) {
                 clearInterval(this._autoUpdateTimerID);
             }
         },
+        /**
+         * @param val {boolean}
+         */
         setAutoUpdate: function (val) {
             storageModule.persistSetting(this.model.getView(), 'auto_update', val);
             if (val) {
@@ -442,12 +534,21 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 this.stopAutoUpdate();
             }
         },
+        /**
+         * @returns {boolean}
+         */
         hasSettings: function () {
             return !$.isEmptyObject(this.getFormSettingsFromStorage());
         },
+        /**
+         * @param settings {Object}
+         */
         persistColumnsSettings: function (settings) {
             storageModule.persistColumnsSettings(this.model.getView(), settings);
         },
+        /**
+         * @returns {Object}
+         */
         getFormSettingsFromStorage: function () {
             var settings = storageModule.getSettings(),
                 key = this.model.getView();
@@ -456,6 +557,10 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             }
             return settings[key];
         },
+        /**
+         * @param data {Object}
+         * @param order {Array}
+         */
         persistData: function (data, order) {
             storageModule.addToSession(this.model.cid, {
                 data: data,
@@ -464,6 +569,9 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 deleted: {}
             });
         },
+        /**
+         * @returns {Object}
+         */
         getStorage: function () {
             var cid = this.model.cid;
             if (!storageModule.hasSession(cid)) {
@@ -477,27 +585,18 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             return storageModule.getSession(cid);
 
         },
+        /**
+         * @returns {boolean}
+         */
         hasChange: function () {
             helpersModule.leaveFocus();
             return !$.isEmptyObject(this.getChangedDataFromStorage()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
         },
+        /**
+         * @param opts {Object}
+         * @abstract
+         */
         save: function (opts) {
-//            validate = function (data) {
-//                var requiredFields = this.getRequiredObj(),
-//                    errors = [];
-//                for (var field in requiredFields) {
-//                    if (typeof(data[field]) == 'undefined' || !data[field]) {
-//                        errors.push(field);
-//                    }
-//                }
-//                return errors;
-//            };
-//            getMessagesContainer = function () {
-//                if (this._ch_messages_container === null) {
-//                    this._ch_messages_container = facade.getFactoryModule().makeChMessagesContainer(this.$form.find(".messages-container"));
-//                }
-//                return this._ch_messages_container;
-//            };
 //            var ChResponseStatus = {
 //                SUCCESS: 0,
 //                ERROR: 1,
@@ -550,6 +649,9 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             );
         },
+        /**
+         * @abstract
+         */
         refresh: function () {
             mediator.publish(optionsModule.getChannel('logError'),
                 {
@@ -558,6 +660,9 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             );
         },
+        /**
+         * @abstract
+         */
         showMessage: function () {
             mediator.publish(optionsModule.getChannel('logError'),
                 {
@@ -566,6 +671,9 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             );
         },
+        /**
+         * @abstract
+         */
         render: function () {
             mediator.publish(optionsModule.getChannel('logError'),
                 {
@@ -574,6 +682,10 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             );
         },
+        /**
+         * @param opts {Object}
+         * @abstract
+         */
         change: function (opts) {
             mediator.publish(optionsModule.getChannel('logError'),
                 {
@@ -582,6 +694,32 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             );
         },
+        /**
+         * @abstract
+         */
+        openWizardTask: function () {
+            mediator.publish(optionsModule.getChannel('logError'),
+                {
+                    model: this,
+                    error: 'not implemented openWizardTask method'
+                }
+            );
+        },
+        /**
+         * @abstract
+         */
+        saveCard: function (opts) {
+            mediator.publish(optionsModule.getChannel('logError'),
+                {
+                    model: this,
+                    opts: opts,
+                    error: 'not implemented saveCard method'
+                }
+            );
+        },
+        /**
+         * @abstract
+         */
         openMailClient: function () {
             mediator.publish(optionsModule.getChannel('logError'),
                 {
@@ -590,6 +728,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             );
         }
+
     });
 })
 (Backbone, jQuery, _, storageModule, undefined, helpersModule, optionsModule);

@@ -14,7 +14,10 @@ var optionsModule = (function () {
             multiTaskService: '81',
             tasksXml: 'tasks.xml',
             tasksForTopsXml: 'tasksfortops.xml',
-            userSettingsXml: 'UserSettings.xml'
+            userSettingsXml: 'UserSettings.xml',
+            standardDesignType: '1',
+            mobileDesignType: '2'
+
         },
         channels = {
             socketRequest: 'socket_request',
