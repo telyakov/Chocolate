@@ -33,7 +33,7 @@ var AttachmentColumnRO = (function () {
              */
             destroy: function () {
                 if (this._$editableElements) {
-                    this._$editableElements.off('init').off('save').editable('destroy');
+                    this._$editableElements.off('init').off('save').editable('destroy').remove();
                 }
                 delete this._readData;
                 delete this._columnCustomProperties;

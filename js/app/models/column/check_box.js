@@ -20,7 +20,7 @@ var CheckBoxColumnRO = (function (helpersModule) {
                     delete this._$cnt;
                 }
                 if(this._$editableElements){
-                    this._$editableElements.off('init').editable('destroy');
+                    this._$editableElements.off('init').editable('destroy').remove();
                 }
                 this.constructor.__super__.destroy.apply(this, arguments);
             },
