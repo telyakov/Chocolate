@@ -61,6 +61,13 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
                 }
                 delete this._preview;
                 delete this._requiredFields;
+                this.set('$xml', null);
+                this.set('parentId', null);
+                var parentModel = this.get('parentModel');
+                if(parentModel){
+                    parentModel.destroy();
+                    this.set('parentModel', null);
+                }
             },
             getDynamicDefaultValues: function () {
                 return this._dynamicDefaultValues;

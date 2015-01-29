@@ -85,8 +85,10 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         },
         destroy: function () {
             delete this._properties;
-            //todo: call destroy view
-            delete this._view;
+            if (this._view) {
+                this._view.destroy();
+                delete this._view;
+            }
         },
         /**
          * @param view {FilterView|null}
