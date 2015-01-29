@@ -19,6 +19,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             },
             selectedTimerID: null,
             previewTimerID: null,
+            _$resizableElements: null,
             /**
              * @method destroy
              */
@@ -26,9 +27,9 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 delete this.selectedTimerID;
                 delete this.previewTimerID;
                 this.undelegateEvents();
-                this.getTh().find('.ui-resizable').resizable('destroy');
-                this.getJqueryDataTable().trigger("destroy");
-                this.getJqueryDataTable().floatThead('destroy');
+                this._destroyResizableWidget();
+                this._destroyTableSorterWidget();
+                this._destroyFloatTheadWidget();
                 AbstractView.prototype.destroy.apply(this);
             },
             /**
@@ -650,6 +651,20 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 $table.tablesorter(options);
             },
             /**
+             * @method destroyTableSorterWidget
+             * @private
+             */
+            _destroyTableSorterWidget: function () {
+                this.getJqueryDataTable().trigger("destroy");
+            },
+            /**
+             * @param $elements {jQuery|null}
+             * @private
+             */
+            _persistLinkToResizableElements: function ($elements) {
+                this._$resizableElements = $elements;
+            },
+            /**
              * @param $table {jQuery}
              */
             initResize: function ($table) {
@@ -659,6 +674,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                         }).children('div'),
                     startWidth = 0,
                     _this = this;
+                this._persistLinkToResizableElements($headers);
                 $headers.each(function () {
                     var $columnResize, $bodyResize;
                     $(this).resizable({
@@ -732,6 +748,16 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 });
             },
             /**
+             * @method destroyTableSorterWidget
+             * * @private
+             */
+            _destroyResizableWidget: function () {
+                if(this._$resizableElements){
+                    this._$resizableElements.resizable('destroy');
+                    delete this._$resizableElements;
+                }
+            },
+            /**
              * @param $table {jQuery}
              */
             initFloatThead: function ($table) {
@@ -742,6 +768,13 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                         return _this.getJqueryGridView();
                     }
                 });
+            },
+            /**
+             * @method _destroyFloatTheadWidget
+             * @private
+             */
+            _destroyFloatTheadWidget: function () {
+                this.getJqueryDataTable().floatThead('destroy');
             }
         });
 })
