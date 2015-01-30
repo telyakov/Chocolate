@@ -26,8 +26,8 @@ var FilterRoFactory = (function () {
                 }
                 return type;
             },
-            make: function (filter, view) {
-                var options = {filter: filter, model: view.model, view: view},
+            make: function (filter, view, $el) {
+                var options = {filter: filter, model: view.model, view: view, $el: $el},
                     type = _private.prepareType(filter);
                 switch (type) {
                     case fast:
@@ -44,8 +44,8 @@ var FilterRoFactory = (function () {
             }
         };
     return {
-        make: function (filter, view) {
-            return _private.make(filter, view);
+        make: function (filter, view, $el) {
+            return _private.make(filter, view, $el);
         }
     };
 })();

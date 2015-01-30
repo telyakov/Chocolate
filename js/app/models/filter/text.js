@@ -17,7 +17,8 @@ var TextFilterRO = (function (FilterRO) {
                 var view = new TextFilterView({
                     form: this.get('model'),
                     model: this,
-                    id: this.getViewId()
+                    id: this.getViewId(),
+                    $el: this.get('$el')
                 });
                 this.persistLinkToView(view);
                 view.render(event, i);

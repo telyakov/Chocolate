@@ -55,7 +55,8 @@ var FastFilterRO = (function (FilterRO, helpersModule, optionsModule, deferredMo
                     form: this.get('model'),
                     view: this.get('view'),
                     id: this.getViewId(),
-                    $el: $('body')
+                    $el: this.get('$el')
+
                 });
                 this.persistLinkToView(view);
                 view.render(event, i, collection);

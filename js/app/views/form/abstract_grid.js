@@ -782,6 +782,8 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
              * @private
              */
             _destroyFloatTheadWidget: function () {
+                this.getJqueryDataTable().find('th').remove();
+                this.getJqueryDataTable().find('td').remove();
                 this.getJqueryDataTable().floatThead('destroy');
             }
         });

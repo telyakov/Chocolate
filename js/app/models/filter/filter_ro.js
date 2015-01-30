@@ -7,7 +7,8 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             view: null,
             id: null,
             key: null,
-            value: null
+            value: null,
+            $el: null
         },
         _view: null,
         _properties: null,
@@ -91,11 +92,12 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
                 this._view = null;
             }
             this._id = null;
-            this.model = null;
-            this.filter = null;
-            this.id = null;
-            this.key = null;
-            this.value = null;
+            this.set('model', null);
+            this.set('filter', null);
+            this.set('id', null);
+            this.set('key', null);
+            this.set('value', null);
+            this.set('$el', null);
         },
         /**
          * @param view {FilterView|null}

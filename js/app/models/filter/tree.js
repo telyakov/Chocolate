@@ -17,7 +17,7 @@ var TreeFilterRO = (function (FilterRO) {
                     form: this.get('model'),
                     model: this,
                     id: this.getViewId(),
-                    $el: $('body')
+                    $el: this.get('$el')
                 });
                 this.persistLinkToView(view);
                 view.render(event, i);

@@ -441,14 +441,14 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
             hasFilters: function () {
                 return this.getFiltersCollections().length !== 0 && !this.isDiscussionView();
             },
-            getFiltersROCollection: function (view) {
+            getFiltersROCollection: function (view, $filterSection) {
                 if (this._filterRoCollection !== null) {
                     return this._filterRoCollection;
                 }
                 var filtersCollection = this.getFiltersCollections(),
                     filtersROCollection = new FiltersROCollection();
                 filtersCollection.each(function (item) {
-                    filtersROCollection.push(FilterRoFactory.make(item, view));
+                    filtersROCollection.push(FilterRoFactory.make(item, view, $filterSection));
                 });
                 this._filterRoCollection = filtersROCollection;
                 return this._filterRoCollection;

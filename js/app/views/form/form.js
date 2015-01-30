@@ -369,7 +369,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     var html = [],
                         callbacks = [],
                         event = 'render_' + helpersModule.uniqueID(),
-                        ROCollections = this.model.getFiltersROCollection(this),
+                        ROCollections = this.model.getFiltersROCollection(this, $filterSection),
                         length = ROCollections.length,
                         asyncTaskCompleted = 0;
                     $.subscribe(event, function (e, data) {

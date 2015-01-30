@@ -95,7 +95,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                         type: 'text',
                                         'data-from-id': _this.getFromKey()
                                     });
-                            })
+                            });
                             defer.resolve();
 
                         });

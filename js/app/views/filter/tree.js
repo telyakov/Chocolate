@@ -35,7 +35,6 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
              */
             destroy: function () {
                 delete this.template;
-                this.undelegateEvents();
                 FilterView.prototype.destroy.apply(this);
             },
             /**
