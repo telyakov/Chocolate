@@ -31,6 +31,8 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 this._destroyTableSorterWidget();
                 this._destroyFloatTheadWidget();
                 AbstractView.prototype.destroy.apply(this);
+                this.events = null;
+
 
             },
             /**

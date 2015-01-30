@@ -89,6 +89,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this._destroyTaskWizard();
                 AbstractGridView.prototype.destroy.apply(this);
                 this.$el = null;
+                this.events = null;
+
             },
             /**
              * @param $taskWizard {jQuery|null}

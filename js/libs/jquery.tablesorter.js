@@ -1114,6 +1114,20 @@
                 c.$table = null;
                 c.$tbodies = null;
                 c.headerList = [];
+                c.headerContent = null;
+                c.empties = null;
+                c.cache = null;
+                c.$filters = null;
+                c.headerList = null;
+                c.parsers = null;
+                c.headers = null;
+                c.sortList = null;
+                c.string = null;
+                c.strings = null;
+                c.widgetInit = null;
+                c.widgetOptions = null;
+                c.widgets = null;
+                c = null;
             };
 
             // *** sort functions ***

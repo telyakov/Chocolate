@@ -41,8 +41,10 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             destroy: function () {
                 delete this.template;
                 this.undelegateEvents();
+                this.$el.off();
                 this.model.stopListening();
                 FilterView.prototype.destroy.apply(this);
+                this.unbind();
             },
             /**
              * @returns {string}
@@ -86,16 +88,15 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                     visibleId = deferredModule.save(visibleDf),
                     nextRowId = deferredModule.save(nextRowDf);
                 var changeHandler = model.getEventChange();
-                var selector = 'change ' + '#' + _this.id + ' input';
-                this.events[selector] = function (e) {
+                var selector = 'input';
+                this.$el.on('change', selector, function (e) {
                     var val = _this.getValue();
                     if (changeHandler) {
                         helpersModule.scriptExpressionEval(changeHandler, val, _this);
                     }
                     model.trigger('change:value', val);
                     e.stopImmediatePropagation();
-                };
-                this.delegateEvents();
+                });
 
                 model.isVisibleEval(visibleId);
                 model.isNextRowEval(nextRowId);

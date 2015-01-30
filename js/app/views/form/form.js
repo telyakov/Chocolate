@@ -69,27 +69,35 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     if (e.keyCode === optionsModule.getKeyCode('enter')) {
                         this.model.trigger('refresh:form', {});
                     }
-                }
-            },
-            view: null,
-            _panelID: null,
-            $closeLink: null,
-            headerTemplate: _.template([
-                '<section class="section-header" data-id="header">',
-                '<div class="top-header">',
-                '<div class="left-header">',
-                '<%= image %>',
-                '</div>',
-                '<div class="right-header">',
-                '<%= title %>',
-                '</div>',
-                '</div>',
-                '<div class="bottom-header" id="<%= asyncId %>">',
-                '</div>',
-                '</section>'
-            ].join('')),
-            filterTemplate: _.template([
-                '<div class="filters-content">',
+                },
+                'click .fm-email-send': function(e){
+                this.model.trigger('openMailClient');
+    e.preventDefault();
+},
+    'click .fm-wizard-task': function(e){
+    this.model.trigger('openWizardTask', e);
+    e.preventDefault();
+}
+},
+view: null,
+    _panelID: null,
+    $closeLink: null,
+    headerTemplate: _.template([
+    '<section class="section-header" data-id="header">',
+    '<div class="top-header">',
+    '<div class="left-header">',
+    '<%= image %>',
+    '</div>',
+    '<div class="right-header">',
+    '<%= title %>',
+    '</div>',
+    '</div>',
+    '<div class="bottom-header" id="<%= asyncId %>">',
+    '</div>',
+    '</section>'
+].join('')),
+    filterTemplate: _.template([
+    '<div class="filters-content">',
                 '<form class="form-vertical filter-form" id="<%= formID %>">',
                 '<%= html %>',
                 '</form>',
@@ -118,6 +126,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 }
                 delete this.$el; // Delete the jQuery wrapped object variable
                 delete this.el; // Delete the variable reference to this node
+                this.events = null;
 
             },
             /**
@@ -323,19 +332,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                             model = this.model,
                             image = facade.getImageAdapter().convert(model.getImage());
                         title = model.getHeaderText();
-                        if (title.indexOf('fm-email-send') !== -1) {
-                            this.events['click #' + this.getPanelID() + ' .fm-email-send'] = function () {
-                                model.trigger('openMailClient');
-                            };
-                            this.delegateEvents();
-                        }
-                        if (title.indexOf('fm-wizard-task') !== -1) {
-                            this.events['click .fm-wizard-task'] = function (e) {
-                                e.preventDefault();
-                                model.trigger('openWizardTask', e);
-                            };
-                            this.delegateEvents();
-                        }
                         $panel.append(this.headerTemplate({
                             image: image,
                             title: title,

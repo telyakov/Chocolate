@@ -57,6 +57,8 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 delete this._$form;
                 delete this.footerTemplate;
                 delete this.cardButtonsTemplate;
+                this.events = null;
+
             },
             /**
              * @param e {Event}

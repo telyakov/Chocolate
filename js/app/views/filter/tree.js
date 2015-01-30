@@ -35,6 +35,7 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
              */
             destroy: function () {
                 delete this.template;
+                this.$el.off();
                 FilterView.prototype.destroy.apply(this);
             },
             /**
@@ -80,7 +81,7 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                                 attribute: model.getAttribute(),
                                 buttonId: buttonId
                             });
-                            var selector = 'click #' + buttonId,
+                            var selector = '#' + buttonId,
                                 defaultOpts = {
                                     debugLevel: 0,
                                     checkbox: true,
@@ -115,8 +116,9 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                                         return this.parent().children('input[type=hidden]');
                                     }
                                 });
-                            _this.events[selector] = function (e) {
+                            _this.$el.on('click', selector, function (e) {
                                 //todo: fix leak memory
+
                                 var model = new DynatreeModel({
                                     $el: $(e.target),
                                     options: opts
@@ -126,8 +128,7 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                                 });
                                 view.render();
                                 e.stopImmediatePropagation();
-                            };
-                            _this.delegateEvents();
+                            });
                         }
                         $.publish(event, {
                             text: text,
