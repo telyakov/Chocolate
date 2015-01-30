@@ -60,6 +60,7 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 '</menu>'
             ].join('')),
             _$printActionButton: null,
+            _$actionButton: null,
             /**
              * @method destroy
              */
@@ -67,10 +68,10 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 this.undelegateEvents();
                 this._destroyPrintActionsEvent();
                 this._destroyActionsButtonEvent();
-                delete this.template;
-                delete this.$el;
-                delete this.view;
-                delete this.model;
+                this.template = null;
+                this.$el = null;
+                this.view = null;
+                this.model = null;
             },
             /**
              * @method remder
@@ -123,7 +124,7 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
             _destroyPrintActionsEvent: function () {
                 if (this._$printActionButton) {
                     this._$printActionButton.contextmenu('destroy');
-                    delete this._$printActionButton;
+                    this._$printActionButton = null;
                 }
             },
             /**
@@ -152,14 +153,13 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                     }
                 });
             },
-            _$actionButton: null,
             /**
              * @private
              */
             _destroyActionsButtonEvent: function () {
                 if (this._$actionButton) {
                     this._$actionButton.contextmenu('destroy');
-                    delete this._$actionButton;
+                    this._$actionButton = null;
                 }
             },
             /**

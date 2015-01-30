@@ -655,7 +655,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
              * @private
              */
             _destroyTableSorterWidget: function () {
-                this.getJqueryDataTable().trigger("destroy");
+                this.getJqueryDataTable().trigger("destroy.tablesorter");
             },
             /**
              * @param $elements {jQuery|null}

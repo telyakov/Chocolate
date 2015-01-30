@@ -780,9 +780,7 @@
                                     this.hide();
                                 }
                                 //fix for tabindex
-                                helpersModule.leaveFocus()
-
-//                                this.element.closest('.table-td'). children('a').editable('toggle')
+                                helpersModule.leaveFocus();
                             } else {
                                 this.fill();
                                 if (this.autoclose) {

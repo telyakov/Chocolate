@@ -101,23 +101,24 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             destroy: function () {
                 this.destroyCloseEventListener();
                 this.undelegateEvents();
-                delete this._panelID;
-                delete this.$closeLink;
-                delete this.headerTemplate;
-                delete this.filterTemplate;
-                delete this.$card;
+                this._panelID = null;
+                this.$closeLink = null;
+                this.headerTemplate= null;
+                this.filterTemplate = null;
+                this.$card = null;
                 if (this.card) {
                     this.card.destroy();
-                    delete this.card;
+                    this.card = null;
                 }
-                delete this.$el;
                 if (this.view) {
                     this.view.destroy();
-                    delete this.view;
+                    this.view = null;
                 }
                 this.model.destroy();
-                delete this.model;
-                delete this.$el;
+                this.model = null;
+                delete this.$el; // Delete the jQuery wrapped object variable
+                delete this.el; // Delete the variable reference to this node
+
             },
             /**
              * @param e {Event}
@@ -173,6 +174,9 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
 
                 });
             },
+            /**
+             * @returns {Array|Object}
+             */
             getFilterData: function () {
                 //todo: support idlist
                 if (this.model.hasFilters()) {
@@ -217,12 +221,20 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     return {};
                 }
             },
+            /**
+             * @returns {String}
+             */
             getPanelID: function () {
                 if (this._panelID === null) {
                     this._panelID = helpersModule.uniqueID();
                 }
                 return this._panelID;
             },
+            /**
+             * @param id {String}
+             * @param name {String}
+             * @returns {jQuery}
+             */
             addTab: function (id, name) {
                 var tabsModule = facade.getTabsModule();
                 var $item = $('<li>', {
@@ -235,11 +247,19 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 tabsModule.push($item);
                 return $item;
             },
+            /**
+             * @param id {String}
+             * @param name {String}
+             * @returns {jQuery}
+             */
             addTabAndSetActive: function (id, name) {
                 var $item = this.addTab(id, name);
                 helpersModule.getTabsObj().tabs({active: $item.index()});
                 return $item;
             },
+            /**
+             * @returns {jQuery}
+             */
             createPanel: function () {
                 if (this.$card) {
                     return this.$card;
@@ -251,10 +271,12 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 $('#tabs').append($panel);
                 var $closeLink = this.addTabAndSetActive(id, this.model.getCaption());
                 this.addCloseEventListener($closeLink);
-                this.delegateEvents();
                 return $panel;
 
             },
+            /**
+             * @param $closeLink {jQuery}
+             */
             addCloseEventListener: function ($closeLink) {
                 this.$closeLink = $closeLink;
                 var _this = this;
@@ -269,9 +291,17 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         facade.getTabsModule().close($(this));
                     });
             },
+            /**
+             * @method destroy
+             */
             destroyCloseEventListener: function () {
-                this.$closeLink.off('click');
+                if( this.$closeLink){
+                    this.$closeLink.off('click');
+                }
             },
+            /**
+             * @param $panel {jQuery}
+             */
             layoutHeader: function ($panel) {
                 var title;
                 if (this.model.isAttachmentView()) {
@@ -323,6 +353,11 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 }
 
             },
+            /**
+             *
+             * @param $panel {jQuery}
+             * @param panelDefer {Deferred}
+             */
             layoutFilters: function ($panel, panelDefer) {
                 var _this = this;
                 if (this.model.hasFilters()) {
@@ -342,7 +377,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         if (data.callback) {
                             callbacks.push(data.callback);
                         }
-                        asyncTaskCompleted++;
+                        asyncTaskCompleted += 1;
                         if (asyncTaskCompleted === length) {
                             $.unsubscribe(event);
                             $filterSection.append(
@@ -367,6 +402,9 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 }
 
             },
+            /**
+             * @param $panel {jQuery}
+             */
             layoutFormSection: function ($panel) {
                 var $formSection;
                 if (this.model.isDiscussionView()) {

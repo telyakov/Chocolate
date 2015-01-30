@@ -24,11 +24,11 @@ var FilterView = (function (Backbone, $) {
              * @method destroy
              */
             destroy: function(){
-                delete this.model;
-                delete this.form;
-                delete this.view;
-                delete this.id;
-                delete this.$el;
+                this.model= null;
+                this.form= null;
+                this.view= null;
+                this.id= null;
+                this.$el = null;
             },
             /**
              * @param event {String}

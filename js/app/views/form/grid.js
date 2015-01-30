@@ -68,15 +68,15 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @override
              */
             destroy: function(){
-                delete this.template;
-                delete this.gridTemplate;
-                delete this.columnHeaderTemplate;
-                delete this._callbacks;
-                delete this._priorityColors;
+                this.template = null;
+                this.gridTemplate = null;
+                this.columnHeaderTemplate = null;
+                this._callbacks = null;
+                this._priorityColors = null;
                 this._unsubscribeRefreshEvent();
                 if(this._menuView){
                     this._menuView.destroy();
-                    delete this._menuView;
+                    this._menuView = null;
                 }
                 try{
                     this.$el.contextmenu('destroy');
@@ -88,7 +88,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this.undelegateEvents();
                 this._destroyTaskWizard();
                 AbstractGridView.prototype.destroy.apply(this);
-                delete this.$el;
+                this.$el = null;
             },
             /**
              * @param $taskWizard {jQuery|null}
@@ -103,7 +103,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             _destroyTaskWizard: function(){
               if(this._$taskWizard){
                   this._$taskWizard.chWizard('destroy');
-                  delete this._$taskWizard;
+                  this._$taskWizard = null;
               }
             },
             /**
@@ -612,7 +612,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             _destroyContextMenuWidget: function(){
                 if(this._$contextMenu){
                     this._$contextMenu.contextmenu('destroy');
-                    delete this._$contextMenu;
+                    this._$contextMenu = null;
                 }
             },
             _persistLinkToContextMenu: function($contextMenu){
@@ -855,6 +855,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              */
             _unsubscribeRefreshEvent: function(){
                 $.unsubscribe(this.getLayoutSubscribeName());
+                this.getJqueryGridView().off('scroll.chocolate');
+                this.getJqueryDataTable().off('sortEnd').off('filterEnd');
             },
             /**
              * @param data {Object}
@@ -918,7 +920,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         .css({display: 'none'});
                 });
                 var prevScrollTop = 0;
-                $userGrid.unbind('scroll.chocolate').on('scroll.chocolate', $.debounce(150, false, function () {
+                $userGrid.on('scroll.chocolate', $.debounce(150, false, function () {
                     var curScrollTop = $(this).scrollTop();
                     if (curScrollTop !== prevScrollTop) {
                         $.publish(subscribeName, false);
@@ -929,7 +931,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 $tbody.html(html);
                 this.applyCallbacks(this.$el);
                 $table.trigger("update");
-                $table.unbind('sortEnd').unbind('filterEnd').bind('sortEnd filterEnd', function () {
+                $table.on('sortEnd filterEnd', function () {
                     _this.clearSelectedArea();
                     $.publish(subscribeName, true);
                 });

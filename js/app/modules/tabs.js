@@ -70,19 +70,15 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
                 //};
             }
             var $tab = activeTab.getLi();
+            var index = $tab.index();
             if ($tab.hasClass(optionsModule.getClass('activeTab'))) {
                 var nextIndex = history.pop();
                 helpersModule.getTabsObj().tabs({ active: nextIndex });
                 mediator.publish(optionsModule.getChannel('reflowTab'));
             }
-            var $panel = $('#' + $tab.remove().attr("aria-controls"));
-            _private.destroy($panel);
+            helpersModule.getTabsObj().tabs('remove', index);
             helpersModule.getTabsObj().tabs('refresh');
             factoryModule.garbageCollection();
-        },
-        destroy: function ($panel) {
-            //$panel.find('.editable').editable('destroy').remove();
-            $panel.remove();
         }
     };
     return {
