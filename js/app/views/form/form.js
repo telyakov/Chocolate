@@ -110,12 +110,12 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     this.card.destroy();
                     this.card = null;
                 }
+                this.model.destroy();
+                this.model = null;
                 if (this.view) {
                     this.view.destroy();
                     this.view = null;
                 }
-                this.model.destroy();
-                this.model = null;
                 delete this.$el; // Delete the jQuery wrapped object variable
                 delete this.el; // Delete the variable reference to this node
 

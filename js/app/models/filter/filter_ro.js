@@ -11,6 +11,7 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
         },
         _view: null,
         _properties: null,
+        _id: null,
         getViewId: function () {
             if (this._id === null) {
                 this._id = helpersModule.uniqueID();
@@ -87,8 +88,14 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             delete this._properties;
             if (this._view) {
                 this._view.destroy();
-                delete this._view;
+                this._view = null;
             }
+            this._id = null;
+            this.model = null;
+            this.filter = null;
+            this.id = null;
+            this.key = null;
+            this.value = null;
         },
         /**
          * @param view {FilterView|null}

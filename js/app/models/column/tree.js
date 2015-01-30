@@ -46,7 +46,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
              */
             getJsFn: function () {
                 var _this = this;
-                return function ($cnt, viewProperty) {
+                return function ($cnt, viewProperty, defer) {
                     _this.receiveData()
                         .done(function (res) {
                             _this._persistLinkToContext($cnt);
@@ -95,7 +95,9 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                         type: 'text',
                                         'data-from-id': _this.getFromKey()
                                     });
-                            });
+                            })
+                            defer.resolve();
+
                         });
                 };
             }

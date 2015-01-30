@@ -34,7 +34,7 @@ var TextColumnRO = (function (helpersModule) {
             getJsFn: function () {
                 var _this = this,
                     customProperties = _this.getColumnCustomProperties();
-                return function ($cnt, view) {
+                return function ($cnt, view, defer) {
                     var options = {
                             mode: 'inline',
                             name: _this.get('key'),
@@ -96,6 +96,7 @@ var TextColumnRO = (function (helpersModule) {
                             })
                             .editable(options);
                     });
+                    defer.resolve();
                 };
             }
         });

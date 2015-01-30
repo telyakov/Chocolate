@@ -44,7 +44,7 @@ var DateColumnRO = (function (optionsModule) {
                 var _this = this,
                     isTime = _this.getEditType() === 'date';
 
-                return function ($cnt, view) {
+                return function ($cnt, view, defer) {
                     //todo: fix leak memory - destroy view
                     var selector = '.' + _this._getUniqueClass();
                     var $editableElements = $cnt.find(selector);
@@ -93,6 +93,7 @@ var DateColumnRO = (function (optionsModule) {
                                 });
                         }
                     });
+                    defer.resolve();
                 };
             }
         });

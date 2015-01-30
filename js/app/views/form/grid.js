@@ -67,20 +67,20 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             /**
              * @override
              */
-            destroy: function(){
+            destroy: function () {
                 this.template = null;
                 this.gridTemplate = null;
                 this.columnHeaderTemplate = null;
                 this._callbacks = null;
                 this._priorityColors = null;
                 this._unsubscribeRefreshEvent();
-                if(this._menuView){
+                if (this._menuView) {
                     this._menuView.destroy();
                     this._menuView = null;
                 }
-                try{
+                try {
                     this.$el.contextmenu('destroy');
-                }catch(e){
+                } catch (e) {
                     mediator.publish(optionsModule.getChannel('logError'), e);
                 }
                 this._destroyDragTableWidget();
@@ -94,17 +94,17 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @param $taskWizard {jQuery|null}
              * @private
              */
-            _persistLinkToWizardTask: function($taskWizard){
+            _persistLinkToWizardTask: function ($taskWizard) {
                 this._$taskWizard = $taskWizard
             },
             /**
              * @private
              */
-            _destroyTaskWizard: function(){
-              if(this._$taskWizard){
-                  this._$taskWizard.chWizard('destroy');
-                  this._$taskWizard = null;
-              }
+            _destroyTaskWizard: function () {
+                if (this._$taskWizard) {
+                    this._$taskWizard.chWizard('destroy');
+                    this._$taskWizard = null;
+                }
             },
             /**
              * @param e {Event}
@@ -451,14 +451,17 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             /**
              *
              * @param $cnt {jQuery}
-             * @returns {*}
+             * @returns {Array}
              */
             applyCallbacks: function ($cnt) {
                 var view = this;
+                var deferTasks = [];
                 this.getCallbacks().forEach(function (fn) {
-                    fn($cnt, view);
+                    var defer = deferredModule.create();
+                    deferTasks.push(defer);
+                    fn($cnt, view, defer);
                 });
-                return this;
+                return deferTasks;
             },
             /**
              * @param e {Event}
@@ -493,8 +496,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @param view {MenuView|null}
              * @private
              */
-            _persistLinkToMenuView: function(view){
-              this._menuView = view;
+            _persistLinkToMenuView: function (view) {
+                this._menuView = view;
             },
             /**
              * @param $form {jQuery}
@@ -546,7 +549,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         index = _this.getPositionColumn(column.get('key'));
                     } else {
                         index = iterator;
-                        iterator +=1;
+                        iterator += 1;
                     }
                     sortedColumnCollection[index] = column;
                 });
@@ -609,13 +612,13 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this.initTableScript();
                 this.refreshData();
             },
-            _destroyContextMenuWidget: function(){
-                if(this._$contextMenu){
+            _destroyContextMenuWidget: function () {
+                if (this._$contextMenu) {
                     this._$contextMenu.contextmenu('destroy');
                     this._$contextMenu = null;
                 }
             },
-            _persistLinkToContextMenu: function($contextMenu){
+            _persistLinkToContextMenu: function ($contextMenu) {
                 this._$contextMenu = $contextMenu;
             },
             /**
@@ -767,7 +770,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             /**
              * @private
              */
-            _destroyDragTableWidget: function(){
+            _destroyDragTableWidget: function () {
                 //todo: check destroy view
                 this.getJqueryFloatHeadTable().dragtable('destroy');
             },
@@ -853,10 +856,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             /**
              * @private
              */
-            _unsubscribeRefreshEvent: function(){
+            _unsubscribeRefreshEvent: function () {
                 $.unsubscribe(this.getLayoutSubscribeName());
-                this.getJqueryGridView().off('scroll.chocolate');
-                this.getJqueryDataTable().off('sortEnd').off('filterEnd');
+                this.getJqueryGridView().unbind('scroll.chocolate');
+                this.getJqueryDataTable().unbind('sortEnd').unbind('filterEnd');
             },
             /**
              * @param data {Object}
@@ -929,9 +932,12 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 }));
 
                 $tbody.html(html);
-                this.applyCallbacks(this.$el);
-                $table.trigger("update");
-                $table.on('sortEnd filterEnd', function () {
+                var tasks = this.applyCallbacks(this.$el);
+                $.when.apply($, tasks).done(function () {
+                    $table.trigger("update");
+                });
+
+                $table.bind('sortEnd filterEnd', function () {
                     _this.clearSelectedArea();
                     $.publish(subscribeName, true);
                 });

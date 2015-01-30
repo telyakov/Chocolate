@@ -56,7 +56,7 @@ var CheckBoxColumnRO = (function (helpersModule) {
             getJsFn: function () {
                 var _this = this,
                     customProperties = _this.getColumnCustomProperties();
-                return function ($cnt, view) {
+                return function ($cnt, view, defer) {
                     _this._persistLinkToContext($cnt);
                     var selector = '.' + _this._getUniqueClass();
                     $cnt.on('click', selector, function checkBoxClick() {
@@ -107,6 +107,7 @@ var CheckBoxColumnRO = (function (helpersModule) {
                                 );
                             }
                         });
+                    defer.resolve();
                 };
             }
         }

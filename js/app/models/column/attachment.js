@@ -61,7 +61,7 @@ var AttachmentColumnRO = (function () {
              */
             getJsFn: function () {
                 var _this = this;
-                return function ($cnt, view) {
+                return function ($cnt, view, defer) {
                     var $editableElements = $cnt.find('.' + _this._getUniqueClass());
                     _this._persistLinkToEditableElements($editableElements);
                     $editableElements.editable({
@@ -76,8 +76,8 @@ var AttachmentColumnRO = (function () {
                         fromName: null,
                         toName: null,
                         toID: null
-
                     });
+                    defer.resolve();
                 };
             },
             /**

@@ -44,8 +44,8 @@ var FormColumnRO = (function () {
              */
             getJsFn: function () {
                 var _this = this;
-                return function ($cnt) {
-                    var $editableElements =  $cnt.find('.' + _this._getUniqueClass());
+                return function ($cnt, view, defer) {
+                    var $editableElements = $cnt.find('.' + _this._getUniqueClass());
                     _this._persistLinkToEditableElements($editableElements);
                     $editableElements
                         .editable({
@@ -61,8 +61,9 @@ var FormColumnRO = (function () {
                             fromName: _this.getFromName(),
                             toName: _this.getToName(),
                             toID: _this.getToId()
-                        })
-                    ;
+                        });
+                    defer.resolve();
+
                 };
             }
         });

@@ -34,7 +34,7 @@ var SelectColumnRO = (function (Backbone, helpersModule) {
             getJsFn: function () {
                 var _this = this;
 
-                return function ($cnt, view) {
+                return function ($cnt, view, defer) {
                     //todo: fix leak memory - destroy view
 
                     _this.receiveData()
@@ -74,6 +74,7 @@ var SelectColumnRO = (function (Backbone, helpersModule) {
                                         });
                                 }
                             });
+                            defer.resolve();
                         });
                 };
             }
