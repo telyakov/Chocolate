@@ -47,7 +47,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             destroy: function () {
                 this._destroyDialogSettings();
                 storageModule.removeFromSession(this.model.cid);
-                this.model.stopListening();
+                this.stopListening(this.model);
                 delete this.$el;
                 delete this.model;
                 delete this.view;

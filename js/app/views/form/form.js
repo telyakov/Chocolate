@@ -70,34 +70,34 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         this.model.trigger('refresh:form', {});
                     }
                 },
-                'click .fm-email-send': function(e){
-                this.model.trigger('openMailClient');
-    e.preventDefault();
-},
-    'click .fm-wizard-task': function(e){
-    this.model.trigger('openWizardTask', e);
-    e.preventDefault();
-}
-},
-view: null,
-    _panelID: null,
-    $closeLink: null,
-    headerTemplate: _.template([
-    '<section class="section-header" data-id="header">',
-    '<div class="top-header">',
-    '<div class="left-header">',
-    '<%= image %>',
-    '</div>',
-    '<div class="right-header">',
-    '<%= title %>',
-    '</div>',
-    '</div>',
-    '<div class="bottom-header" id="<%= asyncId %>">',
-    '</div>',
-    '</section>'
-].join('')),
-    filterTemplate: _.template([
-    '<div class="filters-content">',
+                'click .fm-email-send': function (e) {
+                    this.model.trigger('openMailClient');
+                    e.preventDefault();
+                },
+                'click .fm-wizard-task': function (e) {
+                    this.model.trigger('openWizardTask', e);
+                    e.preventDefault();
+                }
+            },
+            view: null,
+            _panelID: null,
+            $closeLink: null,
+            headerTemplate: _.template([
+                '<section class="section-header" data-id="header">',
+                '<div class="top-header">',
+                '<div class="left-header">',
+                '<%= image %>',
+                '</div>',
+                '<div class="right-header">',
+                '<%= title %>',
+                '</div>',
+                '</div>',
+                '<div class="bottom-header" id="<%= asyncId %>">',
+                '</div>',
+                '</section>'
+            ].join('')),
+            filterTemplate: _.template([
+                '<div class="filters-content">',
                 '<form class="form-vertical filter-form" id="<%= formID %>">',
                 '<%= html %>',
                 '</form>',
@@ -111,7 +111,7 @@ view: null,
                 this.undelegateEvents();
                 this._panelID = null;
                 this.$closeLink = null;
-                this.headerTemplate= null;
+                this.headerTemplate = null;
                 this.filterTemplate = null;
                 this.$card = null;
                 if (this.card) {
@@ -127,7 +127,6 @@ view: null,
                 delete this.$el; // Delete the jQuery wrapped object variable
                 delete this.el; // Delete the variable reference to this node
                 this.events = null;
-
             },
             /**
              * @param e {Event}
@@ -304,7 +303,7 @@ view: null,
              * @method destroy
              */
             destroyCloseEventListener: function () {
-                if( this.$closeLink){
+                if (this.$closeLink) {
                     this.$closeLink.off('click');
                 }
             },

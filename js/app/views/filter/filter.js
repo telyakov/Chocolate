@@ -29,6 +29,8 @@ var FilterView = (function (Backbone, $) {
                 this.view= null;
                 this.id= null;
                 this.$el = null;
+                this.el = null;
+                this.render = null;
             },
             /**
              * @param event {String}

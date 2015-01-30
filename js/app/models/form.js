@@ -59,6 +59,12 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
                     });
                     delete this._columnsCardRoCollection;
                 }
+                if(this._cardCollection){
+                    this._cardCollection.each(function (object) {
+                        object.destroy();
+                    });
+                    delete this._cardCollection;
+                }
                 delete this._preview;
                 delete this._requiredFields;
                 this.set('$xml', null);

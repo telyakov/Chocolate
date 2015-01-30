@@ -32,8 +32,6 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 this._destroyFloatTheadWidget();
                 AbstractView.prototype.destroy.apply(this);
                 this.events = null;
-
-
             },
             /**
              * @param e {Event}
@@ -663,7 +661,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 this.getJqueryFloatHeadTable().unbind('appendCache applyWidgetId applyWidgets sorton update updateCell')
                     .removeClass('tablesorter');
                 this.getJqueryDataTable().find('.table-td').remove();
-                //this.getJqueryDataTable().find('tr').remove();
+                this.getJqueryDataTable().find('tr').remove();
 
                 this.getJqueryDataTable().trigger("destroy");
             },

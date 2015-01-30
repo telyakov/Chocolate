@@ -42,7 +42,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 delete this.template;
                 this.undelegateEvents();
                 this.$el.off();
-                this.model.stopListening();
+                this.stopListening(this.model);
                 FilterView.prototype.destroy.apply(this);
                 this.unbind();
             },
