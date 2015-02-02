@@ -8,6 +8,26 @@ var DateCardElement = (function ($, moment, optionsModule, CardElement) {
     return CardElement.extend(
         /** @lends DateCardElement */
         {
+            _$element: null,
+            /**
+             * @method destroy
+             * @override
+             */
+            destroy: function () {
+                if (this._$element) {
+                    this._$element.off('init').off('hidden').off('save').editable('destroy').remove();
+                    this._$element = null;
+                }
+                this.constructor.__super__.destroy.apply(this, arguments);
+            },
+            /**
+             * @param $element {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToEditableElements: function ($element) {
+                this._$element = $element;
+            },
             /**
              * @override
              * @param controlID {String}
@@ -23,6 +43,7 @@ var DateCardElement = (function ($, moment, optionsModule, CardElement) {
                         name = column.get('key'),
                         view = _this.get('view'),
                         isAllowEdit = column.isAllowEdit(view, pk);
+                    _this._persistLinkToEditableElements($el);
                     var options = {
                         onblur: 'submit',
                         name: name,

@@ -8,6 +8,27 @@ var SelectCardElement = (function ($, helpersModule, CardElement) {
     return CardElement.extend(
         /** @lends SelectCardElement */
         {
+
+            _$element: null,
+            /**
+             * @method destroy
+             * @override
+             */
+            destroy: function () {
+                if (this._$element) {
+                    this._$element.off('init').off('save').off('hidden').editable('destroy').remove();
+                    this._$element = null;
+                }
+                this.constructor.__super__.destroy.apply(this, arguments);
+            },
+            /**
+             * @param $element {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToEditableElements: function ($element) {
+                this._$element = $element;
+            },
             /**
              * @override
              * @param controlID {String}
@@ -26,6 +47,7 @@ var SelectCardElement = (function ($, helpersModule, CardElement) {
                                 name = column.get('key'),
                                 view = _this.get('view'),
                                 isAllowEdit = column.isAllowEdit(view, pk);
+                            _this._persistLinkToEditableElements($el);
                             if (isAllowEdit) {
                                 $el
                                     .on('save', function (e, params) {

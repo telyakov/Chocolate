@@ -21,6 +21,8 @@ var CheckBoxColumnRO = (function (helpersModule) {
                 }
                 if(this._$editableElements){
                     this._$editableElements.off('init').editable('destroy').remove();
+                    this._$editableElements = null;
+
                 }
                 this.constructor.__super__.destroy.apply(this, arguments);
             },

@@ -16,6 +16,7 @@ var DateColumnRO = (function (optionsModule) {
             destroy: function () {
                 if (this._$editableElements) {
                     this._$editableElements.off('init').off('save').editable('destroy').remove();
+                    this._$editableElements = null;
                 }
                 this.constructor.__super__.destroy.apply(this, arguments);
             },

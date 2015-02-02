@@ -15,6 +15,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 'click .card-cancel': '_cancel'
             },
             _$cardMenu: null,
+            _cardElements: [],
             buttonsTemplate: _.template([
                 '<div class="card-action-button" data-id="action-button-panel">',
                 '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
@@ -37,6 +38,19 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             },
 
             destroy: function () {
+                if (this._cardElements) {
+                    this._cardElements.forEach(
+                        /**
+                         * @param card {CardROCollection}
+                         */
+                            function (card) {
+                            card.each(function (object) {
+                                object.destroy();
+                            });
+                        });
+
+                    this._cardElements = null;
+                }
                 this._destroyCardMenu();
                 this._destroyCloseCardEventListener();
                 this.view.deleteOpenedCard(this.id);
@@ -79,7 +93,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                                     card = _this.model.getCardROCollection().findWhere({
                                         key: key
                                     });
-                                _this.createCardPanel(card, $(ui.panel));
+                                _this._createPanel(card, $(ui.panel));
                                 ui.tab.data('loaded', 1);
                             }
                             return false;
@@ -88,11 +102,11 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                     });
             },
             /**
-             *
              * @param card {CardRO}
              * @param $panel {jQuery}
+             * @private
              */
-            createCardPanel: function (card, $panel) {
+            _createPanel: function (card, $panel) {
                 var html = {},
                     pk = this.id,
                     callbacks = [],
@@ -106,6 +120,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                         'id': helpersModule.uniqueID(),
                         'data-rows': card.getRows()
                     });
+                this._cardElements.push(elements);
                 $panel.html($div);
                 if (card.hasSaveButtons()) {
                     $panel.append(this.buttonsTemplate());

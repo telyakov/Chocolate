@@ -9,6 +9,26 @@ var TreeCardElement = (function ($, helpersModule, undefined, CardElement) {
         /** @lends TreeCardElement */
 
         {
+            _$element: null,
+            /**
+             * @method destroy
+             * @override
+             */
+            destroy: function () {
+                if (this._$element) {
+                    this._$element.off('init').off('click').editable('destroy').remove();
+                    this._$element = null;
+                }
+                this.constructor.__super__.destroy.apply(this, arguments);
+            },
+            /**
+             * @param $element {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToEditableElements: function ($element) {
+                this._$element = $element;
+            },
             /**
              * @override
              * @param controlID {String}
@@ -27,15 +47,17 @@ var TreeCardElement = (function ($, helpersModule, undefined, CardElement) {
                                 name = column.get('key'),
                                 viewProperty = _this.get('view'),
                                 isAllowEdit = column.isAllowEdit(viewProperty, pk);
+                            _this._persistLinkToEditableElements($el);
                             if (isAllowEdit) {
-                                var model = new DynatreeModel({
-                                    $el: $el
-                                });
-                                var view = new FormDynatreeView({
-                                    model: model,
-                                    dataModel: viewProperty.model
-                                });
                                 $el.on('click', function () {
+                                    //todo: leak memory
+                                    var model = new DynatreeModel({
+                                        $el: $el
+                                    });
+                                    var view = new FormDynatreeView({
+                                        model: model,
+                                        dataModel: viewProperty.model
+                                    });
                                     view.render(column.isSingle(), _this.getCaption(), name, pk);
                                 });
                             }

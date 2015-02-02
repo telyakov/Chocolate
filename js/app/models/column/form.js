@@ -16,6 +16,8 @@ var FormColumnRO = (function () {
             destroy: function () {
                 if (this._$editableElements) {
                     this._$editableElements.editable('destroy').remove();
+                    this._$editableElements = null;
+
                 }
                 this.constructor.__super__.destroy.apply(this, arguments);
             },

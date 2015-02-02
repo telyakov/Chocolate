@@ -8,6 +8,53 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
     return CardElement.extend(
         /** @lends TextCardElement */
         {
+
+            _$element: null,
+            _$body: null,
+            _editor: null,
+            /**
+             * @method destroy
+             * @override
+             */
+            destroy: function () {
+                if (this._$element) {
+                    this._$element.off('shown').off('save').off('hidden').off('init').editable('destroy').remove();
+                    this._$element = null;
+                }
+                if(this._$body){
+                    this._$body.off('keydown');
+                    this._$body = null;
+                }
+                if(this._editor){
+                    this._$body.off('load');
+                    this._editor = null;
+                }
+                this.constructor.__super__.destroy.apply(this, arguments);
+            },
+            /**
+             * @param $element {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToEditableElements: function ($element) {
+                this._$element = $element;
+            },
+            /**
+             * @param $element {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToBody: function ($element) {
+                this._$body = $element;
+            },
+            /**
+             * @param editor {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToEditor: function (editor) {
+                this._editor = editor;
+            },
             controlTemplate: _.template(
                 [
                     '<div class="table-td">',
@@ -62,6 +109,7 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
                                 _this.validate($(this), value);
                             }
                         };
+                    _this._persistLinkToEditableElements($el);
                     if (isMarkupSupport) {
                         $el
                             .on('shown', function (e, editable) {
@@ -146,8 +194,10 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
                                 $textArea.attr('readonly', 'true');
                             } else {
                                 var editor = new wysihtml5.Editor($textArea.get(0));
-                                editor.on("load", function (e) {
+                                _this._persistLinkToEditor(editor);
+                                editor.on("load", function () {
                                     var $tbody = $textArea.siblings('iframe').eq(1).contents().find('body');
+                                    _this._persistLinkToBody($tbody);
                                     $tbody
                                         .on('keydown', helpersModule.addSignToIframe)
                                         .on('keydown', function (e) {

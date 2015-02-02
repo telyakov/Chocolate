@@ -8,6 +8,26 @@ var CheckBoxCardElement = (function ($, helpersModule, CardElement) {
     return CardElement.extend(
         /** @lends CheckBoxCardElement */
         {
+            _$element: null,
+            /**
+             * @method destroy
+             * @override
+             */
+            destroy: function () {
+                if (this._$element) {
+                    this._$element.off('click').off('init').off('hidden').editable('destroy').remove();
+                    this._$element = null;
+                }
+                this.constructor.__super__.destroy.apply(this, arguments);
+            },
+            /**
+             * @param $element {jQuery|null}
+             * @private
+             * @description for the destruction of unused objects and events
+             */
+            _persistLinkToEditableElements: function ($element) {
+                this._$element = $element;
+            },
             /**
              * @override
              * @param controlID {String}
@@ -24,6 +44,7 @@ var CheckBoxCardElement = (function ($, helpersModule, CardElement) {
                         view = _this.get('view'),
                         isAllowEdit = column.isAllowEdit(view, pk),
                         $this = $('#' + controlID);
+                    _this._persistLinkToEditableElements($this);
                     if (isAllowEdit) {
                         $this
                             .on('click', function () {
