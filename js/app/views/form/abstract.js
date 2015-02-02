@@ -21,6 +21,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 this.listenTo(this.model, 'save:form', this.save);
                 this.listenTo(this.model, 'change:form', this.change);
                 this.listenTo(this.model, 'save:card', this.saveCard);
+                this.listenTo(this.model, 'open:card', this.openCardHandler);
                 this.listenTo(this.model, 'openMailClient', this.openMailClient);
                 this.listenTo(this.model, 'openWizardTask', this.openWizardTask);
                 this.render();
@@ -29,6 +30,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             _autoUpdateTimerID: null,
             _$form: null,
             _$settings: null,
+            _openedCards: [],
             footerTemplate: _.template([
                     '<footer class="grid-footer" data-id="grid-footer">',
                     '<div class="footer-info" data-id="info"></div>',
@@ -36,11 +38,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                     '</footer>'
                 ].join('')
             ),
-            cardButtonsTemplate: _.template([
-                '<div class="card-action-button" data-id="action-button-panel">',
-                '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
-                '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
-            ].join('')),
             /**
              * @method destroy
              */
@@ -48,6 +45,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 this._destroyDialogSettings();
                 storageModule.removeFromSession(this.model.cid);
                 this.stopListening(this.model);
+                delete this._openedCards;
                 delete this.$el;
                 delete this.model;
                 delete this.view;
@@ -56,7 +54,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 delete this._autoUpdateTimerID;
                 delete this._$form;
                 delete this.footerTemplate;
-                delete this.cardButtonsTemplate;
                 this.events = null;
 
             },
@@ -115,63 +112,52 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 return ['card_', this.model.getView(), id].join('');
             },
             /**
-             * @param pk {String|int}
-             * @returns {String}
+             * @param view {CardView}
+             * @private
              */
-            getCardCaption: function (pk) {
-                var caption = this.model.getCardTabCaption();
-                if ($.isNumeric(pk)) {
-                    caption += ' [' + pk + ']';
-                } else {
-                    caption += '[новая запись]';
-                }
-                return caption;
+            _addOpenedCard: function (view) {
+                this._openedCards[view.id] = view;
             },
             /**
-             *
-             * @param pk {String}
+             * @param id {String}
              */
-            openCardHandler: function (pk) {
-                var view = this.model.getView(),
-                    $tabs = $('#tabs'),
-                    cardID = this.generateCardID(pk),
-                    $a = $tabs.find("li[data-tab-id='" + cardID + "']").children('a'),
-                    tabsModule = facade.getTabsModule(),
-                    _this = this;
-                if ($a.length) {
-                    $tabs.tabs({active: tabsModule.getIndex($a)});
+            deleteOpenedCard: function (id) {
+                delete this._openedCards[id];
+            },
+            /**
+             * @param id {string}
+             * @returns {CardView|undefined}
+             */
+            getOpenedCard: function (id) {
+                return this._openedCards[id];
+            },
+            /**
+             * @param id {String}
+             */
+            openCardHandler: function (id) {
+                var cardView = this.getOpenedCard(id);
+                if (cardView !== undefined) {
+                    cardView.setWindowActive();
                 } else {
-                    var caption = this.getCardCaption(pk),
-                        $li = $('<li>', {
-                            'data-tab-id': cardID,
-                            'data-id': pk,
-                            'data-view': view,
-                            'html': facade.getTabsModule().createTabLink('', caption)
-                        });
-                    facade.getTabsModule().push($li);
-                    $tabs.children('ul').append($li);
-                    $tabs.tabs('refresh');
-
-                    $tabs.tabs({
+                    var _this = this;
+                    cardView = new CardView({
+                        model: _this.model,
+                        view: _this,
+                        id: id
+                    });
+                    helpersModule.getTabsObj().tabs({
                         beforeLoad: function (event, ui) {
                             ui.jqXHR.abort();
-                            var cardView = new CardView({
-                                model: _this.model,
-                                view: _this,
-                                id: pk,
-                                $el: ui.panel
-                            });
-                            cardView.render(pk, $li);
+                            if (!ui.tab.data('loaded')) {
+                                _this._addOpenedCard(cardView);
+                                cardView.render(id, ui.panel);
+                                ui.tab.data('loaded', 1);
+                            }
                         }
                     });
-
-                    $a = $li.children('a');
-                    $tabs.tabs({active: tabsModule.getIndex($a)});
-                    var href = '#' + $a.parent().attr('aria-controls'),
-                        $context = $(href);
-                    facade.getRepaintModule().reflowCard($context);
-                    this.initCardScripts($context, pk);
-                    $a.attr('href', href);
+                    cardView.setWindowActive();
+                    facade.getRepaintModule().reflowCard(cardView.$el);
+                    cardView.initScripts();
                 }
             },
             /**
@@ -189,97 +175,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                     this._$settings.dialog('destroy');
                     delete this._$settings;
                 }
-            },
-            /**
-             *
-             * @param $cnt {jQuery}
-             * @param pk {String}
-             */
-            initCardScripts: function ($cnt, pk) {
-                var _this = this;
-                $cnt
-                    .addClass(optionsModule.getClass('card'))
-                    .children('div').tabs({
-                        beforeLoad: function (e, ui) {
-                            if (!ui.tab.data('loaded')) {
-                                var key = $(ui.tab).attr('data-id'),
-                                    card = _this.model.getCardROCollection().findWhere({
-                                        key: key
-                                    });
-                                _this.createCardPanel(card, $(ui.panel), pk);
-                                ui.tab.data('loaded', 1);
-                            }
-                            return false;
-                        },
-                        cache: true
-                    });
-            },
-            /**
-             *
-             * @param card {CardRO}
-             * @param $panel {jQuery}
-             * @param pk {string}
-             */
-            createCardPanel: function (card, $panel, pk) {
-                var html = {},
-                    callbacks = [],
-                    event = 'render_' + helpersModule.uniqueID(),
-                    elements = this.model.getCardElements(card, this),
-                    length = elements.length,
-                    asyncTaskCompleted = 0,
-                    $div = $('<div>', {
-                        'class': 'card-content',
-                        'data-id': 'card-control',
-                        'id': helpersModule.uniqueID(),
-                        'data-rows': card.getRows()
-                    });
-                $panel.html($div);
-                if (card.hasSaveButtons()) {
-                    $panel.append(this.cardButtonsTemplate());
-                }
-
-                $.subscribe(event, function (e, data) {
-                    var x = data.x,
-                        y = data.y,
-                        text = data.html;
-                    if (!html.hasOwnProperty(y)) {
-                        html[y] = {};
-                    }
-                    html[y][x] = text;
-
-                    if (data.callback) {
-                        callbacks.push(data.callback);
-                    }
-                    asyncTaskCompleted += 1;
-                    if (asyncTaskCompleted === length) {
-                        $.unsubscribe(event);
-                        var cardHtml = '';
-                        var i,
-                            j,
-                            hasOwn = Object.hasOwnProperty;
-                        for (i in html) {
-                            if (hasOwn.call(html, i)) {
-                                for (j in html[i]) {
-                                    if (hasOwn.call(html[i], j)) {
-                                        cardHtml += html[i][j];
-                                    }
-                                }
-                            }
-                        }
-                        $div.html(cardHtml);
-                        callbacks.forEach(function (fn) {
-                            fn();
-                        });
-                        setTimeout(function () {
-                            mediator.publish(optionsModule.getChannel('reflowTab'));
-                        }, 0);
-                    }
-                });
-                var i = 0;
-                elements.each(function (model) {
-                    model.render(event, i, card, pk);
-                    i += 1;
-                });
             },
             /**
              * @param id {string|undefined}

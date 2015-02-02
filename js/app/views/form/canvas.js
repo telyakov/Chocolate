@@ -32,7 +32,7 @@ var CanvasView = (function (Backbone) {
                     y = y - (y % 1);
                     if (data[y][x] !== undefined) {
                         var pk = data[y][x].id;
-                        this.openCardHandler(pk);
+                        this.model.trigger('open:card', pk);
                     }
                 }
             }

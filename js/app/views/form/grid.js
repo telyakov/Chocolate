@@ -339,7 +339,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 });
                 this.applyCallbacks($row);
                 if (model.isAutoOpenCard()) {
-                    this.openCardHandler(id);
+                    model.trigger('open:card', id);
                 }
             },
             /**
@@ -469,9 +469,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              */
             openCard: function (e) {
                 if (this.model.hasCard()) {
-                    var $this = $(e.target),
-                        pk = $this.closest('tr').attr('data-id');
-                    this.openCardHandler(pk);
+                    var id = $(e.target).closest('tr').attr('data-id');
+                    this.model.trigger('open:card', id);
                 }
             },
             /**
