@@ -62,7 +62,7 @@ var SelectCardElement = (function ($, helpersModule, CardElement) {
                             }
                             $el
                                 .on('init', function () {
-                                    var dbData = view.getActualDataFromStorage(pk),
+                                    var dbData = view.model.getActualDataFromStorage(pk),
                                         value = dbData ? dbData[name] : '';
                                     if (!isAllowEdit) {
                                         _this._markAsNoChanged($el);

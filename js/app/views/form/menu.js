@@ -107,7 +107,7 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
              */
             systemColsInit: function (sysColsID) {
                 var $btn = $('#' + sysColsID);
-                if (!this.view.isSystemColumnsMode()) {
+                if (!this.view.model.isSystemColumnsMode()) {
                     $btn.addClass(optionsModule.getClass('menuButtonSelected'));
                 }
             },

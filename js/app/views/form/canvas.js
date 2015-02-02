@@ -11,7 +11,7 @@ var CanvasView = (function (Backbone) {
             'click canvas': function (e) {
                 var xPos,
                     yPos,
-                    data = this.prepareData(this.getDBDataFromStorage()),
+                    data = this.prepareData(this.model.getDBDataFromStorage()),
                     cellHeight = this.getCellHeight(),
                     cellWidth = this.getCellWidth(),
                     floorWidth = this.getFloorWidth();

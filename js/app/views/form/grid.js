@@ -131,16 +131,15 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @returns {*}
              */
             toggleSystemCols: function () {
-                var isHidden = this.isSystemColumnsMode(),
+                var isHidden = this.model.isSystemColumnsMode(),
                     systemColAttr = optionsModule.getSetting('systemCols'),
                     $th = this.getJqueryFloatHeadTable().find('th').filter(function () {
                         return systemColAttr.indexOf($(this).attr('data-id')) !== -1;
                     });
                 this.toggleColumns(isHidden, $th);
                 this.getJqueryForm().find('.menu-button-toggle').toggleClass(optionsModule.getClass('menuButtonSelected'));
-                return this
-                    .persistSystemColumnsMode(!isHidden)
-                    .clearSelectedArea();
+                this.model.persistSystemColumnsMode(!isHidden);
+                return this.clearSelectedArea();
             },
             /**
              * @param isHidden {Boolean}
@@ -281,7 +280,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             openMailClient: function () {
                 var id = this.getActiveRowID();
                 if (id) {
-                    var data = this.getDBDataFromStorage(id),
+                    var data = this.model.getDBDataFromStorage(id),
                         emailColumn = optionsModule.getSetting('emailCol'),
                         emails = data[emailColumn],
                         url = encodeURIComponent(optionsModule.getUrl('bpOneTask') + id),
@@ -349,9 +348,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 if (this.hasChange()) {
 
                     var _this = this,
-                        changedObj = this.getChangedDataFromStorage(),
-                        dataObj = this.getDBDataFromStorage(),
-                        deletedData = this.getDeletedDataFromStorage(),
+                        changedObj = this.model.getChangedDataFromStorage(),
+                        dataObj = this.model.getDBDataFromStorage(),
+                        deletedData = this.model.getDeletedDataFromStorage(),
                         responseChangeObj = {},
                         name,
                         hasOwn = Object.prototype.hasOwnProperty;
@@ -448,6 +447,22 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     }
                 });
                 return errors;
+            },
+            /**
+             *
+             * @param opts {CardSaveDTO}
+             */
+            saveCard: function(opts){
+                //todo: реализовать
+                var view = this.getOpenedCard(opts.id);
+                if(view === undefined){
+                    mediator.publish(optionsModule.getChannel('logError'),{
+                        model: this,
+                        error: 'Save card throw errors'
+                    });
+                }
+
+              console.log('шокола')
             },
             /**
              *
@@ -798,7 +813,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         .find('[' + optionsModule.getClass('allowHideColumn') + ']');
                     this.toggleColumns(false, $shortCols);
                 }
-                if (this.isSystemColumnsMode()) {
+                if (this.model.isSystemColumnsMode()) {
                     var $systemCols = this.getJqueryFloatHeadTable().find('th')
                         .filter(function () {
                             return optionsModule.getSetting('systemCols')

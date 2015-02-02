@@ -71,7 +71,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
             this.refreshData(true);
         },
         hasChange: function () {
-            return facade.getFilesModule().isNotEmpty(this.getFormID()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
+            return facade.getFilesModule().isNotEmpty(this.getFormID()) || !$.isEmptyObject(this.model.getDeletedDataFromStorage());
         },
         save: function () {
             if (this.hasChange()) {
@@ -79,7 +79,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 var fileModule = facade.getFilesModule(),
                     formID = this.getFormID(),
                     $form = this.getJqueryForm(),
-                    deletedData = this.getDeletedDataFromStorage();
+                    deletedData = this.model.getDeletedDataFromStorage();
                 if (fileModule.isNotEmpty(formID)) {
                     var isEmpty = $.isEmptyObject(deletedData),
                         ownerLock = this.model.getColumnsDefaultValues().ownerlock,
@@ -132,7 +132,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                     }
                 }
                 else {
-                    if (!$.isEmptyObject(this.getDeletedDataFromStorage())) {
+                    if (!$.isEmptyObject(this.model.getDeletedDataFromStorage())) {
                         this.saveDeletedData();
                     } else {
                         this.sendMessage('Данные не были изменены');
@@ -145,7 +145,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
         },
 
         saveDeletedData: function () {
-            var deletedData = this.getDeletedDataFromStorage(),
+            var deletedData = this.model.getDeletedDataFromStorage(),
                 key,
                 hasOwn = Object.prototype.hasOwnProperty;
             for (key in deletedData) {

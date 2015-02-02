@@ -3,7 +3,7 @@
  * @class
  * @augments AbstractView
  */
-var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModule, undefined, moment, storageModule) {
+var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModule, undefined, moment) {
     'use strict';
     return AbstractView.extend(
         /** @lends AbstractGridView */
@@ -130,25 +130,6 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                     });
                 }
                 return false;
-            },
-            /**
-             * @returns {boolean}
-             */
-            isSystemColumnsMode: function () {
-                var key = this.model.getView();
-                if (storageModule.hasSetting(key, 'globalStyle')) {
-                    return storageModule.getSettingByKey(key, 'systemVisibleMode');
-                } else {
-                    return false;
-                }
-            },
-            /**
-             * @param val {Boolean}
-             * @returns {*}
-             */
-            persistSystemColumnsMode: function (val) {
-                storageModule.persistSetting(this.model.getView(), 'systemVisibleMode', val);
-                return this;
             },
             /**
              * @param e {Event}
@@ -360,7 +341,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                     }
                     this.previewTimerID = setTimeout(function () {
                         var previewData = _this.model.getPreview(),
-                            data = _this.getActualDataFromStorage(id);
+                            data = _this.model.getActualDataFromStorage(id);
                         if (previewData !== undefined) {
                             var html = [], key;
                             for (key in previewData) {
@@ -480,7 +461,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                     this.getJqueryDataTable().parent().find('.' + optionsModule.getClass('selectedArea')).remove();
                 }
                 if (['ins', 'upd'].indexOf(operation) !== -1) {
-                    this.addChangeToStorage(opts.id, opts.data);
+                    this.model.addChangeToStorage(opts.id, opts.data);
                     this.getJqueryRow(opts.id).addClass('grid-row-changed');
                 }
                 if (operation === 'del') {
@@ -489,7 +470,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                         data = opts.data;
                     for (i in data) {
                         if (hasOwn.call(data, i)) {
-                            this.addDeletedToStorage(data[i].id);
+                            this.model.addDeletedToStorage(data[i].id);
                         }
                     }
                 }
@@ -788,4 +769,4 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             }
         });
 })
-(AbstractView, jQuery, _, optionsModule, helpersModule, undefined, moment, storageModule);
+(AbstractView, jQuery, _, optionsModule, helpersModule, undefined, moment);

@@ -12,8 +12,8 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                     'keydown .card-input a': '_moveToNextElement',
                     'click .tab-menu-link': '_openMenu',
                     'click .card-cancel': '_cancel',
-                    'click .card-menu-save': $.debounce(500, true, this.save),
-                    'click .card-save': $.debounce(500, true, this.save)
+                    'click .card-menu-save': $.debounce(1500, true, this.save),
+                    'click .card-save': $.debounce(1500, true, this.save)
                 };
             },
             _$cardMenu: null,
@@ -245,8 +245,8 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             _undoChange: function () {
                 var pk = this.id;
                 if (this.isChanged()) {
-                    var changedData = this.view.getChangedDataFromStorage()[pk],
-                        data = this.getDBDataFromStorage(pk),
+                    var changedData = this.model.getChangedDataFromStorage()[pk],
+                        data = this.model.getDBDataFromStorage(pk),
                         $tr = this.getJqueryParent();
                     $.each(changedData, function (i) {
                         var $gridCell = $tr.find(" a[data-pk=" + pk + "][rel$=" + i + "]"),
@@ -273,7 +273,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
              * @returns {boolean}
              */
             isChanged: function () {
-                return !$.isEmptyObject(this.view.getChangedDataFromStorage()[this.id]);
+                return !$.isEmptyObject(this.model.getChangedDataFromStorage()[this.id]);
             },
             /**
              * @returns {jQuery}
@@ -285,7 +285,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
              * @method clearStorage
              */
             clearStorage: function () {
-                delete this.view.getChangedDataFromStorage[this.id];
+                delete this.model.getChangedDataFromStorage[this.id];
             },
             /**
              * @method save

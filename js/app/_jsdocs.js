@@ -29,4 +29,10 @@
  * @param {function(element:jQuery)} callback
  */
 
+/**
+ * Object, that generated in the {FormModel} via event 'save:card'
+ * @typedef {Object} CardSaveDTO
+ * @property {string} id - Row index
+ */
+
 //todo: 1)Поддержка типа Deferred,  2)jquery, 3)custom object Types, 4)Event

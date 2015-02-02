@@ -1,4 +1,4 @@
-var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROCollection, ColumnsRoFactory, Card, CardElementFactory, CardROCollection, CardRO, ActionProperties, AgileFilter, PrintActions, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory, deferredModule, optionsModule, bindModule, helpersModule, MapView, CanvasView, AttachmentView, DiscussionView, GridView) {
+var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColumnRO, ColumnsROCollection, ColumnsRoFactory, Card, CardElementFactory, CardROCollection, CardRO, ActionProperties, AgileFilter, PrintActions, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory, deferredModule, optionsModule, bindModule, helpersModule, MapView, CanvasView, AttachmentView, DiscussionView, GridView) {
     'use strict';
     return Backbone.Model.extend(
         /** @lends FormModel */
@@ -560,7 +560,96 @@ var FormModel = (function ($, Backbone, mediator, AttachmentColumnRO, ColumnsROC
             },
             getColorColumnName: function () {
                 return this.getColumnsCollection().getRowColorColumnNameAlternate();
-            }
+            },
+            /**
+             * @returns {Object}
+             */
+            getStorage: function () {
+                var cid = this.cid;
+                if (!storageModule.hasSession(cid)) {
+                    storageModule.addToSession(cid, {
+                        data: {},
+                        order: [],
+                        changed: {},
+                        deleted: {}
+                    });
+                }
+                return storageModule.getSession(cid);
 
+            },
+            /**
+             * @returns {Object}
+             */
+            getChangedDataFromStorage: function () {
+                return this.getStorage().changed;
+            },
+            /**
+             * @returns {Object}
+             */
+            getDeletedDataFromStorage: function () {
+                return this.getStorage().deleted;
+            },
+            /**
+             * @param id {string|undefined}
+             * @returns {Object}
+             */
+            getDBDataFromStorage: function (id) {
+                if (id === undefined) {
+                    return this.getStorage().data;
+                } else {
+                    return this.getStorage().data[id];
+                }
+            },
+            /**
+             * @param id {string|undefined}
+             * @returns {Object}
+             */
+            getActualDataFromStorage: function (id) {
+                if (id === undefined) {
+                    return helpersModule.merge(
+                        this.getDBDataFromStorage(),
+                        this.getChangedDataFromStorage()
+                    );
+                } else {
+                    return helpersModule.merge(
+                        this.getDBDataFromStorage()[id],
+                        this.getChangedDataFromStorage()[id]
+                    );
+                }
+            },
+            /**
+             * @param id {String|int}
+             */
+            addDeletedToStorage: function (id) {
+                this.getDeletedDataFromStorage()[id] = true;
+            },
+            /**
+             *
+             * @param id {string}
+             * @param data {object}
+             */
+            addChangeToStorage: function (id, data) {
+                if (this.getChangedDataFromStorage()[id] !== undefined) {
+                    data = $.extend({}, this.getChangedDataFromStorage()[id], data);
+                }
+                this.getChangedDataFromStorage()[id] = data;
+            },
+            /**
+             * @param val {Boolean}
+             */
+            persistSystemColumnsMode: function (val) {
+                storageModule.persistSetting(this.getView(), 'systemVisibleMode', val);
+            },
+            /**
+             * @returns {boolean}
+             */
+            isSystemColumnsMode: function () {
+                var key = this.getView();
+                if (storageModule.hasSetting(key, 'globalStyle')) {
+                    return storageModule.getSettingByKey(key, 'systemVisibleMode');
+                } else {
+                    return false;
+                }
+            }
         });
-})(jQuery, Backbone, mediator, AttachmentColumnRO, ColumnsROCollection, ColumnsRoFactory, Card, CardElementFactory, CardROCollection, CardRO, ActionProperties, AgileFilter, PrintActions, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory, deferredModule, optionsModule, bindModule, helpersModule, MapView, CanvasView, AttachmentView, DiscussionView, GridView);
+})(storageModule, jQuery, Backbone, mediator, AttachmentColumnRO, ColumnsROCollection, ColumnsRoFactory, Card, CardElementFactory, CardROCollection, CardRO, ActionProperties, AgileFilter, PrintActions, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory, deferredModule, optionsModule, bindModule, helpersModule, MapView, CanvasView, AttachmentView, DiscussionView, GridView);

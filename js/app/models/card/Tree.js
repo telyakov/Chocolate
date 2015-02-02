@@ -62,7 +62,7 @@ var TreeCardElement = (function ($, helpersModule, undefined, CardElement) {
                                 });
                             }
                             $el.on('init', function () {
-                                var dbData = viewProperty.getActualDataFromStorage(pk),
+                                var dbData = viewProperty.model.getActualDataFromStorage(pk),
                                     value = dbData ? dbData[name] : '',
                                     text = dbData ? dbData[column.getFromKey()] : '';
                                 if (value === undefined || value === null) {

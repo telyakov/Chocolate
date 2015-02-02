@@ -177,24 +177,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             },
             /**
-             * @param id {string|undefined}
-             * @returns {Object}
-             */
-            getActualDataFromStorage: function (id) {
-                if (id === undefined) {
-                    return helpersModule.merge(
-                        this.getDBDataFromStorage(),
-                        this.getChangedDataFromStorage()
-                    );
-                } else {
-                    return helpersModule.merge(
-                        this.getDBDataFromStorage()[id],
-                        this.getChangedDataFromStorage()[id]
-                    );
-                }
-
-            },
-            /**
              * @method exportToExcel
              */
             exportToExcel: function () {
@@ -224,7 +206,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                         }
                     }
                 });
-                var recordset = $.extend(true, {}, this.getDBDataFromStorage(), this.getChangedDataFromStorage());
+                var recordset = $.extend(true, {}, this.model.getDBDataFromStorage(), this.model.getChangedDataFromStorage());
                 $.when.apply($, deferTasks).done(function (data) {
                     var listData = {};
                     Array.prototype.slice.call(arguments).forEach(function (res) {
@@ -321,46 +303,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 });
                 $dialog.dialog('open');
                 this._persistLinkToJquerySettings($dialog);
-            },
-            /**
-             * @param id {string|undefined}
-             * @returns {Object}
-             */
-            getDBDataFromStorage: function (id) {
-                if (id === undefined) {
-                    return this.getStorage().data;
-                } else {
-                    return this.getStorage().data[id];
-                }
-            },
-            /**
-             * @param id {String|int}
-             */
-            addDeletedToStorage: function (id) {
-                this.getDeletedDataFromStorage()[id] = true;
-            },
-            /**
-             *
-             * @param id {string}
-             * @param data {object}
-             */
-            addChangeToStorage: function (id, data) {
-                if (this.getChangedDataFromStorage()[id] !== undefined) {
-                    data = $.extend({}, this.getChangedDataFromStorage()[id], data);
-                }
-                this.getChangedDataFromStorage()[id] = data;
-            },
-            /**
-             * @returns {Object}
-             */
-            getChangedDataFromStorage: function () {
-                return this.getStorage().changed;
-            },
-            /**
-             * @returns {Object}
-             */
-            getDeletedDataFromStorage: function () {
-                return this.getStorage().deleted;
             },
             /**
              * @returns {boolean}
@@ -475,27 +417,11 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 });
             },
             /**
-             * @returns {Object}
-             */
-            getStorage: function () {
-                var cid = this.model.cid;
-                if (!storageModule.hasSession(cid)) {
-                    storageModule.addToSession(cid, {
-                        data: {},
-                        order: [],
-                        changed: {},
-                        deleted: {}
-                    });
-                }
-                return storageModule.getSession(cid);
-
-            },
-            /**
              * @returns {boolean}
              */
             hasChange: function () {
                 helpersModule.leaveFocus();
-                return !$.isEmptyObject(this.getChangedDataFromStorage()) || !$.isEmptyObject(this.getDeletedDataFromStorage());
+                return !$.isEmptyObject(this.model.getChangedDataFromStorage()) || !$.isEmptyObject(this.model.getDeletedDataFromStorage());
             },
             /**
              * @param opts {Object}

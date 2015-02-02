@@ -78,7 +78,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                 $this
                                     .on('init', function treeInit() {
                                         var dataKey = _this.getFromKey(),
-                                            dbData = viewProperty.getDBDataFromStorage(pk);
+                                            dbData = viewProperty.model.getDBDataFromStorage(pk);
                                         if (dbData !== undefined) {
                                             $this.html(dbData[dataKey]);
                                         }
