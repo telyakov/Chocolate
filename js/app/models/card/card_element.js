@@ -200,7 +200,6 @@ var CardElement = (function ($, Backbone, _, helpersModule, optionsModule, media
              * @protected
              */
             validate: function ($cnt, value) {
-                console.log($cnt, value)
                 var $error = $cnt.closest('.card-col').children('label');
                 if ($.trim(value) === '') {
                     $error.addClass('card-error');

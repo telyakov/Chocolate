@@ -9,6 +9,14 @@ var FormCardElement = (function ($, optionsModule, mediator, CardElement) {
         /** @lends FormCardElement */
         {
             /**
+             * @method destroy
+             * @override
+             */
+            destroy: function () {
+                //todo: leak memory, when open child form
+                this.constructor.__super__.destroy.apply(this, arguments);
+            },
+            /**
              * @override
              * @protected
              * @returns {number}

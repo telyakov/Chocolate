@@ -7,12 +7,14 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
     return Backbone.View.extend(
         /** @lends CardView */
         {
-            events: {
-                'keydown .card-input a': '_moveToNextElement',
-                'click .tab-menu-link': '_openMenu',
-                'click .card-menu-save': 'save',
-                'click .card-save': 'save',
-                'click .card-cancel': '_cancel'
+            events: function () {
+                return {
+                    'keydown .card-input a': '_moveToNextElement',
+                    'click .tab-menu-link': '_openMenu',
+                    'click .card-cancel': '_cancel',
+                    'click .card-menu-save': $.debounce(500, true, this.save),
+                    'click .card-save': $.debounce(500, true, this.save)
+                };
             },
             _$cardMenu: null,
             _cardElements: [],
@@ -38,15 +40,16 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             },
 
             destroy: function () {
-                if (this._cardElements) {
-                    this._cardElements.forEach(
+                var cards = this._cardElements;
+                if (cards) {
+                    cards.forEach(
                         /**
-                         * @param card {CardROCollection}
+                         * @param object {CardRO}
+                         * @param index {Number}
                          */
-                            function (card) {
-                            card.each(function (object) {
-                                object.destroy();
-                            });
+                            function (object, index) {
+                            object.destroy();
+                            delete cards[index];
                         });
 
                     this._cardElements = null;
@@ -108,6 +111,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
              */
             _createPanel: function (card, $panel) {
                 var html = {},
+                    _this = this,
                     pk = this.id,
                     callbacks = [],
                     event = 'render_' + helpersModule.uniqueID(),
@@ -120,7 +124,9 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                         'id': helpersModule.uniqueID(),
                         'data-rows': card.getRows()
                     });
-                this._cardElements.push(elements);
+                elements.each(function (obj) {
+                    _this._cardElements.push(obj);
+                });
                 $panel.html($div);
                 if (card.hasSaveButtons()) {
                     $panel.append(this.buttonsTemplate());
