@@ -90,15 +90,15 @@
             return this; //no more crappy browser support.
         }
 
-        if (isChrome == null) { //make sure this is done only once no matter how many times you call the plugin fn
-            isChrome = isChromeCheck(); //need to call this after dom ready, and now it is.
-            if (isChrome) {
-                //because chrome cant read <col> width, these elements are used for sizing the table. Need to create new elements because they must be unstyled by user's css.
-                document.createElement('fthtr'); //tr
-                document.createElement('fthtd'); //td
-                document.createElement('fthfoot'); //tfoot
-            }
-        }
+        //if (isChrome == null) { //make sure this is done only once no matter how many times you call the plugin fn
+        //    isChrome = isChromeCheck(); //need to call this after dom ready, and now it is.
+        //    //if (isChrome) {
+        //        //because chrome cant read <col> width, these elements are used for sizing the table. Need to create new elements because they must be unstyled by user's css.
+        //        //document.createElement('fthtr'); //tr
+        //        //document.createElement('fthtd'); //td
+        //        //document.createElement('fthfoot'); //tfoot
+        //    //}
+        //}
         if (_.isString(map)) {
             var command = map;
             var ret = this;

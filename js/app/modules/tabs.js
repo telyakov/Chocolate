@@ -76,6 +76,7 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
                 helpersModule.getTabsObj().tabs({ active: nextIndex });
                 mediator.publish(optionsModule.getChannel('reflowTab'));
             }
+            $tab.children('.ui-tabs-anchor').remove();
             var $panel = $('#' + $tab.attr("aria-controls"));
             $panel.off();
             helpersModule.getTabsObj().tabs('remove', index);
