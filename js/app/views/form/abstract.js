@@ -141,8 +141,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 if ($a.length) {
                     $tabs.tabs({active: tabsModule.getIndex($a)});
                 } else {
-                    var viewID = this.getFormID(),
-                        caption = this.getCardCaption(pk),
+                    var caption = this.getCardCaption(pk),
                         $li = $('<li>', {
                             'data-tab-id': cardID,
                             'data-id': pk,
@@ -162,7 +161,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                                 id: pk,
                                 $el: ui.panel
                             });
-                            cardView.render(view, pk, viewID, $li);
+                            cardView.render(pk, $li);
                         }
                     });
 

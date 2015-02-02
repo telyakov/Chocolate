@@ -58,6 +58,7 @@ module.exports = function (grunt) {
                     '../js/app/modules/user.js',
                     '../js/app/modules/bind.js',
                     '../js/app/modules/helper.js',
+                    '../js/app/modules/image_adapter.js',
                     '../js/app/plugins/wizard.js',
                     '../js/app/modules/log.js',
                     '../js/app/modules/socket.js',
@@ -99,7 +100,6 @@ module.exports = function (grunt) {
                     '../js/app/views/dynatree/*.js',
                     '../js/app/views/card/*.js',
                     '../js/app/modules/nav_bar.js',
-                    '../js/app/modules/image_adapter.js',
                     '../js/app/settings.js',
                     '../js/app/modules/facade.js' //latest loading module
 

@@ -42,6 +42,7 @@ var CardElement = (function ($, Backbone, _, helpersModule, optionsModule, media
              * @method destroy
              */
             destroy: function () {
+                console.log('destroy card')
                 delete this._id;
                 delete this._posY;
                 delete this.labelTemplate;
