@@ -424,142 +424,101 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 return !$.isEmptyObject(this.model.getChangedDataFromStorage()) || !$.isEmptyObject(this.model.getDeletedDataFromStorage());
             },
             /**
-             * @param opts {Object}
+             * @description Perform save from to db
+             * @param opts {SaveDTO}
              * @abstract
              */
             save: function (opts) {
-//            var ChResponseStatus = {
-//                SUCCESS: 0,
-//                ERROR: 1,
-//                WARNING: 2
-//            };
-//            ChMessagesContainer.prototype = {
-//                sendMessage: function (status_msg, status_code) {
-//                    switch (status_code) {
-//                        case ChResponseStatus.ERROR:
-//                            this._sendErrorMessage(status_msg);
-//                            break;
-//                        case ChResponseStatus.SUCCESS:
-//                            this._sendSuccessMessage(status_msg, 5000);
-//                            break;
-//                        case ChResponseStatus.WARNING:
-//                            this._sendWarningMessage(status_msg)
-//                            break;
-//                        default:
-//                            this._sendErrorMessage(status_msg);
-//                            break;
-//                    }
-//                },
-//                _sendSuccessMessage: function (status_msg, duration) {
-//                    this._appendMessage('<div class="grid-message"><div class="alert in alert-block fade alert-success">' + status_msg + '</div></div>', duration);
-//                },
-//                _appendMessage: function (html, duration) {
-//                    var $message = this.$message_container;
-//                    $message.html(html);
-//                    if (duration) {
-//
-//                        setTimeout(function () {
-//                            $message.html('')
-//                        }, duration);
-//                    }
-//                },
-//                _sendErrorMessage: function (status_msg) {
-//                    this._appendMessage('<div class="grid-message"><div class="alert in alert-block fade alert-error">' + status_msg + '</div></div>', 5000);
-//                },
-//                _sendWarningMessage: function (status_msg) {
-//                    this._appendMessage('<div class="grid-message"><div class="alert in alert-block fade alert-warning">' + status_msg + '</div></div>', 5000);
-//                }
-//            };
-
-
-                mediator.publish(optionsModule.getChannel('logError'),
-                    {
-                        model: this,
-                        opts: opts,
-                        error: 'not implemented save method'
-                    }
-                );
+                this.publishError({
+                    model: this,
+                    opts: opts,
+                    error: 'not implemented save method'
+                });
             },
             /**
+             * @description Performs the update form
              * @abstract
              */
             refresh: function () {
-                mediator.publish(optionsModule.getChannel('logError'),
-                    {
-                        model: this,
-                        error: 'not implemented refresh method'
-                    }
-                );
+                this.publishError({
+                    model: this,
+                    error: 'not implemented refresh method'
+                });
             },
             /**
+             * @description Show application message to user
+             * @param opts {MessageDTO}
              * @abstract
              */
-            showMessage: function () {
-                mediator.publish(optionsModule.getChannel('logError'),
-                    {
-                        model: this,
-                        error: 'not implemented showMessage method'
-                    }
-                );
+            showMessage: function (opts) {
+                this.publishError({
+                    model: this,
+                    opts: opts,
+                    error: 'not implemented showMessage method'
+                });
             },
             /**
+             * @description the main method, that render view
              * @abstract
              */
             render: function () {
-                mediator.publish(optionsModule.getChannel('logError'),
-                    {
-                        model: this,
-                        error: 'not implemented render method'
-                    }
-                );
+                this.publishError({
+                    model: this,
+                    error: 'not implemented render method'
+                });
             },
             /**
-             * @param opts {Object}
+             * @description Save changed data in recordset model to local storage
+             * @param opts {FormChangeDTO}
              * @abstract
              */
             change: function (opts) {
-                mediator.publish(optionsModule.getChannel('logError'),
-                    {
-                        model: this,
-                        error: 'not implemented change method'
-                    }
-                );
+                this.publishError({
+                    model: this,
+                    error: 'not implemented change method',
+                    opts: opts
+                });
             },
             /**
+             * @description Open TaskWizard dialog
              * @abstract
              */
             openWizardTask: function () {
-                mediator.publish(optionsModule.getChannel('logError'),
-                    {
-                        model: this,
-                        error: 'not implemented openWizardTask method'
-                    }
-                );
+                this.publishError({
+                    model: this,
+                    error: 'not implemented openWizardTask method'
+                });
             },
             /**
+             * @description Save card data to database
+             * @param opts {CardSaveDTO}
              * @abstract
              */
             saveCard: function (opts) {
-                mediator.publish(optionsModule.getChannel('logError'),
-                    {
-                        model: this,
-                        opts: opts,
-                        error: 'not implemented saveCard method'
-                    }
-                );
+                this.publishError({
+                    model: this,
+                    opts: opts,
+                    error: 'not implemented saveCard method'
+                });
             },
             /**
+             * @description Opens the e-mail client
              * @abstract
              */
             openMailClient: function () {
-                mediator.publish(optionsModule.getChannel('logError'),
-                    {
-                        model: this,
-                        error: 'not implemented openMailClient method'
-                    }
-                );
+                this.publishError({
+                    model: this,
+                    error: 'not implemented openMailClient method'
+                });
+            },
+            /**
+             * @description Send error event to mediator
+             * @param opts {Object} custom object
+             * @fires mediator#logError
+             */
+            publishError: function (opts) {
+                mediator.publish(optionsModule.getChannel('logError'), opts);
             }
-
         });
 })
 (Backbone, jQuery, _, storageModule, undefined, helpersModule, optionsModule);

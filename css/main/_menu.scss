@@ -42,7 +42,7 @@ $blue-color: #0072c6;
     position: relative;
     box-sizing: content-box;
     float: none !important;
-    vertical-align: middle;
+    vertical-align: bottom;
     cursor: default;
     color: #8c8c8c;
     opacity: 0.5;
@@ -58,7 +58,7 @@ $blue-color: #0072c6;
         position: relative;
         box-sizing: content-box;
         float: none !important;
-        vertical-align: middle;
+//        vertical-align: middle;
         cursor: default;
         outline: none;
     }
@@ -70,7 +70,7 @@ $blue-color: #0072c6;
     margin-right: 2px;
 }
 .menu {
-    height: 22px;
+    height: 43px;
     padding: 0;
     margin: 0 0 5px 0;
 }
@@ -111,6 +111,6 @@ $blue-color: #0072c6;
 }
 
 .section-grid .menu {
-    margin: 4px 4px 9px 4px!important;
+    margin: 0 4px 6px 0;
     overflow: hidden;
 }

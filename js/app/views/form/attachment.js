@@ -8,7 +8,9 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 'data-parent-pk="<%= parentID %>" enctype="multipart/form-data" multiple="multiple" ',
                 '  method="post">',
                 '<% if (isSaved) { %>',
-                '<div class="fileupload-buttonbar"><menu class="menu" type="toolbar">',
+                '<div class="fileupload-buttonbar">',
+                '<menu class="menu" type="toolbar">',
+                '<div class="messages-container"></div>',
                 '<span class="fileinput-button menu-button active">',
                 '<span class="menu-border-green"></span><span>Вложить</span>',
                 '<input id="<%= inputID %>" multiple="multiple" type="file" name="FileModel[files]">',
@@ -20,7 +22,6 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 '<span class="fa-refresh" title="Обновить"></span>',
                 '<span title="Обновить">Обновить</span>',
                 '</button>',
-                '<div class="messages-container"></div>',
                 '</menu></div>',
                 '<% } %>',
                 '<section data-id="grid">',
@@ -135,12 +136,18 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                     if (!$.isEmptyObject(this.model.getDeletedDataFromStorage())) {
                         this.saveDeletedData();
                     } else {
-                        this.sendMessage('Данные не были изменены');
+                        this.showMessage({
+                            id: 2,
+                            msg: 'Данные не были изменены.'
+                        });
                     }
                 }
                 return [];
             } else {
-                this.showMessage('Данные не были изменены');
+                this.showMessage({
+                    id: 2,
+                    msg: 'Данные не были изменены.'
+                });
             }
         },
 
@@ -199,13 +206,19 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                             _this.getSaveButton().addClass("active");
                         } else {
                             data.context.remove();
-                            _this.showMessage("Слишком большой размер файла (максисмум 50мб.)");
+                            _this.showMessage({
+                                id: 3,
+                                msg: "Слишком большой размер файла (максисмум 50мб.)"
+                            });
                         }
                     },
                     stop: function () {
                         var filesModule = facade.getFilesModule();
                         if (filesModule.hasErrors(_this.getFormID())) {
-                            _this.showMessage("Возникли ошибки при добавлении вложений");
+                            _this.showMessage({
+                                id: 3,
+                                msg: 'Возникли ошибки при добавлении вложений'
+                            });
                             filesModule.clearErrors(_this.getFormID());
                         } else {
                             if (_this.hasChange()) {

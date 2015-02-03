@@ -20,12 +20,23 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             selectedTimerID: null,
             previewTimerID: null,
             _$resizableElements: null,
+            _messageTimerID: null,
             /**
              * @method destroy
              */
             destroy: function () {
-                delete this.selectedTimerID;
-                delete this.previewTimerID;
+                if(this.selectedTimerID){
+                    clearTimeout(this.selectedTimerID);
+                    delete this.selectedTimerID;
+                }
+                if(this.previewTimerID){
+                    clearTimeout(this.previewTimerID);
+                    delete this.previewTimerID;
+                }
+                if(this._messageTimerID){
+                    clearTimeout(this._messageTimerID);
+                    delete this._messageTimerID;
+                }
                 this.undelegateEvents();
                 this._destroyResizableWidget();
                 this._destroyTableSorterWidget();
@@ -47,6 +58,38 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 this.model.trigger('save:form', {
                     refresh: true
                 });
+            },
+            /**
+             * @param opts {MessageDTO}
+             * @override
+             */
+            showMessage: function(opts){
+                var $output = this.getJqueryForm().children('.menu').children('.messages-container'),
+                    messageClass;
+                switch (opts.id){
+                    case 1:
+                        messageClass = 'alert-success';
+                        break;
+                    case 2:
+                        messageClass = 'alert-warning';
+                        break;
+                    case 3:
+                        messageClass = 'alert-error';
+                        break;
+                }
+                var $msg = $('<div>', {
+                    'class': 'alert in alert-block fade '+ messageClass,
+                       html: opts.msg
+                    }).wrap('<div class="grid-message"></div>');
+                $output.html($msg);
+                if(opts.id !== 3) {
+                    if(this._messageTimerID){
+                        clearTimeout(this._messageTimerID);
+                    }
+                    this._messageTimerID = setTimeout(function () {
+                            $output.html('')
+                        }, 5000);
+                }
             },
             /**
              *

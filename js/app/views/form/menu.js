@@ -16,6 +16,7 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
             events: {},
             template: _.template([
                 '<menu class="menu" type="toolbar">',
+                '<div class="messages-container"></div>',
                 '<% if (isAllowCreate) { %>',
                 '<button class="active menu-button menu-button-add" title="Создать" type="button">',
                 '<span class="menu-border-green"></span><span>Создать</span>',
@@ -56,7 +57,6 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 '<% if (isSearchColumnVisible) { %>',
                 '<input type="search" class="grid-column-search" placeholder="Поиск колонки">',
                 '<% } %>',
-                '<div class="messages-container"></div>',
                 '</menu>'
             ].join('')),
             _$printActionButton: null,

@@ -1,4 +1,5 @@
 $(function () {
+    'use strict';
     /* jQuery Tiny Pub/Sub - v0.7 - 10/27/2011
      * http://benalman.com/
      * Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT, GPL */

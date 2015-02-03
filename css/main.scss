@@ -1098,10 +1098,12 @@ input:focus, textarea:focus, keygen:focus, select:focus {
 
 .messages-container {
     overflow: hidden;
-    display: inline-block;
+    display: block;
     height: 21px;
     vertical-align: middle;
     .alert {
+        display: block;
+        height: 21px;
         border-radius: 0 !important;
         padding: 0 20px !important;
     }

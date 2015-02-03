@@ -402,8 +402,11 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                                         model.trigger('refresh:form');
                                     }
                                 })
-                                .fail(function (error) {
-                                    _this.showMessage(error);
+                                .fail(function (jqXHR, textStatus) {
+                                    _this.showMessage({
+                                        id: 3,
+                                        msg: textStatus
+                                    });
                                 });
                         } else {
                             var pk,
@@ -421,17 +424,25 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                                     }
                                 }
                             }
-                            this.showMessage('Заполните обязательные поля( ошибки подсвечены в сетке).')
+                            this.showMessage({
+                                id: 3,
+                                msg: 'Заполните обязательные поля( ошибки подсвечены в сетке).'
+                            });
                         }
                     } else {
                         if (opts.refresh) {
-                            this.showMessage('Данные не были изменены.');
+                            this.showMessage({
+                                id: 2,
+                                msg: 'Данные не были изменены.'
+                            });
                         }
                     }
                 } else {
                     if (opts.refresh) {
-                        this.showMessage('Данные не были изменены.');
-                    }
+                        this.showMessage({
+                            id: 2,
+                            msg: 'Данные не были изменены.'
+                        });                    }
                 }
             },
             /**
@@ -449,20 +460,19 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 return errors;
             },
             /**
-             *
              * @param opts {CardSaveDTO}
              */
-            saveCard: function(opts){
+            saveCard: function (opts) {
                 //todo: реализовать
                 var view = this.getOpenedCard(opts.id);
-                if(view === undefined){
-                    mediator.publish(optionsModule.getChannel('logError'),{
+                if (view === undefined) {
+                    mediator.publish(optionsModule.getChannel('logError'), {
                         model: this,
                         error: 'Save card throw errors'
                     });
                 }
 
-              console.log('шокола')
+                console.log('шокола')
             },
             /**
              *

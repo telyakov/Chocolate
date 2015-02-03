@@ -40,7 +40,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                                 'Да': function () {
                                     $(this).dialog("close");
                                     _this.model.trigger('save:form', {
-                                        isRefresh: true
+                                        refresh: true
                                     });
                                 },
                                 'Нет': function () {
