@@ -87,7 +87,7 @@ var CanvasView = (function (Backbone) {
                 });
                 deferRead.done(function (res) {
                     var data = res.data;
-                    _this.persistData(data, res.order);
+                    _this.model.persistData(data, res.order);
                     _this.refreshData(data);
                 });
             });

@@ -55,7 +55,6 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 delete this._$form;
                 delete this.footerTemplate;
                 this.events = null;
-
             },
             /**
              * @param e {Event}
@@ -180,7 +179,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
              * @method exportToExcel
              */
             exportToExcel: function () {
-                var settings = this.getFormSettingsFromStorage(),
+                var settings = this.model.getFormSettingsFromStorage(),
                     prepareSettings = {},
                     model = this.model,
                     collection = model.getColumnsROCollection(),
@@ -385,38 +384,10 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
              * @returns {boolean}
              */
             hasSettings: function () {
-                return !$.isEmptyObject(this.getFormSettingsFromStorage());
+                return !$.isEmptyObject(this.model.getFormSettingsFromStorage());
             },
             /**
-             * @param settings {Object}
-             */
-            persistColumnsSettings: function (settings) {
-                storageModule.persistColumnsSettings(this.model.getView(), settings);
-            },
-            /**
-             * @returns {Object}
-             */
-            getFormSettingsFromStorage: function () {
-                var settings = storageModule.getSettings(),
-                    key = this.model.getView();
-                if (!settings.hasOwnProperty(key)) {
-                    settings[key] = {};
-                }
-                return settings[key];
-            },
-            /**
-             * @param data {Object}
-             * @param order {Array}
-             */
-            persistData: function (data, order) {
-                storageModule.addToSession(this.model.cid, {
-                    data: data,
-                    order: order,
-                    changed: {},
-                    deleted: {}
-                });
-            },
-            /**
+             * @description Indicates whether there is a change in the form
              * @returns {boolean}
              */
             hasChange: function () {
@@ -424,7 +395,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 return !$.isEmptyObject(this.model.getChangedDataFromStorage()) || !$.isEmptyObject(this.model.getDeletedDataFromStorage());
             },
             /**
-             * @description Perform save from to db
+             * @description Perform save form data to db
              * @param opts {SaveDTO}
              * @abstract
              */
@@ -436,7 +407,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 });
             },
             /**
-             * @description Performs the update form
+             * @description Perform the update form
              * @abstract
              */
             refresh: function () {
@@ -468,7 +439,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 });
             },
             /**
-             * @description Save changed data in recordset model to local storage
+             * @description Save changed data in form model to local storage
              * @param opts {FormChangeDTO}
              * @abstract
              */

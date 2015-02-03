@@ -286,7 +286,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                         _this.initTableScript();
                     }
                     defer.done(function (data) {
-                        _this.persistData(data.data, data.order);
+                        _this.model.persistData(data.data, data.order);
                         var files = [];
                         data.order.forEach(function (key) {
                             files.push(data.data[key]);

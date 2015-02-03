@@ -650,6 +650,35 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 } else {
                     return false;
                 }
+            },
+            /**
+             * @param data {Object}
+             * @param order {Array}
+             */
+            persistData: function (data, order) {
+                storageModule.addToSession(this.cid, {
+                    data: data,
+                    order: order,
+                    changed: {},
+                    deleted: {}
+                });
+            },
+            /**
+             * @returns {Object}
+             */
+            getFormSettingsFromStorage: function () {
+                var settings = storageModule.getSettings(),
+                    key = this.getView();
+                if (!settings.hasOwnProperty(key)) {
+                    settings[key] = {};
+                }
+                return settings[key];
+            },
+            /**
+             * @param settings {Object}
+             */
+            persistColumnsSettings: function (settings) {
+                storageModule.persistColumnsSettings(this.getView(), settings);
             }
         });
 })(storageModule, jQuery, Backbone, mediator, AttachmentColumnRO, ColumnsROCollection, ColumnsRoFactory, Card, CardElementFactory, CardROCollection, CardRO, ActionProperties, AgileFilter, PrintActions, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory, deferredModule, optionsModule, bindModule, helpersModule, MapView, CanvasView, AttachmentView, DiscussionView, GridView);

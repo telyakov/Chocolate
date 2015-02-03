@@ -274,7 +274,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
              * @returns {Number}
              */
             getColumnWidth: function (index) {
-                var settings = this.getFormSettingsFromStorage();
+                var settings = this.model.getFormSettingsFromStorage();
                 if ($.isEmptyObject(settings)) {
                     var defaultWidth = optionsModule.getSetting('defaultColumnsWidth');
                     this.setColumnWidth(index, defaultWidth);
@@ -555,7 +555,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
              * @returns {Number}
              */
             getPositionColumn: function (key) {
-                var settings = this.getFormSettingsFromStorage(),
+                var settings = this.model.getFormSettingsFromStorage(),
                     i,
                     hasOwn = Object.prototype.hasOwnProperty,
                     obj;
@@ -588,7 +588,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                     var $tr = this.getThead().children('tr'),
                         $trSorted = $('<tr/>'),
                         controlColumn = optionsModule.getSetting('controlColumn');
-                    settings = this.getFormSettingsFromStorage();
+                    settings = this.model.getFormSettingsFromStorage();
                     var unsavedSettings = settings.sort(function (a, b) {
                         if (a.key === controlColumn) {
                             return -1;
@@ -623,7 +623,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                             $trSorted.append($this);
                         }
                     });
-                    this.persistColumnsSettings(unsavedSettings);
+                    this.model.persistColumnsSettings(unsavedSettings);
                     $tr.replaceWith($trSorted);
                 } else {
                     $th.each(function (i, elem) {
@@ -642,7 +642,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                             };
                         }
                     });
-                    this.persistColumnsSettings(settings);
+                    this.model.persistColumnsSettings(settings);
                 }
             },
             /**
@@ -650,7 +650,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
              * @param width {Number}
              */
             setColumnWidth: function (index, width) {
-                var settings = this.getFormSettingsFromStorage();
+                var settings = this.model.getFormSettingsFromStorage();
                 if (!$.isEmptyObject(settings)) {
                     settings[index].width = width;
                 }

@@ -627,7 +627,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 newColumns.forEach(function (item) {
                     rows.push(item);
                 });
-                this.persistColumnsSettings(setting);
+                this.model.persistColumnsSettings(setting);
                 var tableID = helpersModule.uniqueID();
                 $form.append(this.gridTemplate({
                     userGridID: userGridID,
@@ -656,7 +656,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         return i > 0;
                     }),
                     _this = this,
-                    count = Object.keys(this.getFormSettingsFromStorage()).length - 1,
+                    count = Object.keys(this.model.getFormSettingsFromStorage()).length - 1,
                     realCount = $th.length - 1,
                     tables = [$table.eq(0)[0], $fixedTable.eq(0)[0]];
                 this._persistLinkToContextMenu($sortedTh);
@@ -697,7 +697,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @param end {Number}
              */
             changeSettings: function (start, end) {
-                var min = 1, settings = this.getFormSettingsFromStorage();
+                var min = 1, settings = this.model.getFormSettingsFromStorage();
                 if (!$.isEmptyObject(settings)) {
                     var obj,
                         newSettings = [],
@@ -776,7 +776,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                             }
                         }
                     }
-                    this.persistColumnsSettings(newSettings);
+                    this.model.persistColumnsSettings(newSettings);
                 }
             },
             /**
@@ -893,7 +893,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 var sortedColumnCollection = this.getSortedColumns(),
                     order = data.order,
                     recordset = data.data;
-                this.persistData(recordset, order);
+                this.model.persistData(recordset, order);
                 var html = this.generateRows(recordset, order, sortedColumnCollection),
                     $table = this.getJqueryDataTable(),
                     $tbody = this.getJqueryTbody(),
