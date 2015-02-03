@@ -459,6 +459,9 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 this._filterRoCollection = filtersROCollection;
                 return this._filterRoCollection;
             },
+            /**
+             * @returns {ColumnsROCollection}
+             */
             getColumnsROCollection: function () {
                 if (this._columnsRoCollection !== null) {
                     return this._columnsRoCollection;
@@ -679,6 +682,56 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              */
             persistColumnsSettings: function (settings) {
                 storageModule.persistColumnsSettings(this.getView(), settings);
+            },
+            /**
+             * @param val {Number}
+             */
+            setFormStyleID: function (val) {
+                storageModule.persistSetting(this.getView(), 'globalStyle', val);
+            },
+            /**
+             * @returns {Number}
+             */
+            getFormStyleID: function () {
+                var key = this.getView();
+                if (storageModule.hasSetting(key, 'globalStyle')) {
+                    return storageModule.getSettingByKey(key, 'globalStyle');
+                } else {
+                    if (key  === optionsModule.getConstants('tasksForTopsXml')) {
+                        return 2;
+                    } else {
+                        return 1;
+                    }
+                }
+            },
+            /**
+             * @param val {boolean}
+             */
+            setShortMode: function (val) {
+                storageModule.persistSetting(this.getView(), 'shortVisibleMode', val);
+            },
+            /**
+             * @returns {boolean}
+             */
+            isShortMode: function () {
+                return storageModule.getSettingByKey(this.getView(), 'shortVisibleMode') ? true : false;
+            },
+            /**
+             * @returns {boolean}
+             */
+            isAutoUpdate: function () {
+                var key = this.getView();
+                if (storageModule.hasSetting(key, 'auto_update')) {
+                    return storageModule.getSettingByKey(key, 'auto_update') ? true : false;
+                } else {
+                    return false;
+                }
+            },
+            /**
+             * @returns {boolean}
+             */
+            hasSettings: function () {
+                return !$.isEmptyObject(this.getFormSettingsFromStorage());
             }
         });
 })(storageModule, jQuery, Backbone, mediator, AttachmentColumnRO, ColumnsROCollection, ColumnsRoFactory, Card, CardElementFactory, CardROCollection, CardRO, ActionProperties, AgileFilter, PrintActions, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory, deferredModule, optionsModule, bindModule, helpersModule, MapView, CanvasView, AttachmentView, DiscussionView, GridView);

@@ -2,7 +2,7 @@
  * Class AbstractView
  * @class
  */
-var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersModule, optionsModule) {
+var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersModule, optionsModule, deferredModule) {
     'use strict';
     return Backbone.View.extend(
         /** @lends AbstractView */
@@ -131,7 +131,8 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 return this._openedCards[id];
             },
             /**
-             * @param id {String}
+             * @description Open card
+             * @param id {String} Unique row key
              */
             openCardHandler: function (id) {
                 var cardView = this.getOpenedCard(id);
@@ -140,7 +141,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 } else {
                     var _this = this;
                     cardView = new CardView({
-                        model: _this.model,
+                        model: _this.getModel(),
                         view: _this,
                         id: id
                     });
@@ -160,6 +161,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             },
             /**
+             * @description Persist reference to initialized settings dialog. To prevent leak memory.
              * @param $settings {jQuery|null}
              * @private
              */
@@ -167,6 +169,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 this._$settings = $settings;
             },
             /**
+             * @description Destroy previously initialized by dialog settings
              * @private
              */
             _destroyDialogSettings: function () {
@@ -176,12 +179,13 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             },
             /**
-             * @method exportToExcel
+             * @description Export form data into Excel file(file.xsl)
+             * @fires mediator#socketExportToExcel
              */
             exportToExcel: function () {
-                var settings = this.model.getFormSettingsFromStorage(),
-                    prepareSettings = {},
-                    model = this.model,
+                var prepareSettings = {},
+                    model = this.getModel(),
+                    settings = model.getFormSettingsFromStorage(),
                     collection = model.getColumnsROCollection(),
                     deferTasks = [];
                 settings.forEach(function (item) {
@@ -205,7 +209,7 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                         }
                     }
                 });
-                var recordset = $.extend(true, {}, this.model.getDBDataFromStorage(), this.model.getChangedDataFromStorage());
+                var recordset = $.extend(true, {}, model.getDBDataFromStorage(), modell.getChangedDataFromStorage());
                 $.when.apply($, deferTasks).done(function (data) {
                     var listData = {};
                     Array.prototype.slice.call(arguments).forEach(function (res) {
@@ -237,12 +241,12 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 });
             },
             /**
-             * @method openFormSettings
+             * @description Open dialog with form settings
              */
             openFormSettings: function () {
                 this._destroyDialogSettings();
                 var $dialog = $('<div/>'),
-                    $content = $('<div />', {'class': 'grid-settings'}),
+                    $content = $('<div/>', {'class': 'grid-settings'}),
                     $autoUpdate = $('<div/>', {
                         'class': 'setting-item',
                         html: '<span class="setting-caption">Автоматические обновление данных(раз в 100 секунд)</span>'
@@ -265,10 +269,10 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                         html: styleHtml
                     }),
                     _this = this;
-                if (this.isAutoUpdate()) {
+                if (this.model.isAutoUpdate()) {
                     $input.attr('checked', 'checked');
                 }
-                $styleInput.find('[value="' + this.getFormStyleID() + '"]').attr('selected', true);
+                $styleInput.find('[value="' + this.model.getFormStyleID() + '"]').attr('selected', true);
                 $styleSettings.append($styleInput);
                 $autoUpdate.append($input);
                 $content
@@ -285,9 +289,9 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                             'text': 'OK',
                             'class': 'wizard-active wizard-next-button',
                             click: function () {
-                                _this.setAutoUpdate($input.is(':checked'));
-                                _this.setFormStyleID(parseInt($styleInput.val(), 10));
-                                $(this).dialog("close");
+                                _this.changeAutoUpdate($input.is(':checked'));
+                                _this.model.setFormStyleID(parseInt($styleInput.val(), 10));
+                                $(this).dialog('close');
                             }
                         },
                         Отмена: {
@@ -304,65 +308,20 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 this._persistLinkToJquerySettings($dialog);
             },
             /**
-             * @returns {boolean}
-             */
-            isAutoUpdate: function () {
-                var key = this.model.getView();
-                if (storageModule.hasSetting(key, 'auto_update')) {
-                    return storageModule.getSettingByKey(key, 'auto_update') ? true : false;
-                } else {
-                    return false;
-                }
-            },
-            /**
-             * @returns {boolean}
-             */
-            isShortMode: function () {
-                var key = this.model.getView();
-                return storageModule.getSettingByKey(key, 'shortVisibleMode') ? true : false;
-            },
-            /**
-             * @param val {boolean}
-             */
-            setShortMode: function (val) {
-                storageModule.persistSetting(this.model.getView(), 'shortVisibleMode', val);
-            },
-            /**
-             * @returns {Number}
-             */
-            getFormStyleID: function () {
-                var key = this.model.getView();
-                if (storageModule.hasSetting(key, 'globalStyle')) {
-                    return storageModule.getSettingByKey(key, 'globalStyle');
-                } else {
-                    if (this.model.getView() === optionsModule.getConstants('tasksForTopsXml')) {
-                        return 2;
-                    } else {
-                        return 1;
-                    }
-                }
-            },
-            /**
-             * @param val {Number}
-             */
-            setFormStyleID: function (val) {
-                storageModule.persistSetting(this.model.getView(), 'globalStyle', val);
-            },
-            /**
-             * @method startAutoUpdate
+             * @description Start autoUpdate process
              */
             startAutoUpdate: function () {
                 if (this._autoUpdateTimerID === null) {
                     var _this = this;
                     this._autoUpdateTimerID = setInterval(function () {
                         if (_this.getJqueryForm().is(':visible') && !this.hasChange()) {
-                            _this.model.trigger('refresh:form');
+                            _this.getModel().trigger('refresh:form');
                         }
                     }, optionsModule.getSetting('defaultAutoUpdateMS'));
                 }
             },
             /**
-             * @method stopAutoUpdate
+             * @description Stop autoUpdate process
              */
             stopAutoUpdate: function () {
                 if (this._autoUpdateTimerID !== null) {
@@ -370,10 +329,17 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             },
             /**
+             * @returns {FormModel}
+             */
+            getModel: function () {
+                return this.model;
+            },
+            /**
+             * @description Persist AutoUpdate param to local storage and start autoUpdate process, if value===true
              * @param val {boolean}
              */
-            setAutoUpdate: function (val) {
-                storageModule.persistSetting(this.model.getView(), 'auto_update', val);
+            changeAutoUpdate: function (val) {
+                storageModule.persistSetting(this.getModel().getView(), 'auto_update', val);
                 if (val) {
                     this.startAutoUpdate();
                 } else {
@@ -381,18 +347,13 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
                 }
             },
             /**
-             * @returns {boolean}
-             */
-            hasSettings: function () {
-                return !$.isEmptyObject(this.model.getFormSettingsFromStorage());
-            },
-            /**
              * @description Indicates whether there is a change in the form
              * @returns {boolean}
              */
             hasChange: function () {
                 helpersModule.leaveFocus();
-                return !$.isEmptyObject(this.model.getChangedDataFromStorage()) || !$.isEmptyObject(this.model.getDeletedDataFromStorage());
+                var model = this.getModel();
+                return !$.isEmptyObject(model.getChangedDataFromStorage()) || !$.isEmptyObject(model.getDeletedDataFromStorage());
             },
             /**
              * @description Perform save form data to db
@@ -492,4 +453,4 @@ var AbstractView = (function (Backbone, $, _, storageModule, undefined, helpersM
             }
         });
 })
-(Backbone, jQuery, _, storageModule, undefined, helpersModule, optionsModule);
+(undefined, Backbone, jQuery, _, storageModule, helpersModule, optionsModule, deferredModule);

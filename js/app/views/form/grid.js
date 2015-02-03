@@ -565,7 +565,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              */
             getSortedColumns: function () {
                 var sortedColumnCollection = [],
-                    hasSetting = this.hasSettings(),
+                    hasSetting = this.model.hasSettings(),
                     iterator = 1,
                     index,
                     _this = this;
@@ -586,7 +586,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             layoutForm: function ($form) {
                 var _this = this,
                     roCollection = this.model.getColumnsROCollection(),
-                    hasSetting = this.hasSettings(),
+                    hasSetting = this.model.hasSettings(),
                     rows = [{
                         options: {'data-id': 'chocolate-control-column'},
                         header: ''
@@ -785,11 +785,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              */
             toggleAllCols: function () {
                 var
-                    isHidden = this.isShortMode(),
+                    isHidden = this.model.isShortMode(),
                     $th = this.getJqueryFloatHeadTable().find('[' + optionsModule.getClass('allowHideColumn') + ']');
-                this
-                    .toggleColumns(isHidden, $th)
-                    .setShortMode(!isHidden);
+                this.toggleColumns(isHidden, $th);
+                this.model.setShortMode(!isHidden);
                 return this;
             },
             /**
@@ -818,7 +817,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this.initFloatThead($table);
                 this.initContextMenu($table);
                 this.initDragTable();
-                if (this.isShortMode()) {
+                if (this.model.isShortMode()) {
                     var $shortCols = this.getJqueryFloatHeadTable()
                         .find('[' + optionsModule.getClass('allowHideColumn') + ']');
                     this.toggleColumns(false, $shortCols);

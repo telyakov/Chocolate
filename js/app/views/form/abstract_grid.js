@@ -331,7 +331,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
              * @returns {string}
              */
             getRowClass: function () {
-                switch (this.getFormStyleID()) {
+                switch (this.model.getFormStyleID()) {
                     case 1:
                         return '';
                     case 2:
@@ -573,7 +573,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
              */
             initSettings: function () {
                 this.setDefaultSettings();
-                if (this.isAutoUpdate()) {
+                if (this.model.isAutoUpdate()) {
                     this.startAutoUpdate();
                 }
             },
@@ -584,7 +584,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 var $th = this.getTh(),
                     settings = [],
                     defaultWidth = optionsModule.getSetting('defaultColumnsWidth');
-                if (this.hasSettings()) {
+                if (this.model.hasSettings()) {
                     var $tr = this.getThead().children('tr'),
                         $trSorted = $('<tr/>'),
                         controlColumn = optionsModule.getSetting('controlColumn');
