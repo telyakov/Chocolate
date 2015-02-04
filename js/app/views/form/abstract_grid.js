@@ -12,7 +12,6 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 'keydown .tablesorter': 'navigateHandler',
                 'click tbody > tr': 'selectRowHandler',
                 'click .menu-button-expand': 'changeFullScreenMode',
-                'click .form-modal-button': 'openTextColumnInModalView',
                 'click .menu-button-save': '_saveHandler',
                 'click .menu-button-action': '_openContextMenu',
                 'click .menu-button-print': '_openContextMenu'
@@ -73,7 +72,7 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
             },
 
             /**
-             *
+             * @description Get Jquery object, where shows form messages
              * @returns {jQuery}
              * @private
              */
@@ -81,6 +80,7 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 return this.getJqueryForm().children('.menu').children('.messages-container');
             },
             /**
+             * @description Show application message in form
              * @param opts {MessageDTO}
              * @override
              */
@@ -119,89 +119,6 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                         $output.html('')
                     }, 5000);
                 }
-            },
-            /**
-             *
-             * @param e {Event}
-             * @returns {boolean}
-             */
-            openTextColumnInModalView: function (e) {
-                var $this = $(e.target),
-                    key = $this.attr('data-name'),
-                    pk = $this.closest('tr').attr('data-id'),
-                    model = this.model.getColumnsROCollection().findWhere({
-                        key: key
-                    }),
-                    $elem = $this.prevAll('a'),
-                    _this = this,
-                    isAllowEdit = model.isAllowEdit(this, pk),
-                    caption = model.getVisibleCaption(),
-                    isMarkupSupport = !!model.getColumnCustomProperties().get('markupSupport'),
-                    $cell = $elem.parent(),
-                    $popupControl = $('<a/>', {
-                        'class': 'grid-textarea'
-                    });
-                helpersModule.leaveFocus();
-                $popupControl.appendTo($cell.closest('section'));
-                if (isMarkupSupport) {
-                    helpersModule.wysiHtmlInit($popupControl, helpersModule.createTitleHtml(pk, caption));
-                } else {
-                    $popupControl.editable({
-                        type: 'textarea',
-                        mode: 'popup',
-                        onblur: 'ignore',
-                        savenochange: false,
-                        title: helpersModule.createTitleHtml(pk, caption)
-                    });
-                }
-                if (isAllowEdit) {
-                    $popupControl
-                        .on('save', function saveHandler(e, params) {
-                            if (params.newValue !== undefined) {
-                                var data = {};
-                                data[key] = params.newValue;
-                                _this.model.trigger('change:form', {
-                                    op: 'upd',
-                                    id: pk,
-                                    data: data
-                                });
-                                $elem.editable('setValue', params.newValue);
-                                $popupControl.empty();
-                            }
-                        }
-                    );
-                }
-                $popupControl
-                    .on('hide', function () {
-                        $(this).remove();
-                    });
-
-                var value = $elem.editable('getValue')[key];
-                if (typeof value !== 'string') {
-                    value = value.toString();
-                }
-                if (isMarkupSupport) {
-                    value = helpersModule.newLineSymbolsToBr(value);
-                }
-                $popupControl
-                    .editable('setValue', value)
-                    .editable('show');
-                var $textArea = $popupControl.next('div').find('textarea');
-                if (!isAllowEdit) {
-                    $textArea.attr('readonly', true);
-                } else if (isMarkupSupport) {
-                    var editor = new wysihtml5.Editor($textArea.get(0)), eventData = {};
-                    editor.on('load', function () {
-                        $textArea.siblings('iframe').eq(1).contents().find('body')
-                            .on('keydown', eventData, helpersModule.addSignToIframe)
-                            .on('keydown', function (e) {
-                                if (e.keyCode === optionsModule.getKeyCode('escape')) {
-                                    $popupControl.editable('hide');
-                                }
-                            });
-                    });
-                }
-                return false;
             },
             /**
              * @param e {Event}

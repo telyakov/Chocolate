@@ -1,3 +1,7 @@
+/**
+ * @class FormModel
+ * @augments Backbone.Model
+ */
 var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColumnRO, ColumnsROCollection, ColumnsRoFactory, Card, CardElementFactory, CardROCollection, CardRO, ActionProperties, AgileFilter, PrintActions, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory, deferredModule, optionsModule, bindModule, helpersModule, MapView, CanvasView, AttachmentView, DiscussionView, GridView) {
     'use strict';
     return Backbone.Model.extend(
@@ -611,7 +615,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 return this.getStorage().deleted;
             },
             /**
-             * @param id {string|undefined}
+             * @param {string} [id]
              * @returns {Object}
              */
             getDBDataFromStorage: function (id) {
