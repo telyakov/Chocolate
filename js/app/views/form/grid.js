@@ -50,8 +50,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             ),
             events: function () {
                 return _.extend({}, AbstractGridView.prototype.events, {
-                    'touchmove .card-button': 'openCard',
-                    'dblclick .card-button': 'openCard',
+                    'touchmove .card-button': 'openRowCard',
+                    'dblclick .card-button': 'openRowCard',
                     'click .menu-button-add': 'addRowHandler',
                     'keydown .grid-column-search': $.debounce(200, false, this.searchColumnsHandler),
                     'click .menu-button-excel': 'exportToExcel',
@@ -442,7 +442,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         this.showMessage({
                             id: 2,
                             msg: 'Данные не были изменены.'
-                        });                    }
+                        });
+                    }
                 }
             },
             /**
@@ -492,11 +493,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             /**
              * @param e {Event}
              */
-            openCard: function (e) {
-                if (this.model.hasCard()) {
-                    var id = $(e.target).closest('tr').attr('data-id');
-                    this.model.trigger('open:card', id);
-                }
+            openRowCard: function (e) {
+                var id = $(e.target).closest('tr').attr('data-id');
+                this.model.trigger('open:card', id);
             },
             /**
              * @method render

@@ -383,6 +383,10 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 }
                 return this._actionProperties;
             },
+            /**
+             *
+             * @returns {boolean}
+             */
             hasCard: function () {
                 return this.getCardCollection().length > 0;
             },
@@ -436,6 +440,10 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             getCardTabCaption: function () {
                 return this.getCardCollection().getCaption();
             },
+            /**
+             *
+             * @returns {String}
+             */
             getCaption: function () {
                 return this.getDataFormProperties().getWindowCaption();
             },

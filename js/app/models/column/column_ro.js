@@ -18,6 +18,12 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
                 this.set('key', this._getColumnProperties().getVisibleKey());
             },
             /**
+             * @returns {boolean}
+             */
+            isValueListType: function(){
+                return this.getEditType().indexOf('valuelist') !== -1
+            },
+            /**
              * @returns {ColumnProperties}
              * @private
              */
@@ -64,10 +70,10 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
                 this.set('key', null);
             },
             /**
-             * @param params {Object}
+             * @param {Object} [params]
              * @returns {Deferred}
              */
-            receiveData: function (params) {
+            startAsyncTaskGetData: function (params) {
                 var mainDefer = deferredModule.create(),
                     deferId = deferredModule.save(mainDefer);
                 if (this._readData === null) {

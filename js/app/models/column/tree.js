@@ -48,7 +48,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
             getJsFn: function () {
                 var _this = this;
                 return function ($cnt, viewProperty, defer) {
-                    _this.receiveData()
+                    _this.startAsyncTaskGetData()
                         .done(function (res) {
                             _this._persistLinkToContext($cnt);
                             var data = helpersModule.prepareTreeSource(res.data),

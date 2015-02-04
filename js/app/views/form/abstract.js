@@ -32,7 +32,7 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 this.listenTo(model, 'save:form', this.save);
                 this.listenTo(model, 'change:form', this.change);
                 this.listenTo(model, 'save:card', this.saveCard);
-                this.listenTo(model, 'open:card', this.openCardHandler);
+                this.listenTo(model, 'open:card', this._openCard);
                 this.listenTo(model, 'openMailClient', this.openMailClient);
                 this.listenTo(model, 'openWizardTask', this.openWizardTask);
                 this.render();
@@ -61,7 +61,7 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
             },
             /**
              * @description Disable/enable view mode to full screen
-             * @param e {Event} DOM event object
+             * @param {Event} e  DOM event object
              */
             changeFullScreenMode: function (e) {
                 var $this = $(e.target).closest('button'),
@@ -101,7 +101,7 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
             },
             /**
              * @description Perform refresh form data
-             * @param opts {RefreshDTO|undefined}
+             * @param {RefreshDTO} [opts]
              * @private
              */
             _lazyRefresh: function (opts) {
@@ -117,41 +117,43 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
             },
             /**
              * @description Open card
-             * @param id {String} Unique row key
+             * @param {String} id  Unique card key
+             * @private
              */
-            openCardHandler: function (id) {
+            _openCard: function (id) {
                 var model = this.getModel();
-                var cardView = model.getOpenedCard(id);
-                if (cardView !== undefined) {
-                    cardView.setWindowActive();
-                } else {
-                    var _this = this;
-                    cardView = new CardView({
-                        model: model,
-                        view: _this,
-                        id: id
-                    });
-                    helpersModule.getTabsObj().tabs({
-                        beforeLoad: function (event, ui) {
-                            ui.jqXHR.abort();
-                            if (!ui.tab.data('loaded')) {
-                                model.addOpenedCard(cardView);
-                                cardView.render(id, ui.panel);
-                                ui.tab.data('loaded', 1);
+                if (model.hasCard()) {
+                    var cardView = model.getOpenedCard(id);
+                    if (cardView !== undefined) {
+                        cardView.setWindowActive();
+                    } else {
+                        cardView = new CardView({
+                            model: model,
+                            view: this,
+                            id: id
+                        });
+                        helpersModule.getTabsObj().tabs({
+                            beforeLoad: function (event, ui) {
+                                ui.jqXHR.abort();
+                                if (!ui.tab.data('loaded')) {
+                                    model.addOpenedCard(cardView);
+                                    cardView.render(id, ui.panel);
+                                    ui.tab.data('loaded', 1);
+                                }
                             }
-                        }
-                    });
-                    cardView.setWindowActive();
-                    facade.getRepaintModule().reflowCard(cardView.$el);
-                    cardView.initScripts();
+                        });
+                        cardView.setWindowActive();
+                        facade.getRepaintModule().reflowCard(cardView.$el);
+                        cardView.initScripts();
+                    }
                 }
             },
             /**
              * @description Persist reference to initialized settings dialog. To prevent leak memory.
-             * @param $settings {jQuery|null}
+             * @param {?jQuery} $settings
              * @private
              */
-            _persistLinkToJquerySettings: function ($settings) {
+            _persistReferenceToDialogSettings: function ($settings) {
                 this._$settings = $settings;
             },
             /**
@@ -173,58 +175,79 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                     model = this.getModel(),
                     settings = model.getFormSettingsFromStorage(),
                     collection = model.getColumnsROCollection(),
-                    deferTasks = [];
+                    asyncTasks = [];
+
                 settings.forEach(function (item) {
-                    var key = item.key,
-                        column = collection.findWhere({key: key});
+                    var key = item.key;
+                    /**
+                     * @type {ColumnRO}
+                     */
+                    var column = collection.findWhere({key: key});
+
                     if (column) {
                         prepareSettings[key] = $.extend({}, item);
                         prepareSettings[key].key = column.getFromKey();
                         prepareSettings[key].caption = column.getVisibleCaption();
-                        if (column.getEditType().indexOf('valuelist') !== -1) {
-                            var defer = deferredModule.create();
-                            deferTasks.push(defer);
-                            (function (defer) {
-                                column.receiveData().done(function (res) {
-                                    defer.resolve({
-                                        data: res.data,
-                                        key: key
-                                    });
-                                })
-                            })(defer);
+                        if (column.isValueListType()) {
+                            var task = deferredModule.create();
+                            asyncTasks.push(task);
+                            (/** @param {Deferred} asyncTask */
+                                function (asyncTask) {
+                                column
+                                    .startAsyncTaskGetData()
+                                    .done(function (res) {
+                                        asyncTask.resolve({
+                                            data: res.data,
+                                            key: key
+                                        });
+                                    })
+                            })(task);
                         }
                     }
                 });
-                var recordset = $.extend(true, {}, model.getDBDataFromStorage(), modell.getChangedDataFromStorage());
-                $.when.apply($, deferTasks).done(function (data) {
-                    var listData = {};
-                    Array.prototype.slice.call(arguments).forEach(function (res) {
-                        listData[res.key] = res.data;
-                    });
-                    if (!$.isEmptyObject(listData)) {
-                        var hasOwn = Object.prototype.hasOwnProperty,
-                            i,
-                            k;
-                        for (i in recordset) {
-                            if (hasOwn.call(recordset, i)) {
-                                for (k in recordset[i]) {
-                                    if (hasOwn.call(recordset[i], k)) {
-                                        if (listData.hasOwnProperty(k)) {
-                                            var oldVal = recordset[i][k];
-                                            recordset[i][k] = listData[k][oldVal].name;
+                this._publishExportToExcelEvent(asyncTasks, prepareSettings);
+            },
+            /**
+             *
+             * @param {Deferred[]} asyncTasks
+             * @param {Object} settings
+             * @private
+             * @fires mediator#socketExportToExcel
+             */
+            _publishExportToExcelEvent: function (asyncTasks, settings) {
+                /**
+                 * @type {FormModel}
+                 */
+                var model = this.getModel(),
+                    data = $.extend(true, {}, model.getDBDataFromStorage(), model.getChangedDataFromStorage());
+                $.when.apply($, asyncTasks)
+                    .done(function () {
+                        var extraData = {};
+                        Array.prototype.slice.call(arguments).forEach(function (res) {
+                            extraData[res.key] = res.data;
+                        });
+                        if (!$.isEmptyObject(extraData)) {
+                            var hasOwn = Object.prototype.hasOwnProperty,
+                                i,
+                                k;
+                            for (i in data) {
+                                if (hasOwn.call(data, i)) {
+                                    for (k in data[i]) {
+                                        if (hasOwn.call(data[i], k) && extraData.hasOwnProperty(k)) {
+                                            var oldVal = data[i][k];
+                                            data[i][k] = extraData[k][oldVal].name;
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    mediator.publish(optionsModule.getChannel('socketExportToExcel'), {
-                        name: model.getCaption() + '.xls',
-                        settings: JSON.stringify(prepareSettings),
-                        data: JSON.stringify(recordset),
-                        id: 1
+                        mediator.publish(optionsModule.getChannel('socketExportToExcel'), {
+                            name: model.getCaption() + '.xls',
+                            settings: JSON.stringify(settings),
+                            data: JSON.stringify(data),
+                            id: 1
+                        });
                     });
-                });
             },
             /**
              * @description Open dialog with form settings
@@ -291,7 +314,7 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                     }
                 });
                 $dialog.dialog('open');
-                this._persistLinkToJquerySettings($dialog);
+                this._persistReferenceToDialogSettings($dialog);
             },
             /**
              * @description Start autoUpdate process

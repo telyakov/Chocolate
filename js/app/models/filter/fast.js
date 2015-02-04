@@ -20,7 +20,7 @@ var FastFilterRO = (function (FilterRO, helpersModule, optionsModule, deferredMo
              * @param forceRefresh {Boolean}
              * @returns {Deferred}
              */
-            receiveData: function (forceRefresh) {
+            startAsyncTaskGetData: function (forceRefresh) {
                 var deferred = deferredModule.create(),
                     _this = this;
                 if (this._data === null || forceRefresh) {

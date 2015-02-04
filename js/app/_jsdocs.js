@@ -1,4 +1,8 @@
 /**
+ * @documentation http://usejsdoc.org/
+ */
+
+/**
  * @function
  * @name jQuery.dynatree
  */
@@ -27,12 +31,17 @@
  * @function
  * @name jQuery.contextmenu
  */
+
 /**
  * @function
  * @name Deferred.done
  * @param {function(element:jQuery)} callback
  */
-
+/**
+ * @function
+ * @name Deferred.resolve
+ * @param {...*} args
+ */
 /**
  * Object, that generated in the {FormModel} via event 'save:card'
  * @typedef {Object} CardSaveDTO
