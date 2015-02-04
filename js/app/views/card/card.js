@@ -56,7 +56,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 }
                 this._destroyCardMenu();
                 this._destroyCloseCardEventListener();
-                this.view.deleteOpenedCard(this.id);
+                this.model.deleteOpenedCard(this.id);
                 delete this.model;
                 delete this.view;
                 delete this.id;

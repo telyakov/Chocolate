@@ -3,6 +3,17 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
     return Backbone.View.extend(
         /** @lends AbstractView */
         {
+            _refreshTimerID: 0,
+            _autoUpdateTimerID: 0,
+            _$form: null,
+            _$settings: null,
+            footerTemplate: _.template([
+                    '<footer class="grid-footer" data-id="grid-footer">',
+                    '<div class="footer-info"></div>',
+                    '<div class="footer-counter"></div>',
+                    '</footer>'
+                ].join('')
+            ),
             /**
              * @abstract
              * @class AbstractView
@@ -17,7 +28,7 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 this.model = model;
                 this.view = options.view;
                 this._formID = facade.getHelpersModule().uniqueID();
-                this.listenTo(model, 'refresh:form', this.lazyRefresh);
+                this.listenTo(model, 'refresh:form', this._lazyRefresh);
                 this.listenTo(model, 'save:form', this.save);
                 this.listenTo(model, 'change:form', this.change);
                 this.listenTo(model, 'save:card', this.saveCard);
@@ -26,26 +37,12 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 this.listenTo(model, 'openWizardTask', this.openWizardTask);
                 this.render();
             },
-            _refreshTimerID: 0,
-            _autoUpdateTimerID: 0,
-            _$form: null,
-            _$settings: null,
-            _openedCards: [],
-            footerTemplate: _.template([
-                    '<footer class="grid-footer" data-id="grid-footer">',
-                    '<div class="footer-info"></div>',
-                    '<div class="footer-counter"></div>',
-                    '</footer>'
-                ].join('')
-            ),
             /**
              * @description Destroy class
              */
             destroy: function () {
                 this._destroyDialogSettings();
-                storageModule.removeFromSession(this.model.cid);
                 this.stopListening(this.model);
-                delete this._openedCards;
                 delete this.$el;
                 delete this.model;
                 delete this.view;
@@ -57,38 +54,33 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 this.events = null;
             },
             /**
+             * @returns {FormModel}
+             */
+            getModel: function () {
+                return this.model;
+            },
+            /**
              * @description Disable/enable view mode to full screen
              * @param e {Event} DOM event object
              */
-            contentExpandHandler: function (e) {
+            changeFullScreenMode: function (e) {
                 var $this = $(e.target).closest('button'),
                     $expandSection = $this.closest('section');
+
                 $this.toggleClass('menu-button-selected');
-                $expandSection.siblings('.section-header, .section-filters').toggleClass('expand-hidden');
+
+                $expandSection
+                    .siblings('.section-header, .section-filters')
+                    .toggleClass('expand-hidden');
+
                 var $expandCardCol = $expandSection.closest('.card-col');
                 if ($expandCardCol.length) {
-                    $expandCardCol.toggleClass('expand-card-visible');
-                    $expandCardCol.siblings('.card-col').toggleClass('expand-hidden');
+                    $expandCardCol
+                        .toggleClass('expand-card-visible')
+                        .siblings('.card-col')
+                        .toggleClass('expand-hidden');
                 }
                 mediator.publish(optionsModule.getChannel('reflowTab'), true);
-            },
-            /**
-             * @description Perform refresh form data
-             * @param opts {RefreshDTO}
-             */
-            lazyRefresh: function (opts) {
-                var isLazy = opts && opts.isLazy ? true : false;
-                if (isLazy) {
-                    if (this._refreshTimerID) {
-                        clearTimeout(this._refreshTimerID);
-                    }
-                    var _this = this;
-                    this._refreshTimerID = setTimeout(function () {
-                        _this.refresh();
-                    }, 900);
-                } else {
-                    this.refresh();
-                }
             },
             /**
              * @description Get unique id <form>
@@ -108,40 +100,34 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 return this._$form;
             },
             /**
-             * @description Add opened CardView to cache
-             * @param view {CardView}
+             * @description Perform refresh form data
+             * @param opts {RefreshDTO|undefined}
              * @private
              */
-            _addOpenedCard: function (view) {
-                this._openedCards[view.id] = view;
-            },
-            /**
-             * @description Delete opened CardView from cache
-             * @param id {String}
-             */
-            deleteOpenedCard: function (id) {
-                delete this._openedCards[id];
-            },
-            /**
-             * @description Get opened CardView from cache
-             * @param id {string}
-             * @returns {CardView|undefined}
-             */
-            getOpenedCard: function (id) {
-                return this._openedCards[id];
+            _lazyRefresh: function (opts) {
+                var isLazy = opts && opts.isLazy ? true : false;
+                if (isLazy) {
+                    if (this._refreshTimerID) {
+                        clearTimeout(this._refreshTimerID);
+                    }
+                    this._refreshTimerID = setTimeout(this.refresh, 900);
+                } else {
+                    this.refresh();
+                }
             },
             /**
              * @description Open card
              * @param id {String} Unique row key
              */
             openCardHandler: function (id) {
-                var cardView = this.getOpenedCard(id);
+                var model = this.getModel();
+                var cardView = model.getOpenedCard(id);
                 if (cardView !== undefined) {
                     cardView.setWindowActive();
                 } else {
                     var _this = this;
                     cardView = new CardView({
-                        model: _this.getModel(),
+                        model: model,
                         view: _this,
                         id: id
                     });
@@ -149,7 +135,7 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                         beforeLoad: function (event, ui) {
                             ui.jqXHR.abort();
                             if (!ui.tab.data('loaded')) {
-                                _this._addOpenedCard(cardView);
+                                model.addOpenedCard(cardView);
                                 cardView.render(id, ui.panel);
                                 ui.tab.data('loaded', 1);
                             }
@@ -329,12 +315,6 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 }
             },
             /**
-             * @returns {FormModel}
-             */
-            getModel: function () {
-                return this.model;
-            },
-            /**
              * @description Persist AutoUpdate param to local storage and start autoUpdate process, if value===true
              * @param val {boolean}
              */
@@ -352,6 +332,9 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
              */
             hasChange: function () {
                 helpersModule.leaveFocus();
+                /**
+                 * @type {FormModel}
+                 */
                 var model = this.getModel();
                 return !$.isEmptyObject(model.getChangedDataFromStorage()) || !$.isEmptyObject(model.getDeletedDataFromStorage());
             },

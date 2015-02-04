@@ -20,6 +20,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             _columnsCardRoCollection: null,
             _preview: null,
             _requiredFields: null,
+            _openedCards: [],
             destroy: function () {
                 if (this._columnsCollection) {
                     this._columnsCollection.each(function (object) {
@@ -74,6 +75,8 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                     parentModel.destroy();
                     this.set('parentModel', null);
                 }
+                delete this._openedCards;
+                storageModule.removeFromSession(this.cid);
             },
             getDynamicDefaultValues: function () {
                 return this._dynamicDefaultValues;
@@ -733,6 +736,28 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 } else {
                     return false;
                 }
+            },
+            /**
+             * @description Add opened CardView to cache
+             * @param view {CardView}
+             */
+            addOpenedCard: function (view) {
+                this._openedCards[view.id] = view;
+            },
+            /**
+             * @description Delete opened CardView from cache
+             * @param id {String}
+             */
+            deleteOpenedCard: function (id) {
+                delete this._openedCards[id];
+            },
+            /**
+             * @description Get opened CardView from cache
+             * @param id {string}
+             * @returns {CardView|undefined}
+             */
+            getOpenedCard: function (id) {
+                return this._openedCards[id];
             },
             /**
              * @returns {boolean}

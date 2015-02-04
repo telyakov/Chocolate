@@ -464,7 +464,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              */
             saveCard: function (opts) {
                 //todo: реализовать
-                var view = this.getOpenedCard(opts.id);
+                var view = this.getModel().getOpenedCard(opts.id);
                 if (view === undefined) {
                     mediator.publish(optionsModule.getChannel('logError'), {
                         model: this,

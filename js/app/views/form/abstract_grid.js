@@ -11,7 +11,7 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
             events: {
                 'keydown .tablesorter': 'navigateHandler',
                 'click tbody > tr': 'selectRowHandler',
-                'click .menu-button-expand': 'contentExpandHandler',
+                'click .menu-button-expand': 'changeFullScreenMode',
                 'click .form-modal-button': 'openTextColumnInModalView',
                 'click .menu-button-save': '_saveHandler',
                 'click .menu-button-action': '_openContextMenu',
