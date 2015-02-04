@@ -51,10 +51,33 @@
  */
 
 /**
- *  Object, that generated in the {FormModel} via event 'save:form'
+ * Object, that generated in the {FormModel} via event 'save:form'
  * @typedef {Object} SaveDTO
  * @property {Object} refresh - Indicates whether to refresh form
  */
+
+/**
+ * Object, that generated in the {FormModel} via event 'refresh:form'
+ * @typedef {Object} RefreshDTO
+ * @property {boolean} isLazy - Indicates whether to use lazy refresh
+ */
+
+/**
+ * Options to initialize AbstractView class
+ * @typedef {Object} AbstractViewOptions
+ * @property {jQuery} $el - A cached jQuery object for the view's element
+ * @property {FormModel} model - Main model
+ * @property {FormView} view - Main view
+ */
+
+/**
+ * @function
+ * @name AbstractView.listenTo
+ * @param {Backbone.Model} other
+ * @param {string} event
+ * @param {function} callback
+ */
+
 
 
 //todo: 1)Поддержка типа Deferred,  2)jquery, 3)custom object Types, 4)Event

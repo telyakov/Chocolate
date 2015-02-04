@@ -1,29 +1,29 @@
-/**
- * Class AbstractView
- * @class
- */
 var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersModule, optionsModule, deferredModule) {
     'use strict';
     return Backbone.View.extend(
         /** @lends AbstractView */
         {
             /**
-             *
-             * @private
+             * @abstract
+             * @class AbstractView
+             * @augments Backbone.View
+             * @param {AbstractViewOptions} options
+             * @constructs
              */
             initialize: function (options) {
+                var model = options.model;
                 _.bindAll(this);
                 this.$el = options.$el;
-                this.model = options.model;
+                this.model = model;
                 this.view = options.view;
-                this.formID = facade.getHelpersModule().uniqueID();
-                this.listenTo(this.model, 'refresh:form', this.lazyRefresh);
-                this.listenTo(this.model, 'save:form', this.save);
-                this.listenTo(this.model, 'change:form', this.change);
-                this.listenTo(this.model, 'save:card', this.saveCard);
-                this.listenTo(this.model, 'open:card', this.openCardHandler);
-                this.listenTo(this.model, 'openMailClient', this.openMailClient);
-                this.listenTo(this.model, 'openWizardTask', this.openWizardTask);
+                this._formID = facade.getHelpersModule().uniqueID();
+                this.listenTo(model, 'refresh:form', this.lazyRefresh);
+                this.listenTo(model, 'save:form', this.save);
+                this.listenTo(model, 'change:form', this.change);
+                this.listenTo(model, 'save:card', this.saveCard);
+                this.listenTo(model, 'open:card', this.openCardHandler);
+                this.listenTo(model, 'openMailClient', this.openMailClient);
+                this.listenTo(model, 'openWizardTask', this.openWizardTask);
                 this.render();
             },
             _refreshTimerID: null,
@@ -33,13 +33,13 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
             _openedCards: [],
             footerTemplate: _.template([
                     '<footer class="grid-footer" data-id="grid-footer">',
-                    '<div class="footer-info" data-id="info"></div>',
+                    '<div class="footer-info"></div>',
                     '<div class="footer-counter"></div>',
                     '</footer>'
                 ].join('')
             ),
             /**
-             * @method destroy
+             * @description Destroy class
              */
             destroy: function () {
                 this._destroyDialogSettings();
@@ -49,7 +49,7 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 delete this.$el;
                 delete this.model;
                 delete this.view;
-                delete this.formID;
+                delete this._formID;
                 delete this._refreshTimerID;
                 delete this._autoUpdateTimerID;
                 delete this._$form;
@@ -57,7 +57,8 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 this.events = null;
             },
             /**
-             * @param e {Event}
+             * @description Disable/enable view mode to full screen
+             * @param e {Event} DOM event object
              */
             contentExpandHandler: function (e) {
                 var $this = $(e.target).closest('button'),
@@ -72,7 +73,8 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 mediator.publish(optionsModule.getChannel('reflowTab'), true);
             },
             /**
-             * @param opts {Object}
+             * @description Perform refresh form data
+             * @param opts {RefreshDTO}
              */
             lazyRefresh: function (opts) {
                 var isLazy = opts && opts.isLazy ? true : false;
@@ -89,28 +91,24 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 }
             },
             /**
+             * @description Get unique id <form>
              * @returns {String}
              */
             getFormID: function () {
-                return this.formID;
+                return this._formID;
             },
             /**
+             * @description Return jQuery <form> tag
              * @returns {jQuery}
              */
             getJqueryForm: function () {
                 if (this._$form === null) {
-                    this._$form = $('#' + this.formID);
+                    this._$form = $('#' + this.getFormID());
                 }
                 return this._$form;
             },
             /**
-             * @param id {string}
-             * @returns {string}
-             */
-            generateCardID: function (id) {
-                return ['card_', this.model.getView(), id].join('');
-            },
-            /**
+             * @description Add opened CardView to cache
              * @param view {CardView}
              * @private
              */
@@ -118,12 +116,14 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 this._openedCards[view.id] = view;
             },
             /**
+             * @description Delete opened CardView from cache
              * @param id {String}
              */
             deleteOpenedCard: function (id) {
                 delete this._openedCards[id];
             },
             /**
+             * @description Get opened CardView from cache
              * @param id {string}
              * @returns {CardView|undefined}
              */
