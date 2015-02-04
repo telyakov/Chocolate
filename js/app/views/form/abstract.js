@@ -26,8 +26,8 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 this.listenTo(model, 'openWizardTask', this.openWizardTask);
                 this.render();
             },
-            _refreshTimerID: null,
-            _autoUpdateTimerID: null,
+            _refreshTimerID: 0,
+            _autoUpdateTimerID: 0,
             _$form: null,
             _$settings: null,
             _openedCards: [],

@@ -472,7 +472,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     });
                 }
 
-                console.log('шокола')
+                console.log(view)
             },
             /**
              *

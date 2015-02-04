@@ -25,6 +25,10 @@
 
 /**
  * @function
+ * @name jQuery.contextmenu
+ */
+/**
+ * @function
  * @name Deferred.done
  * @param {function(element:jQuery)} callback
  */

@@ -3,7 +3,7 @@
  * @class
  * @augments AbstractView
  */
-var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModule, undefined, moment) {
+var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, helpersModule, moment) {
     'use strict';
     return AbstractView.extend(
         /** @lends AbstractGridView */
@@ -12,28 +12,28 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 'keydown .tablesorter': 'navigateHandler',
                 'click tbody > tr': 'selectRowHandler',
                 'click .menu-button-expand': 'contentExpandHandler',
-                'click .form-modal-button': 'modalFormElementHandler',
-                'click .menu-button-save': 'saveFormHandler',
-                'click .menu-button-action': 'menuContextHandler',
-                'click .menu-button-print': 'menuContextHandler'
+                'click .form-modal-button': 'openTextColumnInModalView',
+                'click .menu-button-save': '_saveHandler',
+                'click .menu-button-action': '_openContextMenu',
+                'click .menu-button-print': '_openContextMenu'
             },
-            selectedTimerID: null,
-            previewTimerID: null,
+            _selectedTimerID: 0,
+            _previewTimerID: 0,
             _$resizableElements: null,
-            _messageTimerID: null,
+            _messageTimerID: 0,
             /**
-             * @method destroy
+             * @description Destroy class
              */
             destroy: function () {
-                if(this.selectedTimerID){
-                    clearTimeout(this.selectedTimerID);
-                    delete this.selectedTimerID;
+                if (this._selectedTimerID) {
+                    clearTimeout(this._selectedTimerID);
+                    delete this._selectedTimerID;
                 }
-                if(this.previewTimerID){
-                    clearTimeout(this.previewTimerID);
-                    delete this.previewTimerID;
+                if (this._previewTimerID) {
+                    clearTimeout(this._previewTimerID);
+                    delete this._previewTimerID;
                 }
-                if(this._messageTimerID){
+                if (this._messageTimerID) {
                     clearTimeout(this._messageTimerID);
                     delete this._messageTimerID;
                 }
@@ -45,28 +45,53 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                 this.events = null;
             },
             /**
+             * @description Open context menu
              * @param e {Event}
+             * @private
              */
-            menuContextHandler: function (e) {
+            _openContextMenu: function (e) {
+                /**
+                 * @type {jQuery}
+                 */
                 var $this = $(e.target).closest('button');
                 $this.contextmenu('open', $this);
             },
             /**
-             * @method save
+             * @description Trigger FormModel save
+             * @fires FormModel#save:form
+             * @private
              */
-            saveFormHandler: function () {
-                this.model.trigger('save:form', {
+            _saveHandler: function () {
+                /**
+                 *
+                 * @type {SaveDTO}
+                 */
+                var saveDto = {
                     refresh: true
-                });
+                };
+                this.getModel().trigger('save:form', saveDto);
+            },
+
+            /**
+             *
+             * @returns {jQuery}
+             * @private
+             */
+            _getJqueryMessageContainer: function () {
+                return this.getJqueryForm().children('.menu').children('.messages-container');
             },
             /**
              * @param opts {MessageDTO}
              * @override
              */
-            showMessage: function(opts){
-                var $output = this.getJqueryForm().children('.menu').children('.messages-container'),
+            showMessage: function (opts) {
+                /**
+                 *
+                 * @type {jQuery}
+                 */
+                var $output = this._getJqueryMessageContainer(),
                     messageClass;
-                switch (opts.id){
+                switch (opts.id) {
                     case 1:
                         messageClass = 'alert-success';
                         break;
@@ -77,18 +102,22 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                         messageClass = 'alert-error';
                         break;
                 }
+                /**
+                 * @type {jQuery}
+                 */
                 var $msg = $('<div>', {
-                    'class': 'alert in alert-block fade '+ messageClass,
-                       html: opts.msg
-                    }).wrap('<div class="grid-message"></div>');
+                    'class': 'alert in alert-block fade ' + messageClass,
+                    html: opts.msg
+                }).wrap('<div class="grid-message"></div>');
                 $output.html($msg);
-                if(opts.id !== 3) {
-                    if(this._messageTimerID){
+
+                if (opts.id !== 3) {
+                    if (this._messageTimerID) {
                         clearTimeout(this._messageTimerID);
                     }
                     this._messageTimerID = setTimeout(function () {
-                            $output.html('')
-                        }, 5000);
+                        $output.html('')
+                    }, 5000);
                 }
             },
             /**
@@ -96,7 +125,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
              * @param e {Event}
              * @returns {boolean}
              */
-            modalFormElementHandler: function (e) {
+            openTextColumnInModalView: function (e) {
                 var $this = $(e.target),
                     key = $this.attr('data-name'),
                     pk = $this.closest('tr').attr('data-id'),
@@ -359,10 +388,10 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                             top = $row.offset().top - parentOffsetTop;
                         this.createSelectedArea(width, height, left, top, id);
                     } else {
-                        if (this.selectedTimerID) {
-                            clearTimeout(this.selectedTimerID);
+                        if (this._selectedTimerID) {
+                            clearTimeout(this._selectedTimerID);
                         }
-                        this.selectedTimerID = setTimeout(function () {
+                        this._selectedTimerID = setTimeout(function () {
                             var $selectedByMouse = $tbody.children('.' + optionsModule.getClass('selectedMouseArea'));
                             if ($selectedByMouse.length) {
                                 $selectedByMouse.remove();
@@ -379,10 +408,10 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
                         }, 100);
 
                     }
-                    if (this.previewTimerID) {
-                        clearTimeout(this.previewTimerID);
+                    if (this._previewTimerID) {
+                        clearTimeout(this._previewTimerID);
                     }
-                    this.previewTimerID = setTimeout(function () {
+                    this._previewTimerID = setTimeout(function () {
                         var previewData = _this.model.getPreview(),
                             data = _this.model.getActualDataFromStorage(id);
                         if (previewData !== undefined) {
@@ -784,7 +813,7 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
              * * @private
              */
             _destroyResizableWidget: function () {
-                if(this._$resizableElements){
+                if (this._$resizableElements) {
                     this._$resizableElements.resizable('destroy');
                     delete this._$resizableElements;
                 }
@@ -812,4 +841,4 @@ var AbstractGridView = (function (AbstractView, $, _, optionsModule, helpersModu
             }
         });
 })
-(AbstractView, jQuery, _, optionsModule, helpersModule, undefined, moment);
+(undefined, jQuery, _, AbstractView, optionsModule, helpersModule, moment);

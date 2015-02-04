@@ -279,7 +279,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
              * @returns {jQuery}
              */
             getJqueryParent: function () {
-                return this.view.getJqueryDataTable().find('tr[data-id="' + this.getKey() + '"]');
+                return this.view.getJqueryDataTable().find('tr[data-id="' + this.id + '"]');
             },
             /**
              * @method clearStorage

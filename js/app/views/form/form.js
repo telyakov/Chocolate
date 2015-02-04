@@ -55,8 +55,8 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                                 var $buttons = $(this).siblings('div').find("button");
                                 $buttons.first()
                                     .addClass("wizard-next-button")
-                                    .nextAll().
-                                    addClass('wizard-cancel-button');
+                                    .nextAll()
+                                    .addClass('wizard-cancel-button');
                             }
                         });
                     } else {

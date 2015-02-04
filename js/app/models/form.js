@@ -295,12 +295,19 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                         return GridView;
                 }
             },
+            /**
+             *
+             * @returns {jQuery|null}
+             */
+            getXml: function(){
+                return this.get('$xml')
+            },
             getColumnsCollection: function () {
                 if (this._columnsCollection) {
                     return this._columnsCollection;
                 }
                 var columns = [],
-                    $xml = this.get('$xml');
+                    $xml = this.getXml();
                 if ($xml) {
                     var $gridLayout = $xml.find('GridLayoutXml'),
                         $columns = $($.parseXML($.trim($gridLayout.text()))),

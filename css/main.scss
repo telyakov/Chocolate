@@ -572,7 +572,7 @@ span.required {
 
 .card-input {
     box-sizing: border-box;
-    a[rel] {
+    >.table-td a {
         display: block;
     }
     .select2-search-choice {
