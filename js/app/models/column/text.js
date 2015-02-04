@@ -40,7 +40,7 @@ var TextColumnRO = (function (helpersModule) {
                             mode: 'inline',
                             name: _this.get('key'),
                             showbuttons: false,
-                            disabled: true,
+                            disabled: false,
                             onblur: 'submit',
                             savenochange: false
                         },

@@ -67,7 +67,7 @@ var DateColumnRO = (function (optionsModule) {
                                 showbuttons: false,
                                 onblur: 'submit',
                                 type: isTime ? 'date' : 'datetime',
-                                inputclass: isTime ? 'input-medium' : '',
+                                inputclass: 'input-medium',
                                 datetimepicker: {
                                     language: 'ru',
                                     todayBtn: 'true',
