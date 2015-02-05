@@ -5,7 +5,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
             [
                 '<form id="<%= formID %>" class="grid-form" data-id="attachments.xml" ',
                 'parent-data-id="<%= parentView %>" ',
-                'data-parent-pk="<%= parentID %>" enctype="multipart/form-data" multiple="multiple" ',
+                'enctype="multipart/form-data" multiple="multiple" ',
                 '  method="post">',
                 '<% if (isSaved) { %>',
                 '<div class="fileupload-buttonbar">',
@@ -25,7 +25,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 '</menu></div>',
                 '<% } %>',
                 '<section data-id="grid">',
-                '<div class="grid-view" data-id="user-grid" id="<%= gridViewID %>"">',
+                '<div class="grid-view" id="<%= gridViewID %>"">',
                 '<table class="items table-bordered" tabindex="0" ><thead>',
                 '<th data-id="chocolate-control-column"><div></div></th>',
                 '<th data-id="name"><div><a>',
@@ -52,6 +52,9 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 'click .attachment-file': $.debounce(2000, true, this.downloadFileHandler)
             });
         },
+        //destroy: function(){
+        //  console.log('sem')
+        //},
         downloadFileHandler: function (e) {
             var id = $(e.target).attr('data-id');
             mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
@@ -62,7 +65,6 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 isSaved: !this.model.isNotSaved(),
                 formID: formID,
                 parentView: this.model.getParentView(),
-                parentID: this.model.get('parentId'),
                 inputID: helpersModule.uniqueID(),
                 gridViewID: helpersModule.uniqueID()
             }));
@@ -202,7 +204,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                             facade.getFilesModule().push(_this.getFormID(), data.files);
                             data.context.attr("data-id", rowID);
                             data.context.find("td input[type=file]").attr("parent-id", rowID);
-                            $form.find("div[data-id=user-grid] table").trigger("update");
+                            $form.find(".grid-view table").trigger("update");
                             _this.getSaveButton().addClass("active");
                         } else {
                             data.context.remove();
@@ -306,9 +308,9 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
         initTableScript: function () {
             var $table = this.getJqueryDataTable();
             this.initSettings();
-            this.initTableSorter($table);
-            this.initResize($table);
-            this.initFloatThead($table);
+            this.initTableSorterWidget($table);
+            this.initResizeWidget($table);
+            this.initFloatTheadWidget($table);
         }
     });
 })(AbstractGridView, jQuery, _, deferredModule, optionsModule, window, helpersModule);

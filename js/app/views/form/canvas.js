@@ -1,11 +1,9 @@
-var CanvasView = (function (Backbone) {
+var CanvasView = (function () {
     'use strict';
     return AbstractView.extend({
         template: _.template([
             '<form data-id="<%= view %>" id="<%= id%>" ',
-            'data-card-support="<%= isCardSupport %>"',
-            '>',
-            '</form>'
+            '></form>'
         ].join('')),
         events: {
             'click canvas': function (e) {
@@ -48,8 +46,7 @@ var CanvasView = (function (Backbone) {
             var formID = this.getFormID(),
                 $form = $(this.template({
                     id: formID,
-                    view: this.model.getView(),
-                    isCardSupport: this.model.hasCard()
+                    view: this.model.getView()
                 }));
             this.$el.html($form);
             var menuView = new MenuView({
@@ -273,4 +270,4 @@ var CanvasView = (function (Backbone) {
             this.initData();
         }
     });
-})(Backbone);
+})();

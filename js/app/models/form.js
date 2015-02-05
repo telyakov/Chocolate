@@ -74,11 +74,12 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 delete this._requiredFields;
                 this.set('$xml', null);
                 this.set('parentId', null);
-                var parentModel = this.get('parentModel');
-                if(parentModel){
-                    parentModel.destroy();
-                    this.set('parentModel', null);
-                }
+                //var parentModel = this.get('parentModel');
+                //if(parentModel){
+                //TODO: запретить вобще закрытие родительской сушности, пока открыты дочернии
+                //    parentModel.destroy();
+                //    this.set('parentModel', null);
+                //}
                 delete this._openedCards;
                 storageModule.removeFromSession(this.cid);
             },
@@ -562,6 +563,10 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 }
                 return bindModule.deferredBindSql(sql, data);
             },
+            /**
+             *
+             * @returns {Object}
+             */
             getPreview: function () {
                 if (this._preview === null) {
                     var preview = {};
@@ -580,9 +585,17 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 return this._preview;
 
             },
+            /**
+             *
+             * @returns {String}
+             */
             getKeyColorColumnName: function () {
                 return this.getColumnsCollection().getRowColorColumnName();
             },
+            /**
+             *
+             * @returns {String}
+             */
             getColorColumnName: function () {
                 return this.getColumnsCollection().getRowColorColumnNameAlternate();
             },

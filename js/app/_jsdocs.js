@@ -64,6 +64,13 @@
  */
 
 /**
+ * Object, that represented applications message
+ * @typedef {Object} RecordsetDTO
+ * @property {Object} data - data
+ * @property {Array} order - order rows in data
+ */
+
+/**
  * Object, that generated in the {FormModel} via event 'save:form'
  * @typedef {Object} SaveDTO
  * @property {Object} refresh - Indicates whether to refresh form

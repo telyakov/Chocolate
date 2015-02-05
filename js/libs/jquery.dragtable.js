@@ -393,7 +393,7 @@
             //console.profile('selectCol');
 
             //colHeader.addClass('ui-state-disabled')
-            this.parentElement = $(this.element).closest('section').find('div[data-id=user-grid]>table')
+            this.parentElement = $(this.element).closest('section').find('.grid-view > table')
             var $table = this.element,
                 self = this,
                 eIndex = self.tableElemIndex,

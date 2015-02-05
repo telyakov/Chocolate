@@ -3,13 +3,13 @@
  * @class
  * @augments AbstractView
  */
-var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, helpersModule, moment) {
+var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsModule, helpersModule, moment) {
     'use strict';
     return AbstractView.extend(
         /** @lends AbstractGridView */
         {
             events: {
-                'keydown .tablesorter': 'navigateHandler',
+                'keydown .tablesorter': 'movingInGridByKeyboard',
                 'click tbody > tr': 'selectRowHandler',
                 'click .menu-button-expand': 'changeFullScreenMode',
                 'click .menu-button-save': '_saveHandler',
@@ -121,12 +121,14 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 }
             },
             /**
-             * @param e {Event}
+             * @description Allow move back and forth by keyboard in grid,
+             *  select/deselect rows for mass operations
+             * @param {Event} e
              * @returns {boolean}
              */
-            navigateHandler: function (e) {
+            movingInGridByKeyboard: function (e) {
+                //span for ie fix
                 if (['TABLE', 'SPAN'].indexOf(e.target.tagName) !== -1) {
-                    //span for ie fix
                     var op = optionsModule,
                         keyCode = e.keyCode,
                         catchKeys = [
@@ -171,7 +173,7 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 return true;
             },
             /**
-             * @param $row {jQuery}
+             * @param {jQuery} $row
              * @returns {*}
              */
             setCorrectScroll: function ($row) {
@@ -179,6 +181,7 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                     leftBound = $userGrid.find('thead').height(),
                     rightBound = $userGrid.height() - leftBound,
                     rowTopOffset = $row.offset().top - $userGrid.offset().top;
+
                 if (rowTopOffset < leftBound || rowTopOffset > rightBound) {
                     $userGrid.scrollTop($userGrid.scrollTop() + rowTopOffset - rightBound);
                 }
@@ -189,7 +192,7 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
              * @returns {string}
              */
             getLayoutSubscribeName: function () {
-                return ['layout', this.getJqueryGridView().attr('id')].join('/');
+                return ['layout', this.getFormID()].join('');
             },
             /**
              * @returns {jQuery}
@@ -216,11 +219,11 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 return this.$('.floatThead-table');
             },
             /**
-             * @param index {Number}
+             * @param {Number} index
              * @returns {Number}
              */
             getColumnWidth: function (index) {
-                var settings = this.model.getFormSettingsFromStorage();
+                var settings = this.getModel().getFormSettingsFromStorage();
                 if ($.isEmptyObject(settings)) {
                     var defaultWidth = optionsModule.getSetting('defaultColumnsWidth');
                     this.setColumnWidth(index, defaultWidth);
@@ -229,16 +232,18 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 return settings[index].width;
             },
             /**
-             * @param e {Event}
+             * @description Mark row as selected
+             * @param {Event} e
              */
             selectRowHandler: function (e) {
                 var $this = $(e.target).closest('tr');
                 this.selectRow($this, e.ctrlKey || e.shiftKey, true);
             },
             /**
-             * @param $row {jQuery}
-             * @param group {Boolean}
-             * @param isMouse {Boolean}
+             * @desc Select row
+             * @param {jQuery} $row
+             * @param {Boolean} group
+             * @param {Boolean} isMouse
              */
             selectRow: function ($row, group, isMouse) {
                 var $activeRow = this.getJqueryActiveRow(),
@@ -249,8 +254,13 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 $row.addClass(activeClass);
                 if (!group) {
                     var $tbody = this.getJqueryTbody();
-                    $tbody.children('.' + selectedClass).removeClass(selectedClass);
-                    $tbody.closest('div').children('.' + optionsModule.getClass('selectedArea')).remove();
+                    $tbody
+                        .children('.' + selectedClass)
+                        .removeClass(selectedClass);
+                    $tbody
+                        .closest('div')
+                        .children('.' + optionsModule.getClass('selectedArea'))
+                        .remove();
                 }
                 if ($row.hasClass(selectedClass) && !isMouse) {
                     $activeRow.removeClass(selectedClass);
@@ -258,7 +268,7 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                     $row.toggleClass(selectedClass);
                 }
                 this
-                    .layoutSelectedArea($row, isMouse, $activeRow)
+                    ._layoutSelectedArea($row, isMouse, $activeRow)
                     .setRowCount(this.getSelectedRows().length);
             },
             /**
@@ -274,10 +284,11 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 return this.getJqueryDataTable().children('thead');
             },
             /**
+             * @desc Get Form row class
              * @returns {string}
              */
             getRowClass: function () {
-                switch (this.model.getFormStyleID()) {
+                switch (this.getModel().getFormStyleID()) {
                     case 1:
                         return '';
                     case 2:
@@ -287,12 +298,14 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 }
             },
             /**
-             * @param $row {jQuery}
-             * @param isMouse {Boolean}
-             * @param $activeRow {jQuery}
+             * @param {jQuery} $row
+             * @param {Boolean} isMouse
+             * @param {jQuery} $activeRow
+             * @private
              */
-            layoutSelectedArea: function ($row, isMouse, $activeRow) {
-                var id = $row.attr('data-id'),
+            _layoutSelectedArea: function ($row, isMouse, $activeRow) {
+                var model = this.getModel(),
+                    id = $row.attr('data-id'),
                     $tbody = this.getJqueryTbody(),
                     selectedClass = optionsModule.getClass('selectedRow'),
                     _this = this;
@@ -303,7 +316,7 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                     if (isMouse) {
                         var height = $row.height(),
                             top = $row.offset().top - parentOffsetTop;
-                        this.createSelectedArea(width, height, left, top, id);
+                        this._createSelectedArea(width, height, left, top, id);
                     } else {
                         if (this._selectedTimerID) {
                             clearTimeout(this._selectedTimerID);
@@ -321,7 +334,7 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                                 last = $selectedRows.last().get(0),
                                 height = last.offsetTop + last.offsetHeight - $selectedRows.first().get(0).offsetTop,
                                 top = $selectedRows.first().offset().top - parentOffsetTop;
-                            _this.createSelectedArea(width, height, left, top);
+                            _this._createSelectedArea(width, height, left, top);
                         }, 100);
 
                     }
@@ -329,12 +342,12 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                         clearTimeout(this._previewTimerID);
                     }
                     this._previewTimerID = setTimeout(function () {
-                        var previewData = _this.model.getPreview(),
-                            data = _this.model.getActualDataFromStorage(id);
+                        var previewData = model.getPreview(),
+                            data = model.getActualDataFromStorage(id);
                         if (previewData !== undefined) {
                             var html = [], key;
                             for (key in previewData) {
-                                if (data.hasOwnProperty(key)) {
+                                if (previewData.hasOwnProperty(key) && data.hasOwnProperty(key)) {
                                     html.push('<span class="footer-title">');
                                     html.push(previewData[key].caption);
                                     html.push('</span>: <span>');
@@ -357,13 +370,15 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 return this;
             },
             /**
-             * @param width {Number}
-             * @param height {Number}
-             * @param left {Number}
-             * @param top {Number}
-             * @param rel {string}
+             * @desc Create area selected rows
+             * @param {Number} width
+             * @param {Number} height
+             * @param {Number} left
+             * @param {Number} top
+             * @param {string} rel
+             * @private
              */
-            createSelectedArea: function (width, height, left, top, rel) {
+            _createSelectedArea: function (width, height, left, top, rel) {
                 var selAreaClasses = optionsModule.getClass('selectedArea'),
                     $selLeft = $('<div class="sel-left"></div>'),
                     $selRight = $('<div class="sel-right"></div>'),
@@ -390,7 +405,8 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 this.getJqueryDataTable().parent().append($selLeft, $selRight, $selTop, $selBottom);
             },
             /**
-             * @param count {String}
+             * @desc Set count displayed rows in table
+             * @param {String} count
              * @returns {*}
              */
             setRowCount: function (count) {
@@ -400,7 +416,8 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 return this;
             },
             /**
-             * @returns {Array}
+             * @desc Get selected rows from table
+             * @returns {jQuery[]}
              */
             getSelectedRows: function () {
                 var rows = [];
@@ -410,17 +427,22 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 return rows;
             },
             /**
-             * @method removeSelectedRows
+             * @desc Remove selected rows from table
              */
             removeSelectedRows: function () {
                 this.removeRows(this.getSelectedRows());
             },
             /**
-             * @param rows {Array}
+             * @desc Remove rows from table
+             * @param {jQuery[]} rows
              */
             removeRows: function (rows) {
                 var lng = rows.length;
                 if (lng) {
+                    /**
+                     *
+                     * @type {FormChangeDTO}
+                     */
                     var data = {
                         op: 'del',
                         data: []
@@ -429,28 +451,31 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                         data.data.push({id: rows[i].attr('data-id')});
                         rows[i].remove();
                     }
-                    this.model.trigger('change:form', data);
+                    this.getModel().trigger('change:form', data);
                 }
                 helpersModule.leaveFocus();
             },
             /**
-             * @param id {String}
+             * @param {String} id
              * @returns {jQuery}
              */
             getJqueryRow: function (id) {
                 return this.getJqueryTbody().children('[data-id="' + id + '"]');
             },
             /**
-             * @param opts {Object}
+             * @desc Handles all data change in form
+             * @param {FormChangeDTO} opts
              */
             change: function (opts) {
                 var operation = opts.op;
                 if (['ins', 'del'].indexOf(operation) !== -1) {
-                    this.getJqueryDataTable().trigger('update');
-                    this.getJqueryDataTable().parent().find('.' + optionsModule.getClass('selectedArea')).remove();
+                    var $dataTable = this.getJqueryDataTable();
+                    $dataTable.trigger('update');
+                    $dataTable.parent().find('.' + optionsModule.getClass('selectedArea')).remove();
                 }
+
                 if (['ins', 'upd'].indexOf(operation) !== -1) {
-                    this.model.addChangeToStorage(opts.id, opts.data);
+                    this.getModel().addChangeToStorage(opts.id, opts.data);
                     this.getJqueryRow(opts.id).addClass('grid-row-changed');
                 }
                 if (operation === 'del') {
@@ -459,11 +484,24 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                         data = opts.data;
                     for (i in data) {
                         if (hasOwn.call(data, i)) {
-                            this.model.addDeletedToStorage(data[i].id);
+                            this.getModel().addDeletedToStorage(data[i].id);
                         }
                     }
                 }
+                this._markAsChanged();
+            },
+            /**
+             * @desc Mark for user, that form has unsaved change
+             * @private
+             */
+            _markAsChanged: function(){
                 this.getSaveButton().addClass('active');
+            },
+            /**
+             * @desc Mark for user, that form has not unsaved change
+             */
+            markAsNoChanged: function(){
+                this.getSaveButton().removeClass('active');
             },
             /**
              * @returns {jQuery}
@@ -484,12 +522,13 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 return this.$('.' + optionsModule.getClass('activeRow'));
             },
             /**
-             * @param $form {jQuery}
+             * @param {jQuery} $form
              */
             layoutFooter: function ($form) {
                 $form.after(this.footerTemplate());
             },
             /**
+             * @desc Clear selected area in table
              * @returns {*}
              */
             clearSelectedArea: function () {
@@ -497,11 +536,12 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 return this;
             },
             /**
-             * @param key {String}
+             * @desc Get column position in table
+             * @param {String} key
              * @returns {Number}
              */
             getPositionColumn: function (key) {
-                var settings = this.model.getFormSettingsFromStorage(),
+                var settings = this.getModel().getFormSettingsFromStorage(),
                     i,
                     hasOwn = Object.prototype.hasOwnProperty,
                     obj;
@@ -515,26 +555,30 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 }
             },
             /**
-             * @method initSettings
+             * @desc Initialize form settings
              */
             initSettings: function () {
-                this.setDefaultSettings();
-                if (this.model.isAutoUpdate()) {
+                this._initColumnSettings();
+                if (this.getModel().isAutoUpdate()) {
                     this.startAutoUpdate();
                 }
             },
             /**
-             * @method setDefaultSettings
+             * @desc Initialize column settings and persist his in local storage
+             * @private
              */
-            setDefaultSettings: function () {
+            _initColumnSettings: function () {
                 var $th = this.getTh(),
+                    model = this.getModel(),
                     settings = [],
                     defaultWidth = optionsModule.getSetting('defaultColumnsWidth');
-                if (this.model.hasSettings()) {
+
+                if (model.hasSettings()) {
                     var $tr = this.getThead().children('tr'),
                         $trSorted = $('<tr/>'),
                         controlColumn = optionsModule.getSetting('controlColumn');
-                    settings = this.model.getFormSettingsFromStorage();
+
+                    settings = model.getFormSettingsFromStorage();
                     var unsavedSettings = settings.sort(function (a, b) {
                         if (a.key === controlColumn) {
                             return -1;
@@ -569,7 +613,7 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                             $trSorted.append($this);
                         }
                     });
-                    this.model.persistColumnsSettings(unsavedSettings);
+                    model.persistColumnsSettings(unsavedSettings);
                     $tr.replaceWith($trSorted);
                 } else {
                     $th.each(function (i, elem) {
@@ -588,23 +632,25 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                             };
                         }
                     });
-                    this.model.persistColumnsSettings(settings);
+                    model.persistColumnsSettings(settings);
                 }
             },
             /**
-             * @param index {Number}
-             * @param width {Number}
+             * @desc Save column width in local storage
+             * @param {Number} index
+             * @param {Number} width
              */
             setColumnWidth: function (index, width) {
-                var settings = this.model.getFormSettingsFromStorage();
+                var settings = this.getModel().getFormSettingsFromStorage();
                 if (!$.isEmptyObject(settings)) {
                     settings[index].width = width;
                 }
             },
             /**
-             * @param $table {jQuery}
+             * @desc Initialize TableSorter Widget
+             * @param {jQuery} $table
              */
-            initTableSorter: function ($table) {
+            initTableSorterWidget: function ($table) {
                 var options = {
                     headers: {
                         0: {sorter: false}
@@ -616,19 +662,20 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                         savePages: false
                     }
                 };
-                if (optionsModule.getSetting('viewsWithoutFilters').indexOf(this.model.getView()) === -1) {
+                if (optionsModule.getSetting('viewsWithoutFilters').indexOf(this.getModel().getView()) === -1) {
                     options.widgets = ['filter'];
                 }
                 $table.tablesorter(options);
             },
             /**
-             * @method destroyTableSorterWidget
+             * @desc Destroy TableSorter Widget
              * @private
              */
             _destroyTableSorterWidget: function () {
                 this.getJqueryFloatHeadTable().find('.tablesorter-filter').remove();
                 this.getJqueryFloatHeadTable().find('th').unbind('click mousedown').remove();
-                this.getJqueryFloatHeadTable().unbind('appendCache applyWidgetId applyWidgets sorton update updateCell')
+                this.getJqueryFloatHeadTable()
+                    .unbind('appendCache applyWidgetId applyWidgets sorton update updateCell')
                     .removeClass('tablesorter');
                 this.getJqueryDataTable().find('.table-td').remove();
                 this.getJqueryDataTable().find('tr').remove();
@@ -636,23 +683,25 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 this.getJqueryDataTable().trigger("destroy");
             },
             /**
-             * @param $elements {jQuery|null}
+             * @desc Save reference for fight with leak memory
+             * @param {?jQuery} $elements
              * @private
              */
-            _persistLinkToResizableElements: function ($elements) {
+            _persistReferenceToResizableElements: function ($elements) {
                 this._$resizableElements = $elements;
             },
             /**
-             * @param $table {jQuery}
+             * @desc Initialize resizable widget for columns headers
+             * @param {jQuery} $table
              */
-            initResize: function ($table) {
+            initResizeWidget: function ($table) {
                 var $headers = this.getTh()
                         .filter(function (i) {
                             return i > 0;
                         }).children('div'),
                     startWidth = 0,
                     _this = this;
-                this._persistLinkToResizableElements($headers);
+                this._persistReferenceToResizableElements($headers);
                 $headers.each(function () {
                     var $columnResize, $bodyResize;
                     $(this).resizable({
@@ -685,12 +734,7 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                                     $table.width(tableWidth);
                                 }
                             } catch (e) {
-                                mediator.publish(optionsModule.getChannel('logError'),
-                                    {
-                                        view: _this,
-                                        error: e
-                                    }
-                                );
+                                _this.publishError({view: _this, error: e});
                             } finally {
                                 $columnResize.remove();
                                 $bodyResize.remove();
@@ -719,15 +763,17 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                                     'height': Math.min(visibleHeight, realHeight)
                                 });
 
-                            helpersModule.getContentObj().append($columnResize).append($bodyResize);
+                            helpersModule.getContentObj()
+                                .append($columnResize)
+                                .append($bodyResize);
                             startWidth = ui.element.width();
                         }
                     });
                 });
             },
             /**
-             * @method destroyTableSorterWidget
-             * * @private
+             * @desc Destroy resizable plugin
+             * @private
              */
             _destroyResizableWidget: function () {
                 if (this._$resizableElements) {
@@ -736,19 +782,20 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
                 }
             },
             /**
-             * @param $table {jQuery}
+             * @desc Initialize Jquery.floatThead plugin
+             * @param {jQuery} $table
              */
-            initFloatThead: function ($table) {
-                var _this = this;
+            initFloatTheadWidget: function ($table) {
+                var $gridView = this.getJqueryGridView();
                 $table.floatThead({
                     view: this,
                     scrollContainer: function () {
-                        return _this.getJqueryGridView();
+                        return $gridView;
                     }
                 });
             },
             /**
-             * @method _destroyFloatTheadWidget
+             * @desc Destroy Jquery.floatThead plugin
              * @private
              */
             _destroyFloatTheadWidget: function () {
@@ -758,4 +805,4 @@ var AbstractGridView = (function (undefined, $, _, AbstractView, optionsModule, 
             }
         });
 })
-(undefined, jQuery, _, AbstractView, optionsModule, helpersModule, moment);
+(undefined, Math, jQuery, _, AbstractView, optionsModule, helpersModule, moment);

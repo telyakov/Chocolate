@@ -27,9 +27,6 @@
 .ui-tabs .ui-tabs-nav li a:hover {
     border-bottom: 0 !important;
 }
-.td-red> .table-td>a{
-    color:red;
-}
 .editable-checklist {
     overflow-y: scroll;
     height: inherit;
@@ -1424,10 +1421,6 @@ a.editable-click {
     text-decoration: underline !important;
     color: #0274bd !important;
     font-weight: bold;
-}
-
-td.td-red {
-    color: red;
 }
 
 .fa-exclamation {

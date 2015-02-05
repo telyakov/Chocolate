@@ -240,20 +240,31 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
                 return isAllowEdit;
             },
             /**
-             * @param isVisible {Boolean}
+             * @param {String} id
+             * @param {Boolean} isVisible
+             * @param {String} value
+             * @param {String} [color]
              * @returns {string}
              */
-            getTemplate: function (isVisible) {
-                var template = [
-                    '<td style class="' + this.getClass() + ' {class}"><div class="table-td"><a data-value="{value}"',
-                    ' data-pk ="{pk}"  class="editable ' + this._getUniqueClass() + '"></a></div></td>'
-                ].join('');
-                if (isVisible) {
-                    template = template.replace('style', '');
-                } else {
-                    template = template.replace('style', 'style="display:none;"');
+            getTemplate: function (id, isVisible, value, color) {
+                var html = ['<td '];
+                if(!isVisible){
+                    html.push('style="display:none;"');
                 }
-                return template;
+                html.push(' class="');
+                html.push(this.getClass());
+                html.push('"><div class="table-td"><a data-value="');
+                html.push(value);
+                html.push('" data-pk ="');
+                html.push(id);
+                if(color){
+                    html.push('" style="color:#');
+                    html.push(color);
+                }
+                html.push('" class="editable ');
+                html.push(this._getUniqueClass());
+                html.push('"></a></div></td>');
+                return html.join('');
             },
             /**
              * @returns {string}

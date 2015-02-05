@@ -8,18 +8,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
     return AbstractGridView.extend(
         /** @lends GridView */
         {
-            template: _.template([
-                    '<form action="/grid/save?view=<%=view %>" data-id="<%= view %>" id="<%= id%>"',
-                    'data-ajax-add="<%= ajaxAdd%>" ',
-                    'data-parent-pk="<%= parentPk%>" ',
-                    'data-card-support="<%= cardSupport%>" ',
-                    '>',
-                    '</form>'
-                ].join('')
-            ),
+            template: _.template('<form data-id="<%= view %>" id="<%= id%>"></form>'),
             gridTemplate: _.template([
                     '<section data-id="grid">',
-                    '<div data-id="user-grid" id="<%= userGridID %>" class="grid-view">',
+                    '<div id="<%= userGridID %>" class="grid-view">',
                     '<table tabindex=0 class="table-bordered items" id="<%= tableID%>">',
                     '<thead><tr>',
                     '<% _.each(rows, function(item) { %>',
@@ -323,7 +315,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 if (!data.hasOwnProperty('id')) {
                     data.id = helpersModule.uniqueID();
                 }
-                var $row = $(this.generateRow(data, this.getSortedColumns()));
+                var $row = $(this._generateRowHtml(data, this.getSortedColumns()));
                 $row.addClass('grid-row-changed');
                 this
                     .getJqueryTbody()
@@ -504,11 +496,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 var formId = this.getFormID(),
                     html = this.template({
                         id: formId,
-                        view: this.model.getView(),
-                        ajaxAdd: this.model.isSupportCreateEmpty(),
-                        parentPk: this.model.get('parentId'),
-                        cardSupport: this.model.hasCard()
-
+                        view: this.model.getView()
                     });
                 this.$el.html(html);
                 var $form = this.getJqueryForm();
@@ -811,9 +799,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             initTableScript: function () {
                 var $table = this.getJqueryDataTable();
                 this.initSettings();
-                this.initTableSorter($table);
-                this.initResize($table);
-                this.initFloatThead($table);
+                this.initTableSorterWidget($table);
+                this.initResizeWidget($table);
+                this.initFloatTheadWidget($table);
                 this.initContextMenu($table);
                 this.initDragTable();
                 if (this.model.isShortMode()) {
@@ -885,14 +873,14 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this.getJqueryDataTable().unbind('sortEnd').unbind('filterEnd');
             },
             /**
-             * @param data {Object}
+             * @param {RecordsetDTO} data
              */
             refreshDone: function (data) {
                 var sortedColumnCollection = this.getSortedColumns(),
                     order = data.order,
                     recordset = data.data;
                 this.model.persistData(recordset, order);
-                var html = this.generateRows(recordset, order, sortedColumnCollection),
+                var html = this._generateRowsHtml(recordset, order, sortedColumnCollection),
                     $table = this.getJqueryDataTable(),
                     $tbody = this.getJqueryTbody(),
                     $tr,
@@ -968,37 +956,40 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this.setRowCount(Object.keys(recordset).length);
             },
             /**
-             *
-             * @param data {Object}
-             * @param order {Array}
-             * @param sortedColumnCollection {Array}
+             * @desc Create Html for all Row
+             * @param {Object} data
+             * @param {Array} order
+             * @param {ColumnRO[]} columns
              * @returns {string}
+             * @private
              */
-            generateRows: function (data, order, sortedColumnCollection) {
-                var stringBuilder = [];
-                var _this = this;
+            _generateRowsHtml: function (data, order, columns) {
+                var stringBuilder = [],
+                    _this = this;
                 order.forEach(function (key) {
                     //count++;
-                    stringBuilder.push(_this.generateRow(data[key], sortedColumnCollection));
+                    stringBuilder.push(_this._generateRowHtml(data[key], columns));
                 });
                 return stringBuilder.join('');
             },
             /**
-             * @param data {Object}
-             * @param columns {Array}
+             * @desc Create Single Row Html
+             * @param {Object}  data
+             * @param {ColumnRO[]} columns
              * @returns {string}
              */
-            generateRow: function (data, columns) {
+            _generateRowHtml: function (data, columns) {
                 var style = '',
-                    idClass = '',
-                    colorCol = this.model.getColorColumnName(),
-                    keyColorCol = this.model.getKeyColorColumnName();
+                    keyColor = '',
+                    model = this.getModel(),
+                    colorCol = model.getColorColumnName(),
+                    keyColorCol = model.getKeyColorColumnName();
                 if (colorCol && data[colorCol]) {
                     var correctColor = helpersModule.decToHeh(data[colorCol]);
                     style = ['style="background:#', correctColor, '"'].join('');
                 }
                 if (keyColorCol && data[keyColorCol]) {
-                    idClass = ' td-red';
+                    keyColor = helpersModule.decToHeh(data[keyColorCol])
                 }
                 var rowClass = this.getRowClass();
                 if (rowClass) {
@@ -1021,7 +1012,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     key = item.get('key');
                     var isVisible = thList.filter('[data-id="' + key + '"]').css('display') !== "none",
                         value = '',
-                        tdClass = '';
+                        color;
                     if (data[key] !== undefined && (key !== 'id' || isNumericID )) {
                         value = data[key];
                         if (value) {
@@ -1029,45 +1020,44 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         }
                     }
                     if (key === 'id') {
-                        tdClass = idClass;
+                        color = keyColor;
                     }
                     rowBuilder.push(
-                        item.getTemplate(isVisible).replace(/\{pk\}/g, id)
-                            .replace(/\{value\}/g, value)
-                            .replace(/\{class\}/g, tdClass)
+                        item.getTemplate(id, isVisible, value, color)
                     );
                 });
                 rowBuilder.push('</tr>');
                 return rowBuilder.join('');
             },
             /**
-             *
-             * @param id {String}
-             * @param priority {String}
-             * @param color {String}
+             * @desc Add Row color and priority to storage and apply it
+             * @param {String} id
+             * @param {String} priority
+             * @param {String} color
              */
             addPriorityColorAndApply: function (id, priority, color) {
                 if (this._priorityColors[id] === undefined) {
                     this._priorityColors[id] = [];
                 }
                 this._priorityColors[id].push({priority: priority, color: '#' + color});
-                this.setRowColor(id);
+                this._applyRowColor(id);
             },
             /**
-             *
-             * @param id {String}
+             * @desc Apply background color for row
+             * @param {String} id
              * @returns {*}
+             * @private
              */
-            setRowColor: function (id) {
-                var color = this.getRowColor(id);
+            _applyRowColor: function (id) {
+                var color = this._getRowColor(id);
                 this.getJqueryDataTable().find('tr[data-id="' + id + '"]').css({
                     background: color ? color : ''
                 });
                 return this;
             },
             /**
-             * @param id {string}
-             * @param priority {int}
+             * @param {string} id
+             * @param {Number} priority
              */
             removePriorityColorAndApply: function (id, priority) {
                 if (this._priorityColors[id] !== undefined) {
@@ -1078,13 +1068,15 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         }
                     });
                 }
-                this.setRowColor(id);
+                this._applyRowColor(id);
             },
             /**
-             * @param id {string}
-             * @returns {String|null}
+             * @desc Get Row Color by Id
+             * @param {string} id
+             * @returns {?String}
+             * @private
              */
-            getRowColor: function (id) {
+            _getRowColor: function (id) {
                 if (this._priorityColors[id] !== undefined) {
                     var color = null, prevPriority;
                     this._priorityColors[id].forEach(function (item) {
