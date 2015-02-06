@@ -107,10 +107,15 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             },
             /**
              *
-             * @param {MessageDTO} ops
+             * @param {MessageDTO} opts
              */
-            showMessage: function (ops) {
+            showMessage: function (opts) {
                 //todo: implement
+                mediator.publish(optionsModule.getChannel('logError', {
+                    model: this,
+                    opts: opts,
+                    error: 'Not implemented showMessage method'
+                }))
             },
             /**
              * @param pk {string}

@@ -101,6 +101,10 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 }
                 return this._requiredFields;
             },
+            /**
+             *
+             * @returns {Object}
+             */
             getColumnsDefaultValues: function () {
                 var defaults = {};
                 this.getColumnsROCollection().each(function (column) {
@@ -140,7 +144,11 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             getCreateEmptyProc: function () {
                 return this.getDataFormProperties().getCreateEmptyProc();
             },
-            deferDefaultData: function () {
+            /**
+             *
+             * @returns {Deferred}
+             */
+            runAsyncTaskCreateEmptyDefaultValues: function () {
                 var defer = deferredModule.create(),
                     deferID = deferredModule.save(defer);
                 bindModule.deferredBindSql(this.getCreateEmptyProc())
@@ -260,9 +268,16 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 });
                 return defer;
             },
+            /**
+             *
+             * @returns {boolean}
+             */
             isSupportCreateEmpty: function () {
                 return this.getCreateEmptyProc() ? true : false;
             },
+            /**
+             * @returns {boolean}
+             */
             isAutoOpenCard: function () {
                 return helpersModule.boolEval(this.getCardCollection().getAutoOpen(), false);
             },

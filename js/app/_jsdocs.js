@@ -11,6 +11,14 @@
  * @function
  * @name jQuery.parent
  */
+/**
+ * @function
+ * @name jQuery.tablesorter
+ */
+/**
+ * @function
+ * @name jQuery.chWizard
+ */
 
 /**
  * @function
@@ -39,6 +47,11 @@
 /**
  * @function
  * @name Deferred.done
+ * @param {function(element:jQuery)} callback
+ */
+/**
+ * @function
+ * @name Deferred.fail
  * @param {function(element:jQuery)} callback
  */
 /**
@@ -93,6 +106,12 @@
  * Object, that generated in the {FormModel} via event 'save:form'
  * @typedef {Object} SaveDTO
  * @property {Object} refresh - Indicates whether to refresh form
+ */
+
+/**
+ * Object, that represented response for deferred socket type request
+ * @typedef {Object} DeferredResponse
+ * @property {Object} data
  */
 
 /**

@@ -92,7 +92,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
             },
             /**
              * @description Show application message in form
-             * @param opts {MessageDTO}
+             * @param {MessageDTO} opts
              * @override
              */
             showMessage: function (opts) {
@@ -121,15 +121,16 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                     html: opts.msg
                 }).wrap('<div class="grid-message"></div>');
                 $output.html($msg);
-
-                if (opts.id !== 3) {
-                    if (this._messageTimerID) {
-                        clearTimeout(this._messageTimerID);
-                    }
-                    this._messageTimerID = setTimeout(function () {
-                        $output.html('')
-                    }, 5000);
+                var duration = 5000;
+                if (opts.id === 3) {
+                    duration = 15000;
                 }
+                if (this._messageTimerID) {
+                    clearTimeout(this._messageTimerID);
+                }
+                this._messageTimerID = setTimeout(function () {
+                    $output.html('')
+                }, duration);
             },
             /**
              * @description Allow move back and forth by keyboard in grid,
@@ -417,7 +418,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
             },
             /**
              * @desc Set count displayed rows in table
-             * @param {String} count
+             * @param {String|Number} count
              * @returns {*}
              */
             setRowCount: function (count) {

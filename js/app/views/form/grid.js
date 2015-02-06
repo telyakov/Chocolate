@@ -24,12 +24,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     ' <% }); %>',
                     '><%= item.header%></th>',
                     ' <% }); %>',
-                    '</tr></thead>',
-                    '<tbody>',
-                    '</tbody>',
-                    '</table>',
-                    '</div>',
-                    '</section>'
+                    '</tr></thead><tbody></tbody></table></div></section>'
                 ].join('')
             ),
             columnHeaderTemplate: _.template([
@@ -44,11 +39,11 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 return _.extend({}, AbstractGridView.prototype.events, {
                     'touchmove .card-button': '_openRowCard',
                     'dblclick .card-button': '_openRowCard',
-                    'click .menu-button-add': 'addRowHandler',
-                    'keydown .grid-column-search': $.debounce(200, false, this.searchColumnsHandler),
+                    'click .menu-button-add': '_addRowHandler',
+                    'keydown .grid-column-search': $.debounce(200, false, this._searchColumnsHandler),
                     'click .menu-button-excel': 'exportToExcel',
                     'click .menu-button-settings': 'openFormSettings',
-                    'click .menu-button-toggle': 'toggleSystemCols'
+                    'click .menu-button-toggle': '_toggleSystemCols'
                 });
             },
 
@@ -57,6 +52,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @class GridView
              * @augments AbstractGridView
              * @param {AbstractViewOptions} options
+             * @override
              * @constructs
              */
             initialize: function (options) {
@@ -95,30 +91,238 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this.events = null;
             },
             /**
-             * @param $taskWizard {jQuery|null}
-             * @private
+             * @desc Render Form
              */
-            _persistLinkToWizardTask: function ($taskWizard) {
-                this._$taskWizard = $taskWizard
+            render: function () {
+                var formId = this.getFormID(),
+                    html = this.template({
+                        id: formId,
+                        view: this.getModel().getView()
+                    });
+                this.$el.html(html);
+                this._layoutMenu();
+                this._layoutForm();
+                this.layoutFooter();
             },
             /**
-             * @private
+             * @desc Add row to table
+             * @param {Object} data
              */
-            _destroyTaskWizard: function () {
-                if (this._$taskWizard) {
-                    this._$taskWizard.chWizard('destroy');
-                    this._$taskWizard = null;
+            addRow: function (data) {
+                if (!data.hasOwnProperty('id')) {
+                    data.id = helpersModule.uniqueID();
+                }
+                var $row = $(this._generateRowHtml(data, this._getSortedColumns()));
+                $row.addClass('grid-row-changed');
+                this
+                    .getJqueryTbody()
+                    .prepend($row)
+                    .trigger('addRows', [$row, false]);
+
+                var model = this.getModel(),
+                    id = data.id;
+
+                model.trigger('change:form', {
+                    op: 'ins',
+                    id: id,
+                    data: $.extend({}, data)
+                });
+                this._applyColumnsCallbacks($row);
+
+                if (model.isAutoOpenCard()) {
+                    model.trigger('open:card', id);
                 }
             },
             /**
-             * @param e {Event}
+             * @override
+             * @desc Perform form refresh
+             */
+            refresh: function () {
+                this._runAsyncRefreshFormTask();
+                var collection = this.getModel().getFiltersROCollection(this);
+                collection.each(
+                    /** @param {FilterRO} filter */
+                        function (filter) {
+                        if (filter.isAutoRefresh()) {
+                            filter.refresh(collection);
+                        }
+                    })
+            },
+            /**
+             * @desc Save card and refresh if this is need it
+             * @param {SaveDTO} opts
+             */
+            save: function (opts) {
+                if (this.hasChange()) {
+
+                    var model = this.getModel(),
+                        _this = this,
+                        changedObj = model.getChangedDataFromStorage(),
+                        dataObj = model.getDBDataFromStorage(),
+                        deletedData = model.getDeletedDataFromStorage(),
+                        responseChangeObj = {},
+                        name,
+                        hasOwn = Object.prototype.hasOwnProperty;
+                    for (name in changedObj) {
+                        if (hasOwn.call(changedObj, name)) {
+                            if (!$.isEmptyObject(changedObj[name])) {
+                                if (deletedData[name] === undefined) {
+                                    responseChangeObj[name] = helpersModule.merge(dataObj[name], changedObj[name]);
+                                }
+                            }
+                        }
+                    }
+
+                    if (!$.isEmptyObject(responseChangeObj) && !$.isEmptyObject(deletedData)) {
+                        var rowID;
+                        for (rowID in deletedData) {
+                            if (hasOwn.call(deletedData, rowID)) {
+                                delete responseChangeObj[rowID];
+                            }
+                        }
+                    }
+
+                    var key;
+                    for (key in deletedData) {
+                        if (hasOwn.call(deletedData, key)) {
+                            if (!$.isNumeric(key)) {
+                                delete deletedData[key];
+                            }
+                        }
+                    }
+
+                    if (!$.isEmptyObject(responseChangeObj) || !$.isEmptyObject(deletedData)) {
+                        //отсекаем изменения в уже удаленных строках, они нам не нужны
+                        var errors = [], index;
+                        for (index in responseChangeObj) {
+                            if (hasOwn.call(responseChangeObj, index)) {
+                                var error = this.getModel().validate(responseChangeObj[index]);
+                                if (!$.isEmptyObject(error)) {
+                                    errors[index] = error;
+                                }
+                            }
+                        }
+                        if ($.isEmptyObject(errors)) {
+                            model
+                                .runAsyncTaskSave(responseChangeObj, deletedData)
+                                .done(function () {
+                                    if (opts.refresh) {
+                                        model.trigger('refresh:form');
+                                    }
+                                })
+                                .fail(
+                                /** @param {string} error */
+                                    function (error) {
+                                    _this.showMessage({
+                                        id: 3,
+                                        msg: error
+                                    });
+                                });
+                        } else {
+                            var pk,
+                                $table = this.getJqueryDataTable();
+                            for (pk in errors) {
+                                if (hasOwn.call(errors, pk)) {
+                                    var iterator,
+                                        $tr = $table.find('[data-id="' + pk + '"]');
+                                    $tr.children('.grid-menu').addClass('grid-error');
+                                    for (iterator in errors[pk]) {
+                                        if (hasOwn.call(errors[pk], iterator)) {
+                                            var columnKey = errors[pk][iterator];
+                                            $tr
+                                                .find('.' + helpersModule.uniqueColumnClass(columnKey))
+                                                .closest('td').addClass('grid-error');
+                                        }
+                                    }
+                                }
+                            }
+                            this.showMessage({
+                                id: 3,
+                                msg: 'Заполните обязательные поля( ошибки подсвечены в сетке).'
+                            });
+                        }
+                    } else {
+                        if (opts.refresh) {
+                            this.showMessage({
+                                id: 2,
+                                msg: 'Данные не были изменены.'
+                            });
+                        }
+                    }
+                } else {
+                    if (opts.refresh) {
+                        this.showMessage({
+                            id: 2,
+                            msg: 'Данные не были изменены.'
+                        });
+                    }
+                }
+            },
+            /**
+             * @desc Save card and refresh form
+             * @param opts {CardSaveDTO}
+             * @override
+             */
+            saveCard: function (opts) {
+                var _this = this,
+                    model = this.getModel();
+                /**
+                 * @type {CardView}
+                 */
+                var cardView = model.getOpenedCard(opts.id);
+                if (cardView === undefined) {
+                    this.publishError({
+                        model: this,
+                        error: 'Save card throw errors'
+                    });
+                }
+                if (cardView.isChanged()) {
+
+                    if (cardView.validateData()) {
+                        var data = {};
+                        data[opts.id] = model.getActualDataFromStorage(opts.id);
+                        model
+                            .runAsyncTaskSave(data)
+                            .done(function () {
+                                cardView.destroy();
+                                //todo: ЧТо делать с карточками в которых есть изменения?
+                                model.getAllOpenedCard().forEach(function (view) {
+                                    view.destroy();
+                                });
+                                _this.refresh();
+                            })
+                            .fail(function (error) {
+                                cardView.showMessage(error);
+                            })
+                    }
+
+                } else {
+                    cardView.destroy();
+                }
+            },
+            /**
+             * @desc Add Row color and priority to storage and apply it
+             * @param {String} id
+             * @param {String} priority
+             * @param {String} color
+             */
+            addPriorityColorAndApply: function (id, priority, color) {
+                if (this._priorityColors[id] === undefined) {
+                    this._priorityColors[id] = [];
+                }
+                this._priorityColors[id].push({priority: priority, color: '#' + color});
+                this._applyRowColor(id);
+            },
+            /**
+             * @param {Event} e
              * @returns {boolean}
+             * @override
              */
             openWizardTask: function (e) {
                 this._destroyTaskWizard();
                 var $this = $(e.target),
                     tw = facade.getTaskWizard();
-                this._persistLinkToWizardTask($this);
+                this._persistReferenceToWizardTask($this);
                 $this.chWizard('init', {
                     commandObj: tw.makeCommandObject(this),
                     onDone: tw.onDoneFunc(),
@@ -131,25 +335,173 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 return false;
             },
             /**
-             * @returns {*}
+             * @override
              */
-            toggleSystemCols: function () {
-                var isHidden = this.model.isSystemColumnsMode(),
+            openMailClient: function () {
+                var id = this.getActiveRowID();
+                if (id) {
+                    var data = this.getModel().getDBDataFromStorage(id),
+                        emailColumn = optionsModule.getSetting('emailCol'),
+                        emails = data[emailColumn],
+                        url = encodeURIComponent(optionsModule.getUrl('bpOneTask') + id),
+                        task = helpersModule.stripHtml(data.task),
+                        subject = 'База:' + task.substr(0, 50);
+
+                    window.open('mailto:' + emails + '?subject=' + subject + '&body=' + url, '_self');
+                }
+            },
+            /**
+             * @param {string} id
+             * @param {Number} priority
+             */
+            removePriorityColorAndApply: function (id, priority) {
+                if (this._priorityColors[id] !== undefined) {
+                    var _this = this;
+                    this._priorityColors[id].forEach(function (item, index) {
+                        if (item.priority === priority) {
+                            delete _this._priorityColors[id][index];
+                        }
+                    });
+                }
+                this._applyRowColor(id);
+            },
+            /**
+             * @desc Changing places columns
+             * @param {Number} start
+             * @param {Number} end
+             */
+            changeSettings: function (start, end) {
+                var model = this.getModel(),
+                    min = 1,
+                    settings = model.getFormSettingsFromStorage();
+                if (!$.isEmptyObject(settings)) {
+                    /**
+                     *
+                     * @type {SettingsColumn[]}
+                     */
+                    var newSettings = [],
+                        obj,
+                        i,
+                        hasOwn = Object.prototype.hasOwnProperty,
+                        newWeight;
+                    if (start < end) {
+                        for (i in settings) {
+                            if (hasOwn.call(settings, i)) {
+                                obj = settings[i];
+                                if (obj.weight === 0) {
+                                    newSettings[0] = {
+                                        key: obj.key,
+                                        weight: obj.weight,
+                                        width: obj.width
+                                    };
+                                } else {
+                                    if (obj.weight > start && obj.weight <= end) {
+                                        newWeight = obj.weight - 1;
+                                        newSettings[newWeight] = {
+                                            key: obj.key,
+                                            weight: newWeight,
+                                            width: obj.width
+                                        };
+                                    } else if (obj.weight === start) {
+                                        newWeight = Math.max(end, min);
+                                        newSettings[newWeight] = {
+                                            key: obj.key,
+                                            weight: newWeight,
+                                            width: obj.width
+                                        };
+                                    } else {
+                                        newSettings[obj.weight] = {
+                                            key: obj.key,
+                                            weight: obj.weight,
+                                            width: obj.width
+                                        };
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (start > end) {
+                        for (i in settings) {
+                            if (hasOwn.call(settings, i)) {
+                                obj = settings[i];
+                                if (obj.weight === 0) {
+                                    newSettings[0] = {
+                                        key: obj.key,
+                                        weight: obj.weight,
+                                        width: obj.width
+                                    };
+                                } else {
+                                    if (obj.weight < start && obj.weight >= Math.max(end, min)) {
+                                        newWeight = obj.weight + 1;
+                                        newSettings[newWeight] = {
+                                            key: obj.key,
+                                            weight: newWeight,
+                                            width: obj.width
+                                        };
+                                    } else if (obj.weight === start) {
+                                        newWeight = Math.max(end, min);
+                                        newSettings[newWeight] = {
+                                            key: obj.key,
+                                            weight: newWeight,
+                                            width: obj.width
+                                        };
+                                    } else {
+                                        newSettings[obj.weight] = {
+                                            key: obj.key,
+                                            weight: obj.weight,
+                                            width: obj.width
+                                        };
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    model.persistColumnsSettings(newSettings);
+                }
+            },
+            /**
+             * @desc For fight with leak memory
+             * @param $taskWizard {jQuery|null}
+             * @private
+             */
+            _persistReferenceToWizardTask: function ($taskWizard) {
+                this._$taskWizard = $taskWizard
+            },
+            /**
+             * @private
+             */
+            _destroyTaskWizard: function () {
+                if (this._$taskWizard) {
+                    this._$taskWizard.chWizard('destroy');
+                    this._$taskWizard = null;
+                }
+            },
+            /**
+             * @desc toggle visible mode for system columns(userid, username..)
+             * @returns {*}
+             * @private
+             */
+            _toggleSystemCols: function () {
+                var model = this.getModel(),
+                    isHidden = model.isSystemColumnsMode(),
                     systemColAttr = optionsModule.getSetting('systemCols'),
                     $th = this.getJqueryFloatHeadTable().find('th').filter(function () {
                         return systemColAttr.indexOf($(this).attr('data-id')) !== -1;
                     });
-                this.toggleColumns(isHidden, $th);
-                this.getJqueryForm().find('.menu-button-toggle').toggleClass(optionsModule.getClass('menuButtonSelected'));
-                this.model.persistSystemColumnsMode(!isHidden);
+
+                this._toggleColumns(isHidden, $th);
+                this.getJqueryForm().find('.menu-button-toggle')
+                    .toggleClass(optionsModule.getClass('menuButtonSelected'));
+                model.persistSystemColumnsMode(!isHidden);
                 return this.clearSelectedArea();
             },
             /**
-             * @param isHidden {Boolean}
-             * @param $thList {jQuery}
+             * @param {Boolean} isHidden
+             * @param {jQuery} $th
+             * @private
              * @returns {*}
              */
-            toggleColumns: function (isHidden, $thList) {
+            _toggleColumns: function (isHidden, $th) {
                 var positions = [],
                     $fixedTable = this.getJqueryFloatHeadTable(),
                     $table = this.getJqueryDataTable(),
@@ -159,7 +511,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     newWidth,
                     _this = this,
                     cellIndex;
-                $thList.each(function () {
+                $th.each(function () {
                     cellIndex = $(this).get(0).cellIndex;
                     positions.push(cellIndex);
                     sum += parseInt(_this.getColumnWidth(cellIndex), 10);
@@ -178,9 +530,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 return this;
             },
             /**
-             * @param e {Event}
+             * @param {Event} e
+             * @private
              */
-            searchColumnsHandler: function (e) {
+            _searchColumnsHandler: function (e) {
                 var opm = optionsModule,
                     $this = $(e.target),
                     $th = this.getJqueryFloatHeadTable().find('.tablesorter-headerRow').children('th'),
@@ -278,216 +631,41 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this.clearSelectedArea();
             },
             /**
-             * @method openMailClient
+             * @desc Handle event "add row"
              */
-            openMailClient: function () {
-                var id = this.getActiveRowID();
-                if (id) {
-                    var data = this.model.getDBDataFromStorage(id),
-                        emailColumn = optionsModule.getSetting('emailCol'),
-                        emails = data[emailColumn],
-                        url = encodeURIComponent(optionsModule.getUrl('bpOneTask') + id),
-                        task = helpersModule.stripHtml(data.task),
-                        subject = 'База:' + task.substr(0, 50);
-
-                    window.open('mailto:' + emails + '?subject=' + subject + '&body=' + url, '_self');
-                }
-            },
-            /**
-             * @method addRowHandler
-             */
-            addRowHandler: function () {
-                var defValues = this.model.getColumnsDefaultValues(),
+            _addRowHandler: function () {
+                var model = this.getModel(),
+                    defaultValues = model.getColumnsDefaultValues(),
                     _this = this;
-                if (this.model.isSupportCreateEmpty()) {
-                    var defer = this.model.deferDefaultData();
-                    defer.done(function (res) {
-                        var data = res.data,
-                            i,
-                            hasOwn = Object.prototype.hasOwnProperty,
-                            result;
-                        for (i in data) {
-                            if (hasOwn.call(data, i)) {
-                                result = data[i];
-                                break;
-                            }
-                        }
-                        defValues = $.extend(defValues, result);
-                        _this.addRow(defValues);
-                    });
-                } else {
-                    _this.addRow(defValues);
-                }
-            },
-            /**
-             * @param data {Object}
-             */
-            addRow: function (data) {
-                if (!data.hasOwnProperty('id')) {
-                    data.id = helpersModule.uniqueID();
-                }
-                var $row = $(this._generateRowHtml(data, this._getSortedColumns()));
-                $row.addClass('grid-row-changed');
-                this
-                    .getJqueryTbody()
-                    .prepend($row)
-                    .trigger('addRows', [$row, false]);
-                var model = this.model,
-                    id = data.id;
-                model.trigger('change:form', {
-                    op: 'ins',
-                    id: id,
-                    data: $.extend({}, data)
-                });
-                this._applyColumnsCallbacks($row);
-                if (model.isAutoOpenCard()) {
-                    model.trigger('open:card', id);
-                }
-            },
-            /**
-             * @param opts {Object}
-             */
-            save: function (opts) {
-                if (this.hasChange()) {
-
-                    var _this = this,
-                        changedObj = this.model.getChangedDataFromStorage(),
-                        dataObj = this.model.getDBDataFromStorage(),
-                        deletedData = this.model.getDeletedDataFromStorage(),
-                        responseChangeObj = {},
-                        name,
-                        hasOwn = Object.prototype.hasOwnProperty;
-                    for (name in changedObj) {
-                        if (hasOwn.call(changedObj, name)) {
-                            if (!$.isEmptyObject(changedObj[name])) {
-                                if (deletedData[name] === undefined) {
-                                    responseChangeObj[name] = helpersModule.merge(dataObj[name], changedObj[name]);
+                if (model.isSupportCreateEmpty()) {
+                    model
+                        .runAsyncTaskCreateEmptyDefaultValues()
+                        .done(
+                        /** @param {DeferredResponse} res */
+                            function (res) {
+                            var data = res.data,
+                                i,
+                                hasOwn = Object.prototype.hasOwnProperty,
+                                result;
+                            for (i in data) {
+                                if (hasOwn.call(data, i)) {
+                                    result = data[i];
+                                    break;
                                 }
                             }
-                        }
-                    }
-
-                    if (!$.isEmptyObject(responseChangeObj) && !$.isEmptyObject(deletedData)) {
-                        var rowID;
-                        for (rowID in deletedData) {
-                            if (hasOwn.call(deletedData, rowID)) {
-                                delete responseChangeObj[rowID];
-                            }
-                        }
-                    }
-
-                    var key;
-                    for (key in deletedData) {
-                        if (hasOwn.call(deletedData, key)) {
-                            if (!$.isNumeric(key)) {
-                                delete deletedData[key];
-                            }
-                        }
-                    }
-
-                    if (!$.isEmptyObject(responseChangeObj) || !$.isEmptyObject(deletedData)) {
-                        //отсекаем изменения в уже удаленных строках, они нам не нужны
-                        var errors = [], index;
-                        for (index in responseChangeObj) {
-                            if (hasOwn.call(responseChangeObj, index)) {
-                                var error = this.getModel().validate(responseChangeObj[index]);
-                                if (!$.isEmptyObject(error)) {
-                                    errors[index] = error;
-                                }
-                            }
-                        }
-                        if ($.isEmptyObject(errors)) {
-                            var model = this.model;
-                            model
-                                .runAsyncTaskSave(responseChangeObj, deletedData)
-                                .done(function () {
-                                    if (opts.refresh) {
-                                        model.trigger('refresh:form');
-                                    }
-                                })
-                                .fail(function (jqXHR, textStatus) {
-                                    _this.showMessage({
-                                        id: 3,
-                                        msg: textStatus
-                                    });
-                                });
-                        } else {
-                            var pk,
-                                $table = this.getJqueryDataTable();
-                            for (pk in errors) {
-                                if (hasOwn.call(errors, pk)) {
-                                    var iterator,
-                                        $tr = $table.find('[data-id="' + pk + '"]');
-                                    $tr.children('.grid-menu').addClass('grid-error');
-                                    for (iterator in errors[pk]) {
-                                        if (hasOwn.call(errors[pk], iterator)) {
-                                            var columnKey = errors[pk][iterator];
-                                            $tr.find('.' + helpersModule.uniqueColumnClass(columnKey)).closest('td').addClass('grid-error');
-                                        }
-                                    }
-                                }
-                            }
-                            this.showMessage({
+                            defaultValues = $.extend(defaultValues, result);
+                            _this.addRow(defaultValues);
+                        })
+                        .fail(
+                        /** @param {string} error */
+                            function (error) {
+                            _this.showMessage({
                                 id: 3,
-                                msg: 'Заполните обязательные поля( ошибки подсвечены в сетке).'
+                                msg: error
                             });
-                        }
-                    } else {
-                        if (opts.refresh) {
-                            this.showMessage({
-                                id: 2,
-                                msg: 'Данные не были изменены.'
-                            });
-                        }
-                    }
-                } else {
-                    if (opts.refresh) {
-                        this.showMessage({
-                            id: 2,
-                            msg: 'Данные не были изменены.'
                         });
-                    }
-                }
-            },
-            /**
-             * @param opts {CardSaveDTO}
-             * @override
-             */
-            saveCard: function (opts) {
-                var _this = this,
-                    model = this.getModel();
-                /**
-                 * @type {CardView}
-                 */
-                var cardView = model.getOpenedCard(opts.id);
-                if (cardView === undefined) {
-                    this.publishError({
-                        model: this,
-                        error: 'Save card throw errors'
-                    });
-                }
-                if (cardView.isChanged()) {
-
-                    if (cardView.validateData()) {
-                        var data = {};
-                        data[opts.id] = model.getActualDataFromStorage(opts.id);
-                        model
-                            .runAsyncTaskSave(data)
-                            .done(function (res) {
-                                cardView.destroy();
-                                //todo: ЧТо делать с карточками в которых есть изменения?
-                                model.getAllOpenedCard().forEach(function(view){
-                                   view.destroy();
-                                });
-                                _this.refresh();
-                            })
-                            .fail(function (res) {
-                                cardView.showMessage(res);
-                            })
-                    }
-
                 } else {
-                    cardView.destroy();
+                    _this.addRow(defaultValues);
                 }
             },
             /**
@@ -513,21 +691,6 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this.getModel().trigger('open:card', id);
             },
             /**
-             * @desc Render Form
-             */
-            render: function () {
-                var formId = this.getFormID(),
-                    html = this.template({
-                        id: formId,
-                        view: this.getModel().getView()
-                    });
-                this.$el.html(html);
-                var $form = this.getJqueryForm();
-                this._layoutMenu();
-                this._layoutForm();
-                this.layoutFooter();
-            },
-            /**
              * @desc For fight with leak memory
              * @param view {?MenuView}
              * @private
@@ -542,21 +705,6 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 });
                 this._persistReferenceToMenuView(menuView);
                 menuView.render();
-            },
-            /**
-             * @override
-             * @desc Perform form refresh
-             */
-            refresh: function () {
-                this._runAsyncRefreshFormTask();
-                var collection = this.getModel().getFiltersROCollection(this);
-                collection.each(
-                    /** @param {FilterRO} filter */
-                        function (filter) {
-                        if (filter.isAutoRefresh()) {
-                            filter.refresh(collection);
-                        }
-                    })
             },
             /**
              * @desc Get columns callback functions
@@ -729,100 +877,6 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 return this;
             },
             /**
-             * @desc Changing places columns
-             * @param {Number} start
-             * @param {Number} end
-             */
-            changeSettings: function (start, end) {
-                var model = this.getModel(),
-                    min = 1,
-                    settings = model.getFormSettingsFromStorage();
-                if (!$.isEmptyObject(settings)) {
-                    /**
-                     *
-                     * @type {SettingsColumn[]}
-                     */
-                    var newSettings = [],
-                        obj,
-                        i,
-                        hasOwn = Object.prototype.hasOwnProperty,
-                        newWeight;
-                    if (start < end) {
-                        for (i in settings) {
-                            if (hasOwn.call(settings, i)) {
-                                obj = settings[i];
-                                if (obj.weight === 0) {
-                                    newSettings[0] = {
-                                        key: obj.key,
-                                        weight: obj.weight,
-                                        width: obj.width
-                                    };
-                                } else {
-                                    if (obj.weight > start && obj.weight <= end) {
-                                        newWeight = obj.weight - 1;
-                                        newSettings[newWeight] = {
-                                            key: obj.key,
-                                            weight: newWeight,
-                                            width: obj.width
-                                        };
-                                    } else if (obj.weight === start) {
-                                        newWeight = Math.max(end, min);
-                                        newSettings[newWeight] = {
-                                            key: obj.key,
-                                            weight: newWeight,
-                                            width: obj.width
-                                        };
-                                    } else {
-                                        newSettings[obj.weight] = {
-                                            key: obj.key,
-                                            weight: obj.weight,
-                                            width: obj.width
-                                        };
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (start > end) {
-                        for (i in settings) {
-                            if (hasOwn.call(settings, i)) {
-                                obj = settings[i];
-                                if (obj.weight === 0) {
-                                    newSettings[0] = {
-                                        key: obj.key,
-                                        weight: obj.weight,
-                                        width: obj.width
-                                    };
-                                } else {
-                                    if (obj.weight < start && obj.weight >= Math.max(end, min)) {
-                                        newWeight = obj.weight + 1;
-                                        newSettings[newWeight] = {
-                                            key: obj.key,
-                                            weight: newWeight,
-                                            width: obj.width
-                                        };
-                                    } else if (obj.weight === start) {
-                                        newWeight = Math.max(end, min);
-                                        newSettings[newWeight] = {
-                                            key: obj.key,
-                                            weight: newWeight,
-                                            width: obj.width
-                                        };
-                                    } else {
-                                        newSettings[obj.weight] = {
-                                            key: obj.key,
-                                            weight: obj.weight,
-                                            width: obj.width
-                                        };
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    model.persistColumnsSettings(newSettings);
-                }
-            },
-            /**
              * @desc Toggle columns visible mode
              * @returns {*}
              * @private
@@ -832,7 +886,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     isHidden = model.isShortMode(),
                     $th = this.getJqueryFloatHeadTable()
                         .find('[' + optionsModule.getClass('allowHideColumn') + ']');
-                this.toggleColumns(isHidden, $th);
+                this._toggleColumns(isHidden, $th);
                 model.setShortMode(!isHidden);
                 return this;
             },
@@ -872,7 +926,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 if (model.isShortMode()) {
                     var $shortCols = this.getJqueryFloatHeadTable()
                         .find('[' + optionsModule.getClass('allowHideColumn') + ']');
-                    this.toggleColumns(false, $shortCols);
+                    this._toggleColumns(false, $shortCols);
                 }
                 if (model.isSystemColumnsMode()) {
                     var $systemCols = this.getJqueryFloatHeadTable().find('th')
@@ -881,7 +935,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                                 .getSetting('systemCols')
                                 .indexOf($(this).attr('data-id')) !== -1;
                         });
-                    this.toggleColumns(false, $systemCols);
+                    this._toggleColumns(false, $systemCols);
                 }
 
                 return this._initContextRowWidget();
@@ -934,7 +988,23 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     /** @param {SqlBindingResponse} data */
                         function (data) {
                         model.runAsyncTaskGetData(data.sql)
-                            .done(_this._refreshDone);
+                            .done(_this._refreshDone)
+                            .fail(
+                            /** @param {string} error */
+                                function (error) {
+                                _this.showMessage({
+                                    id: 3,
+                                    msg: error
+                                });
+                            });
+                    })
+                    .fail(
+                    /** @param {string} error */
+                        function (error) {
+                        _this.showMessage({
+                            id: 3,
+                            msg: error
+                        });
                     });
             },
             /**
@@ -1030,9 +1100,18 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
 
                 $tbody.html(html);
                 var asyncTasks = this._applyColumnsCallbacks(this.$el);
-                $.when.apply($, asyncTasks).done(function () {
-                    $table.trigger('update');
-                });
+                $.when.apply($, asyncTasks)
+                    .done(function () {
+                        $table.trigger('update');
+                    })
+                    .fail(
+                    /** @param {string} error */
+                        function (error) {
+                        _this.showMessage({
+                            id: 3,
+                            msg: error
+                        });
+                    });
 
                 $table.bind('sortEnd filterEnd', function () {
                     _this.clearSelectedArea();
@@ -1118,19 +1197,6 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 return rowBuilder.join('');
             },
             /**
-             * @desc Add Row color and priority to storage and apply it
-             * @param {String} id
-             * @param {String} priority
-             * @param {String} color
-             */
-            addPriorityColorAndApply: function (id, priority, color) {
-                if (this._priorityColors[id] === undefined) {
-                    this._priorityColors[id] = [];
-                }
-                this._priorityColors[id].push({priority: priority, color: '#' + color});
-                this._applyRowColor(id);
-            },
-            /**
              * @desc Apply background color for row
              * @param {String} id
              * @returns {*}
@@ -1142,21 +1208,6 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     background: color ? color : ''
                 });
                 return this;
-            },
-            /**
-             * @param {string} id
-             * @param {Number} priority
-             */
-            removePriorityColorAndApply: function (id, priority) {
-                if (this._priorityColors[id] !== undefined) {
-                    var _this = this;
-                    this._priorityColors[id].forEach(function (item, index) {
-                        if (item.priority === priority) {
-                            delete _this._priorityColors[id][index];
-                        }
-                    });
-                }
-                this._applyRowColor(id);
             },
             /**
              * @desc Get Row Color by Id
