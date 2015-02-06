@@ -174,7 +174,11 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 }
                 return sql;
             },
-            deferCreateProc: function (data) {
+            /**
+             * @param {Object} data
+             * @returns {Deferred}
+             */
+            runAsyncTaskBindReadProc: function (data) {
                 var extendedData = $.extend({}, this.getParamsForBind(), data),
                     sql = this.getCreateProc();
                 return bindModule.deferredBindSql(sql, extendedData, true);
@@ -214,7 +218,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                             if (helpersModule.isNewRow(currentData.id)) {
                                 defer = this.deferUpdateProc(extendedData);
                             } else {
-                                defer = this.deferCreateProc(extendedData);
+                                defer = this.runAsyncTaskBindReadProc(extendedData);
                             }
                             deferredTasks.push(defer);
                             defer
@@ -314,6 +318,9 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             isDiscussionView: function () {
                 return this.getKey() === 'directory\\discussions';
             },
+            /**
+             * @returns {boolean}
+             */
             isNotSaved: function () {
                 var parentID = this.get('parentId');
                 return parentID && !helpersModule.isNewRow(parentID);

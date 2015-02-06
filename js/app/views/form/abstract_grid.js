@@ -16,7 +16,6 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                 'click .menu-button-action': '_openContextMenu',
                 'click .menu-button-print': '_openContextMenu'
             },
-
             /**
              * @abstract
              * @class AbstractGridView

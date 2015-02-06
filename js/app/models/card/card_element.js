@@ -1,3 +1,6 @@
+/**
+ * @class
+ */
 var CardElement = (function ($, Backbone, _, helpersModule, optionsModule, mediator) {
     'use strict';
     return Backbone.Model.extend(
@@ -38,6 +41,7 @@ var CardElement = (function ($, Backbone, _, helpersModule, optionsModule, media
                     '>'
                 ].join('')
             ),
+
             /**
              * @method destroy
              */
@@ -80,6 +84,7 @@ var CardElement = (function ($, Backbone, _, helpersModule, optionsModule, media
                 $.publish(event, response);
             },
             /**
+             * @desc get columnRO
              * @returns {ColumnRO}
              */
             getColumn: function () {

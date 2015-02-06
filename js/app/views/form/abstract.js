@@ -60,6 +60,108 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 return this.model;
             },
             /**
+             * @returns {FormView}
+             */
+            getView: function () {
+                return this.view;
+            },
+            /**
+             * @description Perform save form data to db
+             * @param {SaveDTO} opts
+             * @abstract
+             */
+            save: function (opts) {
+                this.publishError({
+                    model: this,
+                    opts: opts,
+                    error: 'not implemented save method'
+                });
+            },
+            /**
+             * @description Perform the update form
+             * @abstract
+             */
+            refresh: function () {
+                this.publishError({
+                    model: this,
+                    error: 'not implemented refresh method'
+                });
+            },
+            /**
+             * @description Show application message to user
+             * @param {MessageDTO} opts
+             * @abstract
+             */
+            showMessage: function (opts) {
+                this.publishError({
+                    model: this,
+                    opts: opts,
+                    error: 'not implemented showMessage method'
+                });
+            },
+            /**
+             * @description the main method, that render view
+             * @abstract
+             */
+            render: function () {
+                this.publishError({
+                    model: this,
+                    error: 'not implemented render method'
+                });
+            },
+            /**
+             * @description Save changed data in form model to local storage
+             * @param {FormChangeDTO} opts
+             * @abstract
+             */
+            change: function (opts) {
+                this.publishError({
+                    model: this,
+                    error: 'not implemented change method',
+                    opts: opts
+                });
+            },
+            /**
+             * @description Open TaskWizard dialog
+             * @abstract
+             */
+            openWizardTask: function () {
+                this.publishError({
+                    model: this,
+                    error: 'not implemented openWizardTask method'
+                });
+            },
+            /**
+             * @description Save card data to database
+             * @param {CardSaveDTO} opts
+             * @abstract
+             */
+            saveCard: function (opts) {
+                this.publishError({
+                    model: this,
+                    opts: opts,
+                    error: 'not implemented saveCard method'
+                });
+            },
+            /**
+             * @description Opens the e-mail client
+             * @abstract
+             */
+            openMailClient: function () {
+                this.publishError({
+                    model: this,
+                    error: 'not implemented openMailClient method'
+                });
+            },
+            /**
+             * @description Send error event to mediator
+             * @param {Object} opts custom object
+             * @fires mediator#logError
+             */
+            publishError: function (opts) {
+                mediator.publish(optionsModule.getChannel('logError'), opts);
+            },
+            /**
              * @description Open dialog with form settings
              */
             openFormSettings: function () {
@@ -226,7 +328,8 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                     asyncTasks = [];
 
                 settings.forEach(function (item) {
-                    var key = item.key;
+                    var key = item.key,
+                        _this = this;
                     /**
                      * @type {ColumnRO}
                      */
@@ -249,6 +352,14 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                                             key: key
                                         });
                                     })
+                                    .fail(
+                                    /** @param {string} error */
+                                        function (error) {
+                                        _this.showMessage({
+                                            id: 3,
+                                            msg: error
+                                        });
+                                    });
                             })(task);
                         }
                     }
@@ -294,6 +405,14 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                             settings: JSON.stringify(settings),
                             data: JSON.stringify(data),
                             id: 1
+                        });
+                    })
+                    .fail(
+                    /** @param {string} error */
+                        function (error) {
+                        _this.showMessage({
+                            id: 3,
+                            msg: error
                         });
                     });
             },
@@ -363,102 +482,6 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                     this._$settings.dialog('destroy');
                     delete this._$settings;
                 }
-            },
-            /**
-             * @description Perform save form data to db
-             * @param {SaveDTO} opts
-             * @abstract
-             */
-            save: function (opts) {
-                this.publishError({
-                    model: this,
-                    opts: opts,
-                    error: 'not implemented save method'
-                });
-            },
-            /**
-             * @description Perform the update form
-             * @abstract
-             */
-            refresh: function () {
-                this.publishError({
-                    model: this,
-                    error: 'not implemented refresh method'
-                });
-            },
-            /**
-             * @description Show application message to user
-             * @param {MessageDTO} opts
-             * @abstract
-             */
-            showMessage: function (opts) {
-                this.publishError({
-                    model: this,
-                    opts: opts,
-                    error: 'not implemented showMessage method'
-                });
-            },
-            /**
-             * @description the main method, that render view
-             * @abstract
-             */
-            render: function () {
-                this.publishError({
-                    model: this,
-                    error: 'not implemented render method'
-                });
-            },
-            /**
-             * @description Save changed data in form model to local storage
-             * @param {FormChangeDTO} opts
-             * @abstract
-             */
-            change: function (opts) {
-                this.publishError({
-                    model: this,
-                    error: 'not implemented change method',
-                    opts: opts
-                });
-            },
-            /**
-             * @description Open TaskWizard dialog
-             * @abstract
-             */
-            openWizardTask: function () {
-                this.publishError({
-                    model: this,
-                    error: 'not implemented openWizardTask method'
-                });
-            },
-            /**
-             * @description Save card data to database
-             * @param {CardSaveDTO} opts
-             * @abstract
-             */
-            saveCard: function (opts) {
-                this.publishError({
-                    model: this,
-                    opts: opts,
-                    error: 'not implemented saveCard method'
-                });
-            },
-            /**
-             * @description Opens the e-mail client
-             * @abstract
-             */
-            openMailClient: function () {
-                this.publishError({
-                    model: this,
-                    error: 'not implemented openMailClient method'
-                });
-            },
-            /**
-             * @description Send error event to mediator
-             * @param {Object} opts custom object
-             * @fires mediator#logError
-             */
-            publishError: function (opts) {
-                mediator.publish(optionsModule.getChannel('logError'), opts);
             }
         });
 })

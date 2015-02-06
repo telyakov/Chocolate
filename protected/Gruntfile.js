@@ -68,7 +68,6 @@ module.exports = function (grunt) {
                     '../js/app/modules/card.js',
                     '../js/app/modules/tabs.js',
                     '../js/app/modules/task_wizard.js',
-                    '../js/app/modules/files.js',
                     '../js/app/modules/phone.js',
                     '../js/app/fm/action_properties.js',
                     '../js/app/fm/actions_properties_collection.js',

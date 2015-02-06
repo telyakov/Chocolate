@@ -152,7 +152,7 @@ var AppView = (function (Backbone, $, optionsModule, mediator, location, window,
                     id: 'template-download',
                     text: [
                         '{% for (var i=0, file; file=o.files[i]; i++) { %}',
-                        '<tr class="template-download fade" data-id="{%=file.id%}">',
+                        '<tr class="template-download fade in" data-id="{%=file.id%}">',
                         '<td class="attachment-grid-menu">',
                         '<span class="card-button" data-id = "card-button" title="Открыть карточку"></span>',
                         '</td>',

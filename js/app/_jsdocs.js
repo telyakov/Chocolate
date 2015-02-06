@@ -96,7 +96,7 @@
  */
 
 /**
- * Object, that represented applications message
+ * Object, that represented response for chFormRefresh socket type request
  * @typedef {Object} RecordsetDTO
  * @property {Object} data - data
  * @property {Array} order - order rows in data

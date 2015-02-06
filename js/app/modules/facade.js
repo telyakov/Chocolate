@@ -1,7 +1,7 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
  */
-var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule) {
+var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, cardModule, formModule, phoneModule) {
     'use strict';
     var showErrorsChannel = optionsModule.getChannel('showError'),
         setRolesChannel = optionsModule.getChannel('setRoles'),
@@ -264,10 +264,7 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
         getRepaintModule: function () {
             return repaintModule;
         },
-        getFilesModule: function () {
-            return filesModule;
-        },
-        getCardModule: function () {
+         getCardModule: function () {
             return cardModule;
         },
         getFormModule: function () {
@@ -296,4 +293,4 @@ var facade = (function (deferredModule, imageAdapter, navBarModule, AppModel, Ap
         }
     };
 
-}(deferredModule, imageAdapter, navBarModule, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, filesModule, cardModule, formModule, phoneModule));
+}(deferredModule, imageAdapter, navBarModule, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, cardModule, formModule, phoneModule));

@@ -131,7 +131,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             },
             /**
              *
-             * @returns {?Card}
+             * @returns {?CardElement}
              */
             getCard: function () {
                 return this.card;
@@ -411,7 +411,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             layoutFormSection: function ($panel) {
                 var $formSection;
                 if (this.model.isDiscussionView()) {
-                    if (this.card) {
+                    if (this.getCard()) {
                         $formSection = $panel;
                     } else {
                         $formSection = $('<section>');
