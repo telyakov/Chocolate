@@ -17,6 +17,9 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     this.$card = options.$card;
                 }
                 this.model = options.model;
+                this.view = null;
+                this._panelID = null;
+                this.$closeLink = null;
                 if (options.card) {
                     this.card = options.card;
                 } else {
@@ -79,9 +82,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     e.preventDefault();
                 }
             },
-            view: null,
-            _panelID: null,
-            $closeLink: null,
+
             headerTemplate: _.template([
                 '<section class="section-header" data-id="header">',
                 '<div class="top-header">',
@@ -132,7 +133,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
              *
              * @returns {?Card}
              */
-            getCard: function(){
+            getCard: function () {
                 return this.card;
             },
             /**

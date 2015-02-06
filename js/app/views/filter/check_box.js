@@ -20,7 +20,16 @@ var CheckBoxView = (function (Backbone, $, helpersModule, FilterView, deferredMo
                 '</div>',
                 '</li>'
             ].join('')),
-            _$filter: null,
+            /**
+             * @abstract
+             * @class CheckBoxView
+             * @augments FilterView
+             * @constructs
+             */
+            initialize: function (options) {
+                this._$filter = null;
+                FilterView.prototype.initialize.call(this, options);
+            },
             /**
              * @override
              */

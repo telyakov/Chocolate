@@ -3,10 +3,6 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
     return Backbone.View.extend(
         /** @lends AbstractView */
         {
-            _refreshTimerID: 0,
-            _autoUpdateTimerID: 0,
-            _$form: null,
-            _$settings: null,
             footerTemplate: _.template([
                     '<footer class="grid-footer" data-id="grid-footer">',
                     '<div class="footer-info"></div>',
@@ -27,6 +23,10 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 this.$el = options.$el;
                 this.model = model;
                 this.view = options.view;
+                this._refreshTimerID = 0;
+                this._autoUpdateTimerID = 0;
+                this._$form = null;
+                this._$settings = null;
                 this._formID = facade.getHelpersModule().uniqueID();
                 this.listenTo(model, 'refresh:form', this._lazyRefresh);
                 this.listenTo(model, 'save:form', this.save);

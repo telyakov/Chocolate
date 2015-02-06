@@ -54,6 +54,16 @@ var CardElement = (function ($, Backbone, _, helpersModule, optionsModule, media
                 this.set('view', null);
             },
             /**
+             * @desc indicates, that control has error after validation
+             * @abstract
+             */
+            showError: function () {
+                mediator.publish(optionsModule.getChannel('logError'),{
+                    model: this,
+                    error: 'not implemented showError method'
+                })
+            },
+            /**
              *
              * @param event {String}
              * @param tabIndex {Number}

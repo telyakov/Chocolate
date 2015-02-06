@@ -181,7 +181,13 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                     sql = this.getDeleteProc();
                 return bindModule.deferredBindSql(sql, extendedData, true);
             },
-            deferSave: function (data, deletedData) {
+            /**
+             *
+             * @param {Object} data
+             * @param {Object} [deletedData]
+             * @returns {Deferred}
+             */
+            runAsyncTaskSave: function (data, deletedData) {
                 var deferredTasks = [],
                     mainDefer = deferredModule.create(),
                     i,
@@ -658,7 +664,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 }
             },
             /**
-             * @param id {string|undefined}
+             * @param {string} [id]
              * @returns {Object}
              */
             getActualDataFromStorage: function (id) {
@@ -802,6 +808,20 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              */
             getOpenedCard: function (id) {
                 return this._openedCards[id];
+            },
+            /**
+             * @param data {Object}
+             * @returns {Array} Columns keys
+             */
+            validate: function (data) {
+                var requiredFields = this.getRequiredFields(),
+                    errors = [];
+                requiredFields.forEach(function (key) {
+                    if (data[key] === undefined || !data[key]) {
+                        errors.push(key);
+                    }
+                });
+                return errors;
             },
             /**
              * @returns {boolean}

@@ -22,6 +22,17 @@ var DateRangeView = (function (Backbone, $, helpersModule, FilterView, deferredM
             _$filterFrom: null,
             _$filterTo: null,
             /**
+             * @abstract
+             * @class DateRangeView
+             * @augments FilterView
+             * @constructs
+             */
+            initialize: function (options) {
+                this._$filterFrom = null;
+                this._$filterTo = null;
+                FilterView.prototype.initialize.call(this, options);
+            },
+            /**
              * @override
              */
             destroy: function () {

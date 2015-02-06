@@ -59,7 +59,7 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
             $('#' + this.getFormID())
                 .next('.discussion-footer').children('.discussion-input').val('');
              this.model
-                .deferSave(data)
+                .runAsyncTaskSave(data)
                 .done(function () {
                     _this.scrollToBottom();
                 });

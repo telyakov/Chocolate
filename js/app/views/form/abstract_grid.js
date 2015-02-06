@@ -16,10 +16,21 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                 'click .menu-button-action': '_openContextMenu',
                 'click .menu-button-print': '_openContextMenu'
             },
-            _selectedTimerID: 0,
-            _previewTimerID: 0,
-            _$resizableElements: null,
-            _messageTimerID: 0,
+
+            /**
+             * @abstract
+             * @class AbstractGridView
+             * @augments AbstractView
+             * @param {AbstractViewOptions} options
+             * @constructs
+             */
+            initialize: function (options) {
+                this._selectedTimerID = 0;
+                this._previewTimerID = 0;
+                this._$resizableElements = null;
+                this._messageTimerID = 0;
+                AbstractView.prototype.initialize.call(this, options);
+            },
             /**
              * @description Destroy class
              */
@@ -494,13 +505,13 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
              * @desc Mark for user, that form has unsaved change
              * @private
              */
-            _markAsChanged: function(){
+            _markAsChanged: function () {
                 this.getSaveButton().addClass('active');
             },
             /**
              * @desc Mark for user, that form has not unsaved change
              */
-            markAsNoChanged: function(){
+            markAsNoChanged: function () {
                 this.getSaveButton().removeClass('active');
             },
             /**

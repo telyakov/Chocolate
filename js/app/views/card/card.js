@@ -16,8 +16,6 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                     'click .card-save': $.debounce(1500, true, this.save)
                 };
             },
-            _$cardMenu: null,
-            _cardElements: [],
             buttonsTemplate: _.template([
                 '<div class="card-action-button" data-id="action-button-panel">',
                 '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
@@ -31,6 +29,8 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             initialize: function (options) {
                 _.bindAll(this, 'render');
                 this.model = options.model;
+                this._cardElements = [];
+                this._$cardMenu = null;
                 this.view = options.view;
                 this.id = options.id;
                 if (options.$el) {
@@ -39,6 +39,9 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 this.$li = this._createTabLink();
             },
 
+            /**
+             * @desc Destroy card
+             */
             destroy: function () {
                 var cards = this._cardElements;
                 if (cards) {
@@ -64,6 +67,50 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 delete this.$li;
                 delete this.buttonsTemplate;
 
+            },
+            /**
+             * @desc Validate required data in card and show errors
+             * @returns {boolean}
+             */
+            validateData: function () {
+                var model = this.model,
+                    data = model.getActualDataFromStorage(this.id);
+                var errors = model.validate(data);
+                if (errors.length) {
+                    this._showErrors(errors);
+                    return false;
+                } else {
+                    return true;
+                }
+            },
+            /**
+             * @desc Show for user error messages
+             * @param {Array} errors
+             * @private
+             */
+            _showErrors: function (errors) {
+                this._resetErrors();
+                this._cardElements.forEach(
+                    /** @param {CardElement} obj */
+                        function (obj) {
+                        if(errors.indexOf(obj.get('key'))!==-1){
+                            obj.showError()
+                        }
+                    })
+            },
+            /**
+             * @desc clear error messages in card
+             * @private
+             */
+            _resetErrors: function () {
+                this.$el.find('.card-error').removeClass('.card-error');
+            },
+            /**
+             *
+             * @param {MessageDTO} ops
+             */
+            showMessage: function (ops) {
+                //todo: implement
             },
             /**
              * @param pk {string}
@@ -243,6 +290,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
              * @private
              */
             _undoChange: function () {
+                //todo: реализовать
                 var pk = this.id;
                 if (this.isChanged()) {
                     var changedData = this.model.getChangedDataFromStorage()[pk],

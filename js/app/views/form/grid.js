@@ -51,11 +51,22 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     'click .menu-button-toggle': 'toggleSystemCols'
                 });
             },
-            _$taskWizard: null,
-            _menuView: null,
-            _callbacks: null,
-            _$contextMenu: null,
-            _priorityColors: [],
+
+            /**
+             * @abstract
+             * @class GridView
+             * @augments AbstractGridView
+             * @param {AbstractViewOptions} options
+             * @constructs
+             */
+            initialize: function (options) {
+                this._$taskWizard = null;
+                this._menuView = null;
+                this._callbacks = null;
+                this._$contextMenu = null;
+                this._priorityColors = [];
+                AbstractGridView.prototype.initialize.call(this, options);
+            },
             /**
              * @override
              */
@@ -379,7 +390,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         var errors = [], index;
                         for (index in responseChangeObj) {
                             if (hasOwn.call(responseChangeObj, index)) {
-                                var error = this.validate(responseChangeObj[index]);
+                                var error = this.getModel().validate(responseChangeObj[index]);
                                 if (!$.isEmptyObject(error)) {
                                     errors[index] = error;
                                 }
@@ -388,7 +399,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         if ($.isEmptyObject(errors)) {
                             var model = this.model;
                             model
-                                .deferSave(responseChangeObj, deletedData)
+                                .runAsyncTaskSave(responseChangeObj, deletedData)
                                 .done(function () {
                                     if (opts.refresh) {
                                         model.trigger('refresh:form');
@@ -439,33 +450,40 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 }
             },
             /**
-             * @param data {Object}
-             * @returns {Array}
-             */
-            validate: function (data) {
-                var requiredFields = this.model.getRequiredFields(),
-                    errors = [];
-                requiredFields.forEach(function (key) {
-                    if (data[key] === undefined || !data[key]) {
-                        errors.push(key);
-                    }
-                });
-                return errors;
-            },
-            /**
              * @param opts {CardSaveDTO}
              */
             saveCard: function (opts) {
-                //todo: реализовать
-                var view = this.getModel().getOpenedCard(opts.id);
-                if (view === undefined) {
+                var _this = this,
+                    model = this.getModel();
+                /**
+                 * @type {CardView}
+                 */
+                var cardView = model.getOpenedCard(opts.id);
+                if (cardView === undefined) {
                     this.publishError({
                         model: this,
                         error: 'Save card throw errors'
                     });
                 }
+                if (cardView.isChanged()) {
 
-                console.log(view)
+                    if (cardView.validateData()) {
+                        var data = {};
+                        data[opts.id] = model.getActualDataFromStorage(opts.id);
+                        model
+                            .runAsyncTaskSave(data)
+                            .done(function (res) {
+                                cardView.destroy();
+                                _this.refresh();
+                            })
+                            .fail(function (res) {
+                                cardView.showMessage(res);
+                            })
+                    }
+
+                } else {
+                    cardView.destroy();
+                }
             },
             /**
              * @param {jQuery} $cnt

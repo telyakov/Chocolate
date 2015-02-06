@@ -12,6 +12,8 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 this.$el = options.$el;
                 this.view = options.view;
                 this.model = options.view.model;
+                this._$printActionButton = null;
+                this._$actionButton = null;
             },
             events: {},
             template: _.template([
@@ -59,8 +61,6 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 '<% } %>',
                 '</menu>'
             ].join('')),
-            _$printActionButton: null,
-            _$actionButton: null,
             /**
              * @method destroy
              */

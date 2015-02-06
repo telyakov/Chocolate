@@ -32,6 +32,18 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
                 this.constructor.__super__.destroy.apply(this, arguments);
             },
             /**
+             * @override
+             */
+            showError: function () {
+                console.log(this._$element)
+                if(this._$element){
+                    this._$element
+                        .closest('.card-col')
+                        .children('label')
+                        .addClass('card-error');
+                }
+            },
+            /**
              * @param $element {jQuery|null}
              * @private
              * @description for the destruction of unused objects and events

@@ -46,6 +46,7 @@
  * @name Deferred.resolve
  * @param {...*} args
  */
+
 /**
  * Object, that generated in the {FormModel} via event 'save:card'
  * @typedef {Object} CardSaveDTO
