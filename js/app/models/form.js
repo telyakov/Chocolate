@@ -810,6 +810,13 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 return this._openedCards[id];
             },
             /**
+             * @desc Get All opened card for form
+             * @returns {?CardView[]}
+             */
+            getAllOpenedCard: function(){
+                return  this._openedCards;
+            },
+            /**
              * @param data {Object}
              * @returns {Array} Columns keys
              */

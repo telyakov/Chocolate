@@ -451,6 +451,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             },
             /**
              * @param opts {CardSaveDTO}
+             * @override
              */
             saveCard: function (opts) {
                 var _this = this,
@@ -474,6 +475,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                             .runAsyncTaskSave(data)
                             .done(function (res) {
                                 cardView.destroy();
+                                //todo: ЧТо делать с карточками в которых есть изменения?
+                                model.getAllOpenedCard().forEach(function(view){
+                                   view.destroy();
+                                });
                                 _this.refresh();
                             })
                             .fail(function (res) {
