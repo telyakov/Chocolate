@@ -1,3 +1,7 @@
+/**
+ * @class
+ * @augments Backbone.Model
+ */
 var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule, deferredModule, optionsModule, undefined) {
     'use strict';
     return Backbone.Model.extend(

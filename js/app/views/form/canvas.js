@@ -72,7 +72,7 @@ var CanvasView = (function () {
             var model = this.model,
                 _this = this,
                 data = this.view.getFilterData();
-            var defer = model.deferReadProc(data);
+            var defer = model.runAsyncTaskBindingReadProc(data);
             defer.done(function (res) {
                 var sql = res.sql;
                 var deferRead = deferredModule.create(),

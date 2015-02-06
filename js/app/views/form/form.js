@@ -129,6 +129,13 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 this.events = null;
             },
             /**
+             *
+             * @returns {?Card}
+             */
+            getCard: function(){
+                return this.card;
+            },
+            /**
              * @param e {Event}
              */
             openChildForm: function (e) {

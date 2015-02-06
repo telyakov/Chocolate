@@ -26,6 +26,10 @@
  * @function
  * @name jQuery.autocomplete
  */
+/**
+ * @function
+ * @name jQuery.scrollTop
+ */
 
 /**
  * @function
@@ -61,6 +65,20 @@
  * @typedef {Object} MessageDTO
  * @property {string} msg - Message text
  * @property {Number} id - Message type (1 - success, 2 - warning, 3 - error)
+ */
+
+/**
+ * Object, that represented response of binding sql
+ * @typedef {Object} SqlBindingResponse
+ * @property {string} sql - Binding sql
+ */
+
+/**
+ * Object, that represented settings Columns
+ * @typedef {Object} SettingsColumn
+ * @property {string} key - unique column key
+ * @property {Number} weight - column order
+ * @property {Number} width - column width in px
  */
 
 /**

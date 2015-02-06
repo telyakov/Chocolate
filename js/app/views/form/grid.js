@@ -42,8 +42,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             ),
             events: function () {
                 return _.extend({}, AbstractGridView.prototype.events, {
-                    'touchmove .card-button': 'openRowCard',
-                    'dblclick .card-button': 'openRowCard',
+                    'touchmove .card-button': '_openRowCard',
+                    'dblclick .card-button': '_openRowCard',
                     'click .menu-button-add': 'addRowHandler',
                     'keydown .grid-column-search': $.debounce(200, false, this.searchColumnsHandler),
                     'click .menu-button-excel': 'exportToExcel',
@@ -76,7 +76,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     mediator.publish(optionsModule.getChannel('logError'), e);
                 }
                 this._destroyDragTableWidget();
-                this._destroyContextMenuWidget();
+                this._destroyTableHeadersContextMenuWidget();
                 this.undelegateEvents();
                 this._destroyTaskWizard();
                 AbstractGridView.prototype.destroy.apply(this);
@@ -315,7 +315,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 if (!data.hasOwnProperty('id')) {
                     data.id = helpersModule.uniqueID();
                 }
-                var $row = $(this._generateRowHtml(data, this.getSortedColumns()));
+                var $row = $(this._generateRowHtml(data, this._getSortedColumns()));
                 $row.addClass('grid-row-changed');
                 this
                     .getJqueryTbody()
@@ -328,7 +328,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     id: id,
                     data: $.extend({}, data)
                 });
-                this.applyCallbacks($row);
+                this._applyColumnsCallbacks($row);
                 if (model.isAutoOpenCard()) {
                     model.trigger('open:card', id);
                 }
@@ -459,7 +459,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 //todo: реализовать
                 var view = this.getModel().getOpenedCard(opts.id);
                 if (view === undefined) {
-                    mediator.publish(optionsModule.getChannel('logError'), {
+                    this.publishError({
                         model: this,
                         error: 'Save card throw errors'
                     });
@@ -468,112 +468,123 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 console.log(view)
             },
             /**
-             *
-             * @param $cnt {jQuery}
-             * @returns {Array}
+             * @param {jQuery} $cnt
+             * @returns {Deferred[]}
              */
-            applyCallbacks: function ($cnt) {
-                var view = this;
-                var deferTasks = [];
-                this.getCallbacks().forEach(function (fn) {
+            _applyColumnsCallbacks: function ($cnt) {
+                var view = this,
+                    asyncTasks = [];
+                this._getCallbacks().forEach(function (fn) {
                     var defer = deferredModule.create();
-                    deferTasks.push(defer);
+                    asyncTasks.push(defer);
                     fn($cnt, view, defer);
                 });
-                return deferTasks;
+                return asyncTasks;
             },
             /**
              * @param e {Event}
+             * @private
              */
-            openRowCard: function (e) {
+            _openRowCard: function (e) {
                 var id = $(e.target).closest('tr').attr('data-id');
-                this.model.trigger('open:card', id);
+                this.getModel().trigger('open:card', id);
             },
             /**
-             * @method render
+             * @desc Render Form
              */
             render: function () {
                 var formId = this.getFormID(),
                     html = this.template({
                         id: formId,
-                        view: this.model.getView()
+                        view: this.getModel().getView()
                     });
                 this.$el.html(html);
                 var $form = this.getJqueryForm();
-                this.layoutMenu($form);
-                this.layoutForm($form);
-                this.layoutFooter($form);
+                this._layoutMenu();
+                this._layoutForm();
+                this.layoutFooter();
             },
             /**
-             * @param view {MenuView|null}
+             * @desc For fight with leak memory
+             * @param view {?MenuView}
              * @private
              */
-            _persistLinkToMenuView: function (view) {
+            _persistReferenceToMenuView: function (view) {
                 this._menuView = view;
             },
-            /**
-             * @param $form {jQuery}
-             */
-            layoutMenu: function ($form) {
+            _layoutMenu: function () {
                 var menuView = new MenuView({
                     view: this,
-                    $el: $form
+                    $el: this.getJqueryForm()
                 });
-                this._persistLinkToMenuView(menuView);
+                this._persistReferenceToMenuView(menuView);
                 menuView.render();
             },
             /**
-             * @method refresh
+             * @override
+             * @desc Perform form refresh
              */
             refresh: function () {
-                this.refreshData();
-                var collection = this.model.getFiltersROCollection(this);
-                collection.each(function (filter) {
-                    if (filter.isAutoRefresh()) {
-                        filter.refresh(collection);
-                    }
-                })
+                this._runAsyncRefreshFormTask();
+                var collection = this.getModel().getFiltersROCollection(this);
+                collection.each(
+                    /** @param {FilterRO} filter */
+                        function (filter) {
+                        if (filter.isAutoRefresh()) {
+                            filter.refresh(collection);
+                        }
+                    })
             },
             /**
-             * @returns {Array}
+             * @desc Get columns callback functions
+             * @returns {Function[]}
+             * @private
              */
-            getCallbacks: function () {
+            _getCallbacks: function () {
                 if (this._callbacks === null) {
                     var callbacks = [];
-                    this.model.getColumnsROCollection().each(function (column) {
-                        callbacks.push(column.getJsFn());
-                    });
+                    this.getModel().getColumnsROCollection().each(
+                        /** @param {ColumnRO} column */
+                            function (column) {
+                            callbacks.push(column.getJsFn());
+                        });
                     this._callbacks = callbacks;
                 }
                 return this._callbacks;
             },
             /**
-             * @returns {Array}
+             * @desc Get Array of ColumnRO with correct order
+             * @returns {ColumnRO[]}
              */
-            getSortedColumns: function () {
+            _getSortedColumns: function () {
                 var sortedColumnCollection = [],
-                    hasSetting = this.model.hasSettings(),
+                    model = this.getModel(),
+                    hasSetting = model.hasSettings(),
                     iterator = 1,
                     index,
                     _this = this;
-                this.model.getColumnsROCollection().each(function (column) {
-                    if (hasSetting) {
-                        index = _this.getPositionColumn(column.get('key'));
-                    } else {
-                        index = iterator;
-                        iterator += 1;
-                    }
-                    sortedColumnCollection[index] = column;
-                });
+                model.getColumnsROCollection().each(
+                    /** @param {ColumnRO} column */
+                        function (column) {
+                        if (hasSetting) {
+                            index = _this.getPositionColumn(column.get('key'));
+                        } else {
+                            index = iterator;
+                            iterator += 1;
+                        }
+                        sortedColumnCollection[index] = column;
+                    });
                 return sortedColumnCollection;
             },
             /**
-             * @param $form {jQuery}
+             * @desc Layout main form
+             * @private
              */
-            layoutForm: function ($form) {
+            _layoutForm: function () {
                 var _this = this,
-                    roCollection = this.model.getColumnsROCollection(),
-                    hasSetting = this.model.hasSettings(),
+                    model = this.getModel(),
+                    roCollection = model.getColumnsROCollection(),
+                    hasSetting = model.hasSettings(),
                     rows = [{
                         options: {'data-id': 'chocolate-control-column'},
                         header: ''
@@ -581,6 +592,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     userGridID = helpersModule.uniqueID(),
                     setting = [],
                     iterator = 1;
+
                 if (!hasSetting) {
                     setting[0] = {
                         key: 'chocolate-control-column',
@@ -588,6 +600,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         width: '28'
                     };
                 }
+
                 var newColumns = [];
                 roCollection.each(function (column) {
                     if (!hasSetting) {
@@ -614,39 +627,51 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 newColumns.forEach(function (item) {
                     rows.push(item);
                 });
-                this.model.persistColumnsSettings(setting);
-                var tableID = helpersModule.uniqueID();
-                $form.append(this.gridTemplate({
+                model.persistColumnsSettings(setting);
+
+                this.getJqueryForm().append(this.gridTemplate({
                     userGridID: userGridID,
                     rows: rows,
-                    tableID: tableID
+                    tableID: helpersModule.uniqueID()
                 }));
-                this.initTableScript();
-                this.refreshData();
+
+                this
+                    ._initTableScripts()
+                    ._runAsyncRefreshFormTask();
             },
-            _destroyContextMenuWidget: function () {
+            /**
+             * @desc Destroy Context Menu Widget for table headers
+             * @private
+             */
+            _destroyTableHeadersContextMenuWidget: function () {
                 if (this._$contextMenu) {
                     this._$contextMenu.contextmenu('destroy');
                     this._$contextMenu = null;
                 }
             },
-            _persistLinkToContextMenu: function ($contextMenu) {
-                this._$contextMenu = $contextMenu;
+            /**
+             * @desc For fight with leak memory
+             * @param {?jQuery} $elem
+             * @private
+             */
+            _persistReferenceToHeadersContextMenu: function ($elem) {
+                this._$contextMenu = $elem;
             },
             /**
-             * @param $table {jQuery}
+             * @desc Initialize context menu widgets for <th> in table
+             * @param {jQuery} $table
              */
-            initContextMenu: function ($table) {
+            _initTableHeadersContextMenuWidget: function ($table) {
                 var $fixedTable = this.getJqueryFloatHeadTable(),
                     $th = $fixedTable.children('thead').find('th'),
                     $sortedTh = $th.filter(function (i) {
                         return i > 0;
                     }),
                     _this = this,
-                    count = Object.keys(this.model.getFormSettingsFromStorage()).length - 1,
+                    count = Object.keys(this.getModel().getFormSettingsFromStorage()).length - 1,
                     realCount = $th.length - 1,
                     tables = [$table.eq(0)[0], $fixedTable.eq(0)[0]];
-                this._persistLinkToContextMenu($sortedTh);
+                this._persistReferenceToHeadersContextMenu($sortedTh);
                 $sortedTh.contextmenu({
                     show: {effect: 'blind', duration: 0},
                     menu: [
@@ -670,7 +695,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                                 break;
                             case 'toggle-cols':
                                 _this
-                                    .toggleAllCols()
+                                    ._toggleAllCols()
                                     .clearSelectedArea();
                                 break;
                             default :
@@ -678,16 +703,24 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         }
                     }
                 });
+                return this;
             },
             /**
-             * @param start {Number}
-             * @param end {Number}
+             * @desc Changing places columns
+             * @param {Number} start
+             * @param {Number} end
              */
             changeSettings: function (start, end) {
-                var min = 1, settings = this.model.getFormSettingsFromStorage();
+                var model = this.getModel(),
+                    min = 1,
+                    settings = model.getFormSettingsFromStorage();
                 if (!$.isEmptyObject(settings)) {
-                    var obj,
-                        newSettings = [],
+                    /**
+                     *
+                     * @type {SettingsColumn[]}
+                     */
+                    var newSettings = [],
+                        obj,
                         i,
                         hasOwn = Object.prototype.hasOwnProperty,
                         newWeight;
@@ -763,22 +796,25 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                             }
                         }
                     }
-                    this.model.persistColumnsSettings(newSettings);
+                    model.persistColumnsSettings(newSettings);
                 }
             },
             /**
-             *
+             * @desc Toggle columns visible mode
              * @returns {*}
+             * @private
              */
-            toggleAllCols: function () {
-                var
-                    isHidden = this.model.isShortMode(),
-                    $th = this.getJqueryFloatHeadTable().find('[' + optionsModule.getClass('allowHideColumn') + ']');
+            _toggleAllCols: function () {
+                var model = this.getModel(),
+                    isHidden = model.isShortMode(),
+                    $th = this.getJqueryFloatHeadTable()
+                        .find('[' + optionsModule.getClass('allowHideColumn') + ']');
                 this.toggleColumns(isHidden, $th);
-                this.model.setShortMode(!isHidden);
+                model.setShortMode(!isHidden);
                 return this;
             },
             /**
+             * @desc Destroy draggable table widget
              * @private
              */
             _destroyDragTableWidget: function () {
@@ -786,44 +822,53 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this.getJqueryFloatHeadTable().dragtable('destroy');
             },
             /**
-             * @method initDragTable
+             * @desc Initialize draggable table widget
+             * @returns {*}
              */
-            initDragTable: function () {
+            _initDragTableWidget: function () {
                 this.getJqueryFloatHeadTable().dragtable({
                     view: this
                 });
+                return this;
             },
             /**
-             * @method initTableScript
+             * @desc Initialize all scripts for table
+             * @returns {*}
+             * @private
              */
-            initTableScript: function () {
-                var $table = this.getJqueryDataTable();
-                this.initSettings();
-                this.initTableSorterWidget($table);
-                this.initResizeWidget($table);
-                this.initFloatTheadWidget($table);
-                this.initContextMenu($table);
-                this.initDragTable();
-                if (this.model.isShortMode()) {
+            _initTableScripts: function () {
+                var model = this.getModel(),
+                    $table = this.getJqueryDataTable();
+                this
+                    .initSettings()
+                    .initTableSorterWidget($table)
+                    .initResizeWidget($table)
+                    .initFloatTheadWidget($table)
+                    ._initTableHeadersContextMenuWidget($table)
+                    ._initDragTableWidget();
+                if (model.isShortMode()) {
                     var $shortCols = this.getJqueryFloatHeadTable()
                         .find('[' + optionsModule.getClass('allowHideColumn') + ']');
                     this.toggleColumns(false, $shortCols);
                 }
-                if (this.model.isSystemColumnsMode()) {
+                if (model.isSystemColumnsMode()) {
                     var $systemCols = this.getJqueryFloatHeadTable().find('th')
                         .filter(function () {
-                            return optionsModule.getSetting('systemCols')
+                            return optionsModule
+                                .getSetting('systemCols')
                                 .indexOf($(this).attr('data-id')) !== -1;
                         });
                     this.toggleColumns(false, $systemCols);
                 }
 
-                this.initContextFormMenuEvent();
+                return this._initContextRowWidget();
             },
             /**
-             * @method initContextFormMenuEvent
+             * @desc Initialize widget for context menu in controls columns in grid
+             * @private
+             * @returns {*}
              */
-            initContextFormMenuEvent: function () {
+            _initContextRowWidget: function () {
                 var _this = this;
                 this.$el.contextmenu({
                     delegate: '.card-button',
@@ -845,26 +890,32 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         }
                     }
                 });
+                return this;
             },
             /**
-             * @method refreshData
+             * @desc Run async form refresh
+             * @private
              */
-            refreshData: function () {
+            _runAsyncRefreshFormTask: function () {
                 var _this = this,
-                    mainSql;
-                if (this.view.card) {
-                    mainSql = this.view.card.get('column').getSql();
+                    model = this.getModel(),
+                    view = this.view,
+                    card = view.getCard(),
+                    cardSql;
+                if (card) {
+                    cardSql = card.get('column').getSql();
                 }
-                this.model
-                    .deferReadProc(this.view.getFilterData(), mainSql)
-                    .done(function (data) {
-                        var defer = _this.model.deferReadData(data.sql);
-                        defer.done(function (data) {
-                            _this.refreshDone(data);
-                        });
+                model
+                    .runAsyncTaskBindingReadProc(view.getFilterData(), cardSql)
+                    .done(
+                    /** @param {SqlBindingResponse} data */
+                        function (data) {
+                        model.runAsyncTaskGetData(data.sql)
+                            .done(_this._refreshDone);
                     });
             },
             /**
+             * @desc Unbind refresh events
              * @private
              */
             _unsubscribeRefreshEvent: function () {
@@ -873,10 +924,12 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 this.getJqueryDataTable().unbind('sortEnd').unbind('filterEnd');
             },
             /**
+             * @desc Done callback for async Task of Get Form Data
              * @param {RecordsetDTO} data
+             * @private
              */
-            refreshDone: function (data) {
-                var sortedColumnCollection = this.getSortedColumns(),
+            _refreshDone: function (data) {
+                var sortedColumnCollection = this._getSortedColumns(),
                     order = data.order,
                     recordset = data.data;
                 this.model.persistData(recordset, order);
@@ -889,53 +942,63 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     $userGrid = this.getJqueryGridView(),
                     subscribeName = this.getLayoutSubscribeName();
                 this._unsubscribeRefreshEvent();
-                $.subscribe(subscribeName, function (e, refreshCache) {
-                    var scrollTop = $userGrid.scrollTop();
-                    if (refreshCache || !$tr) {
-                        $tr = $tbody.children('tr').filter(':not(.filtered)');
-                        cacheVisible = [];
-                    }
-                    var trHeight = $tr.eq(2).height();
-                    if (!trHeight) {
-                        if ($tr.hasClass('ch-mobile')) {
-                            trHeight = 67;
-                        } else {
-                            trHeight = 23;
+                $.subscribe(subscribeName,
+                    /**
+                     * @param e
+                     * @param {boolean} isRefreshCache
+                     */
+                        function (e, isRefreshCache) {
+                        var scrollTop = $userGrid.scrollTop();
+                        if (isRefreshCache || !$tr) {
+                            $tr = $tbody.children('tr').filter(':not(.filtered)');
+                            cacheVisible = [];
                         }
-                    }
-                    var visibleHeight = $userGrid.height(),
-                        startIndex = Math.max((scrollTop / trHeight ^ 0 ) - 7, 0),
-                        endIndex = Math.min(((scrollTop + visibleHeight) / trHeight ^ 0) + 7, $tr.length);
-                    $tr.filter(function (i) {
-                        if (i >= startIndex && i <= endIndex) {
-                            if (cacheVisible[i]) {
+                        var trHeight = $tr.eq(2).height();
+                        if (!trHeight) {
+                            if ($tr.hasClass('ch-mobile')) {
+                                trHeight = 67;
+                            } else {
+                                trHeight = 23;
+                            }
+                        }
+                        var visibleHeight = $userGrid.height(),
+                            startIndex = Math.max(parseInt(scrollTop / trHeight, 10) - 7, 0),
+                            endIndex = Math.min(parseInt((scrollTop + visibleHeight) / trHeight, 10) + 7, $tr.length);
+                        $tr
+                            .filter(function (i) {
+                                if (i >= startIndex && i <= endIndex) {
+                                    if (cacheVisible[i]) {
+                                        return false;
+                                    }
+                                    cacheVisible[i] = 1;
+                                    return true;
+                                }
                                 return false;
+                            })
+                            .find('.table-td')
+                            .css({display: 'block'});
+                        $tr.filter(function (i) {
+                            if (i < startIndex || i > endIndex) {
+                                if (cacheVisible[i]) {
+                                    delete cacheVisible[i];
+                                    return true;
+                                }
+                                if (isRefreshCache) {
+                                    return true;
+                                }
                             }
-                            cacheVisible[i] = 1;
-                            return true;
-                        }
-                        return false;
-                    })
-                        .find('.table-td')
-                        .css({display: 'block'});
-                    $tr.filter(function (i) {
-                        if (i < startIndex || i > endIndex) {
-                            if (cacheVisible[i]) {
-                                delete cacheVisible[i];
-                                return true;
-                            }
-                            if (refreshCache) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    })
-                        .find('.table-td')
-                        .css({display: 'none'});
-                });
+                            return false;
+                        })
+                            .find('.table-td')
+                            .css({display: 'none'});
+                    });
                 var prevScrollTop = 0;
                 $userGrid.on('scroll.chocolate', $.debounce(150, false, function () {
-                    var curScrollTop = $(this).scrollTop();
+                    /**
+                     * @type {jQuery}
+                     */
+                    var $this = $(this),
+                        curScrollTop = $this.scrollTop();
                     if (curScrollTop !== prevScrollTop) {
                         $.publish(subscribeName, false);
                     }
@@ -943,9 +1006,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 }));
 
                 $tbody.html(html);
-                var tasks = this.applyCallbacks(this.$el);
-                $.when.apply($, tasks).done(function () {
-                    $table.trigger("update");
+                var asyncTasks = this._applyColumnsCallbacks(this.$el);
+                $.when.apply($, asyncTasks).done(function () {
+                    $table.trigger('update');
                 });
 
                 $table.bind('sortEnd filterEnd', function () {
@@ -1008,24 +1071,26 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     ],
                     key,
                     thList = this.getTh();
-                columns.forEach(function (item) {
-                    key = item.get('key');
-                    var isVisible = thList.filter('[data-id="' + key + '"]').css('display') !== "none",
-                        value = '',
-                        color;
-                    if (data[key] !== undefined && (key !== 'id' || isNumericID )) {
-                        value = data[key];
-                        if (value) {
-                            value = value.replace(/"/g, '&quot;');
+                columns.forEach(
+                    /** @param {ColumnRO} item */
+                        function (item) {
+                        key = item.get('key');
+                        var isVisible = thList.filter('[data-id="' + key + '"]').css('display') !== "none",
+                            value = '',
+                            color;
+                        if (data[key] !== undefined && (key !== 'id' || isNumericID )) {
+                            value = data[key];
+                            if (value) {
+                                value = value.replace(/"/g, '&quot;');
+                            }
                         }
-                    }
-                    if (key === 'id') {
-                        color = keyColor;
-                    }
-                    rowBuilder.push(
-                        item.getTemplate(id, isVisible, value, color)
-                    );
-                });
+                        if (key === 'id') {
+                            color = keyColor;
+                        }
+                        rowBuilder.push(
+                            item.getTemplate(id, isVisible, value, color)
+                        );
+                    });
                 rowBuilder.push('</tr>');
                 return rowBuilder.join('');
             },

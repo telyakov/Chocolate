@@ -69,7 +69,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 gridViewID: helpersModule.uniqueID()
             }));
             var $form = this.getJqueryForm();
-            this.layoutFooter($form);
+            this.layoutFooter();
             this.initScript($form);
             this.refreshData(true);
         },
@@ -274,7 +274,7 @@ var AttachmentView = (function (AbstractGridView, $, _, deferredModule, optionsM
                 mainSql = this.view.card.get('column').getSql();
             }
             model
-                .deferReadProc(this.view.getFilterData(), mainSql)
+                .runAsyncTaskBindingReadProc(this.view.getFilterData(), mainSql)
                 .done(function (data) {
                     var sql = data.sql,
                         defer = deferredModule.create(),

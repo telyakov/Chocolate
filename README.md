@@ -27,3 +27,12 @@ password: 000000
 sudo /etc/init.d/php-fpm restart - перезапустить PHP
 sudo service nginx restart - запустить nginx
 
+http://www.phphighload.com/2012/08/blog-post.html
+http://vladimir-stupin.blogspot.ru/2014/08/nginx-php5-fpm-uwsgi.html
+http://pektop.net/2013/09/sovety-po-nastrojke-i-optimizacii-nginx-i-php-fpm/
+http://tweaked.io/guide/nginx/
+
+http://otvety.google.ru/otvety/thread?tid=790bc4491da13a6f
+
+ВАЖНО  http://www.cyberciti.biz/tips/linux-unix-bsd-nginx-webserver-security.html
+https://code.google.com/p/sna/wiki/NginxWithPHPFPM

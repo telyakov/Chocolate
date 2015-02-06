@@ -239,7 +239,12 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                     });
                 return mainDefer;
             },
-            deferReadData: function (sql) {
+            /**
+             *
+             * @param {string} sql
+             * @returns {Deferred}
+             */
+            runAsyncTaskGetData: function (sql) {
                 var defer = deferredModule.create(),
                     deferID = deferredModule.save(defer);
                 mediator.publish(optionsModule.getChannel('socketRequest'), {
@@ -270,6 +275,9 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             getKey: function () {
                 return this.getDataFormProperties().getKey();
             },
+            /**
+             * @returns {string}
+             */
             getView: function () {
                 return this.getKey() + '.xml';
             },
@@ -470,6 +478,12 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             hasFilters: function () {
                 return this.getFiltersCollections().length !== 0 && !this.isDiscussionView();
             },
+            /**
+             *
+             * @param {FormView} view
+             * @param {jQuery} [$filterSection]
+             * @returns {FiltersROCollection}
+             */
             getFiltersROCollection: function (view, $filterSection) {
                 if (this._filterRoCollection !== null) {
                     return this._filterRoCollection;
@@ -550,7 +564,12 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                     parententitytype: this.getParentEntityTypeID()
                 };
             },
-            deferReadProc: function (filterData, mainSql) {
+            /**
+             * @param {Object} filterData
+             * @param {string} mainSql
+             * @returns {Deferred}
+             */
+            runAsyncTaskBindingReadProc: function (filterData, mainSql) {
                 var data = this.getParamsForBind();
                 if (filterData) {
                     data = $.extend(data, filterData);

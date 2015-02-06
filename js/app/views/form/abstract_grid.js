@@ -521,11 +521,8 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
             getJqueryActiveRow: function () {
                 return this.$('.' + optionsModule.getClass('activeRow'));
             },
-            /**
-             * @param {jQuery} $form
-             */
-            layoutFooter: function ($form) {
-                $form.after(this.footerTemplate());
+            layoutFooter: function () {
+                this.getJqueryForm().after(this.footerTemplate());
             },
             /**
              * @desc Clear selected area in table
@@ -556,12 +553,14 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
             },
             /**
              * @desc Initialize form settings
+             * @returns {*}
              */
             initSettings: function () {
                 this._initColumnSettings();
                 if (this.getModel().isAutoUpdate()) {
                     this.startAutoUpdate();
                 }
+                return this;
             },
             /**
              * @desc Initialize column settings and persist his in local storage
@@ -649,6 +648,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
             /**
              * @desc Initialize TableSorter Widget
              * @param {jQuery} $table
+             * @returns {*}
              */
             initTableSorterWidget: function ($table) {
                 var options = {
@@ -666,6 +666,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                     options.widgets = ['filter'];
                 }
                 $table.tablesorter(options);
+                return this;
             },
             /**
              * @desc Destroy TableSorter Widget
@@ -693,6 +694,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
             /**
              * @desc Initialize resizable widget for columns headers
              * @param {jQuery} $table
+             * @returns {*}
              */
             initResizeWidget: function ($table) {
                 var $headers = this.getTh()
@@ -770,6 +772,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                         }
                     });
                 });
+                return this;
             },
             /**
              * @desc Destroy resizable plugin
@@ -784,6 +787,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
             /**
              * @desc Initialize Jquery.floatThead plugin
              * @param {jQuery} $table
+             * @returns {*}
              */
             initFloatTheadWidget: function ($table) {
                 var $gridView = this.getJqueryGridView();
@@ -793,6 +797,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                         return $gridView;
                     }
                 });
+                return this;
             },
             /**
              * @desc Destroy Jquery.floatThead plugin

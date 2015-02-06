@@ -66,9 +66,9 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
         },
         refresh: function () {
             var _this = this;
-            this.model.deferReadProc()
+            this.model.runAsyncTaskBindingReadProc()
                 .done(function (data) {
-                    var defer = _this.model.deferReadData(data.sql);
+                    var defer = _this.model.runAsyncTaskGetData(data.sql);
                     defer.done(function (res) {
                         _this.layout(res.data, res.order);
 
