@@ -12,10 +12,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 '<% if (isNextRow) { %> </div><div class="filter-row"><% } %>',
                 '<li class="fast-filter filter-item" id="<%= containerID %>" ',
                 ' name="<%= attribute %>"',
-                ' <% if (parentFilterKey) { %> rel="<%= parentFilterKey %>"  <% } %> >',
                 '<input type="hidden" name="<%= attribute %>">',
-
-                '<% if (!parentFilterKey || force) { %>',
                 '<% if (isMultiSelect) { %>',
                 '<% _.each(data, function(item) { %>',
                 '<span class="checkbox inline">',
@@ -30,7 +27,6 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 '<label for="<%= item.id %>"><%= item.name %></label>',
                 '</span>',
                 ' <% }); %>',
-                '<% } %>',
                 '<% } %>',
                 '</li>'
             ].join('')),
@@ -88,14 +84,13 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                     visibleId = deferredModule.save(visibleDf),
                     nextRowId = deferredModule.save(nextRowDf);
                 var changeHandler = model.getEventChange();
-                var selector = 'input';
+                var selector = '#' +_this.id + ' input';
                 this.$el.on('change', selector, function (e) {
                     var val = _this.getValue();
                     if (changeHandler) {
                         helpersModule.scriptExpressionEval(changeHandler, val, _this);
                     }
                     model.trigger('change:value', val);
-                    e.stopImmediatePropagation();
                 });
 
                 model.isVisibleEval(visibleId);
@@ -124,14 +119,15 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                         text = _this.template({
                             attribute: model.getAttribute(),
                             isNextRow: isNextRow,
-                            parentFilterKey: parentFilter,
+                            //parentFilterKey: parentFilter,
                             isMultiSelect: isMultiSelect,
                             data: prepareData,
                             containerID: _this.id
                         });
                     }
-
                     var parentFilter = model.getProperties().get('parentFilter');
+
+
                     if (parentFilter) {
                         var parentModel = collection.findWhere({
                             key: parentFilter
