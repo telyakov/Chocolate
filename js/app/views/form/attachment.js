@@ -71,7 +71,6 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
             initialize: function (options) {
                 this._$zone = null;
                 this._files = {};
-                this._errors = [];
                 AbstractGridView.prototype.initialize.call(this, options);
             },
             /**
@@ -80,7 +79,6 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
             destroy: function () {
                 this._destroyContextMenuWidget();
                 this._destroyFileUploadWidget();
-                delete this._errors;
                 delete this._files;
                 AbstractGridView.prototype.destroy.apply(this);
             },
@@ -127,6 +125,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                 var file = unsavedFiles[i],
                                     taskDefer = deferredModule.create(),
                                     taskDeferID = deferredModule.save(taskDefer);
+                                asyncTasks.push(taskDefer);
                                 (function (index) {
                                     taskDefer.done(function () {
                                         _this._deleteUnsavedFile(index);
@@ -280,14 +279,9 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                 } else {
 
                     if (afterSave) {
-                        console.log('after save')
                         model.trigger('refresh:form', {
                             afterSave: afterSave
                         });
-                        //this.showMessage({
-                        //    id: 1,
-                        //    msg: 'Данные успешно сохранены.'
-                        //});
                     } else {
                         this.showMessage({
                             id: 2,
