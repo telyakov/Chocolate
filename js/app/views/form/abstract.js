@@ -89,16 +89,46 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 });
             },
             /**
-             * @description Show application message to user
+             * @description Show application message in form
              * @param {MessageDTO} opts
-             * @abstract
+             * @override
              */
             showMessage: function (opts) {
-                this.publishError({
-                    model: this,
-                    opts: opts,
-                    error: 'not implemented showMessage method'
-                });
+                /**
+                 *
+                 * @type {jQuery}
+                 */
+                var $output = this._getJqueryMessageContainer(),
+                    messageClass;
+                switch (opts.id) {
+                    case 1:
+                        messageClass = 'alert-success';
+                        break;
+                    case 2:
+                        messageClass = 'alert-warning';
+                        break;
+                    case 3:
+                        messageClass = 'alert-error';
+                        break;
+                }
+                /**
+                 * @type {jQuery}
+                 */
+                var $msg = $('<div>', {
+                    'class': 'alert in alert-block fade ' + messageClass,
+                    html: opts.msg
+                }).wrap('<div class="grid-message"></div>');
+                $output.html($msg);
+                var duration = 5000;
+                if (opts.id === 3) {
+                    duration = 15000;
+                }
+                if (this._messageTimerID) {
+                    clearTimeout(this._messageTimerID);
+                }
+                this._messageTimerID = setTimeout(function () {
+                    $output.html('')
+                }, duration);
             },
             /**
              * @description the main method, that render view
@@ -366,6 +396,14 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                     }
                 });
                 this._publishExportToExcelEvent(asyncTasks, prepareSettings);
+            },
+            /**
+             * @description Get Jquery object, where shows form messages
+             * @returns {jQuery}
+             * @private
+             */
+            _getJqueryMessageContainer: function () {
+                return this.getJqueryForm().find('.menu').children('.messages-container');
             },
             /**
              *

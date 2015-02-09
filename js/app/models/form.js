@@ -594,7 +594,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             },
             /**
              * @param {Object} filterData
-             * @param {string} mainSql
+             * @param {string} [mainSql]
              * @returns {Deferred}
              */
             runAsyncTaskBindingReadProc: function (filterData, mainSql) {

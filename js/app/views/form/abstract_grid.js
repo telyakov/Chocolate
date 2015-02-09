@@ -82,56 +82,6 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
             },
 
             /**
-             * @description Get Jquery object, where shows form messages
-             * @returns {jQuery}
-             * @private
-             */
-            _getJqueryMessageContainer: function () {
-                return this.getJqueryForm().find('.menu').children('.messages-container');
-            },
-            /**
-             * @description Show application message in form
-             * @param {MessageDTO} opts
-             * @override
-             */
-            showMessage: function (opts) {
-                /**
-                 *
-                 * @type {jQuery}
-                 */
-                var $output = this._getJqueryMessageContainer(),
-                    messageClass;
-                switch (opts.id) {
-                    case 1:
-                        messageClass = 'alert-success';
-                        break;
-                    case 2:
-                        messageClass = 'alert-warning';
-                        break;
-                    case 3:
-                        messageClass = 'alert-error';
-                        break;
-                }
-                /**
-                 * @type {jQuery}
-                 */
-                var $msg = $('<div>', {
-                    'class': 'alert in alert-block fade ' + messageClass,
-                    html: opts.msg
-                }).wrap('<div class="grid-message"></div>');
-                $output.html($msg);
-                var duration = 5000;
-                if (opts.id === 3) {
-                    duration = 15000;
-                }
-                if (this._messageTimerID) {
-                    clearTimeout(this._messageTimerID);
-                }
-                this._messageTimerID = setTimeout(function () {
-                    $output.html('')
-                }, duration);
-            },
-            /**
              * @description Allow move back and forth by keyboard in grid,
              *  select/deselect rows for mass operations
              * @param {Event} e

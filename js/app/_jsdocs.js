@@ -103,6 +103,18 @@
  */
 
 /**
+ * Object, that represented recordset response for CanvasVIew
+ * @typedef {Object} CanvasRecordset
+ * @property {String} axis
+ * @property {String} prenumber
+ * @property {String} flatstypesname
+ * @property {String} costcurrent
+ * @property {String} sqrplanreduced
+ * @property {String} sqrplanfullkitchen
+ * @property {String} bl
+ * @property {String} color
+ */
+/**
  * Object, that generated in the {FormModel} via event 'save:form'
  * @typedef {Object} SaveDTO
  * @property {Object} refresh - Indicates whether to refresh form

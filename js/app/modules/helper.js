@@ -137,6 +137,9 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         getWindowObj: function () {
             return _private.$window;
         },
+        /**
+         * @returns {string}
+         */
         uniqueID: function () {
             return _private.uniqueID();
         },
