@@ -87,7 +87,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
              * @private
              */
             _getJqueryMessageContainer: function () {
-                return this.getJqueryForm().children('.menu').children('.messages-container');
+                return this.getJqueryForm().find('.menu').children('.messages-container');
             },
             /**
              * @description Show application message in form
@@ -152,7 +152,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                             $nextRow;
 
                         if (keyCode === op.getKeyCode('del')) {
-                            this.removeRows(this.getSelectedRows());
+                            this.removeSelectedRows();
                         } else if ((e.ctrlKey || e.shiftKey) && [op.getKeyCode('up'), op.getKeyCode('down')].indexOf(keyCode) !== -1) {
                             $activeRow = this.getJqueryActiveRow();
                             if (keyCode === op.getKeyCode('down')) {

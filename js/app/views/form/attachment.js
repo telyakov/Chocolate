@@ -3,7 +3,7 @@
  * @class
  * @augments AbstractGridView
  */
-var AttachmentView = (function (window, $, _, AbstractGridView, deferredModule, optionsModule, helpersModule, userModule) {
+var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, deferredModule, optionsModule, helpersModule, userModule) {
     'use strict';
     return AbstractGridView.extend(
         /** @lends AttachmentView */
@@ -70,7 +70,7 @@ var AttachmentView = (function (window, $, _, AbstractGridView, deferredModule, 
              */
             initialize: function (options) {
                 this._$zone = null;
-                this._files = [];
+                this._files = {};
                 this._errors = [];
                 AbstractGridView.prototype.initialize.call(this, options);
             },
@@ -114,27 +114,32 @@ var AttachmentView = (function (window, $, _, AbstractGridView, deferredModule, 
             save: function () {
                 if (this.hasChange()) {
                     var model = this.getModel(),
-                        _this = this,
-                        deletedData = model.getDeletedDataFromStorage();
-
+                        _this = this;
                     if (this._hasUnsavedFiles()) {
-                        var isEmpty = $.isEmptyObject(deletedData),
+                        var deletedData = model.getDeletedDataFromStorage(),
+                            isEmpty = $.isEmptyObject(deletedData),
                             ownerLock = model.getColumnsDefaultValues().ownerlock,
-                            filesTasks = [];
-                        while (this._hasUnsavedFiles()) {
-                            var taskDefer = deferredModule.create(),
-                                taskDeferID = deferredModule.save(taskDefer);
-                            filesTasks.push(taskDefer);
-                            var files = _this._filePop(),
-                                file = files[0],
-                                rowID = file.rowID;
-                            if (isEmpty || !deletedData[rowID]) {
-                                var defer = deferredModule.create();
-                                defer.done(function (file, taskDeferID) {
+                            asyncTasks = [],
+                            fileDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
+                        var i,
+                            hasOwn = Object.prototype.hasOwnProperty,
+                            unsavedFiles = this._getUnsavedFiles();
+                        for (i in unsavedFiles) {
+                            if (hasOwn.call(unsavedFiles, i)) {
+                                var file = unsavedFiles[i],
+                                    taskDefer = deferredModule.create(),
+                                    taskDeferID = deferredModule.save(taskDefer);
+                                (function (index) {
+                                    taskDefer.done(function () {
+                                        _this._deleteUnsavedFile(index);
+                                    })
+                                })(i);
+
+                                (function (file, taskDeferID) {
                                     var reader = new FileReader();
                                     reader.onload = function (evt) {
-                                        var data = evt.target.result;
-                                        var prepare = helpersModule.arrayBufferToBase64(data);
+                                        var data = evt.target.result,
+                                            base64data = helpersModule.arrayBufferToBase64(data);
                                         model.runAsyncTaskBindReadProc({
                                             filestypesid: '4',
                                             ownerlock: ownerLock,
@@ -142,7 +147,7 @@ var AttachmentView = (function (window, $, _, AbstractGridView, deferredModule, 
                                             description: 'загружено через web-service',
                                             userid: userModule.getID(),
                                             name: file.name,
-                                            filedatetime: moment().format('YYYY-MM-DD HH:mm:ss')
+                                            filedatetime: fileDateTime
                                         })
                                             .done(
                                             /** @param {SqlBindingResponse} res */
@@ -150,24 +155,78 @@ var AttachmentView = (function (window, $, _, AbstractGridView, deferredModule, 
                                                 var sql = res.sql;
                                                 mediator.publish(optionsModule.getChannel('socketFileUpload'), {
                                                     type: optionsModule.getRequestType('deferred'),
-                                                    data: prepare,
+                                                    data: base64data,
                                                     sql: sql,
                                                     name: taskDeferID
                                                 });
-                                            });
+                                            })
+                                            .fail(
+                                            /** @param {String} error */
+                                                function (error) {
+                                                deferredModule.pop(taskDeferID).reject(error);
+                                            })
                                     };
                                     reader
                                         .readAsArrayBuffer(file);
-                                });
-                                defer.resolve(file, taskDeferID);
-
-
+                                })(file, taskDeferID);
                             }
-                            $.when.apply($, filesTasks).done(function () {
-                                _this._saveDeletedData();
-
-                            });
                         }
+
+                        $.when.apply($, asyncTasks)
+                            .done(function () {
+                                _this._saveDeletedData();
+                            })
+                            .fail(
+                            /** @param {String} error */
+                                function (error) {
+                                /**
+                                 * @type {MessageDTO}
+                                 */
+                                var messageDTO = {
+                                    msg: error,
+                                    id: 3
+                                };
+                                _this.showMessage(messageDTO)
+                            });
+
+                        //while (this._hasUnsavedFiles()) {
+                        //    //var taskDefer = deferredModule.create(),
+                        //    //    taskDeferID = deferredModule.save(taskDefer);
+                        //    //asyncTasks.push(taskDefer);
+                        //    //var files = _this._filePop(),
+                        //    //    file = files[0],
+                        //    //    rowID = file.rowID;
+                        //    //if (isEmpty || !deletedData[rowID]) {
+                        //
+                        //
+                        //        //stop: function () {
+                        //        //    console.log('stop')
+                        //        //    if (_this._validate()) {
+                        //        //        _this.showMessage({
+                        //        //            id: 3,
+                        //        //            msg: 'Возникли ошибки при добавлении вложений'
+                        //        //        });
+                        //        //        _this._resetErrors();
+                        //        //    } else {
+                        //        //        if (_this.hasChange()) {
+                        //        //            model.trigger('save:form');
+                        //        //        } else {
+                        //        //            model.trigger('refresh:form');
+                        //        //        }
+                        //        //    }
+                        //        //},
+                        //        //fail: function (e, data) {
+                        //        //    console.log('fail')
+                        //        //    console.log(e,data)
+                        //        //    _this._addError(data.errorThrown);
+                        //        //    _this._filePush(data.files);
+                        //        //},
+                        //    //}
+                        //    //$.when.apply($, asyncTasks).done(function () {
+                        //    //    _this._saveDeletedData();
+                        //    //
+                        //    //});
+                        //}
                     }
                     else {
                         if (!$.isEmptyObject(model.getDeletedDataFromStorage())) {
@@ -197,44 +256,51 @@ var AttachmentView = (function (window, $, _, AbstractGridView, deferredModule, 
              * @private
              */
             _hasUnsavedFiles: function () {
-                return this._files.length > 0;
+                return Object.keys(this._files).length > 0;
+            },
+            /**
+             * @param {String|Number} id
+             * @private
+             */
+            _deleteUnsavedFile: function (id) {
+                delete this._files[id];
             },
             /**
              * @returns {*}
              * @private
              */
-            _filePop: function () {
-                return this._files.pop()
+            _getUnsavedFiles: function () {
+                return this._files
             },
             /**
-             *
-             * @param file
+             * @param {string|Number} id
+             * @param {File} file
              * @private
              */
-            _filePush: function (file) {
-                this._files.push(file);
+            _addFile: function (id, file) {
+                this._files[id] = file;
             },
-            /**
-             * @returns {boolean}
-             * @private
-             */
-            _validate: function () {
-                return this._errors.length === 0;
-            },
-            /**
-             * @desc clear errors
-             * @private
-             */
-            _resetErrors: function () {
-                this._errors = [];
-            },
-            /**
-             * @param {String} error
-             * @private
-             */
-            _addError: function (error) {
-                this._errors.push(error);
-            },
+            ///**
+            // * @returns {boolean}
+            // * @private
+            // */
+            //_validate: function () {
+            //    return this._errors.length === 0;
+            //},
+            ///**
+            // * @desc clear errors
+            // * @private
+            // */
+            //_resetErrors: function () {
+            //    this._errors = [];
+            //},
+            ///**
+            // * @param {String} error
+            // * @private
+            // */
+            //_addError: function (error) {
+            //    this._errors.push(error);
+            //},
             /**
              * @desc Trigger download file event
              * @param {Event} e
@@ -300,8 +366,7 @@ var AttachmentView = (function (window, $, _, AbstractGridView, deferredModule, 
              * @private
              */
             _initFileUploadWidget: function () {
-                var model = this.getModel(),
-                    $form = this.getJqueryForm(),
+                var $form = this.getJqueryForm(),
                     isSaved = !this.getModel().isNotSaved(),
                     _this = this,
                     $dropZone;
@@ -331,12 +396,10 @@ var AttachmentView = (function (window, $, _, AbstractGridView, deferredModule, 
                         acceptFileTypes: /(.*)$/i,
                         added: function (e, data) {
                             if (data.isValidated) {
-                                var rowID = helpersModule.uniqueID();
-                                data.files[0].rowID = rowID;
-                                _this._filePush(data.files);
-                                data.context.attr('data-id', rowID);
-                                data.context.find('td input[type=file]').attr('parent-id', rowID);
-                                $form.find(".grid-view table").trigger("update");
+                                var id = helpersModule.uniqueID();
+                                _this._addFile(id, data.files[0]);
+                                data.context.attr('data-id', id);
+                                $form.find('.grid-view table').trigger('update');
                                 _this._markAsChanged();
                             } else {
                                 data.context.remove();
@@ -345,25 +408,6 @@ var AttachmentView = (function (window, $, _, AbstractGridView, deferredModule, 
                                     msg: "Слишком большой размер файла (максисмум 50мб.)"
                                 });
                             }
-                        },
-                        stop: function () {
-                            if (_this._validate()) {
-                                _this.showMessage({
-                                    id: 3,
-                                    msg: 'Возникли ошибки при добавлении вложений'
-                                });
-                                _this._resetErrors();
-                            } else {
-                                if (_this.hasChange()) {
-                                    model.trigger('save:form');
-                                } else {
-                                    model.trigger('refresh:form');
-                                }
-                            }
-                        },
-                        fail: function (e, data) {
-                            _this._addError(data.errorThrown);
-                            _this._filePush(data.files);
                         },
                         dropZone: $dropZone
                     });
@@ -403,6 +447,19 @@ var AttachmentView = (function (window, $, _, AbstractGridView, deferredModule, 
                         }
                     }
                 });
+            },
+            /**
+             * @desc Remove selected rows from table
+             * @override
+             */
+            removeSelectedRows: function () {
+                var $rows = this.getSelectedRows(),
+                    _this = this;
+                $rows.forEach(function (item) {
+                    var id = $(item).attr('data-id');
+                    _this._deleteUnsavedFile(id);
+                });
+                this.removeRows($rows);
             },
             /**
              *
@@ -487,4 +544,4 @@ var AttachmentView = (function (window, $, _, AbstractGridView, deferredModule, 
                     .initFloatTheadWidget($table);
             }
         });
-})(window, jQuery, _, AbstractGridView, deferredModule, optionsModule, helpersModule, userModule);
+})(window, jQuery, _, FileReader, AbstractGridView, deferredModule, optionsModule, helpersModule, userModule);
