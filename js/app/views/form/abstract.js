@@ -78,10 +78,11 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 });
             },
             /**
+             * @param {RefreshDTO} opts
              * @description Perform the update form
              * @abstract
              */
-            refresh: function () {
+            refresh: function (opts) {
                 this.publishError({
                     model: this,
                     error: 'not implemented refresh method'
@@ -429,7 +430,7 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                     }
                     this._refreshTimerID = setTimeout(this.refresh, 900);
                 } else {
-                    this.refresh();
+                    this.refresh(opts);
                 }
             },
             /**

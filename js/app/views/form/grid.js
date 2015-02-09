@@ -134,10 +134,12 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 }
             },
             /**
-             * @override
+             *
+             * @param {RefreshDTO} opts
              * @desc Perform form refresh
+             * @override
              */
-            refresh: function () {
+            refresh: function (opts) {
                 this._runAsyncRefreshFormTask();
                 var collection = this.getModel().getFiltersROCollection(this);
                 collection.each(
@@ -207,7 +209,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                                 .runAsyncTaskSave(responseChangeObj, deletedData)
                                 .done(function () {
                                     if (opts.refresh) {
-                                        model.trigger('refresh:form');
+                                        model.trigger('refresh:form', {
+                                            afterSave: true
+                                        });
                                     }
                                 })
                                 .fail(

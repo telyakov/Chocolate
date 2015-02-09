@@ -64,7 +64,12 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
                     _this.scrollToBottom();
                 });
         },
-        refresh: function () {
+        /**
+         *
+         * @param {RefreshDTO} opts
+         * @override
+         */
+        refresh: function (opts) {
             var _this = this;
             this.model.runAsyncTaskBindingReadProc()
                 .done(function (data) {

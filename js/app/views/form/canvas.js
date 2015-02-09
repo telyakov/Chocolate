@@ -266,7 +266,12 @@ var CanvasView = (function () {
         refreshData: function (data) {
             this.layout(this.prepareData(data));
         },
-        refresh: function () {
+        /**
+         *
+         * @param {RefreshDTO} opts
+         * @override
+         */
+        refresh: function (opts) {
             this.initData();
         }
     });

@@ -172,7 +172,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
 
                         $.when.apply($, asyncTasks)
                             .done(function () {
-                                _this._saveDeletedData();
+                                _this._saveDeletedData(true);
                             })
                             .fail(
                             /** @param {String} error */
@@ -188,14 +188,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                             });
                     }
                     else {
-                        if (!$.isEmptyObject(model.getDeletedDataFromStorage())) {
-                            this._saveDeletedData();
-                        } else {
-                            this.showMessage({
-                                id: 2,
-                                msg: 'Данные не были изменены.'
-                            });
-                        }
+                        this._saveDeletedData();
                     }
                 } else {
                     this.showMessage({
@@ -205,10 +198,11 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                 }
             },
             /**
+             * @param {RefreshDTO} opts
              * @override
              */
-            refresh: function () {
-                this._makeRefresh();
+            refresh: function (opts) {
+                this._makeRefresh(false, opts);
             },
             /**
              * @returns {boolean}
@@ -250,35 +244,57 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                 mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
             },
             /**
+             * @param {boolean} [afterSave]
              * @desc Save Deleted Data and refresh form
              * @private
              */
-            _saveDeletedData: function () {
+            _saveDeletedData: function (afterSave) {
                 var model = this.getModel(),
-                    deletedData = model.getDeletedDataFromStorage(),
-                    key,
-                    _this = this,
-                    hasOwn = Object.prototype.hasOwnProperty;
-                for (key in deletedData) {
-                    if (hasOwn.call(deletedData, key)) {
-                        if (!$.isNumeric(key)) {
-                            delete deletedData[key];
+                    deletedData = model.getDeletedDataFromStorage();
+                if (!$.isEmptyObject(deletedData)) {
+                    var key,
+                        _this = this,
+                        hasOwn = Object.prototype.hasOwnProperty;
+                    for (key in deletedData) {
+                        if (hasOwn.call(deletedData, key)) {
+                            if (!$.isNumeric(key)) {
+                                delete deletedData[key];
+                            }
                         }
                     }
-                }
-                model
-                    .runAsyncTaskSave({}, deletedData)
-                    .done(function () {
-                        model.trigger('refresh:form');
-                    })
-                    .fail(
-                    /** @param {string} error */
-                        function (error) {
-                        _this.showMessage({
-                            id: 3,
-                            msg: error
+                    model
+                        .runAsyncTaskSave({}, deletedData)
+                        .done(function () {
+                            model.trigger('refresh:form', {
+                                afterSave: afterSave
+                            });
+                        })
+                        .fail(
+                        /** @param {string} error */
+                            function (error) {
+                            _this.showMessage({
+                                id: 3,
+                                msg: error
+                            });
                         });
-                    });
+                } else {
+
+                    if (afterSave) {
+                        console.log('after save')
+                        model.trigger('refresh:form', {
+                            afterSave: afterSave
+                        });
+                        //this.showMessage({
+                        //    id: 1,
+                        //    msg: 'Данные успешно сохранены.'
+                        //});
+                    } else {
+                        this.showMessage({
+                            id: 2,
+                            msg: 'Данные не были изменены.'
+                        });
+                    }
+                }
             },
             /**
              * @desc Destroy FileUpload Widget
@@ -404,9 +420,10 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
             /**
              *
              * @param {boolean} [isApplyJs]
+             * @param {RefreshDTO} [opts]
              * @private
              */
-            _makeRefresh: function (isApplyJs) {
+            _makeRefresh: function (isApplyJs, opts) {
                 var model = this.getModel(),
                     view = this.getView(),
                     card = view.getCard(),
@@ -453,6 +470,17 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                     .clearSelectedArea()
                                     .setRowCount(Object.keys(recordset).length)
                                     .markAsNoChanged();
+                                if(opts && opts.afterSave){
+                                    _this.showMessage({
+                                        id: 1,
+                                        msg: 'Данные успешно сохранены.'
+                                    });
+                                }else if(!isApplyJs){
+                                    _this.showMessage({
+                                        id: 1,
+                                        msg: 'Данные успешно обновлены.'
+                                    });
+                                }
                             })
                             .fail(
                             /** @param {string} error */

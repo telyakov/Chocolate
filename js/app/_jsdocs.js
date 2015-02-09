@@ -118,6 +118,7 @@
  * Object, that generated in the {FormModel} via event 'refresh:form'
  * @typedef {Object} RefreshDTO
  * @property {boolean} isLazy - Indicates whether to use lazy refresh
+ * @property {boolean} afterSave - Indicates whether refresh event called after save
  */
 
 /**
