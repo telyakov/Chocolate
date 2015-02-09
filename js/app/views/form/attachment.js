@@ -188,45 +188,6 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                 };
                                 _this.showMessage(messageDTO)
                             });
-
-                        //while (this._hasUnsavedFiles()) {
-                        //    //var taskDefer = deferredModule.create(),
-                        //    //    taskDeferID = deferredModule.save(taskDefer);
-                        //    //asyncTasks.push(taskDefer);
-                        //    //var files = _this._filePop(),
-                        //    //    file = files[0],
-                        //    //    rowID = file.rowID;
-                        //    //if (isEmpty || !deletedData[rowID]) {
-                        //
-                        //
-                        //        //stop: function () {
-                        //        //    console.log('stop')
-                        //        //    if (_this._validate()) {
-                        //        //        _this.showMessage({
-                        //        //            id: 3,
-                        //        //            msg: 'Возникли ошибки при добавлении вложений'
-                        //        //        });
-                        //        //        _this._resetErrors();
-                        //        //    } else {
-                        //        //        if (_this.hasChange()) {
-                        //        //            model.trigger('save:form');
-                        //        //        } else {
-                        //        //            model.trigger('refresh:form');
-                        //        //        }
-                        //        //    }
-                        //        //},
-                        //        //fail: function (e, data) {
-                        //        //    console.log('fail')
-                        //        //    console.log(e,data)
-                        //        //    _this._addError(data.errorThrown);
-                        //        //    _this._filePush(data.files);
-                        //        //},
-                        //    //}
-                        //    //$.when.apply($, asyncTasks).done(function () {
-                        //    //    _this._saveDeletedData();
-                        //    //
-                        //    //});
-                        //}
                     }
                     else {
                         if (!$.isEmptyObject(model.getDeletedDataFromStorage())) {
@@ -280,27 +241,6 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
             _addFile: function (id, file) {
                 this._files[id] = file;
             },
-            ///**
-            // * @returns {boolean}
-            // * @private
-            // */
-            //_validate: function () {
-            //    return this._errors.length === 0;
-            //},
-            ///**
-            // * @desc clear errors
-            // * @private
-            // */
-            //_resetErrors: function () {
-            //    this._errors = [];
-            //},
-            ///**
-            // * @param {String} error
-            // * @private
-            // */
-            //_addError: function (error) {
-            //    this._errors.push(error);
-            //},
             /**
              * @desc Trigger download file event
              * @param {Event} e
@@ -396,13 +336,15 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                         acceptFileTypes: /(.*)$/i,
                         added: function (e, data) {
                             if (data.isValidated) {
-                                var id = helpersModule.uniqueID();
+                                var $row = data.context,
+                                    id = helpersModule.uniqueID();
                                 _this._addFile(id, data.files[0]);
-                                data.context.attr('data-id', id);
+                                $row.attr('data-id', id);
+                                _this.markRowAsChanged($row);
                                 $form.find('.grid-view table').trigger('update');
                                 _this._markAsChanged();
                             } else {
-                                data.context.remove();
+                                $row.remove();
                                 _this.showMessage({
                                     id: 3,
                                     msg: "Слишком большой размер файла (максисмум 50мб.)"

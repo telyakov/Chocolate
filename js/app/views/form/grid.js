@@ -113,7 +113,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     data.id = helpersModule.uniqueID();
                 }
                 var $row = $(this._generateRowHtml(data, this._getSortedColumns()));
-                $row.addClass('grid-row-changed');
+                this.markRowAsChanged($row);
                 this
                     .getJqueryTbody()
                     .prepend($row)

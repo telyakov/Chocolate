@@ -487,7 +487,8 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
 
                 if (['ins', 'upd'].indexOf(operation) !== -1) {
                     this.getModel().addChangeToStorage(opts.id, opts.data);
-                    this.getJqueryRow(opts.id).addClass('grid-row-changed');
+                    var $row = this.getJqueryRow(opts.id);
+                    this.markRowAsChanged($row);
                 }
                 if (operation === 'del') {
                     var i,
@@ -501,6 +502,14 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                 }
                 this._markAsChanged();
             },
+            /**
+             * @desc Mark grid row as changed;
+             * @param {jQuery} $row
+             */
+            markRowAsChanged: function($row){
+                $row.addClass('grid-row-changed');
+            },
+
             /**
              * @desc Mark for user, that form has unsaved change
              * @private
