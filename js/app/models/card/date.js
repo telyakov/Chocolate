@@ -86,7 +86,7 @@ var DateCardElement = (function ($, moment, optionsModule, CardElement) {
                             var dbData = view.model.getActualDataFromStorage(pk),
                                 value = dbData ? dbData[name] : '';
                             if (value && typeof(value) === 'string') {
-                                value = moment(value, 'MM.DD.YYYY HH:mm:ss').toDate();
+                                value = moment(value, optionsModule.getSetting('userDateFormat')).toDate();
                             }
                             if (!isAllowEdit) {
                                 _this._markAsNoChanged($el);

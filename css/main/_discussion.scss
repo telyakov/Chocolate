@@ -150,3 +150,11 @@ $form-height: 50px;
     overflow-y: scroll;
     overflow-x: hidden;
 }
+$error-color: #F7CDCD;
+.bubble-error{
+    background:$error-color;
+    box-shadow: 0 0 6px #E5AEAE;
+}
+.bubble-error::before{
+    background-color: $error-color;
+}

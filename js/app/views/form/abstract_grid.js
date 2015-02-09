@@ -313,7 +313,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                                     html.push(previewData[key].caption);
                                     html.push('</span>: <span>');
                                     if (previewData[key].type === 'dt') {
-                                        html.push(moment(data[key], 'MM.DD.YYYY HH:mm:ss')
+                                        html.push(moment(data[key], optionsModule.getSetting('userDateFormat'))
                                             .format(optionsModule.getSetting('signatureFormat')));
                                     } else {
                                         html.push(data[key]);

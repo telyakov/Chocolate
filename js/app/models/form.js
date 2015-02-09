@@ -593,7 +593,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 };
             },
             /**
-             * @param {Object} filterData
+             * @param {Object} [filterData]
              * @param {string} [mainSql]
              * @returns {Deferred}
              */

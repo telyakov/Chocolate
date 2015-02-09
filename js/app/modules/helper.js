@@ -468,6 +468,14 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             }
             return window.btoa(binary);
         },
+        /**
+         *
+         * @param {String} str
+         * @returns {String}
+         */
+        newLineToBr: function(str){
+            return str.replace(/\n/g, '<br/>');
+        },
         init: function () {
             _private.createJqueryElements();
         }

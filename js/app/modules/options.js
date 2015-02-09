@@ -43,6 +43,7 @@ var optionsModule = (function () {
             defaultAutoUpdateMS: 100000,
             formatDate: 'YYYY.MM.DD HH:mm:ss',
             signatureFormat: 'DD.MM.YYYY HH:mm',
+            userDateFormat: 'MM.DD.YYYY HH:mm:ss',
             emailCol: 'emails',
             titleRowHeight: 26,
             systemCols: ['lastmodifier', 'lastmodifydate', 'insdate', 'username', 'userid'],

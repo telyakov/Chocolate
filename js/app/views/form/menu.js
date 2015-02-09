@@ -74,7 +74,7 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 this.model = null;
             },
             /**
-             * @method remder
+             * @method render
              */
             render: function () {
                 var printID = helpersModule.uniqueID(),
