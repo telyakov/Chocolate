@@ -116,9 +116,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                     var model = this.getModel(),
                         _this = this;
                     if (this._hasUnsavedFiles()) {
-                        var deletedData = model.getDeletedDataFromStorage(),
-                            isEmpty = $.isEmptyObject(deletedData),
-                            ownerLock = model.getColumnsDefaultValues().ownerlock,
+                        var ownerLock = model.getColumnsDefaultValues().ownerlock,
                             asyncTasks = [],
                             fileDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
                         var i,
@@ -335,9 +333,9 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                         maxFileSize: 50000000,
                         acceptFileTypes: /(.*)$/i,
                         added: function (e, data) {
+                            var $row = data.context;
                             if (data.isValidated) {
-                                var $row = data.context,
-                                    id = helpersModule.uniqueID();
+                                var id = helpersModule.uniqueID();
                                 _this._addFile(id, data.files[0]);
                                 $row.attr('data-id', id);
                                 _this.markRowAsChanged($row);
@@ -453,7 +451,8 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                     .trigger('update');
                                 _this
                                     .clearSelectedArea()
-                                    .setRowCount(Object.keys(recordset).length);
+                                    .setRowCount(Object.keys(recordset).length)
+                                    .markAsNoChanged();
                             })
                             .fail(
                             /** @param {string} error */

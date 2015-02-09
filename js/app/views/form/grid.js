@@ -1118,7 +1118,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     $.publish(subscribeName, true);
                 });
                 $.publish(subscribeName, true);
-                this.setRowCount(Object.keys(recordset).length);
+                this
+                    .setRowCount(Object.keys(recordset).length)
+                    .markAsNoChanged();
             },
             /**
              * @desc Create Html for all Row
