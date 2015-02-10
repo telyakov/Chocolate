@@ -78,7 +78,7 @@ var ChOptions = {
         discussionForm: 'discussion-form'
     },
     urls: {
-        webSocketServer: 'http://crm.78stroy.ru',
+        webSocketServer: location.origin,
         addRow: '/grid/insertRow',
         imagesUrls: '/majestic/images',
         export2excel: '/majestic/export2excel',
