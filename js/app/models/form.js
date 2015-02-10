@@ -309,9 +309,17 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             isCanvasView: function () {
                 return this.getKey() === 'sales\\flatsgramm';
             },
+            /**
+             *
+             * @returns {boolean}
+             */
             isMapView: function () {
                 return this.getKey() === 'crm\\map';
             },
+            /**
+             *
+             * @returns {boolean}
+             */
             isAttachmentView: function () {
                 return this.getKey() === 'attachmentstasks';
             },
@@ -488,12 +496,19 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             getCaption: function () {
                 return this.getDataFormProperties().getWindowCaption();
             },
+            /**
+             *
+             * @returns {boolean}
+             */
             hasHeader: function () {
                 var dataFormProperties = this.getDataFormProperties();
                 return dataFormProperties.getHeaderText() ||
                 dataFormProperties.getHeaderImage() ||
                 dataFormProperties.getStateProc();
             },
+            /**
+             * @returns {String}
+             */
             getImage: function () {
                 return this.getDataFormProperties().getHeaderImage();
             },
@@ -503,6 +518,9 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             getStateProc: function () {
                 return this.getDataFormProperties().getStateProc();
             },
+            /**
+             * @returns {boolean}
+             */
             hasFilters: function () {
                 return this.getFiltersCollections().length !== 0 && !this.isDiscussionView();
             },
