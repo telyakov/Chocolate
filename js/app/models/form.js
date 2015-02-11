@@ -124,6 +124,10 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             getCardHeaderText: function () {
                 return this.getCardCollection().getHeader();
             },
+            /**
+             *
+             * @returns {Array}
+             */
             getPrintActions: function () {
                 if (this._printActions !== null) {
                     return this._printActions;
@@ -135,11 +139,17 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 this._printActions = printActions.getActions();
                 return this._printActions;
             },
+            /**
+             * @returns {boolean}
+             */
             isAllowAudit: function () {
                 return helpersModule.boolEval(this.getDataFormProperties().getAllowAuditButton(), false);
             },
+            /**
+             * @returns {boolean}
+             */
             isSearchColumnVisible: function () {
-                return this.getColumnsCollection().length > 10;
+                return this.getColumnsCollection().length > 10 && !this.isCanvasView() && !this.isMapView();
             },
             getCreateEmptyProc: function () {
                 return this.getDataFormProperties().getCreateEmptyProc();
@@ -285,15 +295,28 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             isAutoOpenCard: function () {
                 return helpersModule.boolEval(this.getCardCollection().getAutoOpen(), false);
             },
+            /**
+             * @returns {boolean}
+             */
             isAllowCreate: function () {
                 return helpersModule.boolEval(this.getDataFormProperties().getAllowAddNew(), false);
             },
+            /**
+             * @returns {boolean}
+             */
             isAllowSave: function () {
                 return helpersModule.boolEval(this.getDataFormProperties().getSaveButtonVisible(), false);
             },
+            /**
+             * @returns {boolean}
+             */
             isAllowRefresh: function () {
                 return helpersModule.boolEval(this.getDataFormProperties().getRefreshButtonVisible(), false);
             },
+            /**
+             *
+             * @returns {boolean}
+             */
             isAllowPrintActions: function () {
                 return this.getPrintActions().length > 0;
             },
@@ -435,6 +458,9 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 return this._agileFilters;
 
             },
+            /**
+             * @returns {ActionsPropertiesCollection}
+             */
             getActionProperties: function () {
                 if (this._actionProperties) {
                     return this._actionProperties;

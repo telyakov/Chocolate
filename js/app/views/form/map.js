@@ -4,7 +4,7 @@ var MapView = (function ($, optionsModule, deferredModule) {
         /** @lends MapView */
         {
             template: _.template('<form id="<%= id%>"></form>'),
-                /**
+            /**
              * @class MapView
              * @param {Object} options
              * @augments AbstractView

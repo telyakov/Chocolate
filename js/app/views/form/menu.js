@@ -1,21 +1,8 @@
-/**
- * Class MenuView
- * @class
- */
 var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) {
     'use strict';
     return Backbone.View.extend(
         /** @lends MenuView */
         {
-            initialize: function (options) {
-                _.bindAll(this, 'render');
-                this.$el = options.$el;
-                this.view = options.view;
-                this.model = options.view.model;
-                this._$printActionButton = null;
-                this._$actionButton = null;
-            },
-            events: {},
             template: _.template([
                 '<menu class="menu" type="toolbar">',
                 '<div class="messages-container"></div>',
@@ -62,7 +49,21 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 '</menu>'
             ].join('')),
             /**
-             * @method destroy
+             * @class MenuView
+             * @param {Object} options
+             * @augments Backbone.View
+             * @constructs
+             */
+            initialize: function (options) {
+                _.bindAll(this);
+                this.$el = options.$el;
+                this.view = options.view;
+                this.model = options.view.model;
+                this._$printActionButton = null;
+                this._$actionButton = null;
+            },
+            /**
+             * @desc destroy
              */
             destroy: function () {
                 this.undelegateEvents();
@@ -74,45 +75,52 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 this.model = null;
             },
             /**
+             * @returns {FormModel}
+             */
+            getModel: function () {
+                return this.model;
+            }, /**
              * @method render
              */
             render: function () {
                 var printID = helpersModule.uniqueID(),
-                    isAllowPrintActions = this.model.isAllowPrintActions(),
-                    isAllowAudit = this.model.isAllowAudit(),
+                    model = this.getModel(),
+                    isAllowPrintActions = model.isAllowPrintActions(),
+                    isAllowAudit = model.isAllowAudit(),
                     auditID = helpersModule.uniqueID(),
                     actionID = helpersModule.uniqueID(),
                     html = this.template({
-                        isAllowCreate: this.model.isAllowCreate(),
-                        isAllowSave: this.model.isAllowSave(),
-                        isAllowRefresh: this.model.isAllowRefresh(),
+                        isAllowCreate: model.isAllowCreate(),
+                        isAllowSave: model.isAllowSave(),
+                        isAllowRefresh: model.isAllowRefresh(),
                         isAllowPrintActions: isAllowPrintActions,
                         printID: printID,
                         isAllowAudit: isAllowAudit,
                         auditID: auditID,
                         actionID: actionID,
-                        isSearchColumnVisible: this.model.isSearchColumnVisible()
+                        isSearchColumnVisible: model.isSearchColumnVisible()
                     });
                 this.$el.append(html);
                 if (isAllowPrintActions) {
-                    this.initPrintActions(printID);
+                    this._initPrintActions(printID);
                 }
                 if (isAllowAudit) {
-                    this.systemColsInit(auditID);
+                    this._systemColsInit(auditID);
                 }
-                this.initActions(actionID);
+                this._initActions(actionID);
             },
             /**
-             * @param sysColsID {string}
+             * @param {string} sysColsID
+             * @private
              */
-            systemColsInit: function (sysColsID) {
+            _systemColsInit: function (sysColsID) {
                 var $btn = $('#' + sysColsID);
-                if (!this.view.model.isSystemColumnsMode()) {
+                if (!this.getModel().isSystemColumnsMode()) {
                     $btn.addClass(optionsModule.getClass('menuButtonSelected'));
                 }
             },
             /**
-             * @param $button {jQuery|null}
+             * @param {jQuery} $button
              * @private
              */
             _persistLinkToPrintActionButton: function ($button) {
@@ -128,11 +136,12 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 }
             },
             /**
-             * @param id {string}
+             * @param {string} id
+             * @private
              */
-            initPrintActions: function (id) {
+            _initPrintActions: function (id) {
                 var view = this.view,
-                    printActions = this.model.getPrintActions(),
+                    printActions = this.getModel().getPrintActions(),
                     $actionButton = $('#' + id);
                 this._persistLinkToPrintActionButton($actionButton);
                 $actionButton.contextmenu({
@@ -147,7 +156,7 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                             for (var i = 0; i < lng; i += 1) {
                                 idList += rows[i].attr('data-id') + ' ';
                             }
-                            url = url.replace(/\[IdList\]/g, idList);
+                            url = url.replace(/\[IdList]/g, idList);
                         }
                         window.open(url);
                     }
@@ -163,17 +172,18 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 }
             },
             /**
-             * @param $button {jQuery|null}
+             * @param {jQuery} $button
              * @private
              */
             _persistLinkToActionButton: function ($button) {
                 this._$actionButton = $button;
             },
             /**
-             * @param id {string}
+             * @param {string} id
+             * @private
              */
-            initActions: function (id) {
-                var actionsProperties = this.model.getActionProperties(),
+            _initActions: function (id) {
+                var actionsProperties = this.getModel().getActionProperties(),
                     $actionButton = $('#' + id),
                     view = this.view;
                 this._persistLinkToActionButton($actionButton);
