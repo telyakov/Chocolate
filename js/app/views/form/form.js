@@ -149,55 +149,57 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     })
             },
             /**
-             * @returns {Array|Object}
+             * @returns {Object}
              */
             getFilterData: function () {
-                var model = this.getModel();
+                var model = this.getModel(),
+                    result = {};
                 if (model.hasFilters()) {
                     var rawData = this.$el.find('.filter-form').serializeArray(),
                         value,
                         name,
-                        separator,
-                        result = [];
+                        separator = '|',
+                        _this = this;
                     var filters = model.getFiltersROCollection();
                     rawData.forEach(function (item) {
                             value = item.value;
                             name = item.name;
                             if (value) {
-                                /**
-                                 * @type FilterRO
-                                 */
-                                var filterModel = filters.findWhere({'key': name});
-                                var format = filterModel.getValueFormat();
-                                if (format === 'idlist') {
-                                    // Convert "18 19     22" to "18|20|"
-                                    var numericArray = value.split(' ');
-                                    numericArray = numericArray.filter(function (val) {
-                                        return val !== '';
-                                    });
-                                    result[name] = numericArray.join('|') + '|';
-                                } else {
-                                    if (name.slice(-2) === '[]') {
-                                        separator = '|';
-                                        name = name.slice(0, name.length - 2);
-                                    } else {
-                                        separator = '';
-                                    }
-
+                                if (_this._isMultiSelectFilter(name)) {
+                                    name = name.slice(0, name.length - 2);
                                     if (result.hasOwnProperty(name)) {
                                         result[name] += value + separator;
                                     } else {
                                         result[name] = value + separator;
                                     }
+                                } else {
+                                    /**
+                                     * @type FilterRO
+                                     */
+                                    var filterModel = filters.findWhere({'key': name}),
+                                        format = filterModel.getValueFormat();
+                                    if (format === 'idlist') {
+                                        result[name] = _this._filterFormatToIDList(value);
+                                    } else {
+                                        result[name] = value;
+                                    }
                                 }
                             }
                         }
                     )
-                    ;
-                    return result;
-                } else {
-                    return {};
                 }
+                return result;
+            },
+            _filterFormatToIDList: function(value){
+                // Convert "18 19     22" to "18|20|"
+                var numericArray = value.split(' ');
+                numericArray = numericArray.filter(function (val) {
+                    return val !== '';
+                });
+               return  numericArray.join('|') + '|'
+            },
+            _isMultiSelectFilter: function (name) {
+                return name.slice(-2) === '[]';
             },
             /**
              * @returns {String}

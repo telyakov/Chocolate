@@ -616,6 +616,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              * @returns {Deferred}
              */
             runAsyncTaskBindingReadProc: function (filterData, mainSql) {
+                console.log(filterData)
                 var data = this.getParamsForBind();
                 if (filterData) {
                     data = $.extend(data, filterData);

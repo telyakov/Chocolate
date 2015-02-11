@@ -43,7 +43,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 this.unbind();
             },
             /**
-             * @returns {string}
+             * @returns {string|undefined}
              */
             getValue: function () {
                 return this.view.getFilterData()[this.model.get('key')];
