@@ -98,6 +98,20 @@
  */
 
 /**
+ * Yandex ymaps
+ * @typedef {Object} ymaps
+ * @property {Function} Map - constructor
+ */
+
+/**
+ * Yandex Map Object
+ * @typedef {Object} ymaps.Map
+ * @property {{fitToViewport: function} container
+ * @property {string} controls
+ * @property {string} geoObjects
+ */
+
+/**
  * Object, that represented settings Columns
  * @typedef {Object} SettingsColumn
  * @property {string} key - unique column key

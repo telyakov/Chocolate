@@ -39,7 +39,8 @@ var CanvasView = (function (undefined, helpersModule, deferredModule, optionsMod
                             model.trigger('open:card', pk);
                         }
                     }
-                }
+                },
+                'click .menu-button-expand': 'changeFullScreenMode'
             },
             /**
              * @class CanvasView
@@ -52,6 +53,9 @@ var CanvasView = (function (undefined, helpersModule, deferredModule, optionsMod
                 this._canvasID = helpersModule.uniqueID();
                 AbstractView.prototype.initialize.call(this, options);
             },
+            /**
+             * @desc Destroy
+             */
             destroy: function(){
                 if(this._menuView){
                     this._menuView.destroy();

@@ -64,6 +64,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 AbstractGridView.prototype.initialize.call(this, options);
             },
             /**
+             * @desc Destroy
              * @override
              */
             destroy: function () {
@@ -135,11 +136,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             },
             /**
              *
-             * @param {RefreshDTO} opts
              * @desc Perform form refresh
              * @override
              */
-            refresh: function (opts) {
+            refresh: function () {
                 this._runAsyncRefreshFormTask();
                 var collection = this.getModel().getFiltersROCollection(this);
                 collection.each(
@@ -289,7 +289,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                             .runAsyncTaskSave(data)
                             .done(function () {
                                 cardView.destroy();
-                                //todo: ЧТо делать с карточками в которых есть изменения?
+                                //todo: Что делать с карточками в которых есть изменения?
                                 model.getAllOpenedCard().forEach(function (view) {
                                     view.destroy();
                                 });

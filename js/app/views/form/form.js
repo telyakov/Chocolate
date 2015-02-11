@@ -34,15 +34,15 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 'click .menu-button-refresh': '_refreshHandler',
                 'keydown input.filter': function (e) {
                     if (e.keyCode === optionsModule.getKeyCode('enter')) {
-                        this.model.trigger('refresh:form', {});
+                        this.getModel().trigger('refresh:form', {});
                     }
                 },
                 'click .fm-email-send': function (e) {
-                    this.model.trigger('openMailClient');
+                    this.getModel().trigger('openMailClient');
                     e.preventDefault();
                 },
                 'click .fm-wizard-task': function (e) {
-                    this.model.trigger('openWizardTask', e);
+                    this.getModel().trigger('openWizardTask', e);
                     e.preventDefault();
                 }
             },
