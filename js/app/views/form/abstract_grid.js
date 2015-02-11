@@ -324,7 +324,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
              * @param {Number} height
              * @param {Number} left
              * @param {Number} top
-             * @param {string} rel
+             * @param {string} [rel]
              * @private
              */
             _createSelectedArea: function (width, height, left, top, rel) {
@@ -532,7 +532,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
 
                 if (model.hasSettings()) {
                     var $tr = this.getThead().children('tr'),
-                        $trSorted = $('<tr/>'),
+                        $trSorted = $('<tr></tr>'),
                         controlColumn = optionsModule.getSetting('controlColumn');
 
                     settings = model.getFormSettingsFromStorage();
@@ -616,7 +616,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                     dateFormat: 'ddmmyyyy',
                     emptyTo: 'zero',
                     widgetOptions: {
-                        filter_hideEmpty: false,
+                        filter_hideEmpty: false,// jshint ignore:line
                         savePages: false
                     }
                 };

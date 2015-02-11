@@ -407,7 +407,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         this._$settings.dialog('open');
                     } else {
 
-                        var $dialog = $('<div/>', {
+                        var $dialog = $('<div></div>', {
                             html: optionsModule.getMessage('refreshForm')
                         });
                         $dialog.dialog({

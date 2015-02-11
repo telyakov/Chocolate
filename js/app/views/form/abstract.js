@@ -208,12 +208,12 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                  * @type {FormModel}
                  */
                 var model = this.getModel();
-                var $autoUpdate = $('<div/>', {
+                var $autoUpdate = $('<div></div>', {
                         'class': 'setting-item',
                         html: '<span class="setting-caption">Автоматические обновление данных(раз в 100 секунд)</span>'
                     }),
                     $input = $('<input/>', {type: 'checkbox'}),
-                    $styleSettings = $('<div/>', {
+                    $styleSettings = $('<div></div>', {
                         'class': 'setting-item',
                         html: '<span class="setting-caption">Выбрать дизайн(необходимо обновить страницу, после изменения)</span>'
                     });
@@ -224,7 +224,7 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                         optionsModule.getConstants('mobileDesignType'),
                         '">Мобильный</option>'
                     ].join(''),
-                    $styleInput = $('<select/>', {
+                    $styleInput = $('<select></select>', {
                         html: htmlStyle
                     }),
                     _this = this;
@@ -234,11 +234,11 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 $styleInput.find('[value="' + model.getFormStyleID() + '"]').attr('selected', true);
                 $styleSettings.append($styleInput);
                 $autoUpdate.append($input);
-                var $content = $('<div/>', {'class': 'grid-settings'});
+                var $content = $('<div></div>', {'class': 'grid-settings'});
                 $content
                     .append($styleSettings)
                     .append($autoUpdate);
-                var $dialog = $('<div/>');
+                var $dialog = $('<div></div>');
                 $dialog.append($content);
                 $dialog.dialog({
                     resizable: false,
@@ -422,6 +422,7 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                  * @type {FormModel}
                  */
                 var model = this.getModel(),
+                    _this = this,
                     data = $.extend(true, {}, model.getDBDataFromStorage(), model.getChangedDataFromStorage());
                 $.when.apply($, asyncTasks)
                     .done(function () {
