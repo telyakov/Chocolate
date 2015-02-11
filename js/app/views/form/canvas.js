@@ -10,37 +10,38 @@ var CanvasView = (function (undefined, helpersModule, deferredModule, optionsMod
 
         {
             template: _.template('<form data-id="<%= view %>" id="<%= id%>"></form>'),
-            events: {
-                'click canvas': function (e) {
-                    var model = this.getModel(),
-                        xPos,
-                        yPos,
-                        data = this._prepareData(model.getDBDataFromStorage()),
-                        cellHeight = this._getCellHeight(),
-                        cellWidth = this._getCellWidth(),
-                        floorWidth = this._getFloorWidth();
-                    if (e.offsetX === undefined) {
-                        // this works for Firefox
-                        var offset = $(this).offset();
-                        xPos = e.pageX - offset.left;
-                        yPos = e.pageY - offset.top;
-                    }
-                    else {
-                        // works in Google Chrome
-                        xPos = e.offsetX;
-                        yPos = e.offsetY;
-                    }
-                    if (xPos >= floorWidth) {
-                        var x = ( xPos - floorWidth) / cellWidth, y = yPos / cellHeight;
-                        x = x - (x % 1);
-                        y = y - (y % 1);
-                        if (data[y][x] !== undefined) {
-                            var pk = data[y][x].id;
-                            model.trigger('open:card', pk);
+            events: function () {
+                return _.extend({}, AbstractView.prototype.events, {
+                    'click canvas': function (e) {
+                        var model = this.getModel(),
+                            xPos,
+                            yPos,
+                            data = this._prepareData(model.getDBDataFromStorage()),
+                            cellHeight = this._getCellHeight(),
+                            cellWidth = this._getCellWidth(),
+                            floorWidth = this._getFloorWidth();
+                        if (e.offsetX === undefined) {
+                            // this works for Firefox
+                            var offset = $(this).offset();
+                            xPos = e.pageX - offset.left;
+                            yPos = e.pageY - offset.top;
+                        }
+                        else {
+                            // works in Google Chrome
+                            xPos = e.offsetX;
+                            yPos = e.offsetY;
+                        }
+                        if (xPos >= floorWidth) {
+                            var x = ( xPos - floorWidth) / cellWidth, y = yPos / cellHeight;
+                            x = x - (x % 1);
+                            y = y - (y % 1);
+                            if (data[y][x] !== undefined) {
+                                var pk = data[y][x].id;
+                                model.trigger('open:card', pk);
+                            }
                         }
                     }
-                },
-                'click .menu-button-expand': 'changeFullScreenMode'
+                });
             },
             /**
              * @class CanvasView
@@ -56,8 +57,8 @@ var CanvasView = (function (undefined, helpersModule, deferredModule, optionsMod
             /**
              * @desc Destroy
              */
-            destroy: function(){
-                if(this._menuView){
+            destroy: function () {
+                if (this._menuView) {
                     this._menuView.destroy();
                     delete this._menuView;
                 }

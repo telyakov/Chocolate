@@ -10,6 +10,13 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                     '</footer>'
                 ].join('')
             ),
+            events: {
+                'click .menu-button-settings': 'openFormSettings',
+                'click .menu-button-expand': 'changeFullScreenMode',
+                'click .menu-button-action': '_openContextMenu',
+                'click .menu-button-excel': 'exportToExcel',
+                'click .menu-button-print': '_openContextMenu'
+            },
             /**
              * @abstract
              * @class AbstractView
@@ -510,6 +517,18 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
              */
             _persistReferenceToDialogSettings: function ($settings) {
                 this._$settings = $settings;
+            },
+            /**
+             * @description Open context menu
+             * @param e {Event}
+             * @private
+             */
+            _openContextMenu: function (e) {
+                /**
+                 * @type {jQuery}
+                 */
+                var $this = $(e.target).closest('button');
+                $this.contextmenu('open', $this);
             },
             /**
              * @description Destroy previously initialized by dialog settings

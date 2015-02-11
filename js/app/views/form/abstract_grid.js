@@ -8,13 +8,13 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
     return AbstractView.extend(
         /** @lends AbstractGridView */
         {
-            events: {
-                'keydown .tablesorter': 'movingInGridByKeyboard',
-                'click tbody > tr': 'selectRowHandler',
-                'click .menu-button-expand': 'changeFullScreenMode',
-                'click .menu-button-save': '_saveHandler',
-                'click .menu-button-action': '_openContextMenu',
-                'click .menu-button-print': '_openContextMenu'
+
+            events: function () {
+                return _.extend({}, AbstractView.prototype.events, {
+                    'keydown .tablesorter': 'movingInGridByKeyboard',
+                    'click tbody > tr': 'selectRowHandler',
+                    'click .menu-button-save': '_saveHandler'
+                });
             },
             /**
              * @abstract
@@ -52,18 +52,6 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                 this._destroyFloatTheadWidget();
                 AbstractView.prototype.destroy.apply(this);
                 this.events = null;
-            },
-            /**
-             * @description Open context menu
-             * @param e {Event}
-             * @private
-             */
-            _openContextMenu: function (e) {
-                /**
-                 * @type {jQuery}
-                 */
-                var $this = $(e.target).closest('button');
-                $this.contextmenu('open', $this);
             },
             /**
              * @description Trigger FormModel save

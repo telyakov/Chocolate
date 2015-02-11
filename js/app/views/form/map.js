@@ -4,10 +4,7 @@ var MapView = (function ($, optionsModule, deferredModule) {
         /** @lends MapView */
         {
             template: _.template('<form id="<%= id%>"></form>'),
-            events: {
-                'click .menu-button-expand': 'changeFullScreenMode'
-            },
-            /**
+                /**
              * @class MapView
              * @param {Object} options
              * @augments AbstractView

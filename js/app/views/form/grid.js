@@ -36,13 +36,11 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 ].join('')
             ),
             events: function () {
-                return _.extend({}, AbstractGridView.prototype.events, {
+                return _.extend({}, AbstractGridView.prototype.events.call(this), {
                     'touchmove .card-button': '_openRowCard',
                     'dblclick .card-button': '_openRowCard',
                     'click .menu-button-add': '_addRowHandler',
                     'keydown .grid-column-search': $.debounce(200, false, this._searchColumnsHandler),
-                    'click .menu-button-excel': 'exportToExcel',
-                    'click .menu-button-settings': 'openFormSettings',
                     'click .menu-button-toggle': '_toggleSystemCols'
                 });
             },
