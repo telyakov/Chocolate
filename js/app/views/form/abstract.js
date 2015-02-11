@@ -35,7 +35,6 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 this.listenTo(model, 'open:card', this._openCard);
                 this.listenTo(model, 'openMailClient', this.openMailClient);
                 this.listenTo(model, 'openWizardTask', this.openWizardTask);
-                this.render();
             },
             /**
              * @description Destroy class

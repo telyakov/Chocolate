@@ -69,7 +69,13 @@
  * @typedef {Object} CardSaveDTO
  * @property {string} id - Row index
  */
-
+/**
+ * Object, that generated in the {FormModel} via event 'save:card'
+ * @typedef {Object} FilterLayoutDTO
+ * @property {Number} counter - ordinal number
+ * @property {String} text -  html filter
+ * @property {Function} callback - filter initialize function
+ */
 /**
  * Object, that generated in the {FormModel} via event 'change:form'
  * @typedef {Object} FormChangeDTO

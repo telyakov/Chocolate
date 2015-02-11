@@ -323,6 +323,10 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             isAttachmentView: function () {
                 return this.getKey() === 'attachmentstasks';
             },
+            /**
+             *
+             * @returns {boolean}
+             */
             isDiscussionView: function () {
                 return this.getKey() === 'directory\\discussions';
             },
@@ -333,7 +337,11 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 var parentID = this.get('parentId');
                 return parentID && !helpersModule.isNewRow(parentID);
             },
-            getFormView: function () {
+            /**
+             * @returns {String}
+             * @private
+             */
+            _getFormViewClassName: function () {
                 switch (true) {
                     case this.isMapView():
                         return MapView;
@@ -346,6 +354,20 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                     default :
                         return GridView;
                 }
+            },
+            /**
+             * @desc Create instance of AbstractView
+             * @param {jQuery} $el
+             * @param {FormView} view
+             * @returns {AbstractView}
+             */
+            makeView: function($el, view){
+                var ViewClass = this._getFormViewClassName();
+                return new ViewClass({
+                    $el: $el,
+                    model: this,
+                    view: view
+                });
             },
             /**
              *

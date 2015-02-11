@@ -1,6 +1,7 @@
 /**
  * Class FormView
  * @class
+ * @augments Backbone.View
  */
 var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
     'use strict';
@@ -49,6 +50,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
              * @class FormView
              * @param options
              * @private
+             * @augments Backbone.View
              * @constructs
              */
             initialize: function (options) {
@@ -59,7 +61,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 this._$settings = null;
                 this.model = options.model;
                 this.view = null;
-                this._panelID = helpersModule.uniqueID();
                 this.$closeLink = null;
                 if (options.card) {
                     this.card = options.card;
@@ -69,12 +70,11 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 this.$el = this._createPanel();
             },
             /**
-             * @method destroy
+             * @desc Destroy
              */
             destroy: function () {
                 this._unbindCloseEventListener();
                 this.undelegateEvents();
-                this._panelID = null;
                 this.$closeLink = null;
                 this.headerTemplate = null;
                 this.filterTemplate = null;
@@ -136,7 +136,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     ._layoutFilters($panel, asyncFiltersTask);
                 $.when(asyncFiltersTask)
                     .done(function () {
-                        _this.layoutFormSection($panel);
+                        _this._layoutFormSection($panel);
                         if (!model.isMapView()) {
                             mediator.publish(optionsModule.getChannel('reflowTab'), true);
                         }
@@ -149,6 +149,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     })
             },
             /**
+             * @desc Return data of filter form
              * @returns {Object}
              */
             getFilterData: function () {
@@ -190,35 +191,13 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 return result;
             },
             /**
-             * @returns {String}
-             */
-            getPanelID: function () {
-                return this._panelID;
-            },
-            /**
              * @param {String} id
              * @param {String} name
              * @returns {jQuery}
+             * @private
              */
-            addTab: function (id, name) {
-                var tabsModule = facade.getTabsModule(),
-                    $item = $('<li>', {
-                        html: tabsModule.createTabLink(id, name)
-                    }),
-                    $tabs = helpersModule.getTabsObj();
-                $tabs.children('ul').append($item);
-                $tabs.tabs();
-                $tabs.tabs('refresh');
-                tabsModule.push($item);
-                return $item;
-            },
-            /**
-             * @param {String} id
-             * @param {String} name
-             * @returns {jQuery}
-             */
-            addTabAndSetActive: function (id, name) {
-                var $item = this.addTab(id, name);
+            _addTabAndSetActive: function (id, name) {
+                var $item = this._addTab(id, name);
                 helpersModule.getTabsObj().tabs({active: $item.index()});
                 return $item;
             },
@@ -230,12 +209,12 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 if (this.$card) {
                     return this.$card;
                 }
-                var id = this.getPanelID(),
+                var id = helpersModule.uniqueID(),
                     $panel = $('<div>', {
                         id: id
                     });
                 $('#tabs').append($panel);
-                var $closeLink = this.addTabAndSetActive(id, this.getModel().getCaption());
+                var $closeLink = this._addTabAndSetActive(id, this.getModel().getCaption());
                 this._bindCloseEventListener($closeLink);
                 return $panel;
 
@@ -245,7 +224,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
              * @private
              */
             _bindCloseEventListener: function ($closeLink) {
-                this.$closeLink = $closeLink;
+                this._persistReferenceToCloseLink($closeLink);
                 var _this = this,
                     tabsModule = facade.getTabsModule();
                 this.$closeLink
@@ -259,6 +238,15 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         tabsModule.close($(this));
                         return false;
                     });
+            },
+
+            /**
+             * @description Persist reference to created AbstractView. To prevent leak memory.
+             * @param {jQuery} $element
+             * @private
+             */
+            _persistReferenceToCloseLink: function ($element) {
+                this.$closeLink = $element;
             },
             /**
              * @desc unbind close event listener
@@ -310,16 +298,15 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     }
                 }
                 return this;
-
             },
             /**
              *
              * @param {jQuery}  $panel
-             * @param {Deferred} panelDefer
+             * @param {Deferred} asyncTask
              * @returns {*}
              * @private
              */
-            _layoutFilters: function ($panel, panelDefer) {
+            _layoutFilters: function ($panel, asyncTask) {
                 var _this = this,
                     model = _this.getModel();
                 if (model.hasFilters()) {
@@ -334,43 +321,50 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         ROCollections = model.getFiltersROCollection(this, $filterSection),
                         length = ROCollections.length,
                         asyncTaskCompleted = 0;
-                    $.subscribe(event, function (e, data) {
-                        html[data.counter] = data.text;
-                        if (data.callback) {
-                            callbacks.push(data.callback);
-                        }
-                        asyncTaskCompleted += 1;
-                        if (asyncTaskCompleted === length) {
-                            $.unsubscribe(event);
-                            $filterSection.append(
-                                _this.filterTemplate({
-                                    html: '<div><ul class="filters-list">' + html.join('') + '</div></ul></div>',
-                                    formID: helpersModule.uniqueID()
-                                })
-                            );
-                            callbacks.forEach(function (fn) {
-                                fn();
-                            });
-                            panelDefer.resolve();
+                    $.subscribe(event,
+                        /**
+                         * @param {Event} e
+                         * @param {FilterLayoutDTO} data
+                         */
+                            function (e, data) {
+                            html[data.counter] = data.text;
+                            if (data.callback) {
+                                callbacks.push(data.callback);
+                            }
+                            asyncTaskCompleted += 1;
+                            if (asyncTaskCompleted === length) {
+                                $.unsubscribe(event);
+                                $filterSection.append(
+                                    _this.filterTemplate({
+                                        html: '<div><ul class="filters-list">' + html.join('') + '</div></ul></div>',
+                                        formID: helpersModule.uniqueID()
+                                    })
+                                );
+                                callbacks.forEach(function (fn) {
+                                    fn();
+                                });
+                                asyncTask.resolve();
 
-                        }
-                    });
+                            }
+                        });
                     ROCollections.each(function (item, i) {
                         item.render(event, i, ROCollections);
                     });
 
                 } else {
-                    panelDefer.resolve();
+                    asyncTask.resolve();
                 }
                 return this;
 
             },
             /**
-             * @param $panel {jQuery}
+             * @param {jQuery} $panel
+             * @private
              */
-            layoutFormSection: function ($panel) {
-                var $formSection;
-                if (this.model.isDiscussionView()) {
+            _layoutFormSection: function ($panel) {
+                var model = this.getModel(),
+                    $formSection;
+                if (model.isDiscussionView()) {
                     if (this.getCard()) {
                         $formSection = $panel;
                     } else {
@@ -385,14 +379,18 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     $panel.append($formSection);
                 }
 
-                var ViewClass = this.model.getFormView(),
-                    view = new ViewClass({
-                        $el: $formSection,
-                        model: this.model,
-                        view: this
-                    });
-                this.view = view;
+                var view = model.makeView($formSection, this);
+                view.render();
+                this._persistReferenceToAbstractView(view);
 
+            },
+            /**
+             * @description Persist reference to created AbstractView. To prevent leak memory.
+             * @param {AbstractView} view
+             * @private
+             */
+            _persistReferenceToAbstractView: function (view) {
+                this.view = view;
             },
             /**
              * @description Persist reference to initialized settings dialog. To prevent leak memory.
@@ -477,8 +475,25 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 });
                 e.stopImmediatePropagation();
 
+            },
+            /**
+             * @param {String} id
+             * @param {String} name
+             * @returns {jQuery}
+             * @private
+             */
+            _addTab: function (id, name) {
+                var tabsModule = facade.getTabsModule(),
+                    $item = $('<li>', {
+                        html: tabsModule.createTabLink(id, name)
+                    }),
+                    $tabs = helpersModule.getTabsObj();
+                $tabs.children('ul').append($item);
+                $tabs.tabs();
+                $tabs.tabs('refresh');
+                tabsModule.push($item);
+                return $item;
             }
         })
-        ;
 })
 (Backbone, jQuery, optionsModule, mediator, helpersModule);
