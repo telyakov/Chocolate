@@ -10,7 +10,7 @@ var TextFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
         {
             template: _.template([
                 '<% if (isNextRow) { %> </div><div class="filter-row"><% } %>',
-                '<li class="filter-item" data-format="<%= valueFormat %>" id="<%= containerID %>">',
+                '<li class="filter-item" id="<%= containerID %>">',
                 '<% if (disabled) { %> <div class="filter-mock-no-edit"></div>  <% } %>',
                 '<div class="text-filter" title="<%= tooltip %>">',
                 '<label for="<%= id %>"><%= caption %></label>',
@@ -58,7 +58,7 @@ var TextFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                             disabled: isDisabled,
                             isNextRow: isNextRow,
                             value: model.getValue(),
-                            valueFormat: model.getValueFormat(),
+                            //valueFormat: model.getValueFormat(),
                             containerID: _this.id
                         });
                     }

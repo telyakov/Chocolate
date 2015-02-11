@@ -62,6 +62,9 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             getDefaultValue: function () {
                 return this.get('filter').getDefaultValue();
             },
+            /**
+             * @returns {String}
+             */
             getValueFormat: function () {
                 return this.get('filter').getValueFormat();
             },

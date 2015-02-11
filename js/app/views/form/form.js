@@ -59,7 +59,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 this._$settings = null;
                 this.model = options.model;
                 this.view = null;
-                this._panelID = null;
+                this._panelID = helpersModule.uniqueID();
                 this.$closeLink = null;
                 if (options.card) {
                     this.card = options.card;
@@ -74,7 +74,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             destroy: function () {
                 this._unbindCloseEventListener();
                 this.undelegateEvents();
-                this._panelID = helpersModule.uniqueID();
+                this._panelID = null;
                 this.$closeLink = null;
                 this.headerTemplate = null;
                 this.filterTemplate = null;
@@ -122,7 +122,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 var $panel = this.$el,
                     _this = this,
                     model = this.getModel(),
-                    asyncTask = $.Deferred();
+                    asyncFiltersTask = $.Deferred();
                 if (model.isAttachmentView()) {
                     var $section = $('<section>', {
                         'class': 'attachment-grid',
@@ -133,60 +133,68 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 }
                 this
                     ._layoutHeader($panel)
-                    ._layoutFilters($panel, asyncTask);
-                $.when(asyncTask)
+                    ._layoutFilters($panel, asyncFiltersTask);
+                $.when(asyncFiltersTask)
                     .done(function () {
                         _this.layoutFormSection($panel);
                         if (!model.isMapView()) {
                             mediator.publish(optionsModule.getChannel('reflowTab'), true);
                         }
 
-                    });
+                    })
+                    .fail(
+                    /** @param {string} error */
+                        function (error) {
+                        $panel.append(error);
+                    })
             },
             /**
              * @returns {Array|Object}
              */
             getFilterData: function () {
-                if (this.getModel().hasFilters()) {
+                var model = this.getModel();
+                if (model.hasFilters()) {
                     var rawData = this.$el.find('.filter-form').serializeArray(),
                         value,
                         name,
                         separator,
                         result = [];
+                    var filters = model.getFiltersROCollection();
                     rawData.forEach(function (item) {
-                        value = item.value;
-                        name = item.name;
-                        if (value) {
-                            if (name.slice(-2) === '[]') {
-                                separator = '|';
-                                name = name.slice(0, name.length - 2);
-                            } else {
-                                separator = '';
-                            }
+                            value = item.value;
+                            name = item.name;
+                            if (value) {
+                                /**
+                                 * @type FilterRO
+                                 */
+                                var filterModel = filters.findWhere({'key': name});
+                                var format = filterModel.getValueFormat();
+                                if (format === 'idlist') {
+                                    // Convert "18 19     22" to "18|20|"
+                                    var numericArray = value.split(' ');
+                                    numericArray = numericArray.filter(function (val) {
+                                        return val !== '';
+                                    });
+                                    result[name] = numericArray.join('|') + '|';
+                                } else {
+                                    if (name.slice(-2) === '[]') {
+                                        separator = '|';
+                                        name = name.slice(0, name.length - 2);
+                                    } else {
+                                        separator = '';
+                                    }
 
-                            if (result.hasOwnProperty(name)) {
-                                result[name] += value + separator;
-                            } else {
-                                result[name] = value + separator;
+                                    if (result.hasOwnProperty(name)) {
+                                        result[name] += value + separator;
+                                    } else {
+                                        result[name] = value + separator;
+                                    }
+                                }
                             }
                         }
-                    });
+                    )
+                    ;
                     return result;
-                    //todo: support idlist
-
-                    //        if (value != '') {
-                    //            if (_this.$form.find('[name="' + name + '"]').closest('li').attr('data-format') == 'idlist') {
-                    //                // Convert "18 19     22" to "18|20|"
-                    //                var numericArray = value.split(' ');
-                    //                numericArray = numericArray.filter(function (val) {
-                    //                    return val !== '';
-                    //                });
-                    //                result[name] = numericArray.join('|') + '|';
-                    //            } else {
-                    //                result[name] = value;
-                    //            }
-                    //        }
-
                 } else {
                     return {};
                 }
@@ -480,5 +488,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 e.stopImmediatePropagation();
 
             }
-        });
-})(Backbone, jQuery, optionsModule, mediator, helpersModule);
+        })
+        ;
+})
+(Backbone, jQuery, optionsModule, mediator, helpersModule);
