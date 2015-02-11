@@ -789,13 +789,16 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 });
             },
             /**
-             * @returns {Object}
+             * @returns {Array}
              */
             getFormSettingsFromStorage: function () {
                 var settings = storageModule.getSettings(),
                     key = this.getView();
                 if (!settings.hasOwnProperty(key)) {
-                    settings[key] = {};
+                    settings[key] = [];
+                }
+                if($.isEmptyObject(settings[key])){
+                    settings[key] = [];
                 }
                 return settings[key];
             },

@@ -363,7 +363,6 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                     settings = model.getFormSettingsFromStorage(),
                     collection = model.getColumnsROCollection(),
                     asyncTasks = [];
-
                 settings.forEach(function (item) {
                     var key = item.key,
                         _this = this;
