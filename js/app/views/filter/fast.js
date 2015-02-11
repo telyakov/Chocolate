@@ -46,12 +46,13 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
              * @returns {string|undefined}
              */
             getValue: function () {
-                return this.view.getFilterData()[this.model.get('key')];
+                return this.model.get('value');
             },
             /**
              * @returns {Deferred}
              */
             deferVisibleValue: function () {
+                //tasks for tops
                 var defer = deferredModule.create(),
                     values = this.getValue().split('|');
                 this.model.startAsyncTaskGetData()
@@ -84,14 +85,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                     visibleId = deferredModule.save(visibleDf),
                     nextRowId = deferredModule.save(nextRowDf);
                 var changeHandler = model.getEventChange();
-                var selector = '#' +_this.id + ' input';
-                this.$el.on('change', selector, function (e) {
-                    var val = _this.getValue();
-                    if (changeHandler) {
-                        helpersModule.scriptExpressionEval(changeHandler, val, _this);
-                    }
-                    model.trigger('change:value', val);
-                });
+                var selector = '#' + _this.id + ' input';
 
                 model.isVisibleEval(visibleId);
                 model.isNextRowEval(nextRowId);
@@ -124,6 +118,25 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                             data: prepareData,
                             containerID: _this.id
                         });
+                        _this.$el.on('change', selector, function (e) {
+                            var val = $(e.target).val();
+                            var newVal;
+                            if (isMultiSelect) {
+
+                                var prevValue = model.get('value');
+                                if (prevValue === null) {
+                                    prevValue = '';
+                                }
+                                newVal = prevValue + val + '|';
+                            } else {
+                                newVal = val;
+                            }
+                            model.set('value', newVal);
+                            if (changeHandler) {
+                                helpersModule.scriptExpressionEval(changeHandler, newVal, _this);
+                            }
+                            model.trigger('refresh:model', newVal);
+                        });
                     }
                     var parentFilter = model.getProperties().get('parentFilter');
 
@@ -133,7 +146,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                             key: parentFilter
                         });
 
-                        _this.listenTo(parentModel, 'change:value', function (value) {
+                        _this.listenTo(parentModel, 'refresh:model', function (value) {
                                 if (value) {
                                     var refreshDf = deferredModule.create(),
                                         refreshDeferId = deferredModule.save(refreshDf),

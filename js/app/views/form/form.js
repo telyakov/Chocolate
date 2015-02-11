@@ -157,16 +157,15 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 if (model.hasFilters()) {
                     var rawData = this.$el.find('.filter-form').serializeArray(),
                         value,
-                        name,
-                        separator = '|',
-                        _this = this;
+                        name;
                     var filters = model.getFiltersROCollection();
                     rawData.forEach(function (item) {
                             value = item.value;
                             name = item.name;
                             if (value) {
-                                if (_this._isMultiSelectFilter(name)) {
+                                if (helpersModule.isMultiSelectFilter(name)) {
                                     name = name.slice(0, name.length - 2);
+                                    var separator = '|';
                                     if (result.hasOwnProperty(name)) {
                                         result[name] += value + separator;
                                     } else {
@@ -179,7 +178,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                                     var filterModel = filters.findWhere({'key': name}),
                                         format = filterModel.getValueFormat();
                                     if (format === 'idlist') {
-                                        result[name] = _this._filterFormatToIDList(value);
+                                        result[name] = helpersModule.filterValueFormatToIDList(value);
                                     } else {
                                         result[name] = value;
                                     }
@@ -189,17 +188,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     )
                 }
                 return result;
-            },
-            _filterFormatToIDList: function(value){
-                // Convert "18 19     22" to "18|20|"
-                var numericArray = value.split(' ');
-                numericArray = numericArray.filter(function (val) {
-                    return val !== '';
-                });
-               return  numericArray.join('|') + '|'
-            },
-            _isMultiSelectFilter: function (name) {
-                return name.slice(-2) === '[]';
             },
             /**
              * @returns {String}

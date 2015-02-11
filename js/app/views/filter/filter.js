@@ -8,7 +8,7 @@ var FilterView = (function (Backbone, $) {
         /** @lends FilterView */
         {
             /**
-             * @private
+             * @constructs
              */
             initialize: function (options) {
                 _.bindAll(this, 'render');

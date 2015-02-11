@@ -476,6 +476,27 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         newLineToBr: function(str){
             return str.replace(/\n/g, '<br/>');
         },
+        /**
+         * @desc Convert "18 19     22" to "18|20|"
+         * @param {String} value
+         * @returns {string}
+         */
+        filterValueFormatToIDList: function(value){
+            // Convert "18 19     22" to "18|20|"
+            var numericArray = value.split(' ');
+            numericArray = numericArray.filter(function (val) {
+                return val !== '';
+            });
+            return  numericArray.join('|') + '|'
+        },
+        /**
+         *
+         * @param {String} name
+         * @returns {boolean}
+         */
+        isMultiSelectFilter: function (name) {
+            return name.slice(-2) === '[]';
+        },
         init: function () {
             _private.createJqueryElements();
         }
