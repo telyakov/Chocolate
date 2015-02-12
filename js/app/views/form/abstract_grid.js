@@ -306,7 +306,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                                     } else {
                                         html.push(data[key]);
                                     }
-                                    html.push('</span><span class="footer-separator"></span>');
+                                    html.push('</span>');
                                 }
                             }
                             _this.$('.footer-info').html(html.join(''));
