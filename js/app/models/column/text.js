@@ -99,6 +99,8 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                                         data: data
                                     });
                                 });
+                        }else{
+                            options.disabled = true;
                         }
                         $this
                             .on('init', function textInit() {
