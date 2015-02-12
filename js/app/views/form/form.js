@@ -229,7 +229,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     tabsModule = facade.getTabsModule();
                 this.$closeLink
                     .on('click', '.tab-closed', function (e, data) {
-                        if(data && data.isFastClose && _this.getView() && _this.getView().hasChange()){
+                        if(data && data.isFastClose){
                             return false;
                         }else{
                             _this.destroy();
