@@ -2,7 +2,7 @@
     "require": {
         "php": ">=5.5.4",
         "rmk135/Rmk-Framework": "*",
-        "yiisoft/yii": ">=1.1.15"
+        "yiisoft/yii": ">=1.1.16"
     },
     "require-dev": {
         "nusphere/nusoap": "0.9.5",

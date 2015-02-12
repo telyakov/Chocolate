@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5160fd0a5b39e93a773b8c0d55180bb3",
+    "hash": "d4c5880e4ee71e72d2fa3da24d5e81e0",
     "packages": [
         {
             "name": "rmk135/Rmk-Framework",

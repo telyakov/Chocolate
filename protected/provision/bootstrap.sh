@@ -132,6 +132,7 @@ sudo gem install sass
 cd /vagrant/protected
 sudo npm install --production
 /opt/php-5.6.0/bin/php /usr/local/bin/composer install --no-dev
+/opt/php-5.6.0/bin/php /usr/local/bin/composer dumpautoload -o --no-dev
 
 
 #Install dependencies nodejs for grunt
