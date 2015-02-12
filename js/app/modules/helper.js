@@ -17,7 +17,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             this.$window = $(window);
             this.$tabs = $('#tabs');
             this.$header = $('#header');
-            this.$footer = $('#footer');
+            //this.$footer = $('#footer');
             this.$content = $('#content');
             this.$page = $('#pagewrap');
         },

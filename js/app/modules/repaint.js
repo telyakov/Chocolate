@@ -9,8 +9,7 @@ var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math,
                 var $tabs = helpersModule.getTabsObj(),
                     windowsHgh = helpersModule.getWindowObj().height(),
                     headerHgh = helpersModule.getHeaderObj().height(),
-                    footerHgh = helpersModule.getFooterObj().height(),
-                    pageHgh = windowsHgh - headerHgh - footerHgh;
+                    pageHgh = windowsHgh - headerHgh -1;
                 $(helpersModule.getPageObj(), helpersModule.getContentObj(), $tabs).height(pageHgh);
                 var $tabItems = $tabs.children('ul').eq(0),
                     pagePaddingHgh = $context.outerHeight() - $context.height(),

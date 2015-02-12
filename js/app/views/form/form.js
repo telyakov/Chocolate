@@ -228,10 +228,14 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 var _this = this,
                     tabsModule = facade.getTabsModule();
                 this.$closeLink
-                    .on('click', '.tab-closed', function () {
-                        _this.destroy();
-                        tabsModule.close($(this));
-                        return false;
+                    .on('click', '.tab-closed', function (e, data) {
+                        if(data && data.isFastClose && _this.getView() && _this.getView().hasChange()){
+                            return false;
+                        }else{
+                            _this.destroy();
+                            tabsModule.close($(this));
+                            return false;                        }
+
                     })
                     .on('touchmove', function () {
                         _this.destroy();
@@ -417,7 +421,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                             height: 140,
                             modal: true,
                             buttons: {
-                                'Да': function () {
+                                'Сохранить': function () {
                                     $(this).dialog('close');
                                     model.trigger('save:form', {
                                         refresh: true

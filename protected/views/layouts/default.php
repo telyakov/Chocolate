@@ -24,9 +24,8 @@
         <div id="content">
             <? echo $content; ?>
         </div>
+    <div id="message"></div>
     </div>
-    <footer id="footer">
-    </footer>
     </body>
     </html>
 <?

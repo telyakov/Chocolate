@@ -65,11 +65,14 @@ var storageModule = (function (undefined) {
         _private = {
             init: function () {
                 storage.session = {};
-                if (typeof storage.local.settings === 'undefined') {
+                if (storage.local.settings === undefined) {
                     storage.local.settings = {};
                 }
-                if (typeof storage.local.grid_settings === 'undefined') {
+                if (storage.local.grid_settings === undefined) {
                     storage.local.grid_settings = {};
+                }
+                if (storage.local.appSettings === undefined) {
+                    storage.local.appSettings = {};
                 }
             },
             getSession: function () {
@@ -127,35 +130,54 @@ var storageModule = (function (undefined) {
             persistColumnsSettings: function (key, obj) {
                 this.getColumnsSettings()[key] = obj;
             },
-            getSettings: function(){
+            getSettings: function () {
                 return _private.getLocal().grid_settings;
             },
-            getSettingByKey: function(key, attr){
+            getSettingByKey: function (key, attr) {
                 var data = _private.getSettings()[key];
-                if(data === undefined){
+                if (data === undefined) {
                     return undefined;
                 }
                 return data[attr];
             },
-            persistSetting: function(key, attr, val){
-               _private.getSettings()[key][attr] = val;
+            persistSetting: function (key, attr, val) {
+                _private.getSettings()[key][attr] = val;
+            },
+            getApplicationSettings: function () {
+                return _private.getLocal().appSettings;
+            },
+            /**
+             *
+             * @param {String} key
+             * @returns {String|undefined}
+             */
+            getApplicationSettingByKey: function (key) {
+                return _private.getApplicationSettings()[key];
+            },
+            /**
+             *
+             * @param {String} key
+             * @param {String} value
+             */
+            persistApplicationSetting: function (key, value) {
+                _private.getApplicationSettings()[key] = value;
             }
         };
     _private.init();
     return {
-        persistColumnsSettings: function(key, obj){
+        persistColumnsSettings: function (key, obj) {
             _private.persistColumnsSettings(key, obj);
         },
-        persistSetting: function(key, attr, val){
+        persistSetting: function (key, attr, val) {
             _private.persistSetting(key, attr, val);
         },
         getSettings: function () {
             return _private.getColumnsSettings();
         },
-        hasSetting: function(key, attr){
+        hasSetting: function (key, attr) {
             return !!_private.getSettingByKey(key, attr);
         },
-        getSettingByKey: function(key, attr){
+        getSettingByKey: function (key, attr) {
             return _private.getSettingByKey(key, attr);
         },
         hasSession: function (key) {
@@ -165,8 +187,8 @@ var storageModule = (function (undefined) {
         addToSession: function (key, obj) {
             _private.addToSession(key, obj);
         },
-        removeFromSession: function(key){
-          delete this.getSession()[key];
+        removeFromSession: function (key) {
+            delete this.getSession()[key];
         },
         getSession: function (id) {
             if (id === undefined) {
@@ -204,6 +226,17 @@ var storageModule = (function (undefined) {
         },
         saveRoles: function (roles) {
             return _private.saveRoles(roles);
+        },
+        getApplicationSettingByKey: function (key) {
+            return _private.getApplicationSettingByKey(key);
+        },
+        /**
+         *
+         * @param {String} key
+         * @param {String} value
+         */
+        persistApplicationSetting: function (key, value) {
+            _private.persistApplicationSetting(key, value);
         }
     };
 })(undefined);

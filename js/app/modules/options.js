@@ -16,7 +16,8 @@ var optionsModule = (function () {
             tasksForTopsXml: 'tasksfortops.xml',
             userSettingsXml: 'UserSettings.xml',
             standardDesignType: '1',
-            mobileDesignType: '2'
+            mobileDesignType: '2',
+            topsIdList: [1472, 87, 1473, 1705, 1471, 1330, 1130, 1, 50, 326, 1087, 33, 186, 13, 1292, 1390, 337, 1470, 1474]
 
         },
         channels = {

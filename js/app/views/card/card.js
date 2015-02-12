@@ -275,8 +275,12 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             _addCloseCardEventListener: function () {
                 var _this = this;
                 this.$li
-                    .on('click', '.tab-closed', function () {
-                        return _this._cancel();
+                    .on('click', '.tab-closed', function (e, data) {
+                        if(data && data.isFastClose && _this.isChanged()){
+                            return false;
+                        }else{
+                            return _this._cancel();
+                        }
                     })
                     .on('touchmove', function () {
                         return _this._cancel();

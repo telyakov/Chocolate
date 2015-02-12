@@ -745,9 +745,9 @@
 /*.fa-money:before {*/
     /*content: "\f0d6";*/
 /*}*/
-/*.fa-caret-down:before {*/
-    /*content: "\f0d7";*/
-/*}*/
+.fa-caret-down:before {
+    content: "\f0d7";
+}
 /*.fa-caret-up:before {*/
     /*content: "\f0d8";*/
 /*}*/

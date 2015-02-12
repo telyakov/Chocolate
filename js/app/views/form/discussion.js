@@ -57,7 +57,6 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
                             /** @param {RecordsetDTO} res */
                                 function (res) {
                                 _this._layout(res.data, res.order);
-                                _this._showError('<div>sem</div>');
                             })
                             .fail(_this._showError);
                     })

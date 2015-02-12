@@ -98,7 +98,6 @@ module.exports = function (grunt) {
                     '../js/app/views/app/app.js',
                     '../js/app/views/dynatree/*.js',
                     '../js/app/views/card/*.js',
-                    '../js/app/modules/nav_bar.js',
                     '../js/app/settings.js',
                     '../js/app/modules/facade.js' //latest loading module
 

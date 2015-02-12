@@ -125,21 +125,23 @@ $icon-menu-def-color: #5f6f81;
     background: white;
     display: block;
 }
+
 .tab-menu-link{
     display: block;
     height: 20px;
     width: 30px;
     padding: 3px;
 }
+
 .tab-menu-link::before{
     display: inline-block;
     margin-left: 12px;
 }
+
 .tab-menu-link::before{
     content: "\f142";
     font-family: 'FontAwesome';
     font-size: 18px;
-
 }
 
 $icon-menu-active-color: #0274bd;
@@ -154,4 +156,15 @@ $icon-menu-active-color: #0274bd;
 
 .gn-icon-menu.gn-selected::before {
     @include background-icon-menu(#dbeeff, $icon-menu-active-color);
+}
+.ch-app-profile{
+    position: fixed;
+    top: 0;
+    right: 11px;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 10px;
+}
+.ch-app-profile .fa-caret-down{
+    margin-left: 7px;
 }

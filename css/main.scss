@@ -8,9 +8,9 @@
 @import "main/navbar";
 @import "main/fm";
 @import "main/discussion";
-@import "main/no_internet";
 @import "main/modal_elements";
 @import "main/wizard";
+@import "main/log";
 @font-face {
     font-family: 'prod-icon';
     src: url("../css/fonts/icon.eot");
@@ -95,10 +95,6 @@ body {
     width: 200px;
     float: left;
     background-color: #f1f6ef;
-}
-
-#footer {
-    clear: both;
 }
 
 .icon-trash, .icon-refresh, .icon-plus-sign {
@@ -1079,8 +1075,13 @@ input:focus, textarea:focus, keygen:focus, select:focus {
     border-radius: 0 !important;
 }
 
-.select2-highlighted, .ui-state-focus, .dropdown-menu a:hover, .menu-root:hover, .gn-trigger:hover, .gn-selected,
-.tab-menu-link:hover{
+.select2-highlighted, .ui-state-focus, .dropdown-menu a:hover, .menu-root:hover,
+.gn-trigger:hover,
+.gn-selected,
+.tab-menu-link:hover,
+.ch-app-profile:hover
+{
+    cursor: pointer;
     background: #dbeeff !important;
     outline: 1px solid #81a4d0 !important;
     text-shadow: none !important;
@@ -1715,6 +1716,7 @@ Navigations
 .fa-wrench,
 .fa-question,
 .fa-expand,
+.fa-caret-down,
 .fa-eye{
     font-family: FontAwesome;
     font-style: normal;
@@ -1849,31 +1851,6 @@ menu .fileinput-button {
     width: auto;
 }
 
-
-
-#footer {
-    position: fixed;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 1030;
-    margin-bottom: 0;
-    height: 30px;
-    div {
-        &.navbar-fixed-bottom {
-            height: 30px;
-            div.navbar-inner {
-                height: 30px;
-            }
-        }
-        &.nav-collapse {
-            height: 30px;
-        }
-        &.container-fluid {
-            display: flex;
-        }
-    }
-}
 ul.ui-tabs-nav {
     padding: 0 !important;
     border-radius: 0 !important;
@@ -1954,7 +1931,7 @@ ul.ui-tabs-nav {
 }
 
 @media print {
-    .section-filters, .menu, #footer, .ui-tabs-nav, .ui-helper-hidden, .card-action-button {
+    .section-filters, .menu,  .ui-tabs-nav, .ui-helper-hidden, .card-action-button {
         display: none !important;
     }
     .card-input {
