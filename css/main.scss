@@ -831,10 +831,6 @@ span.required {
     display: block;
 }
 
-/*.ui-resizable-e{*/
-/*width: 8px;*/
-/*}*/
-
 .datepicker-dropdown {
     z-index: 1001 !important;
 }
@@ -896,22 +892,15 @@ span.checkbox {
     a {
         &:visited, &:active {
             color: #c49f70 !important;
-            /*font-weight: 600;*/
         }
         color: #c49f70 !important;
-        /*font-weight: 600;*/
     }
 }
 
 .left-header {
-    width: 5%;
+    width: 70px;
     float: left;
     margin-top: 10px;
-}
-
-.right-header, .bottom-header, .card-bottom-header {
-    width: 95%;
-    margin-left: 5%;
 }
 
 /*
@@ -939,7 +928,6 @@ span.checkbox {
     }
     width: 100%;
     min-height: 20px;
-    /*margin-bottom: 5px;*/
 }
 
 .checkbox-filter {
@@ -950,10 +938,6 @@ span.checkbox {
 .section-filters select {
     line-height: 20px;
     cursor: default;
-    /*webkit-appearance:none;*/
-    /*appearance:none;*/
-    /*text-indent: 1px;*/
-    /*text-overflow: '';*/
 }
 input:focus, textarea:focus, keygen:focus, select:focus {
     outline-offset: 0;
@@ -962,19 +946,16 @@ input:focus, textarea:focus, keygen:focus, select:focus {
 .toggle-button, .filter {
     border: 1px solid #99bce8 !important;
     outline: 0;
-    /*border: none!important;*/
     border-radius: 2px;
 }
 
 .filter-date {
     border: 1px solid #99bce8 !important;
     outline: 0;
-    /*border: none!important;*/
     border-radius: 2px;
     &:focus {
         border: 1px solid #99bce8 !important;
         outline: 0;
-        /*border: none!important;*/
         border-radius: 2px;
     }
 }
@@ -982,11 +963,8 @@ input:focus, textarea:focus, keygen:focus, select:focus {
 .tree-container select {
     border: 1px solid #99bce8 !important;
     outline: 0;
-    /*border: none!important;*/
     border-radius: 2px;
 }
-
-
 
 .filter-date {
     padding: 4px !important;

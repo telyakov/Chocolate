@@ -11,9 +11,11 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             headerTemplate: _.template([
                 '<section class="section-header" data-id="header">',
                 '<div class="top-header">',
+                '<% if (image) { %>',
                 '<div class="left-header">',
                 '<%= image %>',
                 '</div>',
+                '<% }%>',
                 '<div class="right-header">',
                 '<%= title %>',
                 '</div>',
