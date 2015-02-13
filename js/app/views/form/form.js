@@ -31,22 +31,24 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 '</form>',
                 '</div>'
             ].join('')),
-            events: {
-                'click .grid-button .editable': '_openChildForm',
-                'click .menu-button-refresh': '_refreshHandler',
-                'keydown input.filter': function (e) {
-                    if (e.keyCode === optionsModule.getKeyCode('enter')) {
-                        this.getModel().trigger('refresh:form', {});
-                    }
-                },
-                'click .fm-email-send': function (e) {
-                    this.getModel().trigger('openMailClient');
-                    e.preventDefault();
-                },
-                'click .fm-wizard-task': function (e) {
-                    this.getModel().trigger('openWizardTask', e);
-                    e.preventDefault();
-                }
+            events: function(){
+              return {
+                  'click .grid-button .editable': '_openChildForm',
+                  'click .menu-button-refresh': $.debounce(1000, true, this._refreshHandler),
+                  'keydown input.filter': function (e) {
+                      if (e.keyCode === optionsModule.getKeyCode('enter')) {
+                          this.getModel().trigger('refresh:form', {});
+                      }
+                  },
+                  'click .fm-email-send': function (e) {
+                      this.getModel().trigger('openMailClient');
+                      e.preventDefault();
+                  },
+                  'click .fm-wizard-task': function (e) {
+                      this.getModel().trigger('openWizardTask', e);
+                      e.preventDefault();
+                  }
+              };
             },
             /**
              * @class FormView
@@ -407,6 +409,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 this._$settings = $settings;
             },
             _refreshHandler: function (e) {
+                console.log('refresh')
                 var model = this.getModel();
                 if (this.getView().hasChange()) {
                     if (this._$settings) {

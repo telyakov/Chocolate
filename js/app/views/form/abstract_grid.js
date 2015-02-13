@@ -13,7 +13,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                 return _.extend({}, AbstractView.prototype.events, {
                     'keydown .tablesorter': 'movingInGridByKeyboard',
                     'click tbody > tr': 'selectRowHandler',
-                    'click .menu-button-save': '_saveHandler'
+                    'click .menu-button-save':$.debounce(500, true, this._saveHandler)
                 });
             },
             /**
