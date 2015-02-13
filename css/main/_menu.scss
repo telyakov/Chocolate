@@ -10,6 +10,8 @@
     background: #FDFD6E!important;
 }
 .grid-column-search{
+    box-sizing: border-box;
+    margin-left: 3px;
    border: 1px solid #D0DBE3 !important;
     &:focus{
         outline: none;
@@ -32,16 +34,13 @@ $blue-color: #0072c6;
     display: inline-block;
     padding: 0;
     border: 1px solid #ddd;
-    font-size: 12px !important;
     height: 19px;
     width: 95px;
     background: transparent;
     line-height: 18px;
-    top: 50% !important;
-    margin-top: -23px;
     position: relative;
     box-sizing: content-box;
-    float: none !important;
+    float: none;
     vertical-align: bottom;
     cursor: default;
     color: #8c8c8c;
