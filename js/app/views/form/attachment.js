@@ -418,6 +418,8 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
              * @private
              */
             _makeRefresh: function (isApplyJs, opts) {
+                this.clearSelectedArea();
+                helpersModule.waitLoading(this.getJqueryTbody());
                 var previousActiveID = this.getActiveRowID(),
                     model = this.getModel(),
                     view = this.getView(),
@@ -462,7 +464,6 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                     .html(content)
                                     .trigger('update');
                                 _this
-                                    .clearSelectedArea()
                                     .setRowCount(Object.keys(recordset).length)
                                     .markAsNoChanged();
                                 if(opts && opts.afterSave){

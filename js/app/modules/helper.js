@@ -497,6 +497,16 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         isMultiSelectFilter: function (name) {
             return name.slice(-2) === '[]';
         },
+        /**
+         *
+         * @param {jQuery} $content
+         */
+        waitLoading: function($content){
+            var $div = $('<div>', {
+               'class':  'refreshing'
+            });
+            $content.html($div);
+        },
         init: function () {
             _private.createJqueryElements();
         }

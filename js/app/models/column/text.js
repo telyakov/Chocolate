@@ -208,7 +208,7 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                     var eventData = {};
                     editor.on('load', function () {
                         $body = $textArea.siblings('iframe').eq(1).contents().find('body');
-
+                        console.log($body)
                         $body
                             .on('keydown', eventData, helpersModule.addSignToIframe)
                             .on('keydown', function (e) {

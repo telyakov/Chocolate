@@ -319,9 +319,10 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     model = _this.getModel();
                 if (model.hasFilters()) {
                     var $filterSection = $('<section>', {
-                        'class': 'section-filters',
                         'data-id': 'filters'
                     });
+                    helpersModule.waitLoading($filterSection);
+
                     $panel.append($filterSection);
                     var html = [],
                         callbacks = [],
@@ -342,7 +343,8 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                             asyncTaskCompleted += 1;
                             if (asyncTaskCompleted === length) {
                                 $.unsubscribe(event);
-                                $filterSection.append(
+                                $filterSection.addClass('section-filters');
+                                $filterSection.html(
                                     _this.filterTemplate({
                                         html: '<div><ul class="filters-list">' + html.join('') + '</div></ul></div>',
                                         formID: helpersModule.uniqueID()

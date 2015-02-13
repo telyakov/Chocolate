@@ -99,6 +99,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         view: this.getModel().getView()
                     });
                 this.$el.html(html);
+
                 this._layoutMenu();
                 this._layoutForm();
                 this.layoutFooter();
@@ -976,6 +977,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @private
              */
             _runAsyncRefreshFormTask: function () {
+                this.clearSelectedArea();
+                helpersModule.waitLoading(this.getJqueryTbody());
                 var previousActiveID = this.getActiveRowID(),
                     _this = this,
                     model = this.getModel(),
@@ -1110,7 +1113,6 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 var asyncTasks = this._applyColumnsCallbacks(this.$el);
                 $.when.apply($, asyncTasks)
                     .done(function () {
-                        _this.clearSelectedArea();
                         $table.trigger('update');
                         if(previousActiveID){
                             var $row = _this.getJqueryRow(previousActiveID);
