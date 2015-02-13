@@ -976,7 +976,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @private
              */
             _runAsyncRefreshFormTask: function () {
-                var _this = this,
+                var previousActiveID = this.getActiveRowID(),
+                    _this = this,
                     model = this.getModel(),
                     view = this.view,
                     card = view.getCard(),
@@ -990,7 +991,11 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     /** @param {SqlBindingResponse} data */
                         function (data) {
                         model.runAsyncTaskGetData(data.sql)
-                            .done(_this._refreshDone)
+                            .done(
+                            /** @param {RecordsetDTO}data */
+                            function(data){
+                                _this._refreshDone(data, previousActiveID)
+                            })
                             .fail(
                             /** @param {string} error */
                                 function (error) {
@@ -1021,9 +1026,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             /**
              * @desc Done callback for async Task of Get Form Data
              * @param {RecordsetDTO} data
+             * @param {String} [previousActiveID]
              * @private
              */
-            _refreshDone: function (data) {
+            _refreshDone: function (data, previousActiveID) {
                 var sortedColumnCollection = this._getSortedColumns(),
                     order = data.order,
                     recordset = data.data;
@@ -1104,7 +1110,14 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 var asyncTasks = this._applyColumnsCallbacks(this.$el);
                 $.when.apply($, asyncTasks)
                     .done(function () {
+                        _this.clearSelectedArea();
                         $table.trigger('update');
+                        if(previousActiveID){
+                            var $row = _this.getJqueryRow(previousActiveID);
+                            if($row.length){
+                                _this.selectRow($row, false, false);
+                            }
+                        }
                     })
                     .fail(
                     /** @param {string} error */
