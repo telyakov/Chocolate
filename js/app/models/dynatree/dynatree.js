@@ -481,10 +481,11 @@ var DynatreeModel = (function (Backbone, undefined, helpersModule) {
                     select: function (event, ui) {
                         $content.find(searchClass).removeClass(searchClass);
                         var id = ui.item.id,
-                            tree = $tree.dynatree("getTree"),
+                            tree = $tree.dynatree('getTree'),
                             node = tree.getNodeByKey(id);
                         node.select(true);
                         node.activate();
+                        node.focus();
                         var parent = node,
                             $li = $(node.li);
                         do {
@@ -495,6 +496,7 @@ var DynatreeModel = (function (Backbone, undefined, helpersModule) {
                             }
                         }
                         while (parent);
+                        ui.item.value ='';
                     }
                 });
                 return dynatree;
