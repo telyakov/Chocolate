@@ -108,6 +108,8 @@ var optionsModule = (function () {
                 chocolateHasChange: 'ВНИМАНИЕ! У Вас есть несохраненные изменения. В результате перехода они могут быть потеряны.',
                 refreshForm: 'Сохранить изменения?',
                 Yes: 'Да',
+                successSave: 'Данные сохранены.',
+                successRefresh: 'Данные обновлены.',
                 No: 'Нет',
                 Cancel: 'Отмена',
                 Delete: 'Удалить',

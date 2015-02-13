@@ -136,10 +136,12 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             /**
              *
              * @desc Perform form refresh
+             * @param {RefreshDTO} opts
              * @override
              */
-            refresh: function () {
-                this._runAsyncRefreshFormTask();
+            refresh: function (opts) {
+                var afterSave = opts.afterSave ? true : false;
+                this._runAsyncRefreshFormTask(false, afterSave);
                 var collection = this.getModel().getFiltersROCollection(this);
                 collection.each(
                     /** @param {FilterRO} filter */
@@ -811,7 +813,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
 
                 this
                     ._initTableScripts()
-                    ._runAsyncRefreshFormTask();
+                    ._runAsyncRefreshFormTask(true);
             },
             /**
              * @desc Destroy Context Menu Widget for table headers
@@ -974,9 +976,11 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
             },
             /**
              * @desc Run async form refresh
+             * @param {boolean} [isFirstInit]
+             * @param {boolean} [afterSave]
              * @private
              */
-            _runAsyncRefreshFormTask: function () {
+            _runAsyncRefreshFormTask: function (isFirstInit, afterSave) {
                 this.clearSelectedArea();
                 helpersModule.waitLoading(this.getJqueryTbody());
                 var previousActiveID = this.getActiveRowID(),
@@ -996,8 +1000,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         model.runAsyncTaskGetData(data.sql)
                             .done(
                             /** @param {RecordsetDTO}data */
-                            function(data){
-                                _this._refreshDone(data, previousActiveID)
+                                function (data) {
+                                _this._refreshDone(data, previousActiveID, isFirstInit, afterSave)
                             })
                             .fail(
                             /** @param {string} error */
@@ -1030,9 +1034,11 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @desc Done callback for async Task of Get Form Data
              * @param {RecordsetDTO} data
              * @param {String} [previousActiveID]
+             * @param {boolean} [isFirstInit]
+             * @param {boolean} [afterSave]
              * @private
              */
-            _refreshDone: function (data, previousActiveID) {
+            _refreshDone: function (data, previousActiveID, isFirstInit, afterSave) {
                 var sortedColumnCollection = this._getSortedColumns(),
                     order = data.order,
                     recordset = data.data;
@@ -1114,11 +1120,23 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 $.when.apply($, asyncTasks)
                     .done(function () {
                         $table.trigger('update');
-                        if(previousActiveID){
+                        if (previousActiveID) {
                             var $row = _this.getJqueryRow(previousActiveID);
-                            if($row.length){
+                            if ($row.length) {
                                 _this.selectRow($row, false, false);
                             }
+                        }
+                        if (!isFirstInit) {
+                            var msg;
+                            if (afterSave) {
+                                msg = optionsModule.getMessage('successSave');
+                            } else {
+                                msg = optionsModule.getMessage('successRefresh');
+                            }
+                            _this.showMessage({
+                                id: 1,
+                                msg: msg
+                            });
                         }
                     })
                     .fail(

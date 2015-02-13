@@ -411,7 +411,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 this._$settings = $settings;
             },
             _refreshHandler: function (e) {
-                console.log('refresh')
                 var model = this.getModel();
                 if (this.getView().hasChange()) {
                     if (this._$settings) {
