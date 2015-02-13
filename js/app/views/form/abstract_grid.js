@@ -309,7 +309,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                                     html.push('</span>');
                                 }
                             }
-                            _this.$('.footer-info').html(html.join(''));
+                            _this._setFooterHtml(html.join(''));
                         }
                     }, 300);
                 } else {
@@ -317,6 +317,14 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                     $selected.remove();
                 }
                 return this;
+            },
+            /**
+             * @desc Set preview data in table
+             * @param {string} html
+             * @private
+             */
+            _setFooterHtml: function(html){
+                this.$('.footer-info').html(html);
             },
             /**
              * @desc Create area selected rows
@@ -488,6 +496,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
              */
             clearSelectedArea: function () {
                 this.getJqueryDataTable().parent().children('.sel-area').remove();
+                this._setFooterHtml('');
                 return this;
             },
             /**

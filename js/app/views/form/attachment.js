@@ -418,7 +418,8 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
              * @private
              */
             _makeRefresh: function (isApplyJs, opts) {
-                var model = this.getModel(),
+                var previousActiveID = this.getActiveRowID(),
+                    model = this.getModel(),
                     view = this.getView(),
                     card = view.getCard(),
                     _this = this,
@@ -474,6 +475,12 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                         id: 1,
                                         msg: 'Данные успешно обновлены.'
                                     });
+                                }
+                                if(previousActiveID){
+                                    var $row = _this.getJqueryRow(previousActiveID);
+                                    if($row.length){
+                                        _this.selectRow($row, false, false);
+                                    }
                                 }
                             })
                             .fail(
