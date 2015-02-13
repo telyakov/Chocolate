@@ -113,7 +113,6 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                         text = _this.template({
                             attribute: model.getAttribute(),
                             isNextRow: isNextRow,
-                            //parentFilterKey: parentFilter,
                             isMultiSelect: isMultiSelect,
                             data: prepareData,
                             containerID: _this.id
@@ -147,6 +146,8 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                         });
 
                         _this.listenTo(parentModel, 'refresh:model', function (value) {
+                                var $elem = $('#' + _this.id);
+                                helpersModule.waitLoading($elem);
                                 if (value) {
                                     var refreshDf = deferredModule.create(),
                                         refreshDeferId = deferredModule.save(refreshDf),
@@ -183,7 +184,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                                                 containerID: _this.id,
                                                 force: true
                                             });
-                                            $('#' + _this.id).replaceWith(text);
+                                            $elem.replaceWith(text);
                                         }
                                     });
                                 }

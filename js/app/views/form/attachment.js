@@ -466,20 +466,20 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                 _this
                                     .setRowCount(Object.keys(recordset).length)
                                     .markAsNoChanged();
-                                if(opts && opts.afterSave){
+                                if (opts && opts.afterSave) {
                                     _this.showMessage({
                                         id: 1,
-                                        msg: 'Данные успешно сохранены.'
+                                        msg: optionsModule.getMessage('successSave')
                                     });
-                                }else if(!isApplyJs){
+                                } else if (!isApplyJs) {
                                     _this.showMessage({
                                         id: 1,
-                                        msg: 'Данные успешно обновлены.'
+                                        msg: optionsModule.getMessage('successRefresh')
                                     });
                                 }
-                                if(previousActiveID){
+                                if (previousActiveID) {
                                     var $row = _this.getJqueryRow(previousActiveID);
-                                    if($row.length){
+                                    if ($row.length) {
                                         _this.selectRow($row, false, false);
                                     }
                                 }

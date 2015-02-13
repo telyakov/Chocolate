@@ -375,7 +375,7 @@ var CanvasView = (function (undefined, helpersModule, deferredModule, optionsMod
                     ._layout(this._prepareData(data))
                     .showMessage({
                         id: 1,
-                        msg: 'Данные успешно обновлены.'
+                        msg: optionsModule.getMessage('successRefresh')
                     });
             }
         });
