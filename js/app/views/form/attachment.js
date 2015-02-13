@@ -58,7 +58,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
              */
             events: function () {
                 return _.extend({}, AbstractGridView.prototype.events.call(this), {
-                    'click .attachment-file': $.debounce(700, true, this._downloadFileHandler)
+                    'click .attachment-file': $.debounce(400, true, this._downloadFileHandler)
                 });
             },
             /**
