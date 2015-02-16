@@ -15,32 +15,16 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                 'click #tabs>ul>li': '_addToTabHistoryLog',
                 'mouseup .ui-tabs-anchor[href=1]': '_reflowTab',
                 'click .ui-tabs-anchor[href^=#]': '_reflowTab',
-                'click .message-close': function(e){
-                    $(e.target)
-                        .closest('.notice')
-                        .animate({
-                            border: 'none',
-                            height: 0,
-                            marginBottom: 0,
-                            marginTop: '-6px',
-                            opacity: 0,
-                            paddingBottom: 0,
-                            paddingTop: 0,
-                            queue: false
-                        }, 1000, function () {
-                            $(this).remove();
-                        });
-                }
+                'click .message-close': '_closeApplicationMessage'
             },
             /**
-             * @abstract
              * @class AppView
              * @augments Backbone.View
              * @param {Object} options
              * @constructs
              */
             initialize: function (options) {
-                _.bindAll(this, 'render');
+                _.bindAll(this);
                 this.$el = $('body');
                 this.model = options.model;
                 this._settings = null;
@@ -60,7 +44,7 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                     model.get('employeeId'),
                     model.get('userName')
                 );
-                this._renderSrartPage();
+                this._renderStartPage();
                 var $downloadAttachmentTmpl = $('<script>', {
                         type: 'text/x-tmpl',
                         id: 'template-download',
@@ -330,93 +314,85 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                     return optionsModule.getMessage('chocolateHasChange');
                 }
             },
-            //_renderAnimateIndicator: function () {
-            //    this.$el.children('header').html(
-            //        [
-            //            '<div id="fadingBarsG">',
-            //            '<div id="fadingBarsG_1" class="fadingBarsG">',
-            //            '</div>',
-            //            '<div id="fadingBarsG_2" class="fadingBarsG">',
-            //            '</div>',
-            //            '<div id="fadingBarsG_3" class="fadingBarsG">',
-            //            '</div>',
-            //            '<div id="fadingBarsG_4" class="fadingBarsG">',
-            //            '</div>',
-            //            '<div id="fadingBarsG_5" class="fadingBarsG">',
-            //            '</div>',
-            //            '<div id="fadingBarsG_6" class="fadingBarsG">',
-            //            '</div>',
-            //            '<div id="fadingBarsG_7" class="fadingBarsG">',
-            //            '</div>',
-            //            '<div id="fadingBarsG_8" class="fadingBarsG">',
-            //            '</div>',
-            //            '</div>'
-            //        ].join('')
-            //    );
-            //},
             /**
              * @desc Render star page of application
              * @private
              */
-            _renderSrartPage: function () {
+            _renderStartPage: function () {
                 var path = location.pathname.toLowerCase();
                 if (path === optionsModule.getUrl('openFromEmail')) {
-
-                    var rawParams = location.search.split('&'),
-                        params = {};
-                    rawParams.forEach(function (par) {
-                        var tokens = par.split('='),
-                            name = tokens[0],
-                            value = tokens[1];
-                        if (name.indexOf('?') === 0) {
-                            name = name.substr(1);
-                        }
-                        params[name] = value;
-                    });
-                    var view = params.view,
-                        idList = params.id;
-                    setTimeout(function () {
-                        var defer = deferredModule.create(),
-                            deferId = deferredModule.save(defer);
-                        mediator.publish(optionsModule.getChannel('xmlRequest'), {
-                            name: view,
-                            type: optionsModule.getRequestType('deferred'),
-                            id: deferId
-                        });
-                        defer.done(function (res) {
-                            //todo: check access to write
-                            var $xml = res.data,
-                                model = new FormModel({
-                                    $xml: $xml,
-                                    write: true
-                                }),
-                                view = new FormView({
-                                    model: model
-                                }),
-                                filterModel = model.getFiltersROCollection(view).findWhere({key: 'idlist'});
-                            if (filterModel) {
-                                filterModel.set('value', idList);
-                            }
-
-                            view.render();
-                        })
-                    }, 300);
-
-
+                    this._startFormFromQueryParams();
                 } else {
-                    var form = this.model.getAutoStartForm();
-                    if (form) {
-
-                        setTimeout(function () {
-                            mediator.publish(optionsModule.getChannel('xmlRequest'), {
-                                name: form,
-                                type: optionsModule.getRequestType('mainForm')
-                            });
-                        }, 300);
-                    }
+                    this._startDefaultForm();
                 }
+                this._renderProfile();
+            },
+            /**
+             *
+             * @private
+             */
+            _startFormFromQueryParams: function () {
+                var rawParams = location.search.split('&'),
+                    params = {};
+                rawParams.forEach(function (par) {
+                    var tokens = par.split('='),
+                        name = tokens[0],
+                        value = tokens[1];
+                    if (name.indexOf('?') === 0) {
+                        name = name.substr(1);
+                    }
+                    params[name] = value;
+                });
+                var view = params.view,
+                    idList = params.id;
+                setTimeout(function () {
+                    var defer = deferredModule.create(),
+                        deferId = deferredModule.save(defer);
+                    mediator.publish(optionsModule.getChannel('xmlRequest'), {
+                        name: view,
+                        type: optionsModule.getRequestType('deferred'),
+                        id: deferId
+                    });
+                    defer.done(function (res) {
+                        var $xml = res.data,
+                            model = new FormModel({
+                                $xml: $xml,
+                                write: true
+                            }),
+                            view = new FormView({
+                                model: model
+                            }),
+                            filterModel = model.getFiltersROCollection(view).findWhere({key: 'idlist'});
+                        if (filterModel) {
+                            filterModel.set('value', idList);
+                        }
+
+                        view.render();
+                    })
+                }, 300);
+            },
+            /**
+             *
+             * @private
+             */
+            _startDefaultForm: function () {
+                var form = this.model.getAutoStartForm();
+                if (form) {
+                    setTimeout(function () {
+                        mediator.publish(optionsModule.getChannel('xmlRequest'), {
+                            name: form,
+                            type: optionsModule.getRequestType('mainForm')
+                        });
+                    }, 300);
+                }
+            },
+            /**
+             *
+             * @private
+             */
+            _renderProfile: function () {
                 var $profile = $('<div></div>', {
-                    html: this.model.get('userName') + '<span class="fa-caret-down"></span>' ,
+                    html: this.model.get('userName') + '<span class="fa-caret-down"></span>',
                     'class': 'ch-app-profile'
                 });
                 var _this = this;
@@ -458,7 +434,6 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
 
                 });
                 this.$el.append($profile);
-
             },
             /**
              * @desc open application settings
@@ -516,6 +491,27 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                     });
                     this._settings = $dialog;
                 }
+            },
+            /**
+             *
+             * @param {Event} e
+             * @private
+             */
+            _closeApplicationMessage: function (e) {
+                $(e.target)
+                    .closest('.notice')
+                    .animate({
+                        border: 'none',
+                        height: 0,
+                        marginBottom: 0,
+                        marginTop: '-6px',
+                        opacity: 0,
+                        paddingBottom: 0,
+                        paddingTop: 0,
+                        queue: false
+                    }, 1000, function () {
+                        $(this).remove();
+                    });
             }
         })
 })

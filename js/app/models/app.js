@@ -1,9 +1,14 @@
 /**
  * @class AppModel
+ * @extends Backbone.Model
  */
 var AppModel = (function (undefined, Backbone, storageModule, optionsModule) {
     'use strict';
-    return Backbone.Model.extend({
+    return Backbone.Model.extend(
+        /**
+         * @lends AppModel
+         */
+        {
         defaults: {
             userName: null,
             userId: null,
