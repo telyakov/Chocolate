@@ -50,7 +50,7 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 var defer = model.runAsyncTaskGetReadProc();
                 $.when(
                     model.runAsyncTaskIsVisible(),
-                    model.runAsyncTaskIsVisibleIsEnabled(),
+                    model.runAsyncTaskIsEnabled(),
                     model.runAsyncTaskIsNextRow(),
                     model.runAsyncTaskIsMultiSelect(),
                     defer

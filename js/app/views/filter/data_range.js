@@ -65,7 +65,7 @@ var DateRangeView = (function (Backbone, $, helpersModule, optionsModule, Filter
 
                 $.when(
                     model.runAsyncTaskIsVisible(),
-                    model.runAsyncTaskIsVisibleIsEnabled(),
+                    model.runAsyncTaskIsEnabled(),
                     model.runAsyncTaskIsNextRow()
                 )
                     .done(function (v1, v2, v3) {

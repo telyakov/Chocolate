@@ -88,7 +88,7 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              *
              * @returns {Deferred}
              */
-            runAsyncTaskIsVisibleIsEnabled: function () {
+            runAsyncTaskIsEnabled: function () {
                 var task = deferredModule.create(),
                     taskID = deferredModule.save(task),
                     evaluatedValue = this.get('filter').getEnabled();

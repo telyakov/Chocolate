@@ -37,7 +37,7 @@ var TextFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
 
                 $.when(
                     model.runAsyncTaskIsVisible(),
-                    model.runAsyncTaskIsVisibleIsEnabled(),
+                    model.runAsyncTaskIsEnabled(),
                     model.runAsyncTaskIsNextRow()
                 )
                     .done(function (v1, v2, v3) {

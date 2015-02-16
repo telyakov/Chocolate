@@ -39,13 +39,6 @@ var CheckBoxView = (function (Backbone, $, helpersModule, FilterView) {
                 FilterView.prototype.destroy.apply(this);
             },
             /**
-             * @param $filter {jQuery}
-             * @private
-             */
-            _persistLinkToJqueryFilter: function ($filter) {
-                this._$filter = $filter;
-            },
-            /**
              * @param {string} event
              * @param {number} i
              * @override
@@ -56,58 +49,109 @@ var CheckBoxView = (function (Backbone, $, helpersModule, FilterView) {
 
                 $.when(
                     model.runAsyncTaskIsVisible(),
-                    model.runAsyncTaskIsVisibleIsEnabled(),
+                    model.runAsyncTaskIsEnabled(),
                     model.runAsyncTaskIsNextRow()
                 )
-                    .done(function (v1, v2, v3) {
-                        var isDisabled = !v2.value,
-                            isVisible = v1.value,
-                            isNextRow = v3.value,
-                            text = '',
-                            id = helpersModule.uniqueID();
-                        if (isVisible) {
-                            text = _this.template({
-                                id: id,
-                                caption: model.getCaption(),
-                                attribute: model.getAttribute(),
-                                tooltip: model.getTooltip(),
-                                disabled: isDisabled,
-                                isNextRow: isNextRow,
-                                containerID: _this.id
-                            });
-                        }
-
-                        $.publish(event, {
-                            text: text,
-                            counter: i,
-                            callback: function () {
-                                var $filter = $('#' + id);
-                                _this._persistLinkToJqueryFilter($filter);
-                                $filter.bootstrapSwitch({
-                                    size: 'small',
-                                    onText: 'Да',
-                                    offText: 'Нет',
-                                    onSwitchChange: function (event, state) {
-                                        if (state) {
-                                            $filter.val(1);
-                                        }
-                                    }
-                                });
-                            }
-                        });
+                    .done(function (isVisibleResponse, isEnabledResponse, isNextRowResponse) {
+                        _this._renderDone(isVisibleResponse, isEnabledResponse, isNextRowResponse, event, i);
                     })
                     .fail(function (error) {
-                        $.publish(event, {
-                            text: '',
-                            counter: i,
-                            callback: function () {
-                            }
-                        });
-                        _this.publishError({
-                            error: error,
-                            view: _this
-                        })
+                        _this._handleError(error, event, i);
                     });
+            },
+            /**
+             *
+             * @param {string} error
+             * @param {string} event
+             * @param {Number} i
+             * @private
+             */
+            _handleError: function (error, event, i) {
+                $.publish(event, {
+                    text: '',
+                    counter: i,
+                    callback: function () {
+                    }
+                });
+                this.publishError({
+                    error: error,
+                    view: this
+                })
+            },
+            /**
+             * @param $filter {jQuery}
+             * @private
+             */
+            _persistLinkToJqueryFilter: function ($filter) {
+                this._$filter = $filter;
+            },
+            /**
+             *
+             * @param {BooleanResponse} isVisibleResponse
+             * @param {BooleanResponse} isEnabledResponse
+             * @param {BooleanResponse} isNextRowResponse
+             * @param {string} event
+             * @param {Number} i
+             * @private
+             */
+            _renderDone: function (isVisibleResponse, isEnabledResponse, isNextRowResponse, event, i) {
+                var isDisabled = !isEnabledResponse.value,
+                    isVisible = isVisibleResponse.value,
+                    isNextRow = isNextRowResponse.value,
+                    filterID = helpersModule.uniqueID(),
+                    html = this._getFilterHtml(isVisible, isDisabled, isNextRow, filterID);
+                $.publish(event, {
+                    text: html,
+                    counter: i,
+                    callback: this._createCallback(filterID)
+                });
+            },
+            /**
+             *
+             * @param {String} filterID
+             * @returns function
+             * @private
+             */
+            _createCallback: function (filterID) {
+                var _this = this;
+                return function () {
+                    var $filter = $('#' + filterID);
+                    _this._persistLinkToJqueryFilter($filter);
+                    $filter.bootstrapSwitch({
+                        size: 'small',
+                        onText: 'Да',
+                        offText: 'Нет',
+                        onSwitchChange: function (event, state) {
+                            if (state) {
+                                $filter.val(1);
+                            }
+                        }
+                    });
+                }
+            },
+            /**
+             *
+             * @param {Boolean} isVisible
+             * @param {Boolean} isDisabled
+             * @param {Boolean} isNextRow
+             * @param {string} filterID
+             * @returns {string}
+             * @private
+             */
+            _getFilterHtml: function (isVisible, isDisabled, isNextRow, filterID) {
+                if (isVisible) {
+                    var model = this.getModel();
+                    return this.template({
+                        id: filterID,
+                        caption: model.getCaption(),
+                        attribute: model.getAttribute(),
+                        tooltip: model.getTooltip(),
+                        disabled: isDisabled,
+                        isNextRow: isNextRow,
+                        containerID: this.id
+                    });
+                }
+                return '';
             }
         });
 })(Backbone, jQuery, helpersModule, FilterView);
