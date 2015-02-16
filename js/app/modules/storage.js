@@ -122,6 +122,36 @@ var storageModule = (function (undefined) {
                     _private.getSession().user = {};
                 }
                 _private.getUser().roles = result;
+            },
+            saveForms: function (forms) {
+                var result = {},
+                    i,
+                    hasOwn = Object.prototype.hasOwnProperty;
+                for (i in forms) {
+                    if (hasOwn.call(forms, i)) {
+                        /**
+                         * @type FormDTO
+                         */
+                        var form = forms[i];
+                        if (form.viewname) {
+                            var isWrite = 0;
+                            if (form.write === '1') {
+                                isWrite = 1;
+                            }
+                            result[form.viewname] = {
+                                viewname: form.viewname,
+                                write: isWrite
+                            }
+                        }
+                        //console.log(forms[i])
+                        //role = forms[i].name.toLowerCase();
+                        //result.push(role);
+                    }
+                }
+                if (typeof _private.getUser() === 'undefined') {
+                    _private.getSession().user = {};
+                }
+                _private.getUser().forms = result;
                 return true;
             },
             addToSession: function (key, obj) {
@@ -224,8 +254,18 @@ var storageModule = (function (undefined) {
         saveUser: function (id, employeeId, name) {
             return _private.saveUser(id, employeeId, name);
         },
+        /**
+         * @param {Object} forms
+         */
+        saveForms: function (forms) {
+            _private.saveForms(forms);
+        },
+        /**
+         *
+         * @param {Object} roles
+         */
         saveRoles: function (roles) {
-            return _private.saveRoles(roles);
+            _private.saveRoles(roles);
         },
         getApplicationSettingByKey: function (key) {
             return _private.getApplicationSettingByKey(key);

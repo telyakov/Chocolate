@@ -3,17 +3,34 @@
  * @class
  * @augments CardElement
  */
-var FormCardElement = (function ($, optionsModule, mediator, CardElement) {
+var FormCardElement = (function ($, optionsModule, helpersModule, deferredModule, mediator, CardElement) {
     'use strict';
     return CardElement.extend(
         /** @lends FormCardElement */
         {
             /**
+             * @param {Object} opts
+             * @constructs
+             * @augments CardElement
+             */
+            initialize: function (opts) {
+                this._model = null;
+                this._view = null;
+                this.constructor.__super__.initialize.call(this, opts);
+            },
+            /**
              * @method destroy
              * @override
              */
             destroy: function () {
-                //todo: leak memory, when open child form
+                if (this._view) {
+                    this._view.destroy();
+                    this._view = null;
+                }
+                if (this._model) {
+                    this._model.destroy();
+                    this._model = null;
+                }
                 this.constructor.__super__.destroy.apply(this, arguments);
             },
             /**
@@ -65,17 +82,48 @@ var FormCardElement = (function ($, optionsModule, mediator, CardElement) {
              */
             _getCallback: function (controlID, pk) {
                 var _this = this,
-                    column = _this.getColumn(),
-                    view = column.getView();
+                    column = _this.getColumn();
                 return function () {
-                    mediator.publish(optionsModule.getChannel('openForm'), {
-                        $el: $('#' + controlID),
-                        view: view,
-                        parentModel: _this.get('model'),
-                        parentID: pk,
-                        card: _this
+                    var asyncTask = deferredModule.create(),
+                        data = {
+                            type: optionsModule.getRequestType('deferred'),
+                            name: helpersModule.getCorrectXmlName(column.getView()),
+                            id: deferredModule.save(asyncTask)
+                        };
+                    mediator.publish(optionsModule.getChannel('xmlRequest'), data);
+                    asyncTask.done(function (res) {
+                        var $xml = res.data,
+                            model = new FormModel({
+                                $xml: $xml,
+                                parentModel: _this.get('model'),
+                                parentId: pk
+                            });
+                        var view = new FormView({
+                            $card: $('#' + controlID),
+                            model: model,
+                            card: _this
+                        });
+                        view.render();
+                        _this._persistReferenceToModel(model);
+                        _this._persistReferenceToView(view);
                     });
                 };
+            },
+            /**
+             *
+             * @param {FormModel} model
+             * @private
+             */
+            _persistReferenceToModel: function (model) {
+                this._model = model
+            },
+            /**
+             *
+             * @param {FormView} view
+             * @private
+             */
+            _persistReferenceToView: function (view) {
+                this._view = view
             }
         });
-})(jQuery, optionsModule, mediator, CardElement);
+})(jQuery, optionsModule, helpersModule, deferredModule, mediator, CardElement);

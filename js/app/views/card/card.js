@@ -501,7 +501,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                                     entitytype: entityTypeID
                                 };
                             if (sql) {
-                                bindModule.deferredBindSql(sql, data)
+                                bindModule.runAsyncTaskBindSql(sql, data)
                                     .done(function (res) {
                                         var prepareSql = res.sql;
                                         mediator.publish(facade.getOptionsModule().getChannel('socketRequest'), {

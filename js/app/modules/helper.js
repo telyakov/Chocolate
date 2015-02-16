@@ -218,7 +218,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
                         var posSql = posEqualSign + 1,
                             sql = $.trim(prepareExpr.substr(posSql));
 
-                        var sqlDefer = bindModule.deferredBindSql(sql);
+                        var sqlDefer = bindModule.runAsyncTaskBindSql(sql);
                         sqlDefer.done(function (data) {
                             var sql = data.sql;
                             mediator.publish(optionsModule.getChannel('socketRequest'), {
@@ -496,6 +496,12 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
          */
         isMultiSelectFilter: function (name) {
             return name.slice(-2) === '[]';
+        },
+        getCorrectXmlName: function(name){
+            if (name.indexOf('.xml') === -1) {
+                name = name + '.xml';
+            }
+            return name.replace(/\\/g, '/');
         },
         /**
          *

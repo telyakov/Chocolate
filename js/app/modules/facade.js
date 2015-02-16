@@ -4,7 +4,6 @@
 var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, cardModule, formModule, phoneModule) {
     'use strict';
     var showErrorsChannel = optionsModule.getChannel('showError'),
-        setRolesChannel = optionsModule.getChannel('setRoles'),
         logErrorChannel = optionsModule.getChannel('logError');
     mediator.subscribe(showErrorsChannel, function (msg) {
         logModule.showMessage(msg);
@@ -74,10 +73,7 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
             view = opts.view,
             parentModel = opts.parentModel,
             parentID = opts.parentID;
-        if(view.indexOf('.xml') === -1){
-            view = view + '.xml';
-        }
-        view = view.replace(/\\/g, '/');
+        view = helpersModule.getCorrectXmlName(view);
         var defer = deferredModule.create(),
             deferID = deferredModule.save(defer);
         var data = {
@@ -86,8 +82,8 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
             name: view,
             id: deferID
         };
-    socketModule.emit('xmlRequest', data);
-        defer.done(function(res){
+        socketModule.emit('xmlRequest', data);
+        defer.done(function (res) {
             var $xml = res.data;
             var model = new FormModel({
                 $xml: $xml,
@@ -136,7 +132,7 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
         }
     });
 
-    mediator.subscribe(optionsModule.getChannel('socketMultiplyExec'), function(data){
+    mediator.subscribe(optionsModule.getChannel('socketMultiplyExec'), function (data) {
         data.key = optionsModule.getSetting('key');
         socketModule.emit('execMultiply', data);
     });
@@ -159,10 +155,11 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
             var resData = json_parse(data.data);
             switch (type) {
                 case optionsModule.getRequestType('roles'):
-                    mediator.publish(setRolesChannel, resData);
+                    storageModule.saveRoles(resData);
                     break;
                 case optionsModule.getRequestType('forms'):
                     menuModule.init(resData);
+                    storageModule.saveForms(resData);
                     break;
                 case optionsModule.getRequestType('jquery'):
                     var value = socketModule.getFirstValue(resData);
@@ -185,7 +182,7 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                     defer = deferredModule.pop(data.id);
                     defer.resolve({
                         order: order,
-                        data:  resData
+                        data: resData
                     });
                     //form.updateData(resData, order);
                     break;
@@ -193,8 +190,8 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                     defer = deferredModule.pop(data.id);
                     var isAllow = !!parseInt(socketModule.getFirstValue(resData), 10);
                     defer.resolve({
-                        value:isAllow,
-                        data:  resData
+                        value: isAllow,
+                        data: resData
                     });
                     break;
                 default:
@@ -203,30 +200,38 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
         }
     });
 
-    mediator.subscribe(optionsModule.getChannel('setIdentity'), function (id, employeeId, name) {
-        setTimeout(function(){
-            storageModule.saveUser(id,employeeId,  name);
-            var rolesDefer  = bindModule.deferredBindSql(optionsModule.getSql('getRoles')),
-                formsDefer = bindModule.deferredBindSql(optionsModule.getSql('getForms'));
-            rolesDefer.done(function (data) {
-                var rolesSql = data.sql;
-                mediator.publish(requestChannel, {
-                    query: rolesSql,
-                    type: optionsModule.getRequestType('roles')
+    mediator.subscribe(optionsModule.getChannel('setIdentity'),
+        /**
+         *
+         * @param {Number} id
+         * @param {Number} employeeId
+         * @param {String} name
+         */
+        function (id, employeeId, name) {
+        setTimeout(function () {
+            storageModule.saveUser(id, employeeId, name);
+            bindModule
+                .runAsyncTaskBindSql(optionsModule.getSql('getRoles'))
+                .done(
+                /** @param {SqlBindingResponse} data */
+                function (data) {
+                    var rolesSql = data.sql;
+                    mediator.publish(requestChannel, {
+                        query: rolesSql,
+                        type: optionsModule.getRequestType('roles')
+                    });
                 });
-            });
-            formsDefer.done(function (data) {
-                var formsSql = data.sql;
-                mediator.publish(requestChannel, {
-                    query: formsSql,
-                    type: optionsModule.getRequestType('forms')
+            bindModule
+                .runAsyncTaskBindSql(optionsModule.getSql('getForms'))
+                .done(function (data) {
+                    var formsSql = data.sql;
+                    mediator.publish(requestChannel, {
+                        query: formsSql,
+                        type: optionsModule.getRequestType('forms')
+                    });
                 });
-            });
         }, 300);
 
-    });
-    mediator.subscribe(setRolesChannel, function (roles) {
-        storageModule.saveRoles(roles);
     });
 
     mediator.subscribe(optionsModule.getChannel('reflowTab'), function (force) {
@@ -264,7 +269,7 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
         getRepaintModule: function () {
             return repaintModule;
         },
-         getCardModule: function () {
+        getCardModule: function () {
             return cardModule;
         },
         getFormModule: function () {

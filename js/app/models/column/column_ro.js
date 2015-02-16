@@ -84,7 +84,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
                     var _this = this,
                         sql = this.getSql();
                     if (sql) {
-                        var dataDefer = bindModule.deferredBindSql(sql, params);
+                        var dataDefer = bindModule.runAsyncTaskBindSql(sql, params);
                         dataDefer.done(function (res) {
                             var prepareSql = res.sql;
                             var columnDefer = deferredModule.create(),

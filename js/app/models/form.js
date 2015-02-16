@@ -161,7 +161,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             runAsyncTaskCreateEmptyDefaultValues: function () {
                 var defer = deferredModule.create(),
                     deferID = deferredModule.save(defer);
-                bindModule.deferredBindSql(this.getCreateEmptyProc())
+                bindModule.runAsyncTaskBindSql(this.getCreateEmptyProc())
                     .done(function (res) {
                         mediator.publish(optionsModule.getChannel('socketRequest'), {
                             query: res.sql,
@@ -191,17 +191,17 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             runAsyncTaskBindReadProc: function (data) {
                 var extendedData = $.extend({}, this.getParamsForBind(), data),
                     sql = this.getCreateProc();
-                return bindModule.deferredBindSql(sql, extendedData, true);
+                return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
             },
             deferUpdateProc: function (data) {
                 var extendedData = $.extend({}, this.getParamsForBind(), data),
                     sql = this.getUpdateProc();
-                return bindModule.deferredBindSql(sql, extendedData, true);
+                return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
             },
             deferDeleteProc: function (data) {
                 var extendedData = $.extend({}, this.getParamsForBind(), data),
                     sql = this.getDeleteProc();
-                return bindModule.deferredBindSql(sql, extendedData, true);
+                return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
             },
             /**
              *
@@ -674,7 +674,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 } else {
                     sql = this.getDataFormProperties().getReadProc();
                 }
-                return bindModule.deferredBindSql(sql, data);
+                return bindModule.runAsyncTaskBindSql(sql, data);
             },
             /**
              *

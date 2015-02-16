@@ -31,24 +31,24 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 '</form>',
                 '</div>'
             ].join('')),
-            events: function(){
-              return {
-                  'click .grid-button .editable': '_openChildForm',
-                  'click .menu-button-refresh': $.debounce(1000, true, this._refreshHandler),
-                  'keydown input.filter': function (e) {
-                      if (e.keyCode === optionsModule.getKeyCode('enter')) {
-                          this.getModel().trigger('refresh:form', {});
-                      }
-                  },
-                  'click .fm-email-send': function (e) {
-                      this.getModel().trigger('openMailClient');
-                      e.preventDefault();
-                  },
-                  'click .fm-wizard-task': function (e) {
-                      this.getModel().trigger('openWizardTask', e);
-                      e.preventDefault();
-                  }
-              };
+            events: function () {
+                return {
+                    'click .grid-button .editable': '_openChildForm',
+                    'click .menu-button-refresh': $.debounce(1000, true, this._refreshHandler),
+                    'keydown input.filter': function (e) {
+                        if (e.keyCode === optionsModule.getKeyCode('enter')) {
+                            this.getModel().trigger('refresh:form', {});
+                        }
+                    },
+                    'click .fm-email-send': function (e) {
+                        this.getModel().trigger('openMailClient');
+                        e.preventDefault();
+                    },
+                    'click .fm-wizard-task': function (e) {
+                        this.getModel().trigger('openWizardTask', e);
+                        e.preventDefault();
+                    }
+                };
             },
             /**
              * @class FormView
@@ -87,10 +87,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     this._$settings.dialog('destroy');
                     this._$settings = null;
                 }
-                if (this.getCard()) {
-                    this.getCard().destroy();
-                    this.card = null;
-                }
+                this.card = null;
                 this.getModel().destroy();
                 this.model = null;
                 if (this.getView()) {
@@ -233,12 +230,13 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     tabsModule = facade.getTabsModule();
                 this.$closeLink
                     .on('click', '.tab-closed', function (e, data) {
-                        if(data && data.isFastClose){
+                        if (data && data.isFastClose) {
                             return false;
-                        }else{
+                        } else {
                             _this.destroy();
                             tabsModule.close($(this));
-                            return false;                        }
+                            return false;
+                        }
 
                     })
                     .on('touchmove', function () {

@@ -60,7 +60,7 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                     model.get('employeeId'),
                     model.get('userName')
                 );
-                this._renderProfile();
+                this._renderSrartPage();
                 var $downloadAttachmentTmpl = $('<script>', {
                         type: 'text/x-tmpl',
                         id: 'template-download',
@@ -355,10 +355,10 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
             //    );
             //},
             /**
-             * @desc Render user Profile
+             * @desc Render star page of application
              * @private
              */
-            _renderProfile: function () {
+            _renderSrartPage: function () {
                 var path = location.pathname.toLowerCase();
                 if (path === optionsModule.getUrl('openFromEmail')) {
 

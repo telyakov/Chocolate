@@ -61,7 +61,7 @@ var MultimediaCardElement = (function (bindModule, optionsModule, jsonParse, Car
                     model = this.get('model');
                 return function () {
                     var sql = column.getSql();
-                    bindModule.deferredBindSql(sql, model.getParamsForBind(pk))
+                    bindModule.runAsyncTaskBindSql(sql, model.getParamsForBind(pk))
                         .done(function (res) {
                             $.get(optionsModule.getUrl('imagesUrls'), {sql: res.sql})
                                 .done(function (response) {

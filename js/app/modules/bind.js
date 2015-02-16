@@ -133,7 +133,14 @@ var bindModule = (function (userModule, undefined) {
             }
         };
     return {
-        deferredBindSql: function (sql, data, isFull) {
+        /**
+         *
+         * @param {String} sql
+         * @param {Object} [data]
+         * @param {boolean} [isFull]
+         * @returns {Deferred}
+         */
+        runAsyncTaskBindSql: function (sql, data, isFull) {
             var defer = deferredModule.create(),
                 deferID = deferredModule.save(defer);
             if (data === undefined) {

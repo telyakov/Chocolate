@@ -8,13 +8,14 @@ var phoneModule = (function (optionsModule, userModule, bindModule, mediator) {
                 phoneto: to
             };
 
-            var sqlDefer = bindModule.deferredBindSql(optionsModule.getSql('makeCall'), data);
-            sqlDefer.done(function (data) {
-                var sql = data.sql;
-                mediator.publish(optionsModule.getChannel('socketRequest'), {
-                    query: sql
+            bindModule.
+                runAsyncTaskBindSql(optionsModule.getSql('makeCall'), data)
+                .done(function (data) {
+                    var sql = data.sql;
+                    mediator.publish(optionsModule.getChannel('socketRequest'), {
+                        query: sql
+                    });
                 });
-            });
         }
     };
     return {

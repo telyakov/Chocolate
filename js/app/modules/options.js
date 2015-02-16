@@ -31,7 +31,6 @@ var optionsModule = (function () {
             logError: 'log_error',
             showError: 'show_error',
             setIdentity: 'set_identity',
-            setRoles: 'set_roles',
             reflowTab: 'reflow_tab',
             openForm: 'open_form',
             xmlRequest: 'xml_request',

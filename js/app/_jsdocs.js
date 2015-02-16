@@ -97,6 +97,17 @@
  * @property {string} sql - Binding sql
  */
 
+
+/**
+ *
+ * @typedef {Object} FormDTO
+ * @property {string} id
+ * @property {string} write '0', '1', null
+ * @property {string} viewname
+ * @property {string} parentid
+ * @property {string} name
+ */
+
 /**
  * Yandex ymaps
  * @typedef {Object} ymaps
