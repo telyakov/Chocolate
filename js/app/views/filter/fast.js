@@ -89,6 +89,9 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                             i,
                             collection
                         );
+                    })
+                    .fail(function (error) {
+                        _this.handleError(error, event, i);
                     });
             },
             /**

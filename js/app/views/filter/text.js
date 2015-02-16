@@ -3,7 +3,7 @@
  * @class
  * @augments FilterView
  */
-var TextFilterView = (function (Backbone, $, helpersModule, FilterView, deferredModule) {
+var TextFilterView = (function (Backbone, $, helpersModule, FilterView) {
     'use strict';
     return FilterView.extend(
         /** @lends TextFilterView */
@@ -27,43 +27,63 @@ var TextFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 FilterView.prototype.destroy.apply(this);
             },
             /**
-             * @param event {string}
-             * @param i {int}
+             * @param {string} event
+             * @param {Number} i
              * @override
              */
             render: function (event, i) {
                 var _this = this,
-                    model = this.model;
+                    model = this.getModel();
 
                 $.when(
                     model.runAsyncTaskIsVisible(),
                     model.runAsyncTaskIsEnabled(),
                     model.runAsyncTaskIsNextRow()
-                )
-                    .done(function (v1, v2, v3) {
-                        var isDisabled = !v2.value,
-                            isVisible = v1.value,
-                            isNextRow = v3.value,
-                            text = '';
-                        if (isVisible) {
-                            text = _this.template({
-                                id: helpersModule.uniqueID(),
-                                caption: model.getCaption(),
-                                attribute: model.getAttribute(),
-                                tooltip: model.getTooltip(),
-                                disabled: isDisabled,
-                                isNextRow: isNextRow,
-                                value: model.getValue(),
-                                //valueFormat: model.getValueFormat(),
-                                containerID: _this.id
-                            });
-                        }
+                ).done(
+                    /**
+                     * @param {BooleanResponse} isVisibleResponse
+                     * @param {BooleanResponse} isEnabledResponse
+                     * @param {BooleanResponse} isNextRowResponse
+                     * @private
+                     */
+                        function (isVisibleResponse, isEnabledResponse, isNextRowResponse) {
+                        var isDisabled = !isEnabledResponse.value,
+                            isVisible = isVisibleResponse.value,
+                            isNextRow = isNextRowResponse.value,
+                            text = _this._getFilterHtml(isVisible, isDisabled, isNextRow);
                         $.publish(event, {
                             text: text,
                             counter: i
                         });
+                    })
+                    .fail(function (error) {
+                        _this.handleError(error, event, i);
                     });
 
+            },
+            /**
+             *
+             * @param {Boolean} isVisible
+             * @param {Boolean} isDisabled
+             * @param {Boolean} isNextRow
+             * @returns {string}
+             * @private
+             */
+            _getFilterHtml: function (isVisible, isDisabled, isNextRow) {
+                if (isVisible) {
+                    var model = this.getModel();
+                    return this.template({
+                        id: helpersModule.uniqueID(),
+                        caption: model.getCaption(),
+                        attribute: model.getAttribute(),
+                        tooltip: model.getTooltip(),
+                        disabled: isDisabled,
+                        isNextRow: isNextRow,
+                        value: model.getValue(),
+                        containerID: this.id
+                    });
+                }
+                return '';
             }
         });
-})(Backbone, jQuery, helpersModule, FilterView, deferredModule);
+})(Backbone, jQuery, helpersModule, FilterView);
