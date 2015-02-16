@@ -243,9 +243,6 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
         getUserModule: function () {
             return userModule;
         },
-        getLogModule: function () {
-            return logModule;
-        },
         getOptionsModule: function () {
             return optionsModule;
         },

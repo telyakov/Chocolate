@@ -295,11 +295,18 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         }));
                         var stateProcedure = model.getStateProc();
                         if (stateProcedure) {
+                            var asyncTask = deferredModule.create();
                             mediator.publish(optionsModule.getChannel('socketRequest'), {
                                 query: stateProcedure,
-                                type: optionsModule.getRequestType('jquery'),
-                                id: asyncId
+                                type: optionsModule.getRequestType('deferred'),
+                                id: deferredModule.save(asyncTask)
                             });
+                            asyncTask
+                                .done(function (res) {
+                                    var html = socketModule.getFirstValue(res.data);
+                                    $('#' + asyncId).html(html);
+                                    mediator.publish(optionsModule.getChannel('reflowTab'), true);
+                                })
                         }
                     }
                 }
