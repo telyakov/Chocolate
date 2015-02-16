@@ -47,23 +47,14 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             runAsyncTaskGetCurrentValue: function () {
                 //used in tasksForTops.xml
                 var asyncTask = deferredModule.create(),
-                    _this = this,
-                    values = this.getValue().split('|');
+                    _this = this;
+
                 this.getModel()
                     .startAsyncTaskGetData()
                     .done(
                     /** @param {DeferredResponse} res */
                         function (res) {
-                        var data = res.data,
-                            response = [];
-                        values.forEach(function (item) {
-                            if (item !== '') {
-                                response.push(data[item].name);
-                            }
-                        });
-                        asyncTask.resolve({
-                            value: response.join('/')
-                        });
+                        _this._getCurrentValueDone(res, asyncTask);
                     })
                     .fail(function (error) {
                         _this.publishError({
@@ -75,9 +66,9 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 return asyncTask;
             },
             /**
-             * @param event {String}
-             * @param i {int}
-             * @param collection {FiltersROCollection}
+             * @param {String} event
+             * @param {Number} i
+             * @param {FiltersROCollection} collection
              */
             render: function (event, i, collection) {
                 var _this = this,
@@ -88,115 +79,195 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                     model.runAsyncTaskIsNextRow(),
                     model.runAsyncTaskIsMultiSelect(),
                     model.startAsyncTaskGetData(true)
-                )
-                    .done(function (visible, nextRow, multiSelect, dataRes) {
-                        var isVisible = visible.value,
-                            isNextRow = nextRow.value,
-                            data = dataRes.data,
-                            isMultiSelect = multiSelect.value,
-                            text = '',
-                            prepareData = [],
-                            j,
-                            hasOwnProperty = Object.prototype.hasOwnProperty;
-                        for (j in data) {
-                            if (hasOwnProperty.call(data, j)) {
-                                prepareData.push({
-                                    id: helpersModule.uniqueID(),
-                                    val: data[j].id,
-                                    name: data[j].name
-                                });
-                            }
-                        }
+                ).done(function (isVisibleResponse, isNextRowResponse, isMultiSelectResponse, dataResponse) {
+                        _this._renderDone(
+                            isVisibleResponse,
+                            isNextRowResponse,
+                            isMultiSelectResponse,
+                            dataResponse,
+                            event,
+                            i,
+                            collection
+                        );
+                    });
+            },
+            /**
+             * @param {DeferredResponse} res
+             * @param {Deferred} asyncTask
+             * @private
+             */
+            _getCurrentValueDone: function (res, asyncTask) {
+                var data = res.data,
+                    response = [],
+                    values = this.getValue().split('|');
+                values.forEach(function (item) {
+                    if (item !== '') {
+                        response.push(data[item].name);
+                    }
+                });
+                asyncTask.resolve({
+                    value: response.join('/')
+                });
+            },
+            /**
+             *
+             * @param {Boolean} isVisible
+             * @param {Boolean} isMultiSelect
+             * @param {Boolean} isNextRow
+             * @param {Object} rawData
+             * @returns {string}
+             * @private
+             */
+            _getFilterHtml: function (isVisible, isMultiSelect, isNextRow, rawData) {
+                if (isVisible) {
+                    var model = this.getModel();
+                    return this.template({
+                        attribute: model.getAttribute(),
+                        isNextRow: isNextRow,
+                        isMultiSelect: isMultiSelect,
+                        data: this._prepareData(rawData),
+                        containerID: this.id
+                    });
+                }
+                return '';
+            },
+            /**
+             *
+             * @param {Event} e
+             * @param {Boolean} isMultiSelect
+             * @fire GridForm#refresh:model
+             * @private
+             */
+            _changeHandler: function (e, isMultiSelect) {
+                var currentValue = $(e.target).val(),
+                    model = this.getModel(),
+                    newVal = currentValue;
+                if (isMultiSelect) {
+                    var prevValue = model.get('value');
+                    if (prevValue === null) {
+                        prevValue = '';
+                    }
+                    newVal = prevValue + currentValue + '|';
+                }
+                model.set('value', newVal);
+                var eventChange = model.getEventChange();
+                if (eventChange) {
+                    helpersModule.scriptExpressionEval(eventChange, newVal, this);
+                }
+                model.trigger('refresh:model', newVal);
+            },
+            /**
+             *
+             * @param {String} value
+             * @param {Boolean} isNextRow
+             * @param {Boolean} isMultiSelect
+             * @private
+             */
+            _refreshModelHandler: function (value, isNextRow, isMultiSelect) {
+                if (value) {
+                    var $elem = $('#' + this.id),
+                        model = this.getModel(),
+                        _this = this;
+                    helpersModule.waitLoading($elem);
 
-                        if (isVisible) {
-                            text = _this.template({
-                                attribute: model.getAttribute(),
-                                isNextRow: isNextRow,
-                                isMultiSelect: isMultiSelect,
-                                data: prepareData,
-                                containerID: _this.id
+                    var asyncTask = deferredModule.create();
+                    model
+                        .runAsyncTaskGetReadProc({'parentfilter.id': value})
+                        .done(
+                        /** @param {SqlBindingResponse} data */
+                            function (data) {
+                            mediator.publish(optionsModule.getChannel('socketRequest'), {
+                                query: data.sql,
+                                type: optionsModule.getRequestType('deferred'),
+                                id: deferredModule.save(asyncTask)
                             });
-                            var selector = '#' + _this.id + ' input';
-                            _this.$el.on('change', selector, function (e) {
-                                var val = $(e.target).val(),
-                                    newVal;
-                                if (isMultiSelect) {
-
-                                    var prevValue = model.get('value');
-                                    if (prevValue === null) {
-                                        prevValue = '';
-                                    }
-                                    newVal = prevValue + val + '|';
-                                } else {
-                                    newVal = val;
-                                }
-                                model.set('value', newVal);
-                                var changeHandler = model.getEventChange();
-                                if (changeHandler) {
-                                    helpersModule.scriptExpressionEval(changeHandler, newVal, _this);
-                                }
-                                model.trigger('refresh:model', newVal);
+                        })
+                        .fail(function (error) {
+                            _this.publishError({
+                                error: error,
+                                view: this
                             });
-                        }
-
-                        var parentFilter = model.getProperties().get('parentFilter');
-                        if (parentFilter) {
-                            var parentModel = collection.findWhere({
-                                key: parentFilter
-                            });
-
-                            _this.listenTo(parentModel, 'refresh:model', function (value) {
-                                    var $elem = $('#' + _this.id);
-                                    helpersModule.waitLoading($elem);
-                                    if (value) {
-                                        var refreshDf = deferredModule.create(),
-                                            refreshDeferId = deferredModule.save(refreshDf),
-                                            defer = model.runAsyncTaskGetReadProc({'parentfilter.id': value});
-                                        defer.done(function (data) {
-                                            var sql = data.sql;
-                                            mediator.publish(optionsModule.getChannel('socketRequest'), {
-                                                query: sql,
-                                                type: optionsModule.getRequestType('deferred'),
-                                                id: refreshDeferId
-                                            });
-                                        });
-                                        $.when(refreshDf).done(function (res) {
-                                            var data = res.data;
-                                            var prepareData2 = [],
-                                                j,
-                                                hasOwnProperty = Object.prototype.hasOwnProperty;
-                                            for (j in data) {
-                                                if (hasOwnProperty.call(data, j)) {
-                                                    prepareData2.push({
-                                                        id: helpersModule.uniqueID(),
-                                                        val: data[j].id,
-                                                        name: data[j].name
-                                                    });
-                                                }
-                                            }
-                                            if (isVisible) {
-                                                text = _this.template({
-                                                    attribute: model.getAttribute(),
-                                                    isNextRow: isNextRow,
-                                                    parentFilterKey: parentFilter,
-                                                    isMultiSelect: isMultiSelect,
-                                                    data: prepareData2,
-                                                    containerID: _this.id,
-                                                    force: true
-                                                });
-                                                $elem.replaceWith(text);
-                                            }
-                                        });
-                                    }
-                                }
-                            );
-                        }
-                        $.publish(event, {
-                            text: text,
-                            counter: i
                         });
+
+                    asyncTask
+                        .done(
+                        /** @param {DeferredResponse} res */
+                            function (res) {
+                            var html = _this._getFilterHtml(true, isMultiSelect, isNextRow, res.data);
+                            $elem.replaceWith(html);
+                        })
+                        .fail(function (error) {
+                            _this.publishError({
+                                error: error,
+                                view: this
+                            });
+                        });
+                }
+            },
+            /**
+             *
+             * @param {BooleanResponse} isVisibleResponse
+             * @param {BooleanResponse} isNextRowResponse
+             * @param {BooleanResponse} isMultiSelectResponse
+             * @param {DeferredResponse} dataResponse
+             * @param {string} event
+             * @param {Number} i
+             * @param {FiltersROCollection} collection
+             * @private
+             */
+            _renderDone: function (isVisibleResponse, isNextRowResponse, isMultiSelectResponse, dataResponse, event, i, collection) {
+                var isVisible = isVisibleResponse.value,
+                    isNextRow = isNextRowResponse.value,
+                    data = dataResponse.data,
+                    isMultiSelect = isMultiSelectResponse.value,
+                    text = this._getFilterHtml(isVisible, isMultiSelect, isNextRow, data),
+                    _this = this,
+                    model = this.getModel();
+                if (isVisible) {
+                    var selector = '#' + this.id + ' input';
+                    this.$el.on('change', selector, function (e) {
+                        _this._changeHandler(e, isMultiSelect);
                     });
 
+
+                    var parentFilterKey = model.getProperties().get('parentFilter');
+                    if (parentFilterKey) {
+                        /**
+                         * @type {FilterRO}
+                         */
+                        var parentModel = collection.findWhere({
+                            key: parentFilterKey
+                        });
+                        this.listenTo(parentModel, 'refresh:model', function (value) {
+                            this._refreshModelHandler(value, isNextRow, isMultiSelect)
+                        });
+                    }
+                }
+                $.publish(event, {
+                    text: text,
+                    counter: i
+                });
+            },
+            /**
+             *
+             * @param {Object} rawData
+             * @returns {Array}
+             * @private
+             */
+            _prepareData: function (rawData) {
+                var result = [],
+                    j,
+                    hasOwnProperty = Object.prototype.hasOwnProperty;
+                for (j in rawData) {
+                    if (hasOwnProperty.call(rawData, j)) {
+                        result.push({
+                            id: helpersModule.uniqueID(),
+                            val: rawData[j].id,
+                            name: rawData[j].name
+                        });
+                    }
+                }
+                return result;
             }
         });
 })(Backbone, jQuery, helpersModule, FilterView, deferredModule, optionsModule);
