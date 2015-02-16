@@ -497,11 +497,16 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         isMultiSelectFilter: function (name) {
             return name.slice(-2) === '[]';
         },
+        /**
+         *
+         * @param {string} name
+         * @returns {string}
+         */
         getCorrectXmlName: function(name){
             if (name.indexOf('.xml') === -1) {
                 name = name + '.xml';
             }
-            return name.replace(/\\/g, '/');
+            return name.replace(/\\/g, '/').toLowerCase();
         },
         /**
          *

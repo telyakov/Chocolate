@@ -1,7 +1,7 @@
 /**
  * Storage Module
  */
-var storageModule = (function (undefined) {
+var storageModule = (function (undefined, optionsModule) {
     'use strict';
     function ObjectStorage(duration) {
         var self,
@@ -138,17 +138,15 @@ var storageModule = (function (undefined) {
                             if (form.write === '1') {
                                 isWrite = 1;
                             }
-                            result[form.viewname] = {
-                                viewname: form.viewname,
+                            var correctView = helpersModule.getCorrectXmlName(form.viewname);
+                            result[correctView] = {
+                                viewname: correctView,
                                 write: isWrite
                             }
                         }
-                        //console.log(forms[i])
-                        //role = forms[i].name.toLowerCase();
-                        //result.push(role);
                     }
                 }
-                if (typeof _private.getUser() === 'undefined') {
+                if (_private.getUser() === undefined) {
                     _private.getSession().user = {};
                 }
                 _private.getUser().forms = result;
@@ -246,6 +244,25 @@ var storageModule = (function (undefined) {
             return _private.getUserRoles();
         },
         /**
+         *
+         * @param {string} view
+         * @returns {boolean}
+         */
+        hasAccessToWrite: function (view) {
+            view = view.toLowerCase();
+            var userSettings = optionsModule.getConstants('userSettingsXml'),
+                taskForTop = optionsModule.getConstants('tasksForTopsXml'),
+                task = optionsModule.getConstants('tasksXml');
+            if ([taskForTop, task, userSettings].indexOf(view) !== -1) {
+                return true;
+            }
+            var viewData = _private.getUser().forms[view];
+            if (viewData) {
+                return viewData.write === 1;
+            }
+            return false;
+        },
+        /**
          * @param id {string}
          * @param employeeId {string}
          * @param name {string}
@@ -279,4 +296,4 @@ var storageModule = (function (undefined) {
             _private.persistApplicationSetting(key, value);
         }
     };
-})(undefined);
+})(undefined, optionsModule);

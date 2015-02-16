@@ -41,7 +41,8 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                 switch (type) {
                     case optionsModule.getRequestType('mainForm'):
                         var model = new FormModel({
-                            $xml: $xml
+                            $xml: $xml,
+                            write: storageModule.hasAccessToWrite(data.name)
                         });
                         var view = new FormView({
                             model: model

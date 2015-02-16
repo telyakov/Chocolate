@@ -9,22 +9,43 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
         {
             defaults: {
                 $xml: null,
+                write: false,
                 parentModel: null,
                 parentId: null
             },
-            _columnsCollection: null,
-            _dataFormProperties: null,
-            _agileFilters: null,
-            _actionProperties: null,
-            _cardCollection: null,
-            _filterRoCollection: null,
-            _printActions: null,
-            _columnsRoCollection: null,
-            _dynamicDefaultValues: {},
-            _columnsCardRoCollection: null,
-            _preview: null,
-            _requiredFields: null,
-            _openedCards: [],
+            /**
+             * @abstract
+             * @class FormModel
+             * @augments Backbone.Model
+             * @param {Object} opts
+             * @constructs
+             */
+            initialize: function(opts){
+                this._columnsCollection = null;
+                this._dataFormProperties = null;
+                this._agileFilters = null;
+                this._actionProperties = null;
+                this._cardCollection = null;
+                this._filterRoCollection = null;
+                this._printActions = null;
+                this._columnsRoCollection = null;
+                this._dynamicDefaultValues = {};
+                this._columnsCardRoCollection = null;
+                this._preview = null;
+                this._requiredFields = null;
+                this._openedCards = [];
+            },
+            /**
+             * @desc get access to write if form
+             * @returns {Boolean}
+             */
+            isAllowWrite: function(){
+                var parentModel = this.get('parentModel');
+                if(parentModel){
+                    return parentModel.isAllowWrite();
+                }
+                return this.get('write');
+            },
             destroy: function () {
                 if (this._columnsCollection) {
                     this._columnsCollection.each(function (object) {
@@ -299,13 +320,13 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              * @returns {boolean}
              */
             isAllowCreate: function () {
-                return helpersModule.boolEval(this.getDataFormProperties().getAllowAddNew(), false);
+                return this.isAllowWrite() && helpersModule.boolEval(this.getDataFormProperties().getAllowAddNew(), false);
             },
             /**
              * @returns {boolean}
              */
             isAllowSave: function () {
-                return helpersModule.boolEval(this.getDataFormProperties().getSaveButtonVisible(), false);
+                return this.isAllowWrite() && helpersModule.boolEval(this.getDataFormProperties().getSaveButtonVisible(), false);
             },
             /**
              * @returns {boolean}
@@ -636,14 +657,6 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 var parentModel = this.get('parentModel');
                 if (parentModel) {
                     return parentModel.getEntityTypeID();
-                } else {
-                    return null;
-                }
-            },
-            getParentView: function () {
-                var parentModel = this.get('parentModel');
-                if (parentModel) {
-                    return parentModel.getView();
                 } else {
                     return null;
                 }

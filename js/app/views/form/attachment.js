@@ -16,6 +16,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                     '<div class="fileupload-buttonbar">',
                     '<menu class="menu" type="toolbar">',
                     '<div class="messages-container"></div>',
+                    '<% if (isWrite) { %>',
                     '<span class="fileinput-button menu-button active">',
                     '<span class="menu-border-green"></span><span>Вложить</span>',
                     '<input id="<%= inputID %>" multiple="multiple" type="file" >',
@@ -23,6 +24,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                     '<button class="menu-button menu-button-save start" type="submit">',
                     '<span class="fa-save"></span><span title="Сохранить">Сохранить</span>',
                     '</button>',
+                    '<% } %>',
                     '<button class="menu-button active menu-button-refresh" type="button">',
                     '<span class="fa-refresh" title="Обновить"></span>',
                     '<span title="Обновить">Обновить</span>',
@@ -90,6 +92,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                 this.$el.html(this.template({
                     isSaved: !this.getModel().isNotSaved(),
                     formID: formID,
+                    isWrite: this.getModel().isAllowWrite(),
                     inputID: helpersModule.uniqueID(),
                     gridViewID: helpersModule.uniqueID()
                 }));
@@ -369,47 +372,53 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
              * @private
              */
             _destroyContextMenuWidget: function () {
-                this.$el.contextmenu('destroy');
+                if (this.getModel().isAllowWrite()) {
+                    this.$el.contextmenu('destroy');
+                }
             },
             /**
              * @desc Initialize Context Menu widget
              * @private
              */
             _initContextMenuWidget: function () {
-                var _this = this;
-                this.$el.contextmenu({
-                    delegate: '.attachment-grid-menu',
-                    show: {effect: 'blind', duration: 0},
-                    menu: [
-                        {
-                            title: optionsModule.getMessage('Delete') + ' [DEL]',
-                            cmd: 'delete',
-                            uiIcon: 'ui-icon-trash'
+                if (this.getModel().isAllowWrite()) {
+                    var _this = this;
+                    this.$el.contextmenu({
+                        delegate: '.attachment-grid-menu',
+                        show: {effect: 'blind', duration: 0},
+                        menu: [
+                            {
+                                title: optionsModule.getMessage('Delete') + ' [DEL]',
+                                cmd: 'delete',
+                                uiIcon: 'ui-icon-trash'
+                            }
+                        ],
+                        select: function (e, ui) {
+                            switch (ui.cmd) {
+                                case 'delete':
+                                    _this.removeSelectedRows();
+                                    break;
+                                default :
+                                    break;
+                            }
                         }
-                    ],
-                    select: function (e, ui) {
-                        switch (ui.cmd) {
-                            case 'delete':
-                                _this.removeSelectedRows();
-                                break;
-                            default :
-                                break;
-                        }
-                    }
-                });
+                    });
+                }
             },
             /**
              * @desc Remove selected rows from table
              * @override
              */
             removeSelectedRows: function () {
-                var $rows = this.getSelectedRows(),
-                    _this = this;
-                $rows.forEach(function (item) {
-                    var id = $(item).attr('data-id');
-                    _this._deleteUnsavedFile(id);
-                });
-                this.removeRows($rows);
+                if (this.getModel().isAllowWrite()) {
+                    var $rows = this.getSelectedRows(),
+                        _this = this;
+                    $rows.forEach(function (item) {
+                        var id = $(item).attr('data-id');
+                        _this._deleteUnsavedFile(id);
+                    });
+                    this.removeRows($rows);
+                }
             },
             /**
              *

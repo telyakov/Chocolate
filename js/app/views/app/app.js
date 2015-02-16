@@ -384,9 +384,11 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                             id: deferId
                         });
                         defer.done(function (res) {
+                            //todo: check access to write
                             var $xml = res.data,
                                 model = new FormModel({
-                                    $xml: $xml
+                                    $xml: $xml,
+                                    write: true
                                 }),
                                 view = new FormView({
                                     model: model

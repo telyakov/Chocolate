@@ -387,7 +387,9 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
              * @desc Remove selected rows from table
              */
             removeSelectedRows: function () {
-                this.removeRows(this.getSelectedRows());
+                if(this.getModel().isAllowWrite()){
+                    this.removeRows(this.getSelectedRows());
+                }
             },
             /**
              * @desc Remove rows from table

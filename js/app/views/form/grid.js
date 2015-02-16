@@ -76,10 +76,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     this._menuView.destroy();
                     this._menuView = null;
                 }
-                try {
+                if (this.getModel().isAllowWrite()) {
                     this.$el.contextmenu('destroy');
-                } catch (e) {
-                    mediator.publish(optionsModule.getChannel('logError'), e);
                 }
                 this._destroyDragTableWidget();
                 this._destroyTableHeadersContextMenuWidget();
@@ -952,26 +950,28 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              */
             _initContextRowWidget: function () {
                 var _this = this;
-                this.$el.contextmenu({
-                    delegate: '.card-button',
-                    show: {effect: 'blind', duration: 0},
-                    menu: [
-                        {
-                            title: optionsModule.getMessage('Delete') + ' [DEL]',
-                            cmd: 'delete',
-                            uiIcon: 'ui-icon-trash'
+                if (this.getModel().isAllowWrite()) {
+                    this.$el.contextmenu({
+                        delegate: '.card-button',
+                        show: {effect: 'blind', duration: 0},
+                        menu: [
+                            {
+                                title: optionsModule.getMessage('Delete') + ' [DEL]',
+                                cmd: 'delete',
+                                uiIcon: 'ui-icon-trash'
+                            }
+                        ],
+                        select: function (e, ui) {
+                            switch (ui.cmd) {
+                                case 'delete':
+                                    _this.removeSelectedRows();
+                                    break;
+                                default :
+                                    break;
+                            }
                         }
-                    ],
-                    select: function (e, ui) {
-                        switch (ui.cmd) {
-                            case 'delete':
-                                _this.removeSelectedRows();
-                                break;
-                            default :
-                                break;
-                        }
-                    }
-                });
+                    });
+                }
                 return this;
             },
             /**
