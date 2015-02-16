@@ -36,7 +36,7 @@ var CheckBoxView = (function (Backbone, $, helpersModule, FilterView, deferredMo
             destroy: function () {
                 delete this.template;
                 if (this._$filter) {
-                    //this._$filter.toggleButtons('destroy');
+                    this._$filter.bootstrapSwitch('destroy');
                     delete this._$filter;
                 }
                 FilterView.prototype.destroy.apply(this);
