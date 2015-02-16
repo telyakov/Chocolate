@@ -24,6 +24,25 @@ var FilterView = (function (Backbone, $) {
                 return this.model;
             },
             /**
+             *
+             * @param {string} error
+             * @param {string} event
+             * @param {Number} i
+             * @private
+             */
+            handleError: function (error, event, i) {
+                $.publish(event, {
+                    text: '',
+                    counter: i,
+                    callback: function () {
+                    }
+                });
+                this.publishError({
+                    error: error,
+                    view: this
+                })
+            },
+            /**
              * @returns {string|undefined}
              */
             getValue: function () {

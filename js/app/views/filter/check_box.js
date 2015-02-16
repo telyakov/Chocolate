@@ -56,27 +56,8 @@ var CheckBoxView = (function (Backbone, $, helpersModule, FilterView) {
                         _this._renderDone(isVisibleResponse, isEnabledResponse, isNextRowResponse, event, i);
                     })
                     .fail(function (error) {
-                        _this._handleError(error, event, i);
+                        _this.handleError(error, event, i);
                     });
-            },
-            /**
-             *
-             * @param {string} error
-             * @param {string} event
-             * @param {Number} i
-             * @private
-             */
-            _handleError: function (error, event, i) {
-                $.publish(event, {
-                    text: '',
-                    counter: i,
-                    callback: function () {
-                    }
-                });
-                this.publishError({
-                    error: error,
-                    view: this
-                })
             },
             /**
              * @param $filter {jQuery}
@@ -100,34 +81,41 @@ var CheckBoxView = (function (Backbone, $, helpersModule, FilterView) {
                     isNextRow = isNextRowResponse.value,
                     filterID = helpersModule.uniqueID(),
                     html = this._getFilterHtml(isVisible, isDisabled, isNextRow, filterID);
+
                 $.publish(event, {
                     text: html,
                     counter: i,
-                    callback: this._createCallback(filterID)
+                    callback: this._createCallback(filterID, isVisible)
                 });
             },
             /**
              *
              * @param {String} filterID
+             * @param {Boolean} isVisible
              * @returns function
              * @private
              */
-            _createCallback: function (filterID) {
+            _createCallback: function (filterID, isVisible) {
                 var _this = this;
-                return function () {
-                    var $filter = $('#' + filterID);
-                    _this._persistLinkToJqueryFilter($filter);
-                    $filter.bootstrapSwitch({
-                        size: 'small',
-                        onText: 'Да',
-                        offText: 'Нет',
-                        onSwitchChange: function (event, state) {
-                            if (state) {
-                                $filter.val(1);
+                if (isVisible) {
+                    return function () {
+                        var $filter = $('#' + filterID);
+                        _this._persistLinkToJqueryFilter($filter);
+                        $filter.bootstrapSwitch({
+                            size: 'small',
+                            onText: 'Да',
+                            offText: 'Нет',
+                            onSwitchChange: function (event, state) {
+                                if (state) {
+                                    $filter.val(1);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
+                return function () {
+                };
+
             },
             /**
              *

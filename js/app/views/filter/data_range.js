@@ -41,20 +41,6 @@ var DateRangeView = (function (Backbone, $, helpersModule, optionsModule, Filter
                 FilterView.prototype.destroy.apply(this);
             },
             /**
-             * @param {jQuery} $filter
-             * @private
-             */
-            _persistLinkToJqueryFilterFrom: function ($filter) {
-                this._$filterFrom = $filter;
-            },
-            /**
-             * @param {jQuery} $filter
-             * @private
-             */
-            _persistLinkToJqueryFilterTo: function ($filter) {
-                this._$filterTo = $filter;
-            },
-            /**
              * @param {string} event
              * @param {number} i
              * @override
@@ -68,79 +54,127 @@ var DateRangeView = (function (Backbone, $, helpersModule, optionsModule, Filter
                     model.runAsyncTaskIsEnabled(),
                     model.runAsyncTaskIsNextRow()
                 )
-                    .done(function (v1, v2, v3) {
-                        var isDisabled = !v2.value,
-                            isVisible = v1.value,
-                            isNextRow = v3.value,
-                            text = '';
-
-                        var defaultValue = model.getDefaultValue(),
-                            attrFrom = model.getAttributeFrom(),
-                            attrTo = model.getAttributeTo(attrFrom),
-                            from,
-                            to;
-
-                        switch (defaultValue.toLowerCase()) {
-                            case 'currentmonth':
-                                var momentInstance = moment(),
-                                    dateFormat = 'DD.MM.YYYY';
-                                from = momentInstance.startOf('month').format(dateFormat);
-                                to = momentInstance.endOf("month").format(dateFormat);
-                                break;
-                            default:
-                                break;
-                        }
-
-                        var idFrom = helpersModule.uniqueID(),
-                            idTo = helpersModule.uniqueID();
-                        if (isVisible) {
-                            text = _this.template({
-                                idFrom: idFrom,
-                                idTo: idTo,
-                                attributeTo: attrTo,
-                                attributeFrom: attrFrom,
-                                from: from,
-                                to: to,
-                                caption: model.getCaption(),
-                                attribute: model.getAttribute(),
-                                tooltip: model.getTooltip(),
-                                disabled: isDisabled,
-                                isNextRow: isNextRow,
-                                containerID: _this.id
-                            });
-                        }
-                        $.publish(event, {
-                            text: text,
-                            counter: i,
-                            callback: function () {
-                                var dateFormat = optionsModule.getSetting('ddmmyyyyFormat'),
-                                    $filterFrom = $('#' + idFrom),
-                                    $filterTo = $('#' + idTo);
-                                _this._persistLinkToJqueryFilterFrom($filterFrom);
-                                _this._persistLinkToJqueryFilterTo($filterTo);
-                                $filterFrom.datepicker({
-                                    format: dateFormat,
-                                    autoclose: true
-                                });
-                                $filterTo.datepicker({
-                                    format: dateFormat,
-                                    autoclose: true
-                                });
-                            }
-                        });
+                    .done(function (isVisibleResponse, isEnabledResponse, isNextRowResponse) {
+                        _this._renderDone(isVisibleResponse, isEnabledResponse, isNextRowResponse, event, i);
                     })
                     .fail(function (error) {
-                        $.publish(event, {
-                            text: '',
-                            counter: i,
-                            callback: function () {
-                            }
-                        });
-                        _this.publishError({
-                            error: error,
-                            view: _this
-                        })
+                        _this.handleError(error, event, i);
                     });
+            },
+            /**
+             *
+             * @param {BooleanResponse} isVisibleResponse
+             * @param {BooleanResponse} isEnabledResponse
+             * @param {BooleanResponse} isNextRowResponse
+             * @param {string} event
+             * @param {Number} i
+             * @private
+             */
+            _renderDone: function (isVisibleResponse, isEnabledResponse, isNextRowResponse, event, i) {
+                var isDisabled = !isEnabledResponse.value,
+                    isVisible = isVisibleResponse.value,
+                    isNextRow = isNextRowResponse.value,
+                    idFrom = helpersModule.uniqueID(),
+                    idTo = helpersModule.uniqueID(),
+                    html = this._getFilterHtml(isVisible, isDisabled, isNextRow, idFrom, idTo);
+
+                $.publish(event, {
+                    text: html,
+                    counter: i,
+                    callback: this._createCallback(idFrom, idTo, isVisible)
+                });
+            },
+            /**
+             *
+             * @param {String} idFrom
+             * @param {String} idTo
+             * @param {Boolean} isVisible
+             * @returns function
+             * @private
+             */
+            _createCallback: function (idFrom, idTo, isVisible) {
+                var _this = this;
+                if (isVisible) {
+                    return function () {
+                        var dateFormat = optionsModule.getSetting('ddmmyyyyFormat'),
+                            $filterFrom = $('#' + idFrom),
+                            $filterTo = $('#' + idTo);
+                        _this._persistLinkToJqueryFilterFrom($filterFrom);
+                        _this._persistLinkToJqueryFilterTo($filterTo);
+
+                        $filterFrom.datepicker({
+                            format: dateFormat,
+                            autoclose: true
+                        });
+
+                        $filterTo.datepicker({
+                            format: dateFormat,
+                            autoclose: true
+                        });
+                    }
+                }
+                return function () {
+                };
+            },
+            /**
+             *
+             * @param {Boolean} isVisible
+             * @param {Boolean} isDisabled
+             * @param {Boolean} isNextRow
+             * @param {string} idFrom
+             * @param {string} idTo
+             * @returns {string}
+             * @private
+             */
+            _getFilterHtml: function (isVisible, isDisabled, isNextRow, idFrom, idTo) {
+                if (isVisible) {
+                    var model = this.getModel(),
+                        attrFrom = model.getAttributeFrom(),
+                        attrTo = model.getAttributeTo(attrFrom),
+                        from,
+                        to;
+
+                    switch (model.getDefaultValue().toLowerCase()) {
+                        case 'currentmonth':
+                            var momentInstance = moment(),
+                                dateFormat = 'DD.MM.YYYY';
+                            from = momentInstance.startOf('month').format(dateFormat);
+                            to = momentInstance.endOf("month").format(dateFormat);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    return this.template({
+                        idFrom: idFrom,
+                        idTo: idTo,
+                        attributeTo: attrTo,
+                        attributeFrom: attrFrom,
+                        from: from,
+                        to: to,
+                        caption: model.getCaption(),
+                        attribute: model.getAttribute(),
+                        tooltip: model.getTooltip(),
+                        disabled: isDisabled,
+                        isNextRow: isNextRow,
+                        containerID: this.id
+                    });
+                }
+                return '';
+            },
+            /**
+             * @param {jQuery} $filter
+             * @private
+             */
+            _persistLinkToJqueryFilterFrom: function ($filter) {
+                this._$filterFrom = $filter;
+            },
+            /**
+             * @param {jQuery} $filter
+             * @private
+             */
+            _persistLinkToJqueryFilterTo: function ($filter) {
+                this._$filterTo = $filter;
             }
         });
 })(Backbone, jQuery, helpersModule, optionsModule, FilterView);
