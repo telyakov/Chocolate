@@ -24,7 +24,7 @@ var FastFilterRO = (function (FilterRO, helpersModule, optionsModule, deferredMo
                 var deferred = deferredModule.create(),
                     _this = this;
                 if (this._data === null || forceRefresh) {
-                    this.readProcEval()
+                    this.runAsyncTaskGetReadProc()
                         .done(function (data) {
                             var sql = data.sql,
                                 helpersDefer = deferredModule.create(),

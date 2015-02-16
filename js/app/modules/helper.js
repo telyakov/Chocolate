@@ -275,7 +275,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
                             if (value === 'this.val') {
                                 model.setDynamicDefaultValue(key, val);
                             } else if (value === 'this.caption') {
-                                view.deferVisibleValue()
+                                view.runAsyncTaskGetCurrentValue()
                                     .done(function (res) {
                                         var value = res.value;
                                         model.setDynamicDefaultValue(key, value);

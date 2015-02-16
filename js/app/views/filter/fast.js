@@ -30,7 +30,6 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 '<% } %>',
                 '</li>'
             ].join('')),
-            events: {},
             /**
              * @override
              */
@@ -40,35 +39,40 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 this.$el.off();
                 this.stopListening(this.model);
                 FilterView.prototype.destroy.apply(this);
-                this.unbind();
             },
             /**
-             * @returns {string|undefined}
-             */
-            getValue: function () {
-                return this.model.get('value');
-            },
-            /**
+             * @override
              * @returns {Deferred}
              */
-            deferVisibleValue: function () {
-                //tasks for tops
-                var defer = deferredModule.create(),
+            runAsyncTaskGetCurrentValue: function () {
+                //used in tasksForTops.xml
+                var asyncTask = deferredModule.create(),
+                    _this = this,
                     values = this.getValue().split('|');
-                this.model.startAsyncTaskGetData()
-                    .done(function (res) {
-                        var data = res.data;
-                        var response = [];
+                this.getModel()
+                    .startAsyncTaskGetData()
+                    .done(
+                    /** @param {DeferredResponse} res */
+                        function (res) {
+                        var data = res.data,
+                            response = [];
                         values.forEach(function (item) {
                             if (item !== '') {
                                 response.push(data[item].name);
                             }
                         });
-                        defer.resolve({
+                        asyncTask.resolve({
                             value: response.join('/')
                         });
+                    })
+                    .fail(function (error) {
+                        _this.publishError({
+                            view: this,
+                            error: error
+                        });
+                        asyncTask.reject(error);
                     });
-                return defer;
+                return asyncTask;
             },
             /**
              * @param event {String}
@@ -77,125 +81,121 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
              */
             render: function (event, i, collection) {
                 var _this = this,
-                    model = this.model,
-                    visibleDf = deferredModule.create(),
-                    nextRowDf = deferredModule.create(),
-                    multiSelectDf = deferredModule.create(),
-                    multiSelectId = deferredModule.save(multiSelectDf),
-                    visibleId = deferredModule.save(visibleDf),
-                    nextRowId = deferredModule.save(nextRowDf);
-                var changeHandler = model.getEventChange();
-                var selector = '#' + _this.id + ' input';
+                    model = this.getModel();
 
-                model.isVisibleEval(visibleId);
-                model.isNextRowEval(nextRowId);
-                model.isMultiSelectEval(multiSelectId);
-                var dataDf = model.startAsyncTaskGetData(true);
-                $.when(visibleDf, nextRowDf, multiSelectDf, dataDf).done(function (visible, nextRow, multiSelect, dataRes) {
-                    var isVisible = visible.value,
-                        isNextRow = nextRow.value,
-                        data = dataRes.data,
-                        isMultiSelect = multiSelect.value,
-                        text = '';
-                    var prepareData = [],
-                        j,
-                        hasOwnProperty = Object.prototype.hasOwnProperty;
-                    for (j in data) {
-                        if (hasOwnProperty.call(data, j)) {
-                            prepareData.push({
-                                id: helpersModule.uniqueID(),
-                                val: data[j].id,
-                                name: data[j].name
+                $.when(
+                    model.runAsyncTaskIsVisible(),
+                    model.runAsyncTaskIsNextRow(),
+                    model.runAsyncTaskIsMultiSelect(),
+                    model.startAsyncTaskGetData(true)
+                )
+                    .done(function (visible, nextRow, multiSelect, dataRes) {
+                        var isVisible = visible.value,
+                            isNextRow = nextRow.value,
+                            data = dataRes.data,
+                            isMultiSelect = multiSelect.value,
+                            text = '',
+                            prepareData = [],
+                            j,
+                            hasOwnProperty = Object.prototype.hasOwnProperty;
+                        for (j in data) {
+                            if (hasOwnProperty.call(data, j)) {
+                                prepareData.push({
+                                    id: helpersModule.uniqueID(),
+                                    val: data[j].id,
+                                    name: data[j].name
+                                });
+                            }
+                        }
+
+                        if (isVisible) {
+                            text = _this.template({
+                                attribute: model.getAttribute(),
+                                isNextRow: isNextRow,
+                                isMultiSelect: isMultiSelect,
+                                data: prepareData,
+                                containerID: _this.id
+                            });
+                            var selector = '#' + _this.id + ' input';
+                            _this.$el.on('change', selector, function (e) {
+                                var val = $(e.target).val(),
+                                    newVal;
+                                if (isMultiSelect) {
+
+                                    var prevValue = model.get('value');
+                                    if (prevValue === null) {
+                                        prevValue = '';
+                                    }
+                                    newVal = prevValue + val + '|';
+                                } else {
+                                    newVal = val;
+                                }
+                                model.set('value', newVal);
+                                var changeHandler = model.getEventChange();
+                                if (changeHandler) {
+                                    helpersModule.scriptExpressionEval(changeHandler, newVal, _this);
+                                }
+                                model.trigger('refresh:model', newVal);
                             });
                         }
-                    }
-                    if (isVisible) {
-                        text = _this.template({
-                            attribute: model.getAttribute(),
-                            isNextRow: isNextRow,
-                            isMultiSelect: isMultiSelect,
-                            data: prepareData,
-                            containerID: _this.id
-                        });
-                        _this.$el.on('change', selector, function (e) {
-                            var val = $(e.target).val();
-                            var newVal;
-                            if (isMultiSelect) {
 
-                                var prevValue = model.get('value');
-                                if (prevValue === null) {
-                                    prevValue = '';
-                                }
-                                newVal = prevValue + val + '|';
-                            } else {
-                                newVal = val;
-                            }
-                            model.set('value', newVal);
-                            if (changeHandler) {
-                                helpersModule.scriptExpressionEval(changeHandler, newVal, _this);
-                            }
-                            model.trigger('refresh:model', newVal);
-                        });
-                    }
-                    var parentFilter = model.getProperties().get('parentFilter');
+                        var parentFilter = model.getProperties().get('parentFilter');
+                        if (parentFilter) {
+                            var parentModel = collection.findWhere({
+                                key: parentFilter
+                            });
 
-
-                    if (parentFilter) {
-                        var parentModel = collection.findWhere({
-                            key: parentFilter
-                        });
-
-                        _this.listenTo(parentModel, 'refresh:model', function (value) {
-                                var $elem = $('#' + _this.id);
-                                helpersModule.waitLoading($elem);
-                                if (value) {
-                                    var refreshDf = deferredModule.create(),
-                                        refreshDeferId = deferredModule.save(refreshDf),
-                                        defer = _this.model.readProcEval({'parentfilter.id': value});
-                                    defer.done(function (data) {
-                                        var sql = data.sql;
-                                        mediator.publish(optionsModule.getChannel('socketRequest'), {
-                                            query: sql,
-                                            type: optionsModule.getRequestType('deferred'),
-                                            id: refreshDeferId
-                                        });
-                                    });
-                                    $.when(refreshDf).done(function (res) {
-                                        var data = res.data;
-                                        var prepareData2 = [],
-                                            j,
-                                            hasOwnProperty = Object.prototype.hasOwnProperty;
-                                        for (j in data) {
-                                            if (hasOwnProperty.call(data, j)) {
-                                                prepareData2.push({
-                                                    id: helpersModule.uniqueID(),
-                                                    val: data[j].id,
-                                                    name: data[j].name
-                                                });
-                                            }
-                                        }
-                                        if (isVisible) {
-                                            text = _this.template({
-                                                attribute: model.getAttribute(),
-                                                isNextRow: isNextRow,
-                                                parentFilterKey: parentFilter,
-                                                isMultiSelect: isMultiSelect,
-                                                data: prepareData2,
-                                                containerID: _this.id,
-                                                force: true
+                            _this.listenTo(parentModel, 'refresh:model', function (value) {
+                                    var $elem = $('#' + _this.id);
+                                    helpersModule.waitLoading($elem);
+                                    if (value) {
+                                        var refreshDf = deferredModule.create(),
+                                            refreshDeferId = deferredModule.save(refreshDf),
+                                            defer = model.runAsyncTaskGetReadProc({'parentfilter.id': value});
+                                        defer.done(function (data) {
+                                            var sql = data.sql;
+                                            mediator.publish(optionsModule.getChannel('socketRequest'), {
+                                                query: sql,
+                                                type: optionsModule.getRequestType('deferred'),
+                                                id: refreshDeferId
                                             });
-                                            $elem.replaceWith(text);
-                                        }
-                                    });
+                                        });
+                                        $.when(refreshDf).done(function (res) {
+                                            var data = res.data;
+                                            var prepareData2 = [],
+                                                j,
+                                                hasOwnProperty = Object.prototype.hasOwnProperty;
+                                            for (j in data) {
+                                                if (hasOwnProperty.call(data, j)) {
+                                                    prepareData2.push({
+                                                        id: helpersModule.uniqueID(),
+                                                        val: data[j].id,
+                                                        name: data[j].name
+                                                    });
+                                                }
+                                            }
+                                            if (isVisible) {
+                                                text = _this.template({
+                                                    attribute: model.getAttribute(),
+                                                    isNextRow: isNextRow,
+                                                    parentFilterKey: parentFilter,
+                                                    isMultiSelect: isMultiSelect,
+                                                    data: prepareData2,
+                                                    containerID: _this.id,
+                                                    force: true
+                                                });
+                                                $elem.replaceWith(text);
+                                            }
+                                        });
+                                    }
                                 }
-                            }
-                        );
-                    }
-                    $.publish(event, {
-                        text: text,
-                        counter: i
+                            );
+                        }
+                        $.publish(event, {
+                            text: text,
+                            counter: i
+                        });
                     });
-                });
 
             }
         });

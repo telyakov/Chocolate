@@ -1,7 +1,3 @@
-/**
- * Class FilterView
- * @class
- */
 var FilterView = (function (Backbone, $) {
     'use strict';
     return Backbone.View.extend(
@@ -9,9 +5,10 @@ var FilterView = (function (Backbone, $) {
         {
             /**
              * @constructs
+             * @extends Backbone.View
              */
             initialize: function (options) {
-                _.bindAll(this, 'render');
+                _.bindAll(this);
                 this.model = options.model;
                 this.form = options.form;
                 this.view = options.view;
@@ -21,13 +18,25 @@ var FilterView = (function (Backbone, $) {
                 }
             },
             /**
-             * @method destroy
+             * @returns {FilterRO}
              */
-            destroy: function(){
-                this.model= null;
-                this.form= null;
-                this.view= null;
-                this.id= null;
+            getModel: function () {
+                return this.model;
+            },
+            /**
+             * @returns {string|undefined}
+             */
+            getValue: function () {
+                return this.getModel().get('value');
+            },
+            /**
+             * @desc destroy
+             */
+            destroy: function () {
+                this.model = null;
+                this.form = null;
+                this.view = null;
+                this.id = null;
                 this.$el = null;
                 this.el = null;
                 this.render = null;
@@ -39,6 +48,23 @@ var FilterView = (function (Backbone, $) {
              * @abstract
              */
             render: function (event, i, collection) {
+            },
+            /**
+             * @description Send error event to mediator
+             * @param {Object} opts custom object
+             * @fires mediator#logError
+             */
+            publishError: function (opts) {
+                mediator.publish(optionsModule.getChannel('logError'), opts);
+            },
+            /**
+             * @abstract
+             */
+            runAsyncTaskGetCurrentValue: function () {
+                this.publishError({
+                    view: this,
+                    error: 'not implemented runAsyncTaskGetCurrentValue method'
+                })
             }
         });
 })(Backbone, jQuery);

@@ -45,22 +45,16 @@ var TreeFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
              */
             render: function (event, i) {
                 var _this = this,
-                    model = this.model,
-                    visibleDf = deferredModule.create(),
-                    enabledDf = deferredModule.create(),
-                    nextRowDf = deferredModule.create(),
-                    multiSelectDf = deferredModule.create(),
-                    visibleId = deferredModule.save(visibleDf),
-                    nextRowId = deferredModule.save(nextRowDf),
-                    multiSelectId = deferredModule.save(multiSelectDf),
-                    enabledId = deferredModule.save(enabledDf);
+                    model = this.model;
 
-                var defer = model.readProcEval();
-                model.isVisibleEval(visibleId);
-                model.isEnabledEval(enabledId);
-                model.isMultiSelectEval(multiSelectId);
-                model.isNextRowEval(nextRowId);
-                $.when(visibleDf, enabledDf, nextRowDf, multiSelectDf, defer)
+                var defer = model.runAsyncTaskGetReadProc();
+                $.when(
+                    model.runAsyncTaskIsVisible(),
+                    model.runAsyncTaskIsVisibleIsEnabled(),
+                    model.runAsyncTaskIsNextRow(),
+                    model.runAsyncTaskIsMultiSelect(),
+                    defer
+                )
                     .done(function (visible, enabled, nextRow, multiSelect, sqlDefer) {
                         var isDisabled = !enabled.value,
                             isVisible = visible.value,

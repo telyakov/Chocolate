@@ -76,7 +76,7 @@ var DateCardElement = (function ($, moment, optionsModule, CardElement) {
                         };
                     } else {
                         options.type = 'date';
-                        options.viewformat = 'dd.mm.yyyy';
+                        options.viewformat = optionsModule.getSetting('ddmmyyyyFormat');
                         options.datetimepicker = {
                             weekStart: 1
                         };

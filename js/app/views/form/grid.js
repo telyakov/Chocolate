@@ -138,7 +138,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @override
              */
             refresh: function (opts) {
-                var afterSave = opts.afterSave ? true : false;
+                var afterSave = opts && opts.afterSave ? true : false;
                 this._runAsyncRefreshFormTask(false, afterSave);
                 var collection = this.getModel().getFiltersROCollection(this);
                 collection.each(

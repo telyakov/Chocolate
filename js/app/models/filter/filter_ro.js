@@ -1,8 +1,7 @@
-var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule) {
+var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule, deferredModule) {
     'use strict';
     return Backbone.Model.extend(
         /** @lends FilterRO */
-
         {
             defaults: {
                 model: null,
@@ -46,15 +45,11 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             getCaption: function () {
                 return this.get('filter').getCaption();
             },
+            /**
+             * @returns {String}
+             */
             getTooltip: function () {
                 return this.get('filter').getTooltipText();
-            },
-            isEnabledEval: function (deferID) {
-                var evaluatedValue = this.get('filter').getEnabled();
-                if (this.get('value')) {
-                    evaluatedValue = 'true';
-                }
-                return helpersModule.boolExpressionEval(evaluatedValue, deferID, true);
             },
             getValue: function () {
                 if (this.get('value')) {
@@ -71,17 +66,57 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
             getValueFormat: function () {
                 return this.get('filter').getValueFormat();
             },
-            isMultiSelectEval: function (deferID) {
-                return helpersModule.boolExpressionEval(this.get('filter').getMultiSelect(), deferID, false);
+            /**
+             *
+             * @returns {Deferred}
+             */
+            runAsyncTaskIsMultiSelect: function () {
+                var task = deferredModule.create(),
+                    taskID = deferredModule.save(task);
+                helpersModule.boolExpressionEval(this.get('filter').getMultiSelect(), taskID, false);
+                return task;
             },
-            readProcEval: function (data) {
+            /**
+             *
+             * @param {Object} [data]
+             * @returns {Deferred}
+             */
+            runAsyncTaskGetReadProc: function (data) {
                 return bindModule.runAsyncTaskBindSql(this.get('filter').getReadProc(), data);
             },
-            isVisibleEval: function (deferID) {
-                return helpersModule.boolExpressionEval(this.get('filter').getVisible(), deferID, true);
+            /**
+             *
+             * @returns {Deferred}
+             */
+            runAsyncTaskIsVisibleIsEnabled: function () {
+                var task = deferredModule.create(),
+                    taskID = deferredModule.save(task),
+                    evaluatedValue = this.get('filter').getEnabled();
+                if (this.get('value')) {
+                    evaluatedValue = 'true';
+                }
+                helpersModule.boolExpressionEval(evaluatedValue, taskID, true);
+                return task;
             },
-            isNextRowEval: function (deferID) {
-                return helpersModule.boolExpressionEval(this.get('filter').getToNextRow(), deferID, false);
+            /**
+             *
+             * @returns {Deferred}
+             */
+            runAsyncTaskIsVisible: function () {
+                var task = deferredModule.create(),
+                    taskID = deferredModule.save(task);
+                helpersModule.boolExpressionEval(this.get('filter').getVisible(), taskID, true);
+                return task
+            },
+            /**
+             *
+             * @returns {Deferred}
+             */
+            runAsyncTaskIsNextRow: function () {
+                var task = deferredModule.create(),
+                    taskID = deferredModule.save(task);
+                helpersModule.boolExpressionEval(this.get('filter').getToNextRow(), taskID, false);
+                return task
             },
             /**
              *
@@ -122,4 +157,4 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule)
                 this._view = view;
             }
         });
-})(Backbone, helpersModule, FilterProperties, bindModule);
+})(Backbone, helpersModule, FilterProperties, bindModule, deferredModule);

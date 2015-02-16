@@ -12,6 +12,12 @@
  * @name jQuery.parent
  */
 /**
+ * @see https://github.com/nostalgiaz/bootstrap-switch
+ * @function
+ * @name jQuery.bootstrapSwitch
+ */
+
+/**
  * @function
  * @name jQuery.tablesorter
  */

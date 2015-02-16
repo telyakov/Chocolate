@@ -33,40 +33,36 @@ var TextFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
              */
             render: function (event, i) {
                 var _this = this,
-                    model = this.model,
-                    visibleDf = deferredModule.create(),
-                    enabledDf = deferredModule.create(),
-                    nextRowDf = deferredModule.create(),
-                    visibleId = deferredModule.save(visibleDf),
-                    nextRowId = deferredModule.save(nextRowDf),
-                    enabledId = deferredModule.save(enabledDf);
+                    model = this.model;
 
-                model.isVisibleEval(visibleId);
-                model.isEnabledEval(enabledId);
-                model.isNextRowEval(nextRowId);
-                $.when(visibleDf, enabledDf, nextRowDf).done(function (v1, v2, v3) {
-                    var isDisabled = !v2.value,
-                        isVisible = v1.value,
-                        isNextRow = v3.value,
-                        text = '';
-                    if (isVisible) {
-                        text = _this.template({
-                            id: helpersModule.uniqueID(),
-                            caption: model.getCaption(),
-                            attribute: model.getAttribute(),
-                            tooltip: model.getTooltip(),
-                            disabled: isDisabled,
-                            isNextRow: isNextRow,
-                            value: model.getValue(),
-                            //valueFormat: model.getValueFormat(),
-                            containerID: _this.id
+                $.when(
+                    model.runAsyncTaskIsVisible(),
+                    model.runAsyncTaskIsVisibleIsEnabled(),
+                    model.runAsyncTaskIsNextRow()
+                )
+                    .done(function (v1, v2, v3) {
+                        var isDisabled = !v2.value,
+                            isVisible = v1.value,
+                            isNextRow = v3.value,
+                            text = '';
+                        if (isVisible) {
+                            text = _this.template({
+                                id: helpersModule.uniqueID(),
+                                caption: model.getCaption(),
+                                attribute: model.getAttribute(),
+                                tooltip: model.getTooltip(),
+                                disabled: isDisabled,
+                                isNextRow: isNextRow,
+                                value: model.getValue(),
+                                //valueFormat: model.getValueFormat(),
+                                containerID: _this.id
+                            });
+                        }
+                        $.publish(event, {
+                            text: text,
+                            counter: i
                         });
-                    }
-                    $.publish(event, {
-                        text: text,
-                        counter: i
                     });
-                });
 
             }
         });

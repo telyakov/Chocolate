@@ -44,6 +44,7 @@ var optionsModule = (function () {
             formatDate: 'YYYY.MM.DD HH:mm:ss',
             signatureFormat: 'DD.MM.YYYY HH:mm',
             userDateFormat: 'MM.DD.YYYY HH:mm:ss',
+            ddmmyyyyFormat: 'dd.mm.yyyy',
             emailCol: 'emails',
             titleRowHeight: 26,
             systemCols: ['lastmodifier', 'lastmodifydate', 'insdate', 'username', 'userid'],
