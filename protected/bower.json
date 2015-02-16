@@ -2,8 +2,8 @@
     "name": "Chocolate",
     "dependencies": {
         "throttle-debounce": "https://raw.githubusercontent.com/cowboy/jquery-throttle-debounce/master/jquery.ba-throttle-debounce.js",
-        "jquery": "1.8.3",
-        "toggle-buttons": "https://raw.githubusercontent.com/nostalgiaz/bootstrap-toggle-buttons/master/static/js/jquery.toggle.buttons.js",
+        "jquery": "2.1.3",
+        "bootstrap-switch": "3.3.2",
         "ui-touch-punch": "https://raw.githubusercontent.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.js",
         "jquery-ui-contextmenu": "https://raw.githubusercontent.com/mar10/jquery-ui-contextmenu/master/jquery.ui-contextmenu.js",
         "jquery-ui": "https://github.com/components/jqueryui/archive/1.9.2.zip",

@@ -13,10 +13,10 @@ var CheckBoxView = (function (Backbone, $, helpersModule, FilterView, deferredMo
                 '<li class="filter-item" id="<%= containerID %>">',
                 '<div class="checkbox-filter" title="<%= tooltip %>">',
                 '<label for="<%= id %>"><%= caption %></label>',
-                '<div id="<%= id %>">',
-                '<input type="hidden" value="" name="<%= attribute %>"/>',
-                '<input name="<%= attribute %>" value="1" type="checkbox"/>',
-                '</div>',
+                //'<div id="<%= id %>">',
+                //'<input type="hidden" value="" name="<%= attribute %>"/>',
+                '<input id="<%= id %>" name="<%= attribute %>" type="checkbox"/>',
+                //'</div>',
                 '</div>',
                 '</li>'
             ].join('')),
@@ -36,7 +36,7 @@ var CheckBoxView = (function (Backbone, $, helpersModule, FilterView, deferredMo
             destroy: function () {
                 delete this.template;
                 if (this._$filter) {
-                    this._$filter.toggleButtons('destroy');
+                    //this._$filter.toggleButtons('destroy');
                     delete this._$filter;
                 }
                 FilterView.prototype.destroy.apply(this);
@@ -90,15 +90,14 @@ var CheckBoxView = (function (Backbone, $, helpersModule, FilterView, deferredMo
                         callback: function () {
                             var $filter = $('#' + id);
                             _this._persistLinkToJqueryFilter($filter);
-                            $filter.toggleButtons({
-                                'onChange': $.noop,
-                                'width': 75,
-                                'height': 24,
-                                'animated': true,
-                                'label': {'enabled': 'Да', 'disabled': 'Нет'},
-                                'style': {
-                                    'enabled': 'checkbox-filter-enabled',
-                                    'disabled': 'checkbox-filter-disabled'
+                            $filter.bootstrapSwitch({
+                                size: 'small',
+                                onText: 'Да',
+                                offText: 'Нет',
+                                onSwitchChange: function(event, state){
+                                    if(state){
+                                        $filter.val(1);
+                                    }
                                 }
                             });
                         }

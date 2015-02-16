@@ -26,7 +26,6 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
                     this._$body = null;
                 }
                 if(this._editor){
-                    this._$body.off('load');
                     this._editor = null;
                 }
                 this.constructor.__super__.destroy.apply(this, arguments);
@@ -35,7 +34,6 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
              * @override
              */
             showError: function () {
-                console.log(this._$element)
                 if(this._$element){
                     this._$element
                         .closest('.card-col')
