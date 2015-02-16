@@ -18,7 +18,9 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             },
             buttonsTemplate: _.template([
                 '<div class="card-action-button" data-id="action-button-panel">',
+                '<% if(isWrite){ %>',
                 '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
+                '<% } %>',
                 '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
             ].join('')),
             /**
@@ -93,7 +95,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 this._cardElements.forEach(
                     /** @param {CardElement} obj */
                         function (obj) {
-                        if(errors.indexOf(obj.get('key'))!==-1){
+                        if (errors.indexOf(obj.get('key')) !== -1) {
                             obj.showError()
                         }
                     })
@@ -181,7 +183,11 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 });
                 $panel.html($div);
                 if (card.hasSaveButtons()) {
-                    $panel.append(this.buttonsTemplate());
+                    $panel.append(this.buttonsTemplate(
+                        {
+                            isWrite: this.model.isAllowWrite()
+                        }
+                    ))
                 }
 
                 $.subscribe(event, function (e, data) {
@@ -276,9 +282,9 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 var _this = this;
                 this.$li
                     .on('click', '.tab-closed', function (e, data) {
-                        if(data && data.isFastClose && _this.isChanged()){
+                        if (data && data.isFastClose && _this.isChanged()) {
                             return false;
-                        }else{
+                        } else {
                             return _this._cancel();
                         }
                     })
