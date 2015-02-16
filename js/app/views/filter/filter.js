@@ -33,9 +33,7 @@ var FilterView = (function (Backbone, $) {
             handleError: function (error, event, i) {
                 $.publish(event, {
                     text: '',
-                    counter: i,
-                    callback: function () {
-                    }
+                    counter: i
                 });
                 this.publishError({
                     error: error,

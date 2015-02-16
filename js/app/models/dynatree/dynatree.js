@@ -16,9 +16,19 @@ var DynatreeModel = (function (Backbone, undefined, helpersModule) {
              * @method destroy
              */
             destroy: function(){
+                //todo: realize
                 this.set('$el', null);
                 this.set('options', null);
                 console.log('dynatree destroy');
+            },
+            /**
+             *
+             * @returns {boolean}
+             */
+            isAlreadyInit: function(){
+                var $input = this.getInput(),
+                    $dialog = $.data($input.get(0), 'dialog');
+                return $dialog !== undefined;
             },
             /**
              * @param options {Object}
@@ -135,12 +145,13 @@ var DynatreeModel = (function (Backbone, undefined, helpersModule) {
 
             },
             /**
-             * @param $dialog {jQuery}
+             * @desc loading from cache
              */
-            loadFromCache: function ($dialog) {
+            loadFromCache: function () {
                 var $el = this.get('$el'),
                     $treeCon = $el.parent(),
                     $input = this.getInput(),
+                    $dialog = $.data($input.get(0), 'dialog'),
                     isRestoreState = this._isRestoreState();
                 var defValues = $input.val().split(this.getSeparator());
                 if (!isRestoreState) {
