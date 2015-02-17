@@ -53,6 +53,8 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                             _this._persistLinkToContext($cnt);
                             var data = helpersModule.prepareTreeSource(res.data),
                                 selector = '.' + _this._getUniqueClass();
+                            //todo: temp stub
+                            $cnt.off('click', selector);
                             $cnt.on('click', selector, function () {
                                 var $this = $(this),
                                     pk = $this.attr('data-pk'),
