@@ -288,14 +288,27 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                             .runAsyncTaskSave(data)
                             .done(function () {
                                 cardView.destroy();
-                                //todo: Что делать с карточками в которых есть изменения?
-                                model.getAllOpenedCard().forEach(function (view) {
-                                    view.destroy();
-                                });
-                                _this.refresh();
+
+                                var changedCard = [];
+                                model.getAllOpenedCard().forEach(
+                                    /**
+                                     * @param {CardView} view
+                                     */
+                                        function (view) {
+                                        if (view.isChanged()) {
+                                            changedCard.push(view);
+                                        } else {
+                                            view.destroy();
+                                        }
+                                    });
+                                if (changedCard.length) {
+                                    changedCard.shift().setWindowActive();
+                                }else{
+                                    _this.refresh();
+                                }
                             })
                             .fail(function (error) {
-                                cardView.showMessage(error);
+                                mediator.publish(optionsModule.getChannel('showError'), error);
                             })
                     }
 
@@ -898,7 +911,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @private
              */
             _destroyDragTableWidget: function () {
-                //todo: check destroy view
+                //todo: check destroy dragtable
                 this.getJqueryFloatHeadTable().dragtable('destroy');
             },
             /**

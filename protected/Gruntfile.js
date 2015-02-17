@@ -65,7 +65,6 @@ module.exports = function (grunt) {
                     '../js/app/modules/menu.js',
                     '../js/app/modules/factory.js',
                     '../js/app/modules/repaint.js',
-                    '../js/app/modules/card.js',
                     '../js/app/modules/tabs.js',
                     '../js/app/modules/task_wizard.js',
                     '../js/app/modules/phone.js',

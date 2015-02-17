@@ -1,8 +1,4 @@
-/**
- * Class CardView
- * @class
- */
-var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapter, bindModule) {
+var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapter, bindModule, tabsModule) {
     'use strict';
     return Backbone.View.extend(
         /** @lends CardView */
@@ -24,8 +20,10 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
             ].join('')),
             /**
-             *
-             * @param options
+             * @class CardView
+             * @extends Backbone.View
+             * @constructs
+             * @param {Object} options
              * @private
              */
             initialize: function (options) {
@@ -49,11 +47,11 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 if (cards) {
                     cards.forEach(
                         /**
-                         * @param object {CardRO}
-                         * @param index {Number}
+                         * @param {CardElement} model
+                         * @param {Number} index
                          */
-                            function (object, index) {
-                            object.destroy();
+                            function (model, index) {
+                            model.destroy();
                             delete cards[index];
                         });
 
@@ -61,22 +59,43 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 }
                 this._destroyCardMenu();
                 this._destroyCloseCardEventListener();
-                this.model.deleteOpenedCard(this.id);
-                delete this.model;
-                delete this.view;
-                delete this.id;
+                this.getModel().deleteOpenedCard(this.id);
+                this.model = null;
+                this.view = null;
+                this.id = null;
                 facade.getTabsModule().close(this.$li.children('a'));
-                delete this.$li;
-                delete this.buttonsTemplate;
+                this.$li = null;
+                this.undelegateEvents();
+                this.$el.removeData().unbind();
+                this.remove();
+                Backbone.View.prototype.remove.call(this);
 
+            },
+            /**
+             * @param {string} id
+             * @param {jQuery} $panel
+             */
+            render: function (id, $panel) {
+                this.setElement($panel);
+                this._addCloseCardEventListener();
+                this.$el.html(this._generateHeader());
+                this._generateTabs(id);
+            },
+            /**
+             *
+             * @returns {FormModel}
+             */
+            getModel: function () {
+                return this.model;
             },
             /**
              * @desc Validate required data in card and show errors
              * @returns {boolean}
              */
             validateData: function () {
-                var model = this.model,
+                var model = this.getModel(),
                     data = model.getActualDataFromStorage(this.id);
+
                 var errors = model.validate(data);
                 if (errors.length) {
                     this._showErrors(errors);
@@ -86,6 +105,15 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 }
             },
             /**
+             * @method setWindowActive
+             */
+            setWindowActive: function () {
+                var $a = this.$li.children('a');
+                helpersModule.getTabsObj().tabs({
+                    active: tabsModule.getIndex($a)
+                });
+            },
+            /**
              * @desc Show for user error messages
              * @param {Array} errors
              * @private
@@ -93,10 +121,10 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             _showErrors: function (errors) {
                 this._resetErrors();
                 this._cardElements.forEach(
-                    /** @param {CardElement} obj */
-                        function (obj) {
-                        if (errors.indexOf(obj.get('key')) !== -1) {
-                            obj.showError()
+                    /** @param {CardElement} model */
+                        function (model) {
+                        if (errors.indexOf(model.get('key')) !== -1) {
+                            model.showError()
                         }
                     })
             },
@@ -108,36 +136,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 this.$el.find('.card-error').removeClass('.card-error');
             },
             /**
-             *
-             * @param {MessageDTO} opts
-             */
-            showMessage: function (opts) {
-                //todo: implement
-                mediator.publish(optionsModule.getChannel('logError', {
-                    model: this,
-                    opts: opts,
-                    error: 'Not implemented showMessage method'
-                }))
-            },
-            /**
-             * @param pk {string}
-             * @param $panel {jQuery}
-             */
-            render: function (pk, $panel) {
-                this.setElement($panel);
-                this._addCloseCardEventListener();
-                this.$el.html(this._generateHeader());
-                this._generateTabs(pk);
-            },
-            /**
-             * @method setWindowActive
-             */
-            setWindowActive: function () {
-                var $a = this.$li.children('a');
-                helpersModule.getTabsObj().tabs({active: tabsModule.getIndex($a)});
-            },
-            /**
-             * @method initScripts
+             * @desc initScripts
              */
             initScripts: function () {
                 var _this = this;
@@ -521,4 +520,4 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 }
             }
         });
-})(Backbone, jQuery, helpersModule, optionsModule, imageAdapter, bindModule);
+})(Backbone, jQuery, helpersModule, optionsModule, imageAdapter, bindModule, tabsModule);

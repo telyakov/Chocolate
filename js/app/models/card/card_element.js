@@ -1,5 +1,6 @@
 /**
  * @class
+ * @extends Backbone.Model
  */
 var CardElement = (function ($, Backbone, _, helpersModule, optionsModule, mediator) {
     'use strict';

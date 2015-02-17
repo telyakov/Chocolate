@@ -33,3 +33,5 @@ js/libs/bootstrap
 js/libs/bootstrap-switch
 protected/config/main_production.php
 protected/.ftppass
+
+protected/review.txt
