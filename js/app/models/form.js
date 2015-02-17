@@ -163,12 +163,22 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 });
                 return $.extend({}, defaults, this.getDynamicDefaultValues());
             },
+            /**
+             * @returns {String}
+             */
             hasCardHeader: function () {
                 return this.getCardHeaderText() || this.getCardHeaderImage();
             },
+            /**
+             *
+             * @returns {String}
+             */
             getCardHeaderImage: function () {
                 return this.getCardCollection().getHeaderImage();
             },
+            /**
+             * @returns {String}
+             */
             getCardHeaderText: function () {
                 return this.getCardCollection().getHeader();
             },
@@ -688,6 +698,10 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             isAttachmentSupport: function () {
                 return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);
             },
+            /**
+             *
+             * @returns {String}
+             */
             getEntityTypeID: function () {
                 return this.getDataFormProperties().getAttachmentsEntityType();
             },

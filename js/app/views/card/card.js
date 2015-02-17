@@ -351,7 +351,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             _undoChange: function () {
                 if (helpersModule.isNewRow(this.id)) {
                     var data = {};
-                    data[this.id] = { id:  this.id};
+                    data[this.id] = {id: this.id};
                     /**
                      *
                      * @type {FormChangeDTO}
@@ -361,7 +361,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                         data: data
                     };
                     this.getModel().trigger('change:form', changeDTO);
-                }else{
+                } else {
                     this.getModel().trigger('change:form', {
                         op: 'upd',
                         id: this.id,
@@ -384,16 +384,16 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 delete this.getModel().getChangedDataFromStorage()[this.id];
             },
             /**
-             * @method save
+             * @desc save
              */
             save: function () {
                 helpersModule.leaveFocus();
-                this.model.trigger('save:card', {
+                this.getModel().trigger('save:card', {
                     id: this.id
                 });
             },
             /**
-             * @param e {Event}
+             * @param {Event} e
              * @returns {boolean}
              * @private
              */
@@ -418,7 +418,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 }
             },
             /**
-             * @param e {Event}
+             * @param {Event} e
              * @private
              */
             _openMenu: function (e) {
@@ -429,17 +429,18 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                         activeClass = optionsModule.getClass('activeTab');
                     this._$cardMenu = $this;
                     $tabs.each(function () {
-                        var item = {
-                            title: $(this).text(),
-                            cmd: $(this).attr('id')
-                        };
-                        if ($(this).parent().hasClass(activeClass)) {
+                        var $item = $(this),
+                            item = {
+                                title: $item.text(),
+                                cmd: $item.attr('id')
+                            };
+                        if ($item.parent().hasClass(activeClass)) {
                             item.uiIcon = 'ui-icon-check';
                         }
                         menu.push(item);
                     });
                     $this.contextmenu({
-                        show: {effect: "blind", duration: 0},
+                        show: {effect: 'blind', duration: 0},
                         menu: menu,
                         select: function (event, ui) {
                             $('#' + ui.cmd).trigger('click');
@@ -453,8 +454,8 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
              * @private
              */
             _generateHeader: function () {
-                var model = this.model,
-                    view = this.model.getView(),
+                var model = this.getModel(),
+                    view = model.getView(),
                     html = [
                         '<header class="card-header">',
                         '<div class="card-bottom-header card-error"></div>'
@@ -475,17 +476,17 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 return html.join('');
             },
             /**
-             * @param pk {string}
+             * @param {string} pk
              * @private
              */
             _generateTabs: function (pk) {
-                var html = '<div data-id="grid-tabs" data-pk="' + pk + '">',
-                    cards = this.model.getCardROCollection(),
+                var html = ['<div data-id="grid-tabs" data-pk="', pk, '">'],
+                    cards = this.getModel().getCardROCollection(),
                     isVisibleCaption = this._isVisibleCaption(cards);
                 if (isVisibleCaption) {
-                    html += '<ul>';
+                    html.push('<ul>');
                 } else {
-                    html += '<ul class="hidden">';
+                    html.push('<ul class="hidden">');
                 }
                 var tabs = [],
                     tabIdList = {};
@@ -495,25 +496,35 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                         var key = card.getKey(),
                             id = helpersModule.uniqueID(),
                             tabID = helpersModule.uniqueID();
-                        html += ' <li class="card-tab" data-id="' + key + '"';
-                        html += ' aria-controls="' + id + '">';
+                        html.push('<li class="card-tab" data-id="');
+                        html.push(key);
+                        html.push('"');
+                        html.push(' aria-controls="');
+                        html.push(id);
+                        html.push('">');
                         tabIdList[key] = tabID;
-                        html += '<a id="' + tabID + '" href="1" title="' + key + '">' + card.getCaption() + '</a>';
+                        html.push('<a id="');
+                        html.push(tabID);
+                        html.push('" href="1" title="');
+                        html.push(key);
+                        html.push('">');
+                        html.push(card.getCaption());
+                        html.push('</a>');
                     });
-                html += '</ul>';
+                html.push('</ul>');
                 if (isVisibleCaption) {
-                    html += '<span class="tab-menu"><a class="tab-menu-link"></a></span>';
+                    html.push('<span class="tab-menu"><a class="tab-menu-link"></a></span>');
                 }
-                html += '</div>';
-                this.$el.append(html);
+                html.push('</div>');
+                this.$el.append(html.join(''));
 
-                if ($.isNumeric(pk)) {
-                    this._receiveHeaderCaptions(cards, tabIdList, pk);
+                if (!helpersModule.isNewRow(pk)) {
+                    this._runAsyncTaskGetHeaders(cards, tabIdList, pk);
                 }
 
             },
             /**
-             * @param cards {CardROCollection}
+             * @param {CardROCollection} cards
              * @returns {boolean}
              * @private
              */
@@ -521,14 +532,14 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 return cards.length > 1;
             },
             /**
-             * @param cards {CardROCollection}
-             * @param idList {Object}
-             * @param pk {string}
+             * @param {CardROCollection} cards
+             * @param {Object} idList
+             * @param {string} pk
              * @private
              */
-            _receiveHeaderCaptions: function (cards, idList, pk) {
+            _runAsyncTaskGetHeaders: function (cards, idList, pk) {
                 if (this._isVisibleCaption(cards)) {
-                    var entityTypeID = this.model.getEntityTypeID();
+                    var entityTypeID = this.getModel().getEntityTypeID();
                     cards.each(
                         /** @param card {CardRO} */
                             function (card) {
@@ -541,14 +552,19 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                                 };
                             if (sql) {
                                 bindModule.runAsyncTaskBindSql(sql, data)
-                                    .done(function (res) {
+                                    .done(
+                                    /** @param {SqlBindingResponse} res */
+                                        function (res) {
                                         var prepareSql = res.sql;
                                         mediator.publish(facade.getOptionsModule().getChannel('socketRequest'), {
                                             type: 'jquery',
                                             query: prepareSql,
                                             id: idList[card.getKey()]
                                         });
-                                    });
+                                    })
+                                    .fail(function (error) {
+                                        mediator.publish(optionsModule.getChannel('logError'), error);
+                                    })
                             }
                         });
                 }
