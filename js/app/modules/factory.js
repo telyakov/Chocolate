@@ -1,12 +1,13 @@
 /**
  * Factory module
+ * //todo: remove module
  */
-var factoryModule = (function ($, window, optionsModule, mediator) {
+var factoryModule = (function (undefined, $, window, optionsModule, mediator) {
     'use strict';
     var _private = {
         storage: [],
         getByID: function (id) {
-            if (typeof _private.storage[id] !== 'undefined') {
+            if (_private.storage[id] !== undefined) {
                 return _private.storage[id];
             }
             return null;
@@ -63,4 +64,4 @@ var factoryModule = (function ($, window, optionsModule, mediator) {
             _private.garbageCollection();
         }
     };
-})(jQuery, window, optionsModule, mediator);
+})(undefined, jQuery, window, optionsModule, mediator);

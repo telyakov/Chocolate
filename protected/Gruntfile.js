@@ -51,7 +51,6 @@ module.exports = function (grunt) {
                     '../js/app/modules/options.js',
                     '../js/app/modules/mediator.js',
                     '../js/app/modules/table.js',
-                    '../js/app/modules/form.js',
                     '../js/app/modules/deferred.js',
                     '../js/app/classes/tab.js',
                     '../js/app/modules/storage.js',

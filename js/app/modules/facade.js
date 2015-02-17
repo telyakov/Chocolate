@@ -1,7 +1,7 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
  */
-var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, formModule, phoneModule) {
+var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, phoneModule) {
     'use strict';
     var showErrorsChannel = optionsModule.getChannel('showError'),
         logErrorChannel = optionsModule.getChannel('logError');
@@ -267,13 +267,9 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
         getRepaintModule: function () {
             return repaintModule;
         },
-        getFormModule: function () {
-            return formModule;
-        },
         getPhoneModule: function () {
             return phoneModule;
         },
-
         getImageAdapter: function () {
             return imageAdapter;
         },
@@ -291,4 +287,4 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
         }
     };
 
-}(deferredModule, imageAdapter, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, formModule, phoneModule));
+}(deferredModule, imageAdapter, AppModel, AppView, Blob, saveAs, json_parse, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, phoneModule));
