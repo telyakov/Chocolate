@@ -271,7 +271,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 var title,
                     model = this.getModel();
                 if (model.isAttachmentView()) {
-                    title = model.isNotSaved() ?
+                    title = model.parentModelIsNotSaved() ?
                         '<b>Сохраните строку, перед добавлением вложения</b>' :
                         [
                             '<b>Прикрепить файл</b> можно простым способом:',

@@ -167,9 +167,9 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                             var $this = $(this),
                                 $nextBtn = $this.parent().find('.wizard-next-button.wizard-no-active');
                             if (isActiveNext || !$nextBtn.length) {
+                                doneFn.call($cnt, commandObj, $data);
                                 $this.dialog('close');
                                 $this.closest('.ui-dialog').remove();
-                                doneFn.call($cnt, commandObj, $data);
                                 return true;
                             } else {
                                 var $error = $('<span>', {

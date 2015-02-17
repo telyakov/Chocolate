@@ -349,10 +349,10 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             return true;
         },
         createTitleHtml: function (pk, caption) {
-            if ($.isNumeric(pk)) {
-                return caption + ' [' + pk + ']';
-            } else {
+            if (helpersModule.isNewRow(pk)) {
                 return caption;
+            } else {
+                return caption + ' [' + pk + ']';
             }
         },
         appHasChange: function () {
@@ -454,7 +454,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             cnt.fillText(line, marginLeft, marginTop);
         },
         isNewRow: function (pk) {
-            return $.isNumeric(pk) ? true : false;
+            return $.isNumeric(pk) ? false : true;
         },
         uniqueColumnClass: function (key) {
             return 'column-' + key;
@@ -473,7 +473,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
          * @param {String} str
          * @returns {String}
          */
-        newLineToBr: function(str){
+        newLineToBr: function (str) {
             return str.replace(/\n/g, '<br/>');
         },
         /**
@@ -481,13 +481,13 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
          * @param {String} value
          * @returns {string}
          */
-        filterValueFormatToIDList: function(value){
+        filterValueFormatToIDList: function (value) {
             // Convert "18 19     22" to "18|20|"
             var numericArray = value.split(' ');
             numericArray = numericArray.filter(function (val) {
                 return val !== '';
             });
-            return  numericArray.join('|') + '|'
+            return numericArray.join('|') + '|'
         },
         /**
          *
@@ -502,7 +502,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
          * @param {string} name
          * @returns {string}
          */
-        getCorrectXmlName: function(name){
+        getCorrectXmlName: function (name) {
             if (name.indexOf('.xml') === -1) {
                 name = name + '.xml';
             }
@@ -512,9 +512,9 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
          *
          * @param {jQuery} $content
          */
-        waitLoading: function($content){
+        waitLoading: function ($content) {
             var $div = $('<div>', {
-               'class':  'refreshing'
+                'class': 'refreshing'
             });
             $content.html($div);
         },

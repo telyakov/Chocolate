@@ -2,8 +2,7 @@ var WizardDynatreeView = (function (Backbone, $) {
     'use strict';
     return Backbone.View.extend({
         initialize: function (options) {
-            _.bindAll(this, 'render');
-            //this.$el = options.$el;
+            _.bindAll(this);
             this.model = options.model;
             //this.render();
         },

@@ -90,7 +90,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
             render: function () {
                 var formID = this.getFormID();
                 this.$el.html(this.template({
-                    isSaved: !this.getModel().isNotSaved(),
+                    isSaved: !this.getModel().parentModelIsNotSaved(),
                     formID: formID,
                     isWrite: this.getModel().isAllowWrite(),
                     inputID: helpersModule.uniqueID(),
@@ -140,7 +140,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                     reader.onload = function (evt) {
                                         var data = evt.target.result,
                                             base64data = helpersModule.arrayBufferToBase64(data);
-                                        model.runAsyncTaskBindReadProc({
+                                        model.runAsyncTaskBindInsProc({
                                             filestypesid: '4',
                                             ownerlock: ownerLock,
                                             source: '',
@@ -318,7 +318,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
              */
             _initFileUploadWidget: function () {
                 var $form = this.getJqueryForm(),
-                    isSaved = !this.getModel().isNotSaved(),
+                    isSaved = !this.getModel().parentModelIsNotSaved(),
                     _this = this,
                     $dropZone;
                 if (isSaved) {

@@ -82,6 +82,15 @@
  * @property {String} text -  html filter
  * @property {Function} callback - filter initialize function
  */
+
+/**
+ *
+ * @typedef {Object} CardElementLayoutDTO
+ * @property {Number} x
+ * @property {Number} y
+ * @property {String} html -  html card element
+ * @property {?Function} callback - card element initialize function
+ */
 /**
  * Object, that generated in the {FormModel} via event 'change:form'
  * @typedef {Object} FormChangeDTO

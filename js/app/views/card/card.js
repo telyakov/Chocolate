@@ -14,9 +14,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             },
             buttonsTemplate: _.template([
                 '<div class="card-action-button" data-id="action-button-panel">',
-                '<% if(isWrite){ %>',
                 '<input class="card-save" data-id="card-save" type="button" value="Сохранить"/>',
-                '<% } %>',
                 '<input class="card-cancel" data-id="card-cancel" type="button" value="Отменить"/>'
             ].join('')),
             /**
@@ -27,7 +25,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
              * @private
              */
             initialize: function (options) {
-                _.bindAll(this, 'render');
+                _.bindAll(this);
                 this.model = options.model;
                 this._cardElements = [];
                 this._$cardMenu = null;
@@ -40,6 +38,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             },
 
             /**
+             * @public
              * @desc Destroy card
              */
             destroy: function () {
@@ -72,6 +71,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
 
             },
             /**
+             * @public
              * @param {string} id
              * @param {jQuery} $panel
              */
@@ -82,13 +82,14 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 this._generateTabs(id);
             },
             /**
-             *
+             * @public
              * @returns {FormModel}
              */
             getModel: function () {
                 return this.model;
             },
             /**
+             * @public
              * @desc Validate required data in card and show errors
              * @returns {boolean}
              */
@@ -105,6 +106,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 }
             },
             /**
+             * @public
              * @method setWindowActive
              */
             setWindowActive: function () {
@@ -112,6 +114,35 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 helpersModule.getTabsObj().tabs({
                     active: tabsModule.getIndex($a)
                 });
+            },
+            /**
+             * @public
+             * @desc initScripts
+             */
+            initScripts: function () {
+                this.$el
+                    .addClass(optionsModule.getClass('card'))
+                    .children('div').tabs({
+                        beforeLoad: this._beforeLoadInitScripts
+                    });
+            },
+            /**
+             *
+             * @param {Event} e
+             * @param {Object} ui
+             * @returns {boolean}
+             * @private
+             */
+            _beforeLoadInitScripts: function (e, ui) {
+                if (!ui.tab.data('loaded')) {
+                    var key = $(ui.tab).attr('data-id'),
+                        card = this.getModel().getCardROCollection().findWhere({
+                            key: key
+                        });
+                    this._createPanel(card, $(ui.panel));
+                    ui.tab.data('loaded', 1);
+                }
+                return false;
             },
             /**
              * @desc Show for user error messages
@@ -136,101 +167,115 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 this.$el.find('.card-error').removeClass('.card-error');
             },
             /**
-             * @desc initScripts
+             * @param {CardRO} card
+             * @param {jQuery} $panel
+             * @returns {jQuery}
+             * @private
              */
-            initScripts: function () {
-                var _this = this;
-                this.$el
-                    .addClass(optionsModule.getClass('card'))
-                    .children('div').tabs({
-                        beforeLoad: function (e, ui) {
-                            if (!ui.tab.data('loaded')) {
-                                var key = $(ui.tab).attr('data-id'),
-                                    card = _this.model.getCardROCollection().findWhere({
-                                        key: key
-                                    });
-                                _this._createPanel(card, $(ui.panel));
-                                ui.tab.data('loaded', 1);
-                            }
-                            return false;
-                        },
-                        cache: true
+            _createContent: function (card, $panel) {
+                var $content = $('<div></div>', {
+                    'class': 'card-content',
+                    'data-id': 'card-control',
+                    id: helpersModule.uniqueID(),
+                    'data-rows': card.getRows()
+                });
+                $panel.html($content);
+                if (card.hasSaveButtons() && this.getModel().isAllowWrite()) {
+                    $panel.append(this.buttonsTemplate())
+                }
+                return $content;
+            },
+            /**
+             *
+             * @param {string} eventName
+             * @param {jQuery} $content
+             * @param {Number} elementsCount
+             * @private
+             */
+            _subscribeToRenderEvents: function (eventName, $content, elementsCount) {
+                var html = {},
+                    completedTaskCount = 0,
+                    callbacks = [],
+                    _this = this;
+                $.subscribe(eventName,
+                    /**
+                     *
+                     * @param {Event} e
+                     * @param {CardElementLayoutDTO} data
+                     */
+                        function (e, data) {
+                        var x = data.x,
+                            y = data.y;
+
+                        if (!html.hasOwnProperty(y)) {
+                            html[y] = {};
+                        }
+                        html[y][x] = data.html;
+
+                        if (data.callback) {
+                            callbacks.push(data.callback);
+                        }
+                        completedTaskCount += 1;
+                        if (completedTaskCount === elementsCount) {
+                            _this._renderEventsDone(eventName, html, callbacks, $content);
+                        }
                     });
             },
             /**
-             * @param card {CardRO}
-             * @param $panel {jQuery}
+             *
+             * @param {String} eventName
+             * @param {Object} data
+             * @param {function[]} callbacks
+             * @param {jQuery} $content
+             * @private
+             */
+            _renderEventsDone: function (eventName, data, callbacks, $content) {
+                $.unsubscribe(eventName);
+                var html = '',
+                    i,
+                    j,
+                    hasOwn = Object.prototype.hasOwnProperty;
+                for (i in data) {
+                    if (hasOwn.call(data, i)) {
+                        for (j in data[i]) {
+                            if (hasOwn.call(data[i], j)) {
+                                html += data[i][j];
+                            }
+                        }
+                    }
+                }
+                $content.html(html);
+                callbacks.forEach(function (fn) {
+                    fn();
+                });
+                setTimeout(function () {
+                    mediator.publish(optionsModule.getChannel('reflowTab'));
+                }, 0);
+            },
+            /**
+             * @param {CardRO} card
+             * @param {jQuery} $panel
              * @private
              */
             _createPanel: function (card, $panel) {
-                var html = {},
+                var model = this.getModel(),
                     _this = this,
-                    pk = this.id,
-                    callbacks = [],
+                    id = this.id,
                     event = 'render_' + helpersModule.uniqueID(),
-                    elements = this.model.getCardElements(card, this.view),
-                    length = elements.length,
-                    asyncTaskCompleted = 0,
-                    $div = $('<div>', {
-                        'class': 'card-content',
-                        'data-id': 'card-control',
-                        'id': helpersModule.uniqueID(),
-                        'data-rows': card.getRows()
+                    elements = model.getCardElements(card, this.view),
+                    elementsCount = elements.length;
+                this._cardElements = elements;
+                var $content = _this._createContent(card, $panel);
+                _this._subscribeToRenderEvents(event, $content, elementsCount);
+                var order = 0;
+                elements.forEach(
+                    /**
+                     * @param {CardElement} model
+                     */
+                        function (model) {
+                        model.render(event, order, card, id);
+                        order += 1;
                     });
-                elements.each(function (obj) {
-                    _this._cardElements.push(obj);
-                });
-                $panel.html($div);
-                if (card.hasSaveButtons()) {
-                    $panel.append(this.buttonsTemplate(
-                        {
-                            isWrite: this.model.isAllowWrite()
-                        }
-                    ))
-                }
-
-                $.subscribe(event, function (e, data) {
-                    var x = data.x,
-                        y = data.y,
-                        text = data.html;
-                    if (!html.hasOwnProperty(y)) {
-                        html[y] = {};
-                    }
-                    html[y][x] = text;
-
-                    if (data.callback) {
-                        callbacks.push(data.callback);
-                    }
-                    asyncTaskCompleted += 1;
-                    if (asyncTaskCompleted === length) {
-                        $.unsubscribe(event);
-                        var cardHtml = '';
-                        var i,
-                            j,
-                            hasOwn = Object.hasOwnProperty;
-                        for (i in html) {
-                            if (hasOwn.call(html, i)) {
-                                for (j in html[i]) {
-                                    if (hasOwn.call(html[i], j)) {
-                                        cardHtml += html[i][j];
-                                    }
-                                }
-                            }
-                        }
-                        $div.html(cardHtml);
-                        callbacks.forEach(function (fn) {
-                            fn();
-                        });
-                        setTimeout(function () {
-                            mediator.publish(optionsModule.getChannel('reflowTab'));
-                        }, 0);
-                    }
-                });
-                var i = 0;
-                elements.each(function (model) {
-                    model.render(event, i, card, pk);
-                    i += 1;
-                });
             },
             /**
              *
@@ -240,8 +285,8 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             _createTabLink: function () {
                 var caption = this._getCaption(),
                     $tabs = helpersModule.getTabsObj(),
-                    $li = $('<li>', {
-                        'html': facade.getTabsModule().createTabLink('', caption)
+                    $li = $('<li></li>', {
+                        html: facade.getTabsModule().createTabLink('', caption)
                     });
 
                 facade.getTabsModule().push($li);
@@ -255,12 +300,12 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
              * @private
              */
             _getCaption: function () {
-                var caption = this.model.getCardTabCaption(),
-                    pk = this.id;
-                if ($.isNumeric(pk)) {
-                    caption += ' [' + pk + ']';
-                } else {
+                var caption = this.getModel().getCardTabCaption(),
+                    id = this.id;
+                if (helpersModule.isNewRow(id)) {
                     caption += '[новая запись]';
+                } else {
+                    caption += ' [' + id + ']';
                 }
                 return caption;
             },
@@ -520,4 +565,5 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 }
             }
         });
-})(Backbone, jQuery, helpersModule, optionsModule, imageAdapter, bindModule, tabsModule);
+})
+(Backbone, jQuery, helpersModule, optionsModule, imageAdapter, bindModule, tabsModule);

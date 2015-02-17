@@ -24,7 +24,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
             /**
              * @returns {boolean}
              */
-            isValueListType: function(){
+            isValueListType: function () {
                 return this.getEditType().indexOf('valuelist') !== -1
             },
             /**
@@ -252,7 +252,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              */
             getTemplate: function (id, isVisible, value, color) {
                 var html = ['<td '];
-                if(!isVisible){
+                if (!isVisible) {
                     html.push('style="display:none;"');
                 }
                 html.push(' class="');
@@ -261,7 +261,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
                 html.push(value);
                 html.push('" data-pk ="');
                 html.push(id);
-                if(color){
+                if (color) {
                     html.push('" style="color:#');
                     html.push(color);
                 }
@@ -310,10 +310,10 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @returns {String}
              */
             getModalTitle: function (pk) {
-                if ($.isNumeric(pk)) {
-                    return this.getVisibleCaption() + ' [' + pk + ']';
-                } else {
+                if (helpersModule.isNewRow(pk)) {
                     return this.getVisibleCaption();
+                } else {
+                    return this.getVisibleCaption() + ' [' + pk + ']';
                 }
             },
             /**

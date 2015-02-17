@@ -7,7 +7,7 @@ var FormDynatreeView = (function (Backbone, $) {
             this.dataModel = options.dataModel;
         },
         events: {},
-        render: function (isSingle, title, pk, key) {
+        render: function (isSingle, title, key, pk) {
             var dataModel = this.dataModel,
                 options = {};
             options.getParentID = function () {

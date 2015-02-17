@@ -20,8 +20,9 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              * @param {Object} opts
              * @constructs
              */
-            initialize: function(opts){
+            initialize: function (opts) {
                 this._columnsCollection = null;
+                this._allColumnsRoCollection = null;
                 this._dataFormProperties = null;
                 this._agileFilters = null;
                 this._actionProperties = null;
@@ -39,9 +40,9 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              * @desc get access to write if form
              * @returns {Boolean}
              */
-            isAllowWrite: function(){
+            isAllowWrite: function () {
                 var parentModel = this.get('parentModel');
-                if(parentModel){
+                if (parentModel) {
                     return parentModel.isAllowWrite();
                 }
                 return this.get('write');
@@ -79,13 +80,20 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                     delete this._columnsRoCollection;
                 }
                 delete this._dynamicDefaultValues;
-                if(this._columnsCardRoCollection){
+                if (this._columnsCardRoCollection) {
                     this._columnsCardRoCollection.each(function (object) {
                         object.destroy();
                     });
                     delete this._columnsCardRoCollection;
                 }
-                if(this._cardCollection){
+                if (this._allColumnsRoCollection) {
+                    this._allColumnsRoCollection.each(function (object) {
+                        object.destroy();
+                    });
+                    delete this._allColumnsRoCollection;
+                }
+
+                if (this._cardCollection) {
                     this._cardCollection.each(function (object) {
                         object.destroy();
                     });
@@ -123,15 +131,34 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 return this._requiredFields;
             },
             /**
+             * @returns {ColumnsROCollection}
+             */
+            _getAllColumnsROCollection: function () {
+                if (this._allColumnsRoCollection !== null) {
+                    return this._allColumnsRoCollection;
+                }
+                var columnsCollection = this.getColumnsCollection(),
+                    columnsROCollection = new ColumnsROCollection();
+                columnsCollection.each(function (item) {
+                    var columnRO = ColumnsRoFactory.make(item);
+                    columnsROCollection.push(columnRO);
+                });
+                this._allColumnsRoCollection = columnsROCollection;
+                if (this.isAttachmentSupport()) {
+                    columnsROCollection.push(new AttachmentColumnRO());
+                }
+                return this._allColumnsRoCollection;
+            },
+            /**
              *
              * @returns {Object}
              */
             getColumnsDefaultValues: function () {
                 var defaults = {};
-                this.getColumnsROCollection().each(function (column) {
+                this._getAllColumnsROCollection().each(function (column) {
                     var def = column.getDefault();
                     if (def !== '' && def !== null) {
-                        defaults[column.get('key')] = def;
+                        defaults[column.getFromKey()] = def;
                     }
                 });
                 return $.extend({}, defaults, this.getDynamicDefaultValues());
@@ -209,7 +236,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              * @param {Object} data
              * @returns {Deferred}
              */
-            runAsyncTaskBindReadProc: function (data) {
+            runAsyncTaskBindInsProc: function (data) {
                 var extendedData = $.extend({}, this.getParamsForBind(), data),
                     sql = this.getCreateProc();
                 return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
@@ -247,9 +274,9 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                             currentData = data[i];
                             extendedData = $.extend({}, paramsForBind, currentData);
                             if (helpersModule.isNewRow(currentData.id)) {
-                                defer = this.deferUpdateProc(extendedData);
+                                defer = this.runAsyncTaskBindInsProc(extendedData);
                             } else {
-                                defer = this.runAsyncTaskBindReadProc(extendedData);
+                                defer = this.deferUpdateProc(extendedData);
                             }
                             deferredTasks.push(defer);
                             defer
@@ -377,9 +404,8 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             /**
              * @returns {boolean}
              */
-            isNotSaved: function () {
-                var parentID = this.get('parentId');
-                return parentID && !helpersModule.isNewRow(parentID);
+            parentModelIsNotSaved: function () {
+                return helpersModule.isNewRow(this.get('parentId'));
             },
             /**
              * @returns {String}
@@ -405,7 +431,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              * @param {FormView} view
              * @returns {AbstractView}
              */
-            makeView: function($el, view){
+            makeView: function ($el, view) {
                 var ViewClass = this._getFormViewClassName();
                 return new ViewClass({
                     $el: $el,
@@ -417,7 +443,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              *
              * @returns {jQuery|null}
              */
-            getXml: function(){
+            getXml: function () {
                 return this.get('$xml')
             },
             getColumnsCollection: function () {
@@ -529,6 +555,9 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 }
                 return this._cardCollection;
             },
+            /**
+             * @returns {CardROCollection}
+             */
             getCardROCollection: function () {
                 var collection = new CardROCollection();
                 this.getCardCollection().each(function (card) {
@@ -542,6 +571,12 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 });
                 return collection;
             },
+            /**
+             *
+             * @param {CardRO} card
+             * @param {CardView} view
+             * @returns {Array}
+             */
             getCardElements: function (card, view) {
                 var key = card.getKey(),
                     cardElements = [],
@@ -553,8 +588,11 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                         cardElements.push(elem);
                     }
                 });
-                return new Backbone.Collection(cardElements);
+                return cardElements;
             },
+            /**
+             * @returns {String}
+             */
             getCardTabCaption: function () {
                 return this.getCardCollection().getCaption();
             },
@@ -836,7 +874,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 if (!settings.hasOwnProperty(key)) {
                     settings[key] = [];
                 }
-                if($.isEmptyObject(settings[key])){
+                if ($.isEmptyObject(settings[key])) {
                     settings[key] = [];
                 }
                 return settings[key];
@@ -861,7 +899,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 if (storageModule.hasSetting(key, 'globalStyle')) {
                     return storageModule.getSettingByKey(key, 'globalStyle');
                 } else {
-                    if (key  === optionsModule.getConstants('tasksForTopsXml')) {
+                    if (key === optionsModule.getConstants('tasksForTopsXml')) {
                         return 2;
                     } else {
                         return 1;
@@ -917,8 +955,8 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              * @desc Get All opened card for form
              * @returns {?CardView[]}
              */
-            getAllOpenedCard: function(){
-                return  this._openedCards;
+            getAllOpenedCard: function () {
+                return this._openedCards;
             },
             /**
              * @param data {Object}
