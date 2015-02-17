@@ -361,6 +361,12 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                         data: data
                     };
                     this.getModel().trigger('change:form', changeDTO);
+                }else{
+                    this.getModel().trigger('change:form', {
+                        op: 'upd',
+                        id: this.id,
+                        data: {}
+                    });
                 }
                 this._clearStorage();
             },

@@ -21,6 +21,13 @@ var DateColumnRO = (function (optionsModule) {
                 this.constructor.__super__.destroy.apply(this, arguments);
             },
             /**
+             * @override
+             */
+            getDefault: function(){
+                //todo: stumb for 18:00 default value
+                return null;
+            },
+            /**
              * @param $editableElements {jQuery|null}
              * @private
              * @description for the destruction of unused objects and events

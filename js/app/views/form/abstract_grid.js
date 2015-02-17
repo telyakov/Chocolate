@@ -425,7 +425,8 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
              * @param {FormChangeDTO} opts
              */
             change: function (opts) {
-                var operation = opts.op;
+                var operation = opts.op,
+                    _this = this;
                 if (['ins', 'del'].indexOf(operation) !== -1) {
                     var $dataTable = this.getJqueryDataTable();
                     $dataTable.trigger('update');
@@ -435,7 +436,16 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                 if (['ins', 'upd'].indexOf(operation) !== -1) {
                     this.getModel().addChangeToStorage(opts.id, opts.data);
                     var $row = this.getJqueryRow(opts.id);
-                    this.markRowAsChanged($row);
+
+                    setTimeout(function(){
+                        if($.isEmptyObject(_this.getModel().getChangedDataFromStorage()[opts.id])){
+                            _this.markRowAsNoChanged($row);
+
+                        }else{
+                            _this.markRowAsChanged($row);
+                        }
+                    }, 0);
+
                 }
                 if (operation === 'del') {
                     var i,
@@ -453,11 +463,13 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                         }
                     }
                 }
-                if (this.hasChange()) {
-                    this._markAsChanged();
-                } else {
-                    this.markAsNoChanged();
-                }
+                setTimeout(function () {
+                    if (_this.hasChange()) {
+                        _this._markAsChanged();
+                    } else {
+                        _this.markAsNoChanged();
+                    }
+                }, 0)
             },
             /**
              * @desc Mark grid row as changed;
@@ -466,7 +478,13 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
             markRowAsChanged: function ($row) {
                 $row.addClass('grid-row-changed');
             },
-
+            /**
+             * @desc Mark grid row as no changed;
+             * @param {jQuery} $row
+             */
+            markRowAsNoChanged: function ($row) {
+                $row.removeClass('grid-row-changed');
+            },
             /**
              * @desc Mark for user, that form has unsaved change
              * @private
