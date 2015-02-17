@@ -1,7 +1,7 @@
 /**
- * Bind module/. Dependencies: userModule.
+ * Bind module.
  */
-var bindModule = (function (userModule, undefined) {
+var bindModule = (function (userModule, undefined, deferredModule, optionsModule) {
     'use strict';
     var keys = {
             userID: 'userid',
@@ -11,16 +11,30 @@ var bindModule = (function (userModule, undefined) {
             entityType: 'entitytype'
         },
         _private = {
+            /**
+             *
+             * @param {String} key
+             * @returns {RegExp}
+             */
             createKeySearch: function (key) {
                 var expr = '\'?\\[' + key + '\\]\'?';
                 return new RegExp(expr, 'gi');
             },
+            /**
+             *
+             * @returns {RegExp}
+             */
             createDataSearch: function () {
-                return (/'?\[.*?\]\'?/gi);
+                return (/'?\[.*?]'?/gi);
             },
-            evalProcedureParameters: function (sql) {
-                var defer = deferredModule.create();
-                var parts = sql.split(' '),
+            /**
+             *
+             * @param {String} sql
+             * @returns {Deferred}
+             */
+            runAsyncTaskGetProcedureParameters: function (sql) {
+                var asyncTask = deferredModule.create(),
+                    parts = sql.split(' '),
                     rawProc = parts[0],
                     schema,
                     name,
@@ -32,8 +46,8 @@ var bindModule = (function (userModule, undefined) {
                     schema = rawProc.substring(0, separatorIndex);
                     name = rawProc.substring(separatorIndex + 1);
                 }
-                if (_private.isSelect(name) || parts[1] !== undefined) {
-                    defer.resolve({
+                if (_private.isSelectSql(name) || parts[1] !== undefined) {
+                    asyncTask.resolve({
                         data: null
                     });
                 } else {
@@ -41,72 +55,39 @@ var bindModule = (function (userModule, undefined) {
                         name: name,
                         schema: schema
                     });
-                    var deferId = deferredModule.save(defer);
                     mediator.publish(optionsModule.getChannel('socketRequest'), {
                         query: paramsSql,
                         type: optionsModule.getRequestType('deferred'),
-                        id: deferId,
+                        id: deferredModule.save(asyncTask),
                         isCache: true
                     });
                 }
-                return defer;
+                return asyncTask;
             },
-
-            bind: function (sql, data) {
-                var search = _private.createDataSearch();
-                return sql.replace(search, function (param) {
-                    if(param[0] === "'" && param[param.length -1] === "'"){
-                        param = param.substring(1, param.length - 1);
-                    }
-                    var prop = param.substring(1, param.length - 1).toLowerCase();
-                    if (data.hasOwnProperty(prop)) {
-                        return "'" + data[prop].replace(/\'/g, '\'\'') + "'";
-                    }
-                    return param;
-                });
-
-            },
-            isSelect: function (name) {
-                return name.toLowerCase() === 'select';
-            },
-            bindFromData: function (deferId, sql, data, isFull) {
-                var defer = _private.evalProcedureParameters(sql);
-                defer.done(function (res) {
-                    var sqlParams = res.data, prepareSql;
-                    if (_private.isEmptyProcParams(sqlParams)) {
-                        prepareSql = _private.bind(sql, data);
-                    } else {
-                        prepareSql = _private.bindFromSqlParams(sql, sqlParams, data, isFull);
-                    }
-                    deferredModule.pop(deferId).resolve({
-                        sql: prepareSql
-                    });
-                });
-            },
-            isEmptyProcParams: function (params) {
-                return params === null || $.isEmptyObject(params);
-            },
-            bindFromSqlParams: function (sql, sqlParams, data, isFull) {
+            /**
+             *
+             * @param {String} sql
+             * @param {Object} sqlParams
+             * @param {Object} [data]
+             * @param {Boolean} [isBindAllParams]
+             * @returns {string}
+             */
+            bindFromSqlParams: function (sql, sqlParams, data, isBindAllParams) {
                 var i, param, paramName, newParams = [];
-                    //correctNewLine =  function($0, $1){
-                    //    return $1 ? $0 : '\r\n';
-                    //};
+
                 for (i in sqlParams) {
                     if (sqlParams.hasOwnProperty(i)) {
                         param = sqlParams[i];
                         if (param.parameter_mode === 'IN') {
                             paramName = param.parameter_name.substring(1).toLowerCase();
-                            if (paramName === 'userid') {
-                                newParams.push(' @' + paramName + '=' + userModule.getID());
+                            if (paramName === keys.userID) {
+                                newParams.push(_private.createSqlForParameter(paramName, userModule.getID()));
                             } else {
                                 if (data && data[paramName]) {
-                                    var correctVal = data[paramName]
-                                        .replace(/\'/g, '\'\'');
-                                        //.replace(/(\r)?\n/g, correctNewLine);
-                                    newParams.push(' @' + paramName + '=' + "'" + correctVal + "'");
-                                }else if(isFull){
-                                    newParams.push(' @' + paramName + '=' + 'NULL');
-
+                                    var correctVal = _private.escapeQuotes(data[paramName]);
+                                    newParams.push(_private.createSqlForParameter(paramName, correctVal));
+                                } else if (isBindAllParams) {
+                                    newParams.push(_private.createSqlForParameter(paramName, 'NULL'));
                                 }
                             }
                         }
@@ -114,22 +95,120 @@ var bindModule = (function (userModule, undefined) {
                 }
                 return sql + newParams.join(',');
             },
-            bindSql: function (deferId, sql) {
-                var defer = _private.evalProcedureParameters(sql);
-                defer.done(function (res) {
-                    var sqlParams = res.data,
-                        prepareSql;
-                    if (_private.isEmptyProcParams(sqlParams)) {
-                        var search = _private.createKeySearch(keys.userID);
-                        prepareSql = sql
-                            .replace(search, userModule.getID());
-                    } else {
-                        prepareSql = _private.bindFromSqlParams(sql, sqlParams);
-                    }
-                    deferredModule.pop(deferId).resolve({
-                        sql: prepareSql
+            /**
+             *
+             * @param {string} name
+             * @param {string} value
+             * @returns {string}
+             */
+            createSqlForParameter: function (name, value) {
+                return ' @' + name + '=' + value;
+            },
+            /**
+             *
+             * @param {String} str
+             * @returns {String}
+             */
+            escapeQuotes: function (str) {
+                return "'" + str.replace(/'/g, '\'\'') + "'";
+            },
+            /**
+             *
+             * @param {String} sql
+             * @param {Object} data
+             * @returns {String}
+             */
+            bind: function (sql, data) {
+                var search = _private.createDataSearch();
+                return sql.replace(search,
+                    /**
+                     *  @param {String} param
+                     *  @returns {String}
+                     */
+                        function (param) {
+                        var lastIndex = param.length - 1;
+                        if (param[0] === "'" && param[lastIndex] === "'") {
+                            param = param.substring(1, lastIndex);
+                        }
+                        var property = param.substring(1, lastIndex).toLowerCase();
+                        if (data.hasOwnProperty(property)) {
+                            return _private.escapeQuotes(data[property]);
+                        }
+                        return param;
                     });
-                });
+
+            },
+            /**
+             * @param {String} name
+             * @returns {boolean}
+             */
+            isSelectSql: function (name) {
+                return name.toLowerCase() === 'select';
+            },
+            /**
+             *
+             * @param {Deferred} asyncTask
+             * @param {String} sql
+             * @param {Object} data
+             * @param {boolean} isBindAllParams
+             * @returns {Deferred}
+             */
+            runBindingSqlFromData: function (asyncTask, sql, data, isBindAllParams) {
+                _private.runAsyncTaskGetProcedureParameters(sql)
+                    .done(
+                    /** @param {DeferredResponse} res */
+                        function (res) {
+                        var sqlParams = res.data, prepareSql;
+
+                        if (_private.isEmptyProcParams(sqlParams)) {
+                            prepareSql = _private.bind(sql, data);
+                        } else {
+                            prepareSql = _private.bindFromSqlParams(sql, sqlParams, data, isBindAllParams);
+                        }
+
+                        asyncTask.resolve({
+                            sql: prepareSql
+                        });
+                    })
+                    .fail(function (error) {
+                        mediator.publish(optionsModule.getChannel('logError'), error);
+                        asyncTask.reject(error);
+                    });
+            },
+            /**
+             *
+             * @param {Object} params
+             * @returns {boolean}
+             */
+            isEmptyProcParams: function (params) {
+                return params === null || $.isEmptyObject(params);
+            },
+            /**
+             *
+             * @param {Deferred} asyncTask
+             * @param {String} sql
+             */
+            runBindingSql: function (asyncTask, sql) {
+                _private.runAsyncTaskGetProcedureParameters(sql)
+                    .done(
+                    /** @param {DeferredResponse} res */
+                        function (res) {
+                        var sqlParams = res.data,
+                            prepareSql;
+                        if (_private.isEmptyProcParams(sqlParams)) {
+                            var search = _private.createKeySearch(keys.userID);
+                            prepareSql = sql.replace(search, userModule.getID());
+                        } else {
+                            prepareSql = _private.bindFromSqlParams(sql, sqlParams);
+                        }
+                        asyncTask.resolve({
+                            sql: prepareSql
+                        });
+                    })
+                    .fail(function (error) {
+                        mediator.publish(optionsModule.getChannel('logError'), error);
+                        asyncTask.reject(error);
+                    });
             }
         };
     return {
@@ -137,22 +216,21 @@ var bindModule = (function (userModule, undefined) {
          *
          * @param {String} sql
          * @param {Object} [data]
-         * @param {boolean} [isFull]
+         * @param {boolean} [isBindAllPrams]
          * @returns {Deferred}
          */
-        runAsyncTaskBindSql: function (sql, data, isFull) {
-            var defer = deferredModule.create(),
-                deferID = deferredModule.save(defer);
+        runAsyncTaskBindSql: function (sql, data, isBindAllPrams) {
+            var asyncTask = deferredModule.create();
             if (data === undefined) {
-                _private.bindSql(deferID, sql);
+                _private.runBindingSql(asyncTask, sql);
             } else {
 
-                if (isFull === undefined) {
-                    isFull = false;
+                if (isBindAllPrams === undefined) {
+                    isBindAllPrams = false;
                 }
-                _private.bindFromData(deferID, sql, data, isFull);
+                _private.runBindingSqlFromData(asyncTask, sql, data, isBindAllPrams);
             }
-            return defer;
+            return asyncTask;
         }
     };
-})(userModule, undefined);
+})(userModule, undefined, deferredModule, optionsModule);
