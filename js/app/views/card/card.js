@@ -349,32 +349,20 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
              * @private
              */
             _undoChange: function () {
-                //todo: реализовать
-                var pk = this.id;
-                if (this.isChanged()) {
-                    var changedData = this.model.getChangedDataFromStorage()[pk],
-                        data = this.model.getDBDataFromStorage(pk),
-                        $tr = this.getJqueryParent();
-                    $.each(changedData, function (i) {
-                        var $gridCell = $tr.find(" a[data-pk=" + pk + "][rel$=" + i + "]"),
-                            oldValue = $gridCell.attr("data-value");
-                        if ($gridCell.length) {
-                            if (oldValue === 'null') {
-                                oldValue = '';
-                            }
-                            $gridCell.editable("setValue", oldValue, true);
-
-                            var fromID = $gridCell.data().editable.options['data-from-id'];
-                            if (fromID) {
-                                $gridCell.html(data[fromID]);
-                            }
-                        }
-                    });
+                if (helpersModule.isNewRow(this.id)) {
+                    var data = {};
+                    data[this.id] = { id:  this.id};
+                    /**
+                     *
+                     * @type {FormChangeDTO}
+                     */
+                    var changeDTO = {
+                        op: 'del',
+                        data: data
+                    };
+                    this.getModel().trigger('change:form', changeDTO);
                 }
-                if (!$.isNumeric(pk)) {
-                    this.getJqueryParent().remove();
-                }
-                this.clearStorage();
+                this._clearStorage();
             },
             /**
              * @returns {boolean}
@@ -383,16 +371,11 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 return !$.isEmptyObject(this.model.getChangedDataFromStorage()[this.id]);
             },
             /**
-             * @returns {jQuery}
+             * @desc clearStorage
+             * @private
              */
-            getJqueryParent: function () {
-                return this.view.getJqueryDataTable().find('tr[data-id="' + this.id + '"]');
-            },
-            /**
-             * @method clearStorage
-             */
-            clearStorage: function () {
-                delete this.model.getChangedDataFromStorage[this.id];
+            _clearStorage: function () {
+                delete this.getModel().getChangedDataFromStorage()[this.id];
             },
             /**
              * @method save

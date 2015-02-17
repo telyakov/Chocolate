@@ -13,7 +13,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                 return _.extend({}, AbstractView.prototype.events, {
                     'keydown .tablesorter': 'movingInGridByKeyboard',
                     'click tbody > tr': 'selectRowHandler',
-                    'click .menu-button-save':$.debounce(500, true, this._saveHandler)
+                    'click .menu-button-save': $.debounce(500, true, this._saveHandler)
                 });
             },
             /**
@@ -323,7 +323,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
              * @param {string} html
              * @private
              */
-            _setFooterHtml: function(html){
+            _setFooterHtml: function (html) {
                 this.$('.footer-info').html(html);
             },
             /**
@@ -387,7 +387,7 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
              * @desc Remove selected rows from table
              */
             removeSelectedRows: function () {
-                if(this.getModel().isAllowWrite()){
+                if (this.getModel().isAllowWrite()) {
                     this.removeRows(this.getSelectedRows());
                 }
             },
@@ -408,7 +408,6 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                     };
                     for (var i = 0; i < lng; i += 1) {
                         data.data.push({id: rows[i].attr('data-id')});
-                        rows[i].remove();
                     }
                     this.getModel().trigger('change:form', data);
                 }
@@ -444,17 +443,27 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                         data = opts.data;
                     for (i in data) {
                         if (hasOwn.call(data, i)) {
-                            this.getModel().addDeletedToStorage(data[i].id);
+                            var id = data[i].id;
+                            this.getJqueryRow(id).remove();
+                            if (helpersModule.isNewRow(id)) {
+                                delete this.getModel().getChangedDataFromStorage()[id];
+                            } else {
+                                this.getModel().addDeletedToStorage(id);
+                            }
                         }
                     }
                 }
-                this._markAsChanged();
+                if (this.hasChange()) {
+                    this._markAsChanged();
+                } else {
+                    this.markAsNoChanged();
+                }
             },
             /**
              * @desc Mark grid row as changed;
              * @param {jQuery} $row
              */
-            markRowAsChanged: function($row){
+            markRowAsChanged: function ($row) {
                 $row.addClass('grid-row-changed');
             },
 
