@@ -75,17 +75,6 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             return $.extend(false, source, addition);
         },
         /**
-         * @param key {string|Object}
-         * @param val {string|Object}
-         * @returns {string|Object}
-         */
-        parse: function (key, val) {
-            if (typeof val === 'string') {
-                return decodeURIComponent(val);
-            }
-            return val;
-        },
-        /**
          * @returns {boolean}
          */
         appHasChange: function () {
@@ -350,10 +339,6 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         },
         appHasChange: function () {
             return _private.appHasChange();
-        },
-        parse: _private.parse,
-        newLineSymbolsToBr: function (str) {
-            return str.replace(/\r\n|\r|\n/g, '<br>');
         },
         /**
          *

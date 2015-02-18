@@ -18,7 +18,6 @@ js/libs/jquery-ui
 js/libs/dynatree
 js/libs/jquery-file-upload
 js/libs/jquery-ui-contextmenu
-js/libs/json_parse
 js/libs/lodash
 js/libs/log4javascript
 js/libs/throttle-debounce

@@ -7,7 +7,6 @@
         "ui-touch-punch": "https://raw.githubusercontent.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.js",
         "jquery-ui-contextmenu": "https://raw.githubusercontent.com/mar10/jquery-ui-contextmenu/master/jquery.ui-contextmenu.js",
         "jquery-ui": "https://github.com/components/jqueryui/archive/1.9.2.zip",
-        "json_parse": "https://raw.githubusercontent.com/douglascrockford/JSON-js/master/json_parse.js",
         "lodash": "0.10.0",
         "log4javascript": "https://raw.githubusercontent.com/DECK36/log4javascript/master/js/log4javascript.js",
         "classie": "https://raw.githubusercontent.com/codrops/GoogleNexusWebsiteMenu/master/js/classie.js",

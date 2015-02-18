@@ -26,7 +26,6 @@ module.exports = function (grunt) {
                     '../js/libs/wysihtml5.js',
                     '../js/libs/jquery.tablesorter.js',
                     '../js/libs/jquery.tablesorter.widgets.js',
-                    '../js/libs/json_parse/index.js',
                     '../js/libs/jquery-file-upload/js/vendor/jquery.ui.widget.js',
                     '../js/libs/tmpl.min.js',
                     '../js/libs/jquery-file-upload/js/jquery.fileupload.js',

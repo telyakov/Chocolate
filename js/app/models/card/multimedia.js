@@ -3,7 +3,7 @@
  * @class
  * @augments CardElement
  */
-var MultimediaCardElement = (function (bindModule, optionsModule, jsonParse, CardElement, helpersModule, mediator) {
+var MultimediaCardElement = (function (bindModule, optionsModule, CardElement, helpersModule, mediator) {
     'use strict';
     return CardElement.extend(
         /** @lends MultimediaCardElement */
@@ -65,7 +65,7 @@ var MultimediaCardElement = (function (bindModule, optionsModule, jsonParse, Car
                         .done(function (res) {
                             $.get(optionsModule.getUrl('imagesUrls'), {sql: res.sql})
                                 .done(function (response) {
-                                    var data = jsonParse(response, helpersModule.parse);
+                                    var data = JSON.parse(response);
                                     if (data.length) {
                                         var $context = $('#' + controlID),
                                             html = [],
@@ -105,4 +105,4 @@ var MultimediaCardElement = (function (bindModule, optionsModule, jsonParse, Car
                 };
             }
         });
-})(bindModule, optionsModule, json_parse, CardElement, helpersModule, mediator);
+})(bindModule, optionsModule, CardElement, helpersModule, mediator);
