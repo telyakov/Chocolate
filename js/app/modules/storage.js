@@ -218,6 +218,11 @@ var storageModule = (function (undefined, optionsModule) {
         removeFromSession: function (key) {
             delete this.getSession()[key];
         },
+        /**
+         *
+         * @param {string} [id]
+         * @returns {*}
+         */
         getSession: function (id) {
             if (id === undefined) {
                 return _private.getSession();

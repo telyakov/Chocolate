@@ -15,6 +15,7 @@ var ColumnCustomProperties = (function (Backbone, helpersModule) {
             /**
              *  @constructs
              *  @private
+             *  @extends Backbone.Model
              *  */
             initialize: function () {
                 var expression = this.get('expression'),

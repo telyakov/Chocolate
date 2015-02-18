@@ -1,4 +1,4 @@
-var AppView = (function (location, window, Backbone, $, optionsModule, mediator, helpersModule, deferredModule) {
+var AppView = (function (location, window, Backbone, $, optionsModule, mediator, helpersModule, deferredModule, userModule) {
     'use strict';
     return Backbone.View.extend(
         /** @lends AppView */
@@ -11,11 +11,12 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                 'click .fm-phone': '_makeCallHandler',
                 'click .section-filters div > label': '_disableFilter',
                 'click .filter-mock-no-edit': '_enableFilter',
-                'keydown textarea': '_addSignToText',
+                'keydown textarea': '_addSignByKeydown',
                 'click #tabs>ul>li': '_addToTabHistoryLog',
                 'mouseup .ui-tabs-anchor[href=1]': '_reflowTab',
                 'click .ui-tabs-anchor[href^=#]': '_reflowTab',
-                'click .message-close': '_closeApplicationMessage'
+                'click .message-close': '_closeApplicationMessage',
+                'click .menu-button-sigh': '_addSign'
             },
             /**
              * @class AppView
@@ -136,13 +137,22 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
              * @returns {boolean}
              * @private
              */
-            _addSignToText: function (e) {
+            _addSignByKeydown: function (e) {
                 if (e.keyCode === optionsModule.getKeyCode('f4')) {
-                    var userModule = facade.getUserModule();
-                    $(e.target).insertAtCaret(userModule.getSign());
-                    return false;
+                    this._addSignToTextarea($(e.target));
+                    e.preventDefault();
                 }
                 return true;
+            },
+            /**
+             *
+             * @param {jQuery} $target
+             * @private
+             */
+            _addSignToTextarea: function($target){
+                if (!$target.attr('readonly')) {
+                    $target.insertAtCaret(userModule.getSign());
+                }
             },
             /**
              *
@@ -512,7 +522,22 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                     }, 1000, function () {
                         $(this).remove();
                     });
+            },
+            /**
+             *
+             * @param {Event} e
+             * @private
+             */
+            _addSign: function (e) {
+                var $parent = $(e.target).closest('button').parent();
+                if ($parent.hasClass('wysihtml5-toolbar')) {
+                    var $iframeBody = $parent.siblings('iframe').contents().find('body');
+                    $iframeBody.insertAtCaretIframe(userModule.getSign());
+                }else{
+                    this._addSignToTextarea($parent.next('textarea'));
+                }
+                e.preventDefault();
             }
         })
 })
-(location, window, Backbone, jQuery, optionsModule, mediator, helpersModule, deferredModule);
+(location, window, Backbone, jQuery, optionsModule, mediator, helpersModule, deferredModule, userModule);

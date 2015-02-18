@@ -17,7 +17,8 @@ $(function () {
     }(jQuery));
 
     /**
-     * x-editable buttons template
+     * x-editable default templates
+     * @see http://vitalets.github.io/x-editable/docs.html#global
      */
     if (typeof $.fn.editableform === 'function') {
         $.fn.editableform.buttons =
@@ -25,7 +26,19 @@ $(function () {
                 '<button type="submit" class="editable-submit wizard-cancel-button">Сохранить</button>',
                 '<button type="button" class="editable-cancel wizard-cancel-button">Отменить</button>'
             ].join('');
+
+        $.fn.editableform.loading = '';
+        $.fn.editableform.template = [
+            '<form class="form-inline editableform">',
+            '<div class="control-group">',
+            '<div><div class="editable-input"></div><div class="editable-buttons"></div></div>',
+            '</div></form>'
+        ].join('')
     }
+    /**
+     * @function
+     * @name jQuery.insertAtCaret
+     */
     $.fn.extend({
         insertAtCaretIframe: function (val) {
             var winObject = function (el) {

@@ -8,6 +8,12 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         $page: null,
         $content: null,
         _idCounter: 1,
+        generateHtmlIframeAddSignButton: function(){
+            return [
+                '<button class="active menu-button menu-button-sigh" ',
+                'title="Поставить подпись" type="button"><span>Подпись</span></button>'
+            ].join('');
+        },
         stripHtml: function (html) {
             var tmp = document.createElement('DIV');
             tmp.innerHTML = html;
@@ -82,31 +88,17 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         /**
          * @returns {boolean}
          */
-        hasChange: function () {
-            //var session = Chocolate.storage.session, chForm;
-            //for (var formID in session) {
-            //    if (formID != 'user' && session.hasOwnProperty(formID)) {
-            //        //todo: вернуть код
-            //        //chForm = facade.getFactoryModule().makeChGridForm($('#' + formID));
-            //        //if (chForm.isHasChange()) {
-            //        //    return true;
-            //        //}
-            //
-            //
-            //        //resetErrors = function () {
-            //        //    this.$form.find('td.grid-error').removeClass('grid-error');
-            //        //};
-            //        //isHasChange = function () {
-            //        //    Chocolate.leaveFocus();
-            //        //    if (this._isAttachmentsModel()) {
-            //        //        return facade.getFilesModule().isNotEmpty(this.getID()) || !$.isEmptyObject(this.getDeletedObj());
-            //        //    } else {
-            //        //        return !$.isEmptyObject(this.getChangedObj()) || !$.isEmptyObject(this.getDeletedObj());
-            //        //    }
-            //        //}
-            //
-            //    }
-            //}
+        appHasChange: function () {
+            var session = storageModule.getSession(),
+                property,
+                hasOwn = Object.prototype.hasOwnProperty;
+            for (property in session) {
+                if (hasOwn.call(session, property) && property !== 'user') {
+                    if (!$.isEmptyObject(session[property].changed)) {
+                        return true;
+                    }
+                }
+            }
             return false;
         }
     };
@@ -340,14 +332,15 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         stripHtml: function (html) {
             return _private.stripHtml(html);
         },
-        addSignToIframe: function (e) {
-            if (e.keyCode === optionsModule.getKeyCode('f4')) {
-                var userModule = facade.getUserModule();
-                $(this).insertAtCaretIframe(userModule.getSign());
-                return false;
-            }
-            return true;
-        },
+        //addSignToIframe: function (e) {
+        //    console.log('add sign')
+        //    if (e.keyCode === optionsModule.getKeyCode('f4')) {
+        //        var userModule = facade.getUserModule();
+        //        $(this).insertAtCaretIframe(userModule.getSign());
+        //        return false;
+        //    }
+        //    return true;
+        //},
         createTitleHtml: function (pk, caption) {
             if (helpersModule.isNewRow(pk)) {
                 return caption;
@@ -356,39 +349,39 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             }
         },
         appHasChange: function () {
-            return _private.hasChange();
+            return _private.appHasChange();
         },
         parse: _private.parse,
         newLineSymbolsToBr: function (str) {
             return str.replace(/\r\n|\r|\n/g, '<br>');
         },
-        textShown: function (e, editable) {
-            var $body = editable.$form.find("iframe").contents().find("body");
-            $body
-                .on("keydown.chocolate", function () {
-                    $(this).unbind('keydown.chocolate');
-                    editable.$element.attr('data-change', 1);
-                })
-                .on('keydown', helpersModule.addSignToIframe);
+        /**
+         *
+         * @param {Boolean} isAllowEdit
+         * @returns {string}
+         */
+        generateTemplateTextArea: function(isAllowEdit){
+          if(isAllowEdit){
+              return [
+                  '<textarea></textarea>'
+              ].join('');
+          }else{
+              return '<textarea readonly="readonly"></textarea>'
+          }
         },
-        wysiHtmlInit: function ($target, title) {
-            $target.editable({
-                type: 'wysihtml5',
-                wysihtml5: {
-                    "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
-                    "emphasis": true, //Italics, bold, etc. Default true
-                    "lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
-                    "html": false, //Button which allows you to edit the generated HTML. Default false
-                    "link": false, //Button to insert a link. Default true
-                    "image": false, //Button to insert an image. Default true,
-                    "color": false //Button to change color of font
-                },
-                mode: 'popup',
-                onblur: 'ignore',
-                savenochange: false,
-                title: title
-            });
+        /**
+         * @returns {String}
+         */
+        generateHtmlIframeAddSignButton: function(){
+          return _private.generateHtmlIframeAddSignButton();
         },
+        /**
+         *
+         * @param {string} value
+         * @param {jQuery} $context
+         * @param {ColumnCustomProperties} customProperties
+         * @param {GridView} view
+         */
         checkBoxDisplay: function (value, $context, customProperties, view) {
             var label = customProperties.get('label'),
                 color = customProperties.get('color'),
@@ -397,7 +390,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             if ($context.closest('tr').length && color && priority) {
                 isNeedChangeColor = true;
             }
-            if (typeof(value) !== 'undefined' && parseInt(value, 10)) {
+            if (value !== undefined && parseInt(value, 10)) {
                 if (isNeedChangeColor) {
                     view.addPriorityColorAndApply($context.attr('data-pk'), priority, color);
                 }
@@ -420,7 +413,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             }
         },
         /**
-         * @param number {string|integer}
+         * @param {string|integer} number
          * @returns {string}
          */
         formatNumber: function (number) {
@@ -435,38 +428,35 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             }
             return result.replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g, "$1 ");
         },
-        wrapText: function (cnt, text, marginLeft, marginTop, maxWidth, lineHeight) {
-            var words = text.split(' '),
-                countWords = words.length,
-                line = "";
-            for (var n = 0; n < countWords; n++) {
-                var newLine = line + words[n] + ' ',
-                    newWidth = cnt.measureText(newLine).width;
-                if (newWidth > maxWidth) {
-                    cnt.fillText(line, marginLeft, marginTop);
-                    line = words[n] + " ";
-                    marginTop += lineHeight;
-                }
-                else {
-                    line = newLine;
-                }
-            }
-            cnt.fillText(line, marginLeft, marginTop);
+        /**
+         *
+         * @param {String} id
+         * @returns {boolean}
+         */
+        isNewRow: function (id) {
+            return $.isNumeric(id) ? false : true;
         },
-        isNewRow: function (pk) {
-            return $.isNumeric(pk) ? false : true;
-        },
+        /**
+         *
+         * @param {String} key
+         * @returns {string}
+         */
         uniqueColumnClass: function (key) {
             return 'column-' + key;
         },
+        /**
+         * @param {ArrayBuffer} buffer
+         * @returns {string}
+         */
         arrayBufferToBase64: function (buffer) {
-            var binary = '';
-            var bytes = new Uint8Array(buffer);
-            var len = bytes.byteLength;
-            for (var i = 0; i < len; i++) {
-                binary += String.fromCharCode(bytes[i]);
+            var binary = [],
+                bytes = new Uint8Array(buffer),
+                len = bytes.byteLength,
+                i;
+            for (i = 0; i < len; i += 1) {
+                binary.push(String.fromCharCode(bytes[i]));
             }
-            return window.btoa(binary);
+            return window.btoa(binary.join(''));
         },
         /**
          *
@@ -482,7 +472,6 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
          * @returns {string}
          */
         filterValueFormatToIDList: function (value) {
-            // Convert "18 19     22" to "18|20|"
             var numericArray = value.split(' ');
             numericArray = numericArray.filter(function (val) {
                 return val !== '';
@@ -513,7 +502,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
          * @param {jQuery} $content
          */
         waitLoading: function ($content) {
-            var $div = $('<div>', {
+            var $div = $('<div></div>', {
                 'class': 'refreshing'
             });
             $content.html($div);

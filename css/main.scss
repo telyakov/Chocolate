@@ -12,6 +12,7 @@
 @import "main/wizard";
 @import "main/log";
 @import "main/spinner";
+
 @font-face {
     font-family: 'prod-icon';
     src: url("../css/fonts/icon.eot");
@@ -19,27 +20,29 @@
     font-weight: normal;
     font-style: normal;
 }
-.wysihtml5-toolbar{
-    display: none!important;
+
+.wysihtml5-toolbar {
+    display: none !important;
 }
-.editable-popup .wysihtml5-toolbar{
-    display: block!important;
+
+.editable-popup .wysihtml5-toolbar {
+    display: block !important;
 }
+
 .ui-tabs .ui-tabs-nav li a:hover {
     border-bottom: 0 !important;
 }
+
 .editable-checklist {
     overflow-y: scroll;
     height: inherit;
 }
-.attachment-td{
+
+.attachment-td {
     height: inherit;
     overflow: hidden;
     display: block;
     white-space: pre;
-}
-.table-td .wysihtml5-sandbox {
-    border: 0 !important;
 }
 
 .card-menu-save {
@@ -168,10 +171,11 @@ body {
     }
 }
 
-.table-td .editable >p,
-.ch-card-iframe>p{
+.table-td .editable > p,
+.ch-card-iframe > p {
     display: inline;
 }
+
 .widget-panel-title:hover .widget-elem-close:before {
     opacity: 1;
 }
@@ -191,8 +195,6 @@ body {
 /*
 MODAL CONTROLS.popover-title
   */
-
-
 
 .fm-phone, .fm-iplink, .attachment-file {
     color: #ff8800 !important;
@@ -221,8 +223,6 @@ MODAL CONTROLS.popover-title
     width: 224px !important;
     margin-top: 3px;
 }
-
-
 
 .popover, .ui-widget-content {
     -webkit-border-radius: 6px;
@@ -429,8 +429,6 @@ Card controls
     overflow-y: auto;
 }
 
-
-
 .card-input-text {
     height: 70%;
     min-height: 27px;
@@ -443,7 +441,6 @@ Card controls
 .card-default-height {
     box-sizing: border-box;
 }
-
 
 .ch-card-iframe {
     margin-top: -2px;
@@ -496,7 +493,7 @@ a.editable-click {
         margin: 0;
         white-space: nowrap;
         padding: 0;
-//        color: #0274bd;
+        //        color: #0274bd;
         font-size: 12px !important;
     }
 }
@@ -537,8 +534,6 @@ a.editable-click {
     }
 }
 
-
-
 /**
 Текстовый контрол
 */
@@ -550,43 +545,32 @@ a.editable-click {
         font-family: 'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif !important;
         font-size: 1em;
     }
-    textarea{
+    textarea {
         overflow-y: hidden;
     }
 }
-.chocolate-textarea{
+
+.chocolate-textarea {
     padding: 0;
 }
-.card-input .editable-container.editable-inline{
+
+.card-input .editable-container.editable-inline {
     display: block;
 }
+
 span.required {
     color: red;
 }
 
 .card-input {
     box-sizing: border-box;
-    >.table-td a {
+    > .table-td>a {
         display: block;
-    }
-    .select2-search-choice {
-        display: inline;
     }
     .date {
         width: 100%;
         position: relative;
     }
-}
-
-.card-input .editable-open ~ .grid-modal-open{
-    display: none!important;
-}
-/*.card-input .select2-container {*/
-/*width: 100% !important;*/
-/*}*/
-
-.select2-container {
-    height: 23px;
 }
 
 .card-input .date > {
@@ -608,10 +592,10 @@ span.required {
 .card-error {
     color: #ff0000 !important;
 }
+
 /*
 Меню навигации
 */
-
 
 .nav > li > a {
     padding: 5px 15px 5px;
@@ -672,7 +656,8 @@ span.required {
 .map, .ymaps-map {
     height: inherit !important;
 }
-.map{
+
+.map {
     width: 100%;
 }
 
@@ -760,11 +745,11 @@ span.checkbox {
     height: 57px;
 }
 
-
 .section-filters select {
     line-height: 20px;
     cursor: default;
 }
+
 input:focus, textarea:focus, keygen:focus, select:focus {
     outline-offset: 0;
 }
@@ -845,8 +830,6 @@ input:focus, textarea:focus, keygen:focus, select:focus {
     margin-bottom: 0;
 }
 
-
-
 .checkbox.inline, .radio.inline {
     display: inline-block;
     margin-bottom: 0;
@@ -856,7 +839,6 @@ input:focus, textarea:focus, keygen:focus, select:focus {
 .checkbox, .radio {
     padding-left: 0 !important;
 }
-
 
 .filters-list {
     margin: 0;
@@ -883,8 +865,7 @@ input:focus, textarea:focus, keygen:focus, select:focus {
 .gn-trigger:hover,
 .gn-selected,
 .tab-menu-link:hover,
-.ch-app-profile:hover
-{
+.ch-app-profile:hover {
     cursor: pointer;
     background: #dbeeff !important;
     outline: 1px solid #81a4d0 !important;
@@ -895,8 +876,6 @@ input:focus, textarea:focus, keygen:focus, select:focus {
 .small-button {
     width: 25px !important;
 }
-
-
 
 .messages-container {
     overflow: hidden;
@@ -951,7 +930,6 @@ input:focus, textarea:focus, keygen:focus, select:focus {
 }
 
 /* Grid controls */
-
 
 .editable-inline, .control-group, .editable-inline .editable-input, .chocolate-select, .chocolate-textarea, .input-append {
     width: 100%;
@@ -1249,8 +1227,6 @@ a.editable-click {
     }
 }
 
-
-
 /*Заглушка для первого столбца в фильтрах*/
 
 .grid-view {
@@ -1426,30 +1402,30 @@ Navigations
 #nav-search {
     &:focus, &:hover {
         /*border: 1px solid #aaccf6;*/
-        border-color: #0072c6!important;
-        background-color: #dfedfa!important;
+        border-color: #0072c6 !important;
+        background-color: #dfedfa !important;
         outline: 0;
     }
 }
 
 .filter:focus, .filter-date:focus, .tree-container select:focus, .grid-column-search:focus {
-    border-color: #0072c6!important;
-    background-color: #dfedfa!important;
+    border-color: #0072c6 !important;
+    background-color: #dfedfa !important;
 }
 
 .ui-autocomplete-input {
     &:focus, &:hover {
         /*border: 1px solid #aaccf6;*/
-        border-color: #0072c6!important;
-        background-color: #dfedfa!important;
+        border-color: #0072c6 !important;
+        background-color: #dfedfa !important;
         /*outline: 0;*/
     }
 }
 
 .select2-input:focus {
     /*border: 1px solid #aaccf6;*/
-    border-color: #0072c6!important;
-    background-color: #dfedfa!important;
+    border-color: #0072c6 !important;
+    background-color: #dfedfa !important;
     /*outline: 0;*/
 }
 
@@ -1514,7 +1490,7 @@ Navigations
 .fa-question,
 .fa-expand,
 .fa-caret-down,
-.fa-eye{
+.fa-eye {
     font-family: FontAwesome;
     font-style: normal;
 }
@@ -1523,16 +1499,26 @@ Navigations
     content: '\f009';
 }
 
-.table-td .wysihtml5-sandbox {
-    height: inherit !important;
-    width: inherit !important;
-}
-
 .editable-inline {
     height: inherit;
     .form-inline, div {
         height: inherit;
     }
+}
+
+.ch-toolbar {
+    position: absolute;
+    top: 7px;
+    left: 250px;
+}
+
+//prevent padding, margin in iframe in grid
+.table-td > a span,
+.table-td > a p,
+.table-td > a li,
+.table-td > a ol {
+    margin: 0;
+    padding: 0;
 }
 
 .fa-save, .fa-refresh, .fa-plus-circle, .fa-file-excel-o {
@@ -1638,12 +1624,12 @@ menu .fileinput-button {
     }
 }
 
-
 [data-id=grid-tabs] .ui-tabs-panel {
     padding: 0 5px 15px 10px !important;
     border-radius: 0 !important;
     position: relative;
 }
+
 #content {
     width: auto;
 }
@@ -1728,7 +1714,7 @@ ul.ui-tabs-nav {
 }
 
 @media print {
-    .section-filters, .menu,  .ui-tabs-nav, .ui-helper-hidden, .card-action-button {
+    .section-filters, .menu, .ui-tabs-nav, .ui-helper-hidden, .card-action-button {
         display: none !important;
     }
     .card-input {
@@ -1786,14 +1772,19 @@ textarea {
 }
 
 a:visited, span.MsoHyperlinkFollowed,
-a:link, span.MsoHyperlin{
+a:link, span.MsoHyperlin {
     //color: inherit!important;
     text-decoration: none;
 }
+
 a:link, span.MsoHyperlink {
     color: inherit;
     text-decoration: none;
 }
+.section-grid textarea.input-medium{
+    overflow: hidden;
+}
+
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
     .table-td {
         height: 66px !important;
@@ -1811,6 +1802,7 @@ a:link, span.MsoHyperlink {
         height: 69px;
         margin-top: 0;
     }
+
     .ui-resizable-e:hover {
         width: 25px;
         background: none;

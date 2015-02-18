@@ -311,7 +311,7 @@ var CanvasView = (function (undefined, helpersModule, deferredModule, optionsMod
                             ctx.fillStyle = defaultFillStyle;
                             ctx.font = 'bold 12px Segoe UI, sans-serif';
                             ctx.textBaseline = 'top';
-                            helpersModule.wrapText(ctx, bl, x, y - cellHeight + 75, cellWidth - 10);
+                            this.wrapText(ctx, bl, x, y - cellHeight + 75, cellWidth - 10);
 
                             //рисуем рамку(верхний, правый и нижний край)
                             ctx.beginPath();
@@ -341,6 +341,33 @@ var CanvasView = (function (undefined, helpersModule, deferredModule, optionsMod
                 }
                 ctx.stroke();
                 return this;
+            },
+            /**
+             *
+             * @param {*} cnt
+             * @param {number} text
+             * @param {number} marginLeft
+             * @param {number} marginTop
+             * @param {number} maxWidth
+             * @param {number} lineHeight
+             */
+            wrapText: function (cnt, text, marginLeft, marginTop, maxWidth, lineHeight) {
+                var words = text.split(' '),
+                    countWords = words.length,
+                    line = "";
+                for (var n = 0; n < countWords; n += 1) {
+                    var newLine = line + words[n] + ' ',
+                        newWidth = cnt.measureText(newLine).width;
+                    if (newWidth > maxWidth) {
+                        cnt.fillText(line, marginLeft, marginTop);
+                        line = words[n] + " ";
+                        marginTop += lineHeight;
+                    }
+                    else {
+                        line = newLine;
+                    }
+                }
+                cnt.fillText(line, marginLeft, marginTop);
             },
             /**
              * @desc Get cell width in px

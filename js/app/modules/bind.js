@@ -85,7 +85,7 @@ var bindModule = (function (userModule, undefined, deferredModule, optionsModule
                             } else {
                                 if (data && data[paramName]) {
                                     var correctVal = _private.escapeQuotes(data[paramName]);
-                                    newParams.push(_private.createSqlForParameter(paramName, correctVal));
+                                    newParams.push(_private.createSqlForParameter(paramName, "'" + correctVal + "'"));
                                 } else if (isBindAllParams) {
                                     newParams.push(_private.createSqlForParameter(paramName, 'NULL'));
                                 }
@@ -110,7 +110,7 @@ var bindModule = (function (userModule, undefined, deferredModule, optionsModule
              * @returns {String}
              */
             escapeQuotes: function (str) {
-                return "'" + str.replace(/'/g, '\'\'') + "'";
+                return  str.replace(/'/g, '\'\'');
             },
             /**
              *
@@ -130,9 +130,9 @@ var bindModule = (function (userModule, undefined, deferredModule, optionsModule
                         if (param[0] === "'" && param[lastIndex] === "'") {
                             param = param.substring(1, lastIndex);
                         }
-                        var property = param.substring(1, lastIndex).toLowerCase();
+                        var property = param.substring(1, param.length - 1).toLowerCase();
                         if (data.hasOwnProperty(property)) {
-                            return _private.escapeQuotes(data[property]);
+                            return "'" + _private.escapeQuotes(data[property]) + "'";
                         }
                         return param;
                     });
@@ -159,13 +159,11 @@ var bindModule = (function (userModule, undefined, deferredModule, optionsModule
                     /** @param {DeferredResponse} res */
                         function (res) {
                         var sqlParams = res.data, prepareSql;
-
                         if (_private.isEmptyProcParams(sqlParams)) {
                             prepareSql = _private.bind(sql, data);
                         } else {
                             prepareSql = _private.bindFromSqlParams(sql, sqlParams, data, isBindAllParams);
                         }
-
                         asyncTask.resolve({
                             sql: prepareSql
                         });

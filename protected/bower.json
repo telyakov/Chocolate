@@ -2,7 +2,7 @@
     "name": "Chocolate",
     "dependencies": {
         "throttle-debounce": "https://raw.githubusercontent.com/cowboy/jquery-throttle-debounce/master/jquery.ba-throttle-debounce.js",
-        "jquery": "2.1.3",
+        "jquery": "1.11.2",
         "bootstrap-switch": "3.3.2",
         "ui-touch-punch": "https://raw.githubusercontent.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.js",
         "jquery-ui-contextmenu": "https://raw.githubusercontent.com/mar10/jquery-ui-contextmenu/master/jquery.ui-contextmenu.js",

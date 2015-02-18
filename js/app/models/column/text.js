@@ -54,9 +54,7 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                     customProperties = _this.getColumnCustomProperties();
                 return function ($cnt, view, defer) {
                     var options = {
-                            mode: 'inline',
                             name: _this.get('key'),
-                            showbuttons: false,
                             disabled: false,
                             onblur: 'submit',
                             savenochange: false
@@ -64,28 +62,37 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                         isMarkupSupport = customProperties.get('markupSupport');
                     if (isMarkupSupport) {
                         options.type = 'wysihtml5';
+                        options.mode = 'modal';
+                        options.showbuttons = true;
                         options.wysihtml5 = {
-                            'font-styles': false,
-                            emphasis: false,
-                            lists: false,
+                            toolbar: {
+                                assSigh: helpersModule.generateHtmlIframeAddSignButton()
+                            },
+                            'font-styles': true,
+                            emphasis: true,
+                            lists: true,
+                            html: false,
                             link: false,
-                            image: false
+                            image: false,
+                            color: false
                         };
                     } else {
+                        options.mode = 'inline';
+                        options.showbuttons = false;
                         options.type = 'text';
                         options.tpl = '<textarea/>';
                     }
                     var $editableElements = $cnt.find('.' + _this._getUniqueClass());
                     _this._persistLinkToEditableElements($editableElements);
+
                     $editableElements.each(function () {
                         var $this = $(this),
                             pk = $this.attr('data-pk'),
                             isAllowEdit = _this.isAllowEdit(view, pk);
-
-                        if (isMarkupSupport && isAllowEdit) {
-                            $this.on('shown', function textShown(e, editable) {
-                                helpersModule.textShown(e, editable);
-                            });
+                        if (isMarkupSupport) {
+                            options.title = helpersModule.createTitleHtml(pk, _this.getVisibleCaption());
+                        } else {
+                            options.title = null;
                         }
                         //todo: fix leak memory - destroy view
                         if (isAllowEdit) {
@@ -99,7 +106,7 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                                         data: data
                                     });
                                 });
-                        }else{
+                        } else {
                             options.disabled = true;
                         }
                         $this
@@ -107,16 +114,20 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                                 if (!isAllowEdit) {
                                     _this.markAsNoChanged($this);
                                 }
-                                var $button = $('<div/>', {
-                                    'class': 'grid-modal-open form-modal-button',
-                                    'data-name': _this.get('key')
-                                });
-                                _this._persistReferenceToModalButton($button);
-                                $button.on('click', function (e) {
-                                        _this._openTextColumnInModalView(e, pk, view);
-                                    }
-                                );
-                                $this.parent().append($button);
+                                if (!isMarkupSupport) {
+                                    var $button = $('<div/>', {
+                                        'class': 'grid-modal-open form-modal-button',
+                                        'data-name': _this.get('key')
+                                    });
+                                    _this._persistReferenceToModalButton($button);
+                                    $button.on('click', function (e) {
+                                            helpersModule.leaveFocus();
+                                            _this._openTextColumnInModalView(e, pk, view);
+                                        }
+                                    );
+                                    $this.parent().append($button);
+                                }
+
 
                             })
                             .editable(options);
@@ -133,36 +144,31 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
              * @private
              */
             _openTextColumnInModalView: function (e, id, view) {
+                //todo: leak memory
                 var $this = $(e.target);
-                var editor;
-                var $body;
                 /**
                  *
                  * @type {FormModel}
                  */
-                var model = view.model;
-                var key = this.get('key'),
+                var model = view.model,
+                    key = this.get('key'),
                     $elem = $this.prevAll('a'),
                     isAllowEdit = this.isAllowEdit(view, id),
                     caption = this.getVisibleCaption(),
-                    isMarkupSupport = !!this.getColumnCustomProperties().get('markupSupport'),
                     $cell = $elem.parent(),
                     $popupControl = $('<a/>', {
                         'class': 'grid-textarea'
                     });
                 helpersModule.leaveFocus();
                 $popupControl.appendTo($cell.closest('section'));
-                if (isMarkupSupport) {
-                    helpersModule.wysiHtmlInit($popupControl, helpersModule.createTitleHtml(id, caption));
-                } else {
-                    $popupControl.editable({
-                        type: 'textarea',
-                        mode: 'popup',
-                        onblur: 'ignore',
-                        savenochange: false,
-                        title: helpersModule.createTitleHtml(id, caption)
-                    });
-                }
+                $popupControl.editable({
+                    type: 'textarea',
+                    mode: 'popup',
+                    onblur: 'ignore',
+                    savenochange: false,
+                    title: helpersModule.createTitleHtml(id, caption),
+                    tpl: helpersModule.generateTemplateTextArea(isAllowEdit)
+                });
                 if (isAllowEdit) {
                     $popupControl
                         .on('save', function saveHandler(e, params) {
@@ -178,14 +184,19 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                                 $popupControl.empty();
                             }
                         }
-                    );
+                    )
+                        .on('shown', function (e, editable) {
+                            if (editable) {
+                                var $toolbar = $('<div></div>', {
+                                    'class': 'ch-toolbar',
+                                    html: helpersModule.generateHtmlIframeAddSignButton()
+                                });
+                                editable.$form.find('.editable-input').prepend($toolbar)
+                            }
+                        });
                 }
                 $popupControl
                     .on('hide', function () {
-                        //todo: mb need destroy editor
-                        if($body){
-                            $body.off('keydown');
-                        }
                         $popupControl.off('hide').off('save').editable('destroy').remove();
                         $(this).remove();
                     });
@@ -194,29 +205,9 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                 if (typeof value !== 'string') {
                     value = value.toString();
                 }
-                if (isMarkupSupport) {
-                    value = helpersModule.newLineSymbolsToBr(value);
-                }
                 $popupControl
                     .editable('setValue', value)
                     .editable('show');
-                var $textArea = $popupControl.next('div').find('textarea');
-                if (!isAllowEdit) {
-                    $textArea.attr('readonly', true);
-                } else if (isMarkupSupport) {
-                    editor = new wysihtml5.Editor($textArea.get(0));
-                    var eventData = {};
-                    editor.on('load', function () {
-                        $body = $textArea.siblings('iframe').eq(1).contents().find('body');
-                        $body
-                            .on('keydown', eventData, helpersModule.addSignToIframe)
-                            .on('keydown', function (e) {
-                                if (e.keyCode === optionsModule.getKeyCode('escape')) {
-                                    $popupControl.editable('hide');
-                                }
-                            });
-                    });
-                }
                 return false;
             }
         });

@@ -1665,13 +1665,7 @@
                 if (ec.options.onblur === 'cancel') {
                     $el.data('editableContainer').hide('onblur');
                 } else if (ec.options.onblur === 'submit') {
-
-                    var dataCont = $el.data('editableContainer');
-                    if (dataCont.options.type != 'wysihtml5' || dataCont.$element.attr('data-change')) {
-                        dataCont.tip().find('form').submit()
-                    } else {
-                        dataCont.hide('onblur');
-                    }
+                    $el.data('editableContainer').tip().find('form').submit();
                 }
             });
 

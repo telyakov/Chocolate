@@ -8284,7 +8284,7 @@ wysihtml5.views.View = Base.extend(
 
       ADDITIONAL_CSS_RULES = [
         "html             { height: 100%; }",
-        "body             {scrollbar-shadow-color:white;scrollbar-track-color:white;scrollbar-arrow-color:white;scrollbar-face-color:white; overflow-x: hidden; font-size:12px!important; min-height: 100%; padding: 0; line-height:22px!important; margin: -2px 0 0 1px; font-family:'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif!important;white-space:pre-wrap; }",
+        "body             {scrollbar-shadow-color:white;scrollbar-track-color:white;scrollbar-arrow-color:white;scrollbar-face-color:white; overflow-x: hidden; font-size:12px!important; min-height: 100%; padding: 0; line-height:22px!important; margin: -2px 0 0 1px; font-family:'Segoe UI', Helvetica, 'Droid Sans', Tahoma, Geneva, sans-serif!important;white-space:pre; }",
         "._wysihtml5-temp { display: none; }",
         "::-webkit-scrollbar{width:0;height:0}",
           ".wysiwyg-color-black{color: black;}.wysiwyg-color-silver {color: #404040;}.wysiwyg-color-gray {color: gray;}.wysiwyg-color-white {color: white;}",

@@ -8,25 +8,16 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
     return CardElement.extend(
         /** @lends TextCardElement */
         {
-
+//todo: leak memory
             _$element: null,
-            _$body: null,
-            _editor: null,
             /**
              * @method destroy
              * @override
              */
             destroy: function () {
                 if (this._$element) {
-                    this._$element.off('shown').off('save').off('hidden').off('init').editable('destroy').remove();
+                    this._$element.off('save').off('hidden').off('init').editable('destroy').remove();
                     this._$element = null;
-                }
-                if(this._$body){
-                    this._$body.off('keydown');
-                    this._$body = null;
-                }
-                if(this._editor){
-                    this._editor = null;
                 }
                 this.constructor.__super__.destroy.apply(this, arguments);
             },
@@ -34,7 +25,7 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
              * @override
              */
             showError: function () {
-                if(this._$element){
+                if (this._$element) {
                     this._$element
                         .closest('.card-col')
                         .children('label')
@@ -48,22 +39,6 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
              */
             _persistLinkToEditableElements: function ($element) {
                 this._$element = $element;
-            },
-            /**
-             * @param $element {jQuery|null}
-             * @private
-             * @description for the destruction of unused objects and events
-             */
-            _persistLinkToBody: function ($element) {
-                this._$body = $element;
-            },
-            /**
-             * @param editor {jQuery|null}
-             * @private
-             * @description for the destruction of unused objects and events
-             */
-            _persistLinkToEditor: function (editor) {
-                this._editor = editor;
             },
             controlTemplate: _.template(
                 [
@@ -109,8 +84,8 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
                             name: name,
                             pk: pk,
                             title: caption,
-                            mode: 'inline',
-                            showbuttons: false,
+                            //mode: 'inline',
+                            //showbuttons: false,
                             emptytext: '',
                             disabled: !isAllowEdit,
                             onblur: 'submit',
@@ -121,19 +96,24 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
                         };
                     _this._persistLinkToEditableElements($el);
                     if (isMarkupSupport) {
-                        $el
-                            .on('shown', function (e, editable) {
-                                helpersModule.textShown(e, editable);
-                            });
                         options.type = 'wysihtml5';
+                        options.showbuttons = true;
+                        options.mode = 'modal';
                         options.wysihtml5 = {
-                            'font-styles': false,
-                            emphasis: false,
-                            list: false,
+                            toolbar: {
+                                assSigh: helpersModule.generateHtmlIframeAddSignButton()
+                            },
+                            'font-styles': true,
+                            emphasis: true,
+                            lists: true,
+                            html: false,
                             link: false,
-                            image: false
+                            image: false,
+                            color: false
                         };
                     } else {
+                        options.mode = 'inline';
+                        options.showbuttons = false;
                         options.type = 'text';
                         options.tpl = '<textarea/>';
                     }
@@ -153,89 +133,72 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
                     //todo: format support
                     var $parent = $el.parent(),
                         isNeedFormat = false;
-                    $parent.on('click', '.grid-modal-open', function () {
-                        var $textModal = $('<a/>', {
-                                'class': 'grid-textarea'
-                            }),
-                            actualValue = $el.editable('getValue')[name];
-                        if (actualValue === undefined) {
-                            actualValue = '';
-                        }
-                        if (isNeedFormat) {
-                            actualValue = helpersModule.formatNumber(actualValue);
-                        }
-                        if (actualValue) {
-                            actualValue = actualValue.toString();
-                        }
-                        $textModal.appendTo($parent.closest('.card-content'));
-                        helpersModule.leaveFocus();
-                        if (isAllowEdit) {
-                            $textModal
-                                .on('save', function (e, params) {
-                                    if (params.newValue !== undefined) {
-                                        var data = {};
-                                        data[name] = params.newValue;
-                                        view.model.trigger('change:form', {
-                                            op: 'upd',
-                                            id: pk,
-                                            data: data
-                                        });
-                                        $el.editable("setValue", params.newValue);
-                                        $textModal.empty();
-                                    }
-                                });
-                        }
-
-                        $textModal.on('hidden', function () {
-                            $el.focus();
-                        });
-                        if (isMarkupSupport) {
-                            if ($textModal.attr('data-init') === undefined) {
-                                helpersModule.wysiHtmlInit($textModal, column.getModalTitle(pk));
-                                $textModal.attr('data-init', 1);
+                    if (!isMarkupSupport) {
+                        //todo: cache
+                        $parent.on('click', '.grid-modal-open', function () {
+                            helpersModule.leaveFocus();
+                            var $textModal = $('<a/>', {
+                                    'class': 'grid-textarea'
+                                }),
+                                actualValue = $el.editable('getValue')[name];
+                            if (actualValue === undefined) {
+                                actualValue = '';
+                            }
+                            if (isNeedFormat) {
+                                actualValue = helpersModule.formatNumber(actualValue);
                             }
                             if (actualValue) {
-                                actualValue = helpersModule.newLineSymbolsToBr(actualValue);
+                                actualValue = actualValue.toString();
                             }
-                            $textModal.editable('setValue', actualValue);
-                            $textModal.editable('show');
-                            var $textArea = $textModal.next('div').find('textarea');
-                            if (!isAllowEdit) {
-                                $textArea.attr('readonly', 'true');
-                            } else {
-                                var editor = new wysihtml5.Editor($textArea.get(0));
-                                _this._persistLinkToEditor(editor);
-                                editor.on("load", function () {
-                                    var $tbody = $textArea.siblings('iframe').eq(1).contents().find('body');
-                                    _this._persistLinkToBody($tbody);
-                                    $tbody
-                                        .on('keydown', helpersModule.addSignToIframe)
-                                        .on('keydown', function (e) {
-                                            if (e.keyCode === optionsModule.getKeyCode('escape')) {
-                                                $textModal.editable('hide');
-                                            }
-                                        });
-                                });
+                            $textModal.appendTo($parent.closest('.card-content'));
+                            helpersModule.leaveFocus();
+                            if (isAllowEdit) {
+                                $textModal
+                                    .on('save', function (e, params) {
+                                        console.log('save')
+                                        if (params.newValue !== undefined) {
+                                            var data = {};
+                                            data[name] = params.newValue;
+                                            view.model.trigger('change:form', {
+                                                op: 'upd',
+                                                id: pk,
+                                                data: data
+                                            });
+                                            $el.editable("setValue", params.newValue);
+                                            $textModal.empty();
+                                        }
+                                    })
+                                    .on('shown', function (e, editable) {
+                                        if (editable) {
+                                            var $toolbar = $('<div></div>', {
+                                                'class': 'ch-toolbar',
+                                                html: helpersModule.generateHtmlIframeAddSignButton()
+                                            });
+                                            editable.$form.find('.editable-input').prepend($toolbar)
+                                        }
+                                    });
                             }
-                        } else {
+
+                            $textModal.on('hidden', function () {
+                                $el.focus();
+                            })
+
                             if ($textModal.attr('data-init') === undefined) {
                                 $textModal.editable({
                                     type: 'textarea',
                                     mode: 'popup',
                                     onblur: 'ignore',
                                     savenochange: false,
-                                    title: column.getModalTitle(pk)
+                                    title: column.getModalTitle(pk),
+                                    tpl: helpersModule.generateTemplateTextArea(isAllowEdit)
                                 });
                                 $textModal.attr('data-init', 1);
                             }
                             $textModal.editable('setValue', actualValue);
                             $textModal.editable('show');
-                            if (!isAllowEdit) {
-                                $textModal.next('div').find('textarea').attr('readonly', 'true');
-                            }
-                        }
-                        return false;
-                    });
+                            return false;
+                        });
+                    }
                     $el
                         .on('init', function () {
                             var dbData = view.model.getActualDataFromStorage(pk),
@@ -251,11 +214,10 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
                             }
                             setTimeout(function () {
                                 $el.editable('setValue', value);
-                                $parent.append('<div class="grid-modal-open"></div>');
+                                if (!isMarkupSupport) {
+                                    $parent.append('<div class="grid-modal-open"></div>');
+                                }
                             }, 0);
-                        })
-                        .on('shown', function (e, editable) {
-                            helpersModule.textShown(e, editable);
                         })
                         .editable(options);
                 };

@@ -47,8 +47,15 @@
 
 /**
  * @function
+ * @name jQuery.editable
+ */
+
+/**
+ * @function
  * @name jQuery.contextmenu
  */
+
+
 
 /**
  * @function
