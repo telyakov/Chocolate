@@ -4,23 +4,44 @@
 var userModule = (function (moment, optionsModule, storageModule) {
     'use strict';
     var _private = {
+        /**
+         *
+         * @returns {String}
+         */
         getName: function () {
             return storageModule.getUserName();
         },
+        /**
+         *
+         * @returns {String}
+         */
         getSign: function () {
             return [
                 '',
                 _private.getName(),
-                moment(new Date()).format(optionsModule.getSetting('signatureFormat')),
+                moment().format(optionsModule.getSetting('signatureFormat')),
                 ''
             ].join(' ');
         },
+        /**
+         *
+         * @returns {String}
+         */
         getID: function () {
             return storageModule.getUserID();
         },
-        getEmployeeID: function(){
+        /**
+         *
+         * @returns {String}
+         */
+        getEmployeeID: function () {
             return storageModule.getEmployeeID();
         },
+        /**
+         *
+         * @param {String} role
+         * @returns {Boolean}
+         */
         hasRole: function (role) {
             var prepareRole = role.toLowerCase(),
                 roles = storageModule.getUserRoles();
@@ -32,19 +53,40 @@ var userModule = (function (moment, optionsModule, storageModule) {
         }
     };
     return {
+        /**
+         *
+         * @returns {String}
+         */
         getSign: function () {
             return _private.getSign();
         },
+        /**
+         *
+         * @returns {String}
+         */
         getID: function () {
             return _private.getID();
         },
+        /**
+         *
+         * @returns {String}
+         */
         getName: function () {
             return _private.getName();
         },
+        /**
+         *
+         * @param {String} role
+         * @returns {Boolean}
+         */
         hasRole: function (role) {
             return _private.hasRole(role);
         },
-        getEmployeeID: function(){
+        /**
+         *
+         * @returns {String}
+         */
+        getEmployeeID: function () {
             return _private.getEmployeeID();
         }
     };
