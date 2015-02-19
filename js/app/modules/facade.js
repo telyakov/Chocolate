@@ -1,67 +1,100 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
  */
-var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, saveAs, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, phoneModule) {
+var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, saveAs, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, phoneModule) {
     'use strict';
-    var showErrorsChannel = optionsModule.getChannel('showError'),
-        logErrorChannel = optionsModule.getChannel('logError');
-    mediator.subscribe(showErrorsChannel, function (msg) {
-        logModule.showMessage(msg);
-    });
-    mediator.subscribe(logErrorChannel, function (args) {
-        logModule.error(args);
-    });
+
+    mediator.subscribe(optionsModule.getChannel('showError'),
+        /**
+         * @param {String} msg
+         */
+            function (msg) {
+            logModule.showMessage(msg);
+        });
+
+
+    mediator.subscribe(optionsModule.getChannel('logError'),
+        /**
+         *
+         * @param  {...*} args
+         */
+            function (args) {
+            logModule.error(args);
+        });
 
     var requestChannel = optionsModule.getChannel('socketRequest');
-    mediator.subscribe(requestChannel, function (data) {
-        data.key = optionsModule.getSetting('key');
-        socketModule.emit('request', data);
-    });
-    mediator.subscribe(optionsModule.getChannel('socketFileUpload'), function (data) {
-        data.key = optionsModule.getSetting('key');
-        socketModule.emit('fileUpload', data);
-    });
+    mediator.subscribe(requestChannel,
+        /**
+         *
+         * @param {DTO} data
+         */
+            function (data) {
+            data.key = optionsModule.getSetting('key');
+            socketModule.emit('request', data);
+        });
 
-    mediator.subscribe(optionsModule.getChannel('xmlRequest'), function (data) {
-        data.key = optionsModule.getSetting('key');
-        socketModule.emit('xmlRequest', data);
-    });
-    mediator.subscribe(optionsModule.getChannel('xmlResponse'), function (data) {
-        if (data.error) {
-            mediator.publish(
-                logErrorChannel,
-                data.error
-            );
-        } else {
+    mediator.subscribe(optionsModule.getChannel('socketFileUpload'),
+        /**
+         *
+         * @param {FileDTO} data
+         */
+            function (data) {
+            data.key = optionsModule.getSetting('key');
+            socketModule.emit('fileUpload', data);
+        });
 
-            if (data.data) {
+    mediator.subscribe(optionsModule.getChannel('xmlRequest'),
+        /**
+         *
+         * @param {FileDTO} data
+         */
+            function (data) {
+            data.key = optionsModule.getSetting('key');
+            socketModule.emit('xmlRequest', data);
+        });
+
+    mediator.subscribe(optionsModule.getChannel('xmlResponse'),
+        /**
+         *
+         * @param {FileDTO} data
+         */
+            function (data) {
+
+            var asyncTask;
+            if (data.id) {
+                asyncTask = deferredModule.pop(data.id);
+            }
+
+            if (data.error) {
+                logModule.error(data.error);
+                if (asyncTask) {
+                    asyncTask.reject(data.error);
+                }
+            } else if (data.data && asyncTask) {
+
                 var type = data.type,
                     xml = helpersModule.encodeWinToUnicode(atob(helpersModule.arrayBufferToBase64(data.data))),
                     $xml = $($.parseXML(xml));
+
                 switch (type) {
-                    case optionsModule.getRequestType('mainForm'):
-                        var model = new FormModel({
-                            $xml: $xml,
-                            write: storageModule.hasAccessToWrite(data.name)
-                        });
-                        var view = new FormView({
-                            model: model
-                        });
-                        view.render();
-                        break;
                     case optionsModule.getRequestType('deferred'):
-                        var defer = deferredModule.pop(data.id);
-                        defer.resolve({
+                        asyncTask.resolve({
                             data: $xml
                         });
                         break;
                     default :
+                        asyncTask.reject('Unsupported FileDTO type');
                         break;
-
+                }
+            } else {
+                var error = 'property data in FileDTO not set';
+                logModule.error(error);
+                if (asyncTask) {
+                    asyncTask.reject(error);
                 }
             }
-        }
-    });
+        });
+
     mediator.subscribe(optionsModule.getChannel('socketFileRequest'), function (data) {
         data.key = optionsModule.getSetting('key');
         socketModule.emit('fileRequest', data);
@@ -102,10 +135,7 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
 
     mediator.subscribe(optionsModule.getChannel('socketFileResponse'), function (data) {
         if (data.error) {
-            mediator.publish(
-                logErrorChannel,
-                data.error
-            );
+            logModule.error(data.error);
         } else {
             if (data.data) {
                 //https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
@@ -144,10 +174,8 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
             type = data.type,
             defer;
         if (error) {
-            mediator.publish(
-                logErrorChannel,
-                error
-            );
+            logModule.error(error);
+
             if (type === deferredType) {
                 defer = deferredModule.pop(data.id);
                 defer.reject(error);
@@ -208,32 +236,32 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
          * @param {Number} employeeId
          * @param {String} name
          */
-        function (id, employeeId, name) {
-        setTimeout(function () {
-            storageModule.saveUser(id, employeeId, name);
-            bindModule
-                .runAsyncTaskBindSql(optionsModule.getSql('getRoles'))
-                .done(
-                /** @param {SqlBindingResponse} data */
-                function (data) {
-                    var rolesSql = data.sql;
-                    mediator.publish(requestChannel, {
-                        query: rolesSql,
-                        type: optionsModule.getRequestType('roles')
+            function (id, employeeId, name) {
+            setTimeout(function () {
+                storageModule.saveUser(id, employeeId, name);
+                bindModule
+                    .runAsyncTaskBindSql(optionsModule.getSql('getRoles'))
+                    .done(
+                    /** @param {SqlBindingResponse} data */
+                        function (data) {
+                        var rolesSql = data.sql;
+                        mediator.publish(requestChannel, {
+                            query: rolesSql,
+                            type: optionsModule.getRequestType('roles')
+                        });
                     });
-                });
-            bindModule
-                .runAsyncTaskBindSql(optionsModule.getSql('getForms'))
-                .done(function (data) {
-                    var formsSql = data.sql;
-                    mediator.publish(requestChannel, {
-                        query: formsSql,
-                        type: optionsModule.getRequestType('forms')
+                bindModule
+                    .runAsyncTaskBindSql(optionsModule.getSql('getForms'))
+                    .done(function (data) {
+                        var formsSql = data.sql;
+                        mediator.publish(requestChannel, {
+                            query: formsSql,
+                            type: optionsModule.getRequestType('forms')
+                        });
                     });
-                });
-        }, 300);
+            }, 300);
 
-    });
+        });
 
     mediator.subscribe(optionsModule.getChannel('reflowTab'), function (force) {
         repaintModule.reflowActiveTab(force);
@@ -245,12 +273,6 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
         },
         getOptionsModule: function () {
             return optionsModule;
-        },
-        getBindModule: function () {
-            return bindModule;
-        },
-        getFactoryModule: function () {
-            return factoryModule;
         },
         getTaskWizard: function () {
             return taskWizard;
@@ -273,11 +295,17 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
         getImageAdapter: function () {
             return imageAdapter;
         },
-        startApp: function (userID, userName, $employeeID) {
+        /**
+         *
+         * @param {String} userID
+         * @param {String} userName
+         * @param {String} employeeID
+         */
+        startApp: function (userID, userName, employeeID) {
             helpersModule.init();
             var appModel = new AppModel({
                     userId: userID,
-                    employeeId: $employeeID,
+                    employeeId: employeeID,
                     userName: userName
                 }),
                 view = new AppView({
@@ -287,4 +315,4 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
         }
     };
 
-}(deferredModule, imageAdapter, AppModel, AppView, Blob, saveAs, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, factoryModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, phoneModule));
+}(deferredModule, imageAdapter, AppModel, AppView, Blob, saveAs, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, phoneModule));

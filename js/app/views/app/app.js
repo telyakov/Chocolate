@@ -149,7 +149,7 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
              * @param {jQuery} $target
              * @private
              */
-            _addSignToTextarea: function($target){
+            _addSignToTextarea: function ($target) {
                 if (!$target.attr('readonly')) {
                     $target.insertAtCaret(userModule.getSign());
                 }
@@ -261,16 +261,49 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
             },
             /**
              * @desc Open form
-             * @param {String} form
+             * @param {String} formName
              * @returns {boolean}
              * @private
              */
-            _openForm: function (form) {
+            _openForm: function (formName) {
+                var asyncTask = deferredModule.create(),
+                    _this = this;
                 mediator.publish(optionsModule.getChannel('xmlRequest'), {
-                    name: form,
-                    type: optionsModule.getRequestType('mainForm')
+                    name: formName,
+                    type: optionsModule.getRequestType('deferred'),
+                    id: deferredModule.save(asyncTask)
                 });
+                asyncTask
+                    .done(function (response) {
+                        _this._handleXmlResponse(formName, response);
+                    })
+                    .fail(this._showError);
+
                 return false;
+            },
+            /**
+             * @param {string} name
+             * @param {Object} response
+             * @private
+             */
+            _handleXmlResponse: function (name, response) {
+                var $xml = response.data,
+                    model = new FormModel({
+                        $xml: $xml,
+                        write: storageModule.hasAccessToWrite(name)
+                    }),
+                    view = new FormView({
+                        model: model
+                    });
+                view.render();
+            },
+            /**
+             *
+             * @param {String} error
+             * @private
+             */
+            _showError: function (error) {
+                mediator.publish(optionsModule.getChannel('showError'), error);
             },
             /**
              * @desc Open form in side menu
@@ -284,10 +317,21 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                 if ($subMenu.length) {
                     $subMenu.toggle();
                 } else {
+                    var asyncTask = deferredModule.create(),
+                        _this = this,
+                        formName = $this.attr('href');
+
                     mediator.publish(optionsModule.getChannel('xmlRequest'), {
-                        name: $this.attr('href'),
-                        type: optionsModule.getRequestType('mainForm')
+                        name: formName,
+                        type: optionsModule.getRequestType('deferred'),
+                        id: deferredModule.save(asyncTask)
                     });
+
+                    asyncTask
+                        .done(function (response) {
+                            _this._handleXmlResponse(formName, response);
+                        })
+                        .fail(this._showError);
                     $this
                         .closest('.gn-menu-wrapper')
                         .removeClass('gn-open-all')
@@ -355,7 +399,8 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                     params[name] = value;
                 });
                 var view = params.view,
-                    idList = params.id;
+                    idList = params.id,
+                    _this =  this;
                 setTimeout(function () {
                     var defer = deferredModule.create(),
                         deferId = deferredModule.save(defer);
@@ -380,6 +425,7 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
 
                         view.render();
                     })
+                        .fail(_this._showError);
                 }, 300);
             },
             /**
@@ -387,13 +433,24 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
              * @private
              */
             _startDefaultForm: function () {
-                var form = this.model.getAutoStartForm();
-                if (form) {
+                var formName = this.model.getAutoStartForm(),
+                    _this = this;
+                if (formName) {
                     setTimeout(function () {
+
+                        var asyncTask = deferredModule.create();
+
                         mediator.publish(optionsModule.getChannel('xmlRequest'), {
-                            name: form,
-                            type: optionsModule.getRequestType('mainForm')
+                            name: formName,
+                            type: optionsModule.getRequestType('deferred'),
+                            id: deferredModule.save(asyncTask)
                         });
+
+                        asyncTask
+                            .done(function (response) {
+                                _this._handleXmlResponse(formName, response);
+                            })
+                            .fail(this._showError);
                     }, 300);
                 }
             },
@@ -534,7 +591,7 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                 if ($parent.hasClass('wysihtml5-toolbar')) {
                     var $iframeBody = $parent.siblings('iframe').contents().find('body');
                     $iframeBody.insertAtCaretIframe(userModule.getSign());
-                }else{
+                } else {
                     this._addSignToTextarea($parent.next('textarea'));
                 }
                 e.preventDefault();

@@ -218,5 +218,46 @@
  */
 
 
+/**
+ * @typedef {Object} DTO
+ * @property {string} data
+ * @property {string} id
+ * @property {string} type
+ * @property {string} query
+ * @property {string} error
+ * @property {string} key
+ * @property {boolean} isCache
+ */
 
-//todo: 1)Поддержка типа Deferred,  2)jquery, 3)custom object Types, 4)Event
+/**
+ * @typedef {Object} ExcelDTO
+ * @property {Number} id
+ * @property {string} data
+ * @property {string} settings
+ * @property {string} type
+ * @property {string} name
+ * @property {string} error
+ */
+
+
+/**
+ * @typedef {Object} FileDTO
+ * @property {Number} id
+ * @property {ArrayBuffer} data
+ * @property {string} sql
+ * @property {string} error
+ * @property {string} key
+ * @property {string} name
+ * @property {string} type
+*/
+
+
+/**
+ * @typedef {Object} MultiplyExecDTO
+ * @property {String} id
+ * @property {string} data
+ * @property {string} type
+ * @property {string} error
+ * @property {string} key
+ * @property {string[]} sqlList
+ */
