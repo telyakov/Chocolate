@@ -206,7 +206,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              * @returns {boolean}
              */
             isAllowAudit: function () {
-                return helpersModule.boolEval(this.getDataFormProperties().getAllowAuditButton(), false);
+                return interpreterModule.parseBooleanExpression(this.getDataFormProperties().getAllowAuditButton(), false);
             },
             /**
              * @returns {boolean}
@@ -356,25 +356,25 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              * @returns {boolean}
              */
             isAutoOpenCard: function () {
-                return helpersModule.boolEval(this.getCardCollection().getAutoOpen(), false);
+                return interpreterModule.parseBooleanExpression(this.getCardCollection().getAutoOpen(), false);
             },
             /**
              * @returns {boolean}
              */
             isAllowCreate: function () {
-                return this.isAllowWrite() && helpersModule.boolEval(this.getDataFormProperties().getAllowAddNew(), false);
+                return this.isAllowWrite() && interpreterModule.parseBooleanExpression(this.getDataFormProperties().getAllowAddNew(), false);
             },
             /**
              * @returns {boolean}
              */
             isAllowSave: function () {
-                return this.isAllowWrite() && helpersModule.boolEval(this.getDataFormProperties().getSaveButtonVisible(), false);
+                return this.isAllowWrite() && interpreterModule.parseBooleanExpression(this.getDataFormProperties().getSaveButtonVisible(), false);
             },
             /**
              * @returns {boolean}
              */
             isAllowRefresh: function () {
-                return helpersModule.boolEval(this.getDataFormProperties().getRefreshButtonVisible(), false);
+                return interpreterModule.parseBooleanExpression(this.getDataFormProperties().getRefreshButtonVisible(), false);
             },
             /**
              *
@@ -701,7 +701,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 return this._columnsCardRoCollection;
             },
             isAttachmentSupport: function () {
-                return helpersModule.boolEval(this.getDataFormProperties().getAttachmentsSupport(), false);
+                return interpreterModule.parseBooleanExpression(this.getDataFormProperties().getAttachmentsSupport(), false);
             },
             /**
              *
@@ -754,7 +754,7 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 if (this._preview === null) {
                     var preview = {};
                     this.getColumnsCollection().each(function (column) {
-                        if (helpersModule.boolEval(column.getShowInRowDisplay())) {
+                        if (interpreterModule.parseBooleanExpression(column.getShowInRowDisplay())) {
                             preview[column.getKey()] = {
                                 caption: column.getCaption(),
                                 type: ['date', 'datetime'].indexOf(column.getEditType()) === -1 ?

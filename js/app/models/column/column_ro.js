@@ -112,7 +112,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @returns {Boolean}
              */
             isSingle: function () {
-                return helpersModule.boolEval(this._getColumnProperties().getSingleValueMode(), false);
+                return interpreterModule.parseBooleanExpression(this._getColumnProperties().getSingleValueMode(), false);
             },
             /**
              * @returns {String}
@@ -290,13 +290,13 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @returns {Boolean}
              */
             isVisibleInCard: function () {
-                return helpersModule.boolEval(this._getColumnProperties().getCardVisible(), false);
+                return interpreterModule.parseBooleanExpression(this._getColumnProperties().getCardVisible(), false);
             },
             /**
              * @returns {Boolean}
              */
             isEdit: function () {
-                return helpersModule.boolEval(this._getColumnProperties().getAllowEdit(), true);
+                return interpreterModule.parseBooleanExpression(this._getColumnProperties().getAllowEdit(), true);
             },
             /**
              * @returns {Function}
@@ -335,13 +335,13 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @returns {Boolean}
              */
             isVisible: function () {
-                return this._isVisibleInAllField() || helpersModule.boolEval(this._getColumnProperties().getVisible(), false);
+                return this._isVisibleInAllField() || interpreterModule.parseBooleanExpression(this._getColumnProperties().getVisible(), false);
             },
             /**
              * @returns {Boolean}
              */
             isRequired: function () {
-                return helpersModule.boolEval(this._getColumnProperties().getRequired(), false);
+                return interpreterModule.parseBooleanExpression(this._getColumnProperties().getRequired(), false);
             },
             /**
              * @returns {String}
@@ -375,7 +375,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @protected
              */
             _isVisibleInAllField: function () {
-                return helpersModule.boolEval(this._getColumnProperties().getAllFields(), false);
+                return interpreterModule.parseBooleanExpression(this._getColumnProperties().getAllFields(), false);
             },
             /**
              * @returns {String}

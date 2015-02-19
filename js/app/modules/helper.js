@@ -156,18 +156,6 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             }
             return res;
         },
-        boolEval: function (val, def) {
-            var prepareVal = $.trim(val.toLowerCase());
-            switch (true) {
-                case prepareVal === 'true':
-                    return true;
-                case prepareVal === 'false':
-                    return false;
-                default:
-                    return def;
-
-            }
-        },
         /**
          *
          * @param {String} dec

@@ -170,7 +170,6 @@ var interpreterModule = (function (optionsModule, userModule, deferredModule, bi
                         task.resolve({
                             value: userModule.hasRole(role)
                         });
-                        console.log(role)
                     }
                     break;
                 default:
@@ -183,15 +182,33 @@ var interpreterModule = (function (optionsModule, userModule, deferredModule, bi
         },
         /**
          *
-         * @param {String} expr
+         * @param {String} expression
          * @returns {Number|String}
          */
-        parseIntExpression: function (expr) {
-                if ($.isNumeric(expr)) {
-                    return parseInt(expr, 10);
+        parseIntExpression: function (expression) {
+                if ($.isNumeric(expression)) {
+                    return parseInt(expression, 10);
                 } else {
-                    return expr;
+                    return expression;
                 }
+        },
+        /**
+         *
+         * @param {String} expression
+         * @param {Boolean} defaultValue
+         * @returns {Boolean}
+         */
+        parseBooleanExpression: function (expression, defaultValue) {
+            var prepareExpression = _private.prepareExpression(expression);
+            switch (true) {
+                case prepareExpression === 'true':
+                    return true;
+                case prepareExpression === 'false':
+                    return false;
+                default:
+                    return defaultValue;
+            }
         }
+
     }
 })(optionsModule, userModule, deferredModule, bindModule);

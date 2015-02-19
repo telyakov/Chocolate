@@ -11,7 +11,7 @@ var CardRO = (function (Backbone, helpersModule) {
              * @returns {Boolean}
              */
             isVisible: function () {
-                return helpersModule.boolEval(this.get('card').getVisible(), true);
+                return interpreterModule.parseBooleanExpression(this.get('card').getVisible(), true);
             },
             /**
              * @returns {String}
