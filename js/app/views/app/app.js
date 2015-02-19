@@ -320,6 +320,7 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
              * @private
              */
             _warningMessageHandler: function () {
+                storageModule.getStorage().save('local');
                 if (helpersModule.appHasChange()) {
                     return optionsModule.getMessage('chocolateHasChange');
                 }

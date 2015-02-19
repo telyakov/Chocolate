@@ -3,27 +3,15 @@
  */
 var storageModule = (function (undefined, optionsModule) {
     'use strict';
-    function ObjectStorage(duration) {
-        var self,
-            name = '_objectStorage',
-            defaultDuration = 15000;
-        if (ObjectStorage.instances[name]) {
-            self = ObjectStorage.instances[name];
-            self.duration = duration || self.duration;
-        } else {
-            self = this;
-            self._name = name;
-            self.duration = duration || defaultDuration;
+    function ObjectStorage() {
+        var self = this;
+            self._name = '_objectStorage';
             self._init();
-            ObjectStorage.instances[name] = self;
-        }
         return self;
     }
 
-    ObjectStorage.instances = {};
     ObjectStorage.prototype = {
-        // type == local || session
-        _save: function (type) {
+        save: function (type) {
             var stringified = JSON.stringify(this[type]),
                 storage = window[type + 'Storage'];
             if (storage.getItem(this._name) !== stringified) {
@@ -39,25 +27,13 @@ var storageModule = (function (undefined, optionsModule) {
             self._get('session');
             (function callee() {
                 self.timeoutId = setTimeout(function () {
-                    self._save('local');
+                    self.save('local');
                     callee();
-                }, self._duration);
+                }, 60000);
             })();
-            if (window.addEventListener) {
-                window.addEventListener('beforeunload', function () {
-                    self._save('local');
-                    self._save('session');
-                });
-            }
-            else {
-                window.attachEvent('beforeunload', function () {
-                    self._save('local');
-                    self._save('session');
-                });
-            }
 
         },
-        timeoutId: null,
+        timeoutId: 0,
         local: {},
         session: {}
     };
@@ -193,35 +169,76 @@ var storageModule = (function (undefined, optionsModule) {
         };
     _private.init();
     return {
+        /**
+         *
+         * @param {string} key
+         * @param {object} obj
+         */
         persistColumnsSettings: function (key, obj) {
             _private.persistColumnsSettings(key, obj);
         },
+        /**
+         *
+         * @param {string} key
+         * @param {string} attr
+         * @param {string} val
+         */
         persistSetting: function (key, attr, val) {
             _private.persistSetting(key, attr, val);
         },
+        /**
+         *
+         * @returns {Object}
+         */
         getSettings: function () {
             return _private.getColumnsSettings();
         },
+        /**
+         *
+         * @param {string} key
+         * @param {string} attr
+         * @returns {boolean}
+         */
         hasSetting: function (key, attr) {
             return !!_private.getSettingByKey(key, attr);
         },
+        /**
+         *
+         * @param {string} key
+         * @param {string} attr
+         * @returns {String|undefined}
+         */
         getSettingByKey: function (key, attr) {
             return _private.getSettingByKey(key, attr);
         },
+        /**
+         *
+         * @param {string} key
+         * @returns {boolean}
+         */
         hasSession: function (key) {
             var storage = _private.getSession()[key];
             return !!(storage !== undefined && !$.isEmptyObject(storage));
         },
+        /**
+         *
+         * @param {string} key
+         * @param {object} obj
+         */
         addToSession: function (key, obj) {
             _private.addToSession(key, obj);
         },
+        /**
+         *
+         * @param {string} key
+         */
         removeFromSession: function (key) {
             delete this.getSession()[key];
         },
         /**
          *
          * @param {string} [id]
-         * @returns {*}
+         * @returns {Object}
          */
         getSession: function (id) {
             if (id === undefined) {
@@ -230,21 +247,45 @@ var storageModule = (function (undefined, optionsModule) {
                 return _private.getSession()[id];
             }
         },
+        /**
+         *
+         * @returns {Object}
+         */
         getLocal: function () {
             return _private.getLocal();
         },
+        /**
+         *
+         * @returns {ObjectStorage}
+         */
         getStorage: function () {
             return storage;
         },
+        /**
+         *
+         * @returns {String}
+         */
         getUserName: function () {
             return _private.getUserName();
         },
+        /**
+         *
+         * @returns {String}
+         */
         getUserID: function () {
             return _private.getUserID();
         },
+        /**
+         *
+         * @returns {String}
+         */
         getEmployeeID: function () {
             return _private.getEmployeeID();
         },
+        /**
+         *
+         * @returns {Array}
+         */
         getUserRoles: function () {
             return _private.getUserRoles();
         },
@@ -258,6 +299,7 @@ var storageModule = (function (undefined, optionsModule) {
             var userSettings = optionsModule.getConstants('userSettingsXml'),
                 taskForTop = optionsModule.getConstants('tasksForTopsXml'),
                 task = optionsModule.getConstants('tasksXml');
+
             if ([taskForTop, task, userSettings].indexOf(view) !== -1) {
                 return true;
             }
@@ -268,9 +310,9 @@ var storageModule = (function (undefined, optionsModule) {
             return false;
         },
         /**
-         * @param id {string}
-         * @param employeeId {string}
-         * @param name {string}
+         * @param {string} id
+         * @param {string} employeeId
+         * @param {string} name
          * @returns {boolean}
          */
         saveUser: function (id, employeeId, name) {
@@ -289,6 +331,10 @@ var storageModule = (function (undefined, optionsModule) {
         saveRoles: function (roles) {
             _private.saveRoles(roles);
         },
+        /**
+         * @param {String} key
+         * @returns {String|undefined}
+         */
         getApplicationSettingByKey: function (key) {
             return _private.getApplicationSettingByKey(key);
         },

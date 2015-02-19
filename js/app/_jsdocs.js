@@ -119,7 +119,6 @@
  * @property {string} sql - Binding sql
  */
 
-
 /**
  *
  * @typedef {Object} FormDTO
