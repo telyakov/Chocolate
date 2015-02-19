@@ -483,11 +483,33 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     isSelect = 1;
                 }
                 helpersModule.leaveFocus();
-                mediator.publish(optionsModule.getChannel('openForm'), {
-                    view: view,
-                    parentModel: this.getModel(),
-                    parentID: parentID
+
+                var asyncTask = deferredModule.create();
+
+                mediator.publish(optionsModule.getChannel('xmlRequest'), {
+                    name: view,
+                    type: optionsModule.getRequestType('deferred'),
+                    id: deferredModule.save(asyncTask)
                 });
+
+                var _this = this;
+                asyncTask
+                    .done(function (response) {
+                        var $xml = response.data;
+                        var model = new FormModel({
+                            $xml: $xml,
+                            parentModel: _this.getModel(),
+                            parentId: parentID
+                        });
+                        var view = new FormView({
+                            model: model
+                        });
+                        view.render()
+                    })
+                    .fail(function(error){
+                        mediator.publish(optionsModule.getChannel('showError'), error);
+                    });
+
                 e.stopImmediatePropagation();
 
             },

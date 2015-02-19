@@ -32,7 +32,6 @@ var optionsModule = (function () {
             showError: 'show_error',
             setIdentity: 'set_identity',
             reflowTab: 'reflow_tab',
-            openForm: 'open_form',
             xmlRequest: 'xml_request',
             xmlResponse: 'xml_response'
         },

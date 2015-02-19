@@ -95,43 +95,25 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
             }
         });
 
-    mediator.subscribe(optionsModule.getChannel('socketFileRequest'), function (data) {
-        data.key = optionsModule.getSetting('key');
-        socketModule.emit('fileRequest', data);
-    });
-    mediator.subscribe(optionsModule.getChannel('socketExportToExcel'), function (data) {
-        socketModule.emit('exportToExcel', data);
-    });
-    mediator.subscribe(optionsModule.getChannel('openForm'), function (opts) {
-        var card = opts.card,
-            view = opts.view,
-            parentModel = opts.parentModel,
-            parentID = opts.parentID;
-        view = helpersModule.getCorrectXmlName(view);
-        var defer = deferredModule.create(),
-            deferID = deferredModule.save(defer);
-        var data = {
-            key: optionsModule.getSetting('key'),
-            type: optionsModule.getRequestType('deferred'),
-            name: view,
-            id: deferID
-        };
-        socketModule.emit('xmlRequest', data);
-        defer.done(function (res) {
-            var $xml = res.data;
-            var model = new FormModel({
-                $xml: $xml,
-                parentModel: parentModel,
-                parentId: parentID
-            });
-            var view = new FormView({
-                $card: opts.$el,
-                model: model,
-                card: card
-            });
-            view.render()
+
+    mediator.subscribe(optionsModule.getChannel('socketFileRequest'),
+        /**
+         *
+         * @param {FileDTO} data
+         */
+            function (data) {
+            data.key = optionsModule.getSetting('key');
+            socketModule.emit('fileRequest', data);
         });
-    });
+
+    mediator.subscribe(optionsModule.getChannel('socketExportToExcel'),
+        /**
+         *
+         * @param {ExcelDTO} data
+         */
+            function (data) {
+            socketModule.emit('exportToExcel', data);
+        });
 
     mediator.subscribe(optionsModule.getChannel('socketFileResponse'), function (data) {
         if (data.error) {
@@ -153,7 +135,7 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                     slice = byteCharacters.slice(offset, offset + sliceSize);
                     sliceLength = slice.length;
                     byteNumbers = new Array(sliceLength);
-                    for (i = 0; i < sliceLength; i++) {
+                    for (i = 0; i < sliceLength; i += 1) {
                         byteNumbers[i] = slice.charCodeAt(i);
                     }
                     byteArrays.push(new Uint8Array(byteNumbers));
