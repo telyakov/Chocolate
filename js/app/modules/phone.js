@@ -1,27 +1,39 @@
-var phoneModule = (function (optionsModule, userModule, bindModule, mediator) {
-
+var phoneModule = (function (optionsModule, userModule, bindModule) {
+    'use strict';
     var _private = {
-        makeCall: function (to) {
-
+        /**
+         *
+         * @param {string} phoneTo
+         */
+        makeCall: function (phoneTo) {
             var data = {
                 userid: userModule.getID(),
-                phoneto: to
+                phoneto: phoneTo
             };
 
             bindModule.
                 runAsyncTaskBindSql(optionsModule.getSql('makeCall'), data)
-                .done(function (data) {
+                .done(
+                /** @param {SqlBindingResponse} data */
+                    function (data) {
                     var sql = data.sql;
                     mediator.publish(optionsModule.getChannel('socketRequest'), {
                         query: sql
                     });
+                })
+                .fail(function(error){
+                    mediator.publish(optionsModule.getChannel('showError'), error);
                 });
         }
     };
     return {
-        makeCall: function (to) {
-            _private.makeCall(to);
+        /**
+         *
+         * @param {string} phoneTo
+         */
+        makeCall: function (phoneTo) {
+            _private.makeCall(phoneTo);
 
         }
     };
-})(optionsModule, userModule, bindModule, mediator);
+})(optionsModule, userModule, bindModule);

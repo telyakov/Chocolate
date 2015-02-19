@@ -8,9 +8,17 @@ var logModule = (function (log4javascript, $) {
     log.removeAllAppenders();
     log.addAppender(new log4javascript.BrowserConsoleAppender());
     var _private = {
+        /**
+         *
+         * @param {...*} args
+         */
         error: function (args) {
             log.error(args);
         },
+        /**
+         *
+         * @param {string} msg
+         */
         showMessage: function (msg) {
             $('<div class="notice"></div>')
                 .append('<div class="skin"></div>')
@@ -22,9 +30,17 @@ var logModule = (function (log4javascript, $) {
         }
     };
     return {
+        /**
+         *
+         * @param {...*} args
+         */
         error: function (args) {
             _private.error(args);
         },
+        /**
+         *
+         * @param {string} msg
+         */
         showMessage: function (msg) {
             _private.showMessage(msg);
         }

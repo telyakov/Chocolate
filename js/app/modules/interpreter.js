@@ -145,7 +145,9 @@ var interpreterModule = (function (optionsModule, userModule, deferredModule, bi
                             sql = $.trim(prepareExpr.substr(posSql));
 
                         bindModule.runAsyncTaskBindSql(sql)
-                            .done(function (data) {
+                            .done(
+                            /** @param {SqlBindingResponse} data */
+                                function (data) {
                                 var sql = data.sql;
                                 mediator.publish(optionsModule.getChannel('socketRequest'), {
                                     query: sql,
@@ -186,11 +188,11 @@ var interpreterModule = (function (optionsModule, userModule, deferredModule, bi
          * @returns {Number|String}
          */
         parseIntExpression: function (expression) {
-                if ($.isNumeric(expression)) {
-                    return parseInt(expression, 10);
-                } else {
-                    return expression;
-                }
+            if ($.isNumeric(expression)) {
+                return parseInt(expression, 10);
+            } else {
+                return expression;
+            }
         },
         /**
          *

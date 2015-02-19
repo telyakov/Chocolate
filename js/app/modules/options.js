@@ -143,30 +143,75 @@ var optionsModule = (function () {
             }
         };
     return {
+        /**
+         *
+         * @param {string} key
+         * @returns {string}
+         */
         getMessage: function (key) {
             return _private.getMessage(key);
         },
+        /**
+         *
+         * @param {string} key
+         * @returns {string}
+         */
         getUrl: function (key) {
             return _private.getUrl(key);
         },
+        /**
+         *
+         * @param {string} key
+         * @returns {string}
+         */
         getRequestType: function (key) {
             return _private.getRequestType(key);
         },
+        /**
+         *
+         * @param {string} key
+         * @returns {string}
+         */
         getChannel: function (key) {
             return _private.getChannel(key);
         },
+        /**
+         *
+         * @param {string} key
+         * @returns {string}
+         */
         getSetting: function (key) {
             return _private.getSetting(key);
         },
+        /**
+         *
+         * @param {string} key
+         * @returns {string}
+         */
         getSql: function (key) {
             return _private.getSql(key);
         },
+        /**
+         *
+         * @param {string} key
+         * @returns {string}
+         */
         getClass: function (key) {
             return _private.getClass(key);
         },
+        /**
+         *
+         * @param {string} key
+         * @returns {string}
+         */
         getConstants: function (key) {
             return _private.getConstants(key);
         },
+        /**
+         *
+         * @param {string} key
+         * @returns {string}
+         */
         getKeyCode: function (key) {
             return keys[key.toUpperCase()];
         }

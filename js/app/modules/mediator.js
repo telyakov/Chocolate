@@ -2,6 +2,7 @@
  * Pattern Mediator. Documentation: http://largescalejs.ru/the-mediator-pattern/
  */
 var mediator = (function() {
+    'use strict';
     var subscribe = function(channel, fn) {
             if (!mediator.channels[channel]) {mediator.channels[channel] = [];}
             mediator.channels[channel].push({ context: this, callback: fn });

@@ -4,11 +4,15 @@
 var menuModule = (function (GnMenu, $) {
     'use strict';
     var _private = {
+        /**
+         *
+         * @param {Object} items
+         */
         init: function (items) {
             var i,
                 tree = {},
                 hasOwn = Object.prototype.hasOwnProperty,
-                subTree = { 0: tree };
+                subTree = {0: tree};
             for (i in items) {
                 if (hasOwn.call(items, i)) {
                     var row = items[i],
@@ -18,7 +22,7 @@ var menuModule = (function (GnMenu, $) {
                         view = row.viewname,
                         url;
                     if (view) {
-                        url = view.replace(/\\/g, '/') + '.xml';
+                        url = helpersModule.getCorrectXmlName(view);
                     } else {
                         url = '#';
                     }
@@ -70,9 +74,11 @@ var menuModule = (function (GnMenu, $) {
             }
 
         },
-        toXmlExtensionFormat: function (name) {
-            return name.toLowerCase() + '.xml';
-        },
+        /**
+         *
+         * @param {Object} items
+         * @returns {string}
+         */
         createSubMenu: function (items) {
             var result = ['<ul class="gn-submenu">'],
                 i,
@@ -86,11 +92,12 @@ var menuModule = (function (GnMenu, $) {
                     });
                 }
             }
-            sort = sort.sort(function (a, b) {
-                    if (a.val < b.val){
+            sort = sort
+                .sort(function (a, b) {
+                    if (a.val < b.val) {
                         return -1;
                     }
-                    if (a.val > b.val){
+                    if (a.val > b.val) {
                         return 1;
                     }
                     return 0;
@@ -103,26 +110,40 @@ var menuModule = (function (GnMenu, $) {
             return result.join('');
 
         },
+        /**
+         *
+         * @param {Object} item
+         * @returns {string}
+         */
         createMenuItem: function (item) {
-            var menuTmpl = '<li><a class="menu-root" href="{*url*}">{*name*}</a>{*submenu*}</li>',
-                subMenuTmpl = '<ul><a class="menu-root" href="{*url*}">{*name*}</a>{*submenu*}</ul>',
-                name = item.label,
+            var name = item.label,
                 url = item.url;
             if (Object.keys(item.items).length) {
-                return subMenuTmpl
-                    .replace('{*url*}', url)
-                    .replace('{*name*}', name)
-                    .replace('{*submenu*}', _private.createSubMenu(item.items));
+                return [
+                    '<ul><a class="menu-root" href="',
+                    url,
+                    '">',
+                    name,
+                    '</a>',
+                    _private.createSubMenu(item.items),
+                    '</ul>'
+                ].join('');
             } else {
-                return menuTmpl
-                    .replace('{*url*}', url)
-                    .replace('{*name*}', name)
-                    .replace('{*submenu*}', '');
+                return [
+                    '<li><a class="menu-root" href="',
+                    url,
+                    '">',
+                    name,
+                    '</a></li>'
+                ].join('');
             }
-
         }
     };
     return {
+        /**
+         *
+         * @param {Object} items
+         */
         init: function (items) {
             _private.init(items);
         }

@@ -1,29 +1,44 @@
-var imageAdapter = (function(){
+var imageAdapter = (function () {
     'use strict';
-    var _private ={
-        convert: function(img){
-            var cl = _private.imageToCssClass(img);
-            if(cl){
-                return $('<span>',{
-                    'class': cl
+    var _private = {
+        /**
+         *
+         * @param {String} imageHref
+         * @returns {?jQuery}
+         */
+        convert: function (imageHref) {
+            var cssClass = _private.imageToCssClass(imageHref);
+            if (cssClass) {
+                return $('<span>', {
+                    'class': cssClass
                 });
-            }else{
+            } else {
                 return null;
             }
 
         },
-        imageToCssClass: function(img){
-            switch (img){
+        /**
+         *
+         * @param {string} imageHref
+         * @returns {string}
+         */
+        imageToCssClass: function (imageHref) {
+            switch (imageHref) {
                 case 'TaskBig.jpg':
                     return 'fa-tasks';
                 default :
-                    return null;
+                    return '';
             }
         }
     };
     return {
-        convert: function(img){
-            return _private.convert(img);
+        /**
+         *
+         * @param {String} imageHref
+         * @returns {?jQuery}
+         */
+        convert: function (imageHref) {
+            return _private.convert(imageHref);
         }
     };
 })();
