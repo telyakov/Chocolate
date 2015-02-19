@@ -35,7 +35,7 @@ var ColumnCustomProperties = (function (Backbone, helpersModule) {
                         case propertyInLowerCase.indexOf('color') !== -1:
                             tokens = property.split(valueDelimiter);
                             if (tokens.length === 2) {
-                                var hex = helpersModule.decToHeh(tokens[1]);
+                                var hex = helpersModule.convertDecColorToHeh(tokens[1]);
                                 _this.set('color', hex);
                             }
                             break;

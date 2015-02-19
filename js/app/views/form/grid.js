@@ -1200,11 +1200,11 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     colorCol = model.getColorColumnName(),
                     keyColorCol = model.getKeyColorColumnName();
                 if (colorCol && data[colorCol]) {
-                    var correctColor = helpersModule.decToHeh(data[colorCol]);
+                    var correctColor = helpersModule.convertDecColorToHeh(data[colorCol]);
                     style = ['style="background:#', correctColor, '"'].join('');
                 }
                 if (keyColorCol && data[keyColorCol]) {
-                    keyColor = helpersModule.decToHeh(data[keyColorCol])
+                    keyColor = helpersModule.convertDecColorToHeh(data[keyColorCol])
                 }
                 var rowClass = this.getRowClass();
                 if (rowClass) {

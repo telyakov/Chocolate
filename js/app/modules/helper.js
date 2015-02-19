@@ -8,6 +8,14 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         $page: null,
         $content: null,
         _idCounter: 1,
+        /**
+         *
+         * @param {String} id
+         * @returns {boolean}
+         */
+        isNewRow: function (id) {
+            return $.isNumeric(id) ? false : true;
+        },
         generateHtmlIframeAddSignButton: function(){
             return [
                 '<button class="active menu-button menu-button-sigh" ',
@@ -270,7 +278,12 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
 
             }
         },
-        decToHeh: function (dec) {
+        /**
+         *
+         * @param {String} dec
+         * @returns {string}
+         */
+        convertDecColorToHeh: function (dec) {
             var decColor = parseInt(dec, 10),
                 hexColor = decColor.toString(16);
             if (hexColor.length < 6) {
@@ -283,6 +296,11 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
                 B = [hexColor.charAt(0), hexColor.charAt(1)].join('');
             return [R, G, B].join('');
         },
+        /**
+         * @desc prepare data to expected select format
+         * @param {Object} data
+         * @returns {Array}
+         */
         prepareSelectSource: function (data) {
             var result = [],
                 iterator;
@@ -296,6 +314,11 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             }
             return result;
         },
+        /**
+         * @desc prepare data to expected tree format
+         * @param {Object} data
+         * @returns {Array}
+         */
         prepareTreeSource: function (data) {
             var result = [],
                 iterator;
@@ -312,31 +335,33 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             }
             return result;
         },
+        /**
+         *
+         * @param {Object} source
+         * @param {Object} addition
+         * @returns {Object}
+         */
         merge: function (source, addition) {
             return _private.mergeObj(source, addition);
         },
+        /**
+         * @desc Leave focus from current active element
+         */
         leaveFocus: function () {
             _private.leaveFocus();
         },
+        /**
+         * @desc remove html tags in strings
+         * @param {String} html
+         * @returns {String}
+         */
         stripHtml: function (html) {
             return _private.stripHtml(html);
         },
-        //addSignToIframe: function (e) {
-        //    console.log('add sign')
-        //    if (e.keyCode === optionsModule.getKeyCode('f4')) {
-        //        var userModule = facade.getUserModule();
-        //        $(this).insertAtCaretIframe(userModule.getSign());
-        //        return false;
-        //    }
-        //    return true;
-        //},
-        createTitleHtml: function (pk, caption) {
-            if (helpersModule.isNewRow(pk)) {
-                return caption;
-            } else {
-                return caption + ' [' + pk + ']';
-            }
-        },
+        /**
+         *
+         * @returns {boolean}
+         */
         appHasChange: function () {
             return _private.appHasChange();
         },
@@ -419,7 +444,7 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
          * @returns {boolean}
          */
         isNewRow: function (id) {
-            return $.isNumeric(id) ? false : true;
+            return _private.isNewRow(id);
         },
         /**
          *

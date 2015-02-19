@@ -90,7 +90,7 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                             pk = $this.attr('data-pk'),
                             isAllowEdit = _this.isAllowEdit(view, pk);
                         if (isMarkupSupport) {
-                            options.title = helpersModule.createTitleHtml(pk, _this.getVisibleCaption());
+                            options.title = _this._createTitleHtml(pk, _this.getVisibleCaption());
                         } else {
                             options.title = null;
                         }
@@ -137,6 +137,20 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
             },
             /**
              *
+             * @param {String|Number} pk
+             * @param {String} caption
+             * @returns {String}
+             * @private
+             */
+            _createTitleHtml: function (pk, caption) {
+                if (helpersModule.isNewRow(pk)) {
+                    return caption;
+                } else {
+                    return caption + ' [' + pk + ']';
+                }
+            },
+            /**
+             *
              * @param {Event} e
              * @param {string} id
              * @param {FormView} view
@@ -166,7 +180,7 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                     mode: 'popup',
                     onblur: 'ignore',
                     savenochange: false,
-                    title: helpersModule.createTitleHtml(id, caption),
+                    title: this._createTitleHtml(id, caption),
                     tpl: helpersModule.generateTemplateTextArea(isAllowEdit)
                 });
                 if (isAllowEdit) {
