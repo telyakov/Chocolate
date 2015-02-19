@@ -117,9 +117,6 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         getPageObj: function () {
             return _private.$page;
         },
-        getFooterObj: function () {
-            return _private.$footer;
-        },
         getHeaderObj: function () {
             return _private.$header;
         },
@@ -241,41 +238,6 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
                     return userModule.getEmployeeID();
                 default:
                     return expr;
-            }
-        },
-        scriptExpressionEval: function (expr, val, view) {
-            var exprInLowerCase = expr.toLowerCase(),
-                model = view.form;
-            if (exprInLowerCase.indexOf('script') === 0) {
-                var script = expr.substr(6),
-                    commands = script.split(';');
-                commands.forEach(function (cmd) {
-                    var prepareCmd = $.trim(cmd).toLowerCase(),
-                        defaultKey = 'dataform.defvalues';
-                    switch (true) {
-                        case prepareCmd === 'dataform.refreshdata':
-                            model.trigger('refresh:form', {isLazy: true});
-                            break;
-                        case prepareCmd.indexOf(defaultKey) === 0:
-                            var args = prepareCmd.substr(defaultKey.length + 1),
-                                tokens = args.split('='),
-                                key = $.trim(tokens[0]),
-                                value = $.trim(tokens[1]);
-                            if (value === 'this.val') {
-                                model.setDynamicDefaultValue(key, val);
-                            } else if (value === 'this.caption') {
-                                view.runAsyncTaskGetCurrentValue()
-                                    .done(function (res) {
-                                        var value = res.value;
-                                        model.setDynamicDefaultValue(key, value);
-                                    });
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                });
-
             }
         },
         /**

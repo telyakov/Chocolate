@@ -53,6 +53,7 @@ module.exports = function (grunt) {
                     '../js/app/modules/deferred.js',
                     '../js/app/classes/tab.js',
                     '../js/app/modules/storage.js',
+                    '../js/app/modules/interpretator.js',
                     '../js/app/modules/user.js',
                     '../js/app/modules/bind.js',
                     '../js/app/modules/helper.js',

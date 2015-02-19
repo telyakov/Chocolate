@@ -184,6 +184,12 @@
  */
 
 /**
+ *
+ * @typedef {Object} ValueResponse
+ * @property {String} value
+ */
+
+/**
  * Object, that represented response for deferred socket type request
  * @typedef {Object} DeferredResponse
  * @property {Object} data

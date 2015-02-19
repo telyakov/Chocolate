@@ -115,6 +115,11 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
             getDynamicDefaultValues: function () {
                 return this._dynamicDefaultValues;
             },
+            /**
+             *
+             * @param {string} key
+             * @param {string} val
+             */
             setDynamicDefaultValue: function (key, val) {
                 this._dynamicDefaultValues[key] = val;
             },

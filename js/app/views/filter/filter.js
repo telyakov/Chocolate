@@ -25,6 +25,13 @@ var FilterView = (function (Backbone, $) {
             },
             /**
              *
+             * @returns {FormModel}
+             */
+            getFormModel: function () {
+                return this.form;
+            },
+            /**
+             *
              * @param {string} error
              * @param {string} event
              * @param {Number} i

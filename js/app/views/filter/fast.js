@@ -155,7 +155,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                 model.set('value', newVal);
                 var eventChange = model.getEventChange();
                 if (eventChange) {
-                    helpersModule.scriptExpressionEval(eventChange, newVal, this);
+                    interpreterModule.runAsyncParseScript(eventChange, this);
                 }
                 model.trigger('refresh:model', newVal);
             },
