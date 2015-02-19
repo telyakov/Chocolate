@@ -36,7 +36,7 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
 
             if (data.data) {
                 var type = data.type,
-                    xml = helpersModule.winToUnicode(atob(helpersModule.arrayBufferToBase64(data.data))),
+                    xml = helpersModule.encodeWinToUnicode(atob(helpersModule.arrayBufferToBase64(data.data))),
                     $xml = $($.parseXML(xml));
                 switch (type) {
                     case optionsModule.getRequestType('mainForm'):

@@ -13,6 +13,11 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                 userNames: null
             };
         },
+        filterSearchData: function (seacrh, key) {
+            return function filter(item) {
+                return item[key].toLowerCase().indexOf(seacrh) !== -1;
+            };
+        },
         onServiceCommand: function (data, id) {
             var $cnt = $('#' + id),
                 commandObj = $cnt.data('chWizard').commandObj,
@@ -86,7 +91,7 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                     var search = helpersModule.engToRus(request.term.toLowerCase());
                     $content.find('.node-searched').removeClass('node-searched');
                     $content.find('[data-title*=\'' + search + '\']').addClass('node-searched');
-                    response(searchData.filter(helpersModule.filterSearchData(search, 'label')));
+                    response(searchData.filter(_private.filterSearchData(search, 'label')));
                 },
                 close: function () {
                     $content.find('.node-searched').removeClass('node-searched');
