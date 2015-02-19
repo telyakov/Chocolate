@@ -71,10 +71,7 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @returns {Deferred}
              */
             runAsyncTaskIsMultiSelect: function () {
-                var task = deferredModule.create(),
-                    taskID = deferredModule.save(task);
-                helpersModule.boolExpressionEval(this.get('filter').getMultiSelect(), taskID, false);
-                return task;
+                return interpreterModule.runAsyncParseBooleanExpression(this.get('filter').getMultiSelect(), false);
             },
             /**
              *
@@ -89,34 +86,25 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @returns {Deferred}
              */
             runAsyncTaskIsEnabled: function () {
-                var task = deferredModule.create(),
-                    taskID = deferredModule.save(task),
-                    evaluatedValue = this.get('filter').getEnabled();
+                var isEnabledExpression = this.get('filter').getEnabled();
                 if (this.get('value')) {
-                    evaluatedValue = 'true';
+                    isEnabledExpression = 'true';
                 }
-                helpersModule.boolExpressionEval(evaluatedValue, taskID, true);
-                return task;
+                return interpreterModule.runAsyncParseBooleanExpression(isEnabledExpression, true);
             },
             /**
              *
              * @returns {Deferred}
              */
             runAsyncTaskIsVisible: function () {
-                var task = deferredModule.create(),
-                    taskID = deferredModule.save(task);
-                helpersModule.boolExpressionEval(this.get('filter').getVisible(), taskID, true);
-                return task
+                return interpreterModule.runAsyncParseBooleanExpression(this.get('filter').getVisible(), true);
             },
             /**
              *
              * @returns {Deferred}
              */
             runAsyncTaskIsNextRow: function () {
-                var task = deferredModule.create(),
-                    taskID = deferredModule.save(task);
-                helpersModule.boolExpressionEval(this.get('filter').getToNextRow(), taskID, false);
-                return task
+                return interpreterModule.runAsyncParseBooleanExpression(this.get('filter').getToNextRow(), true);
             },
             /**
              *

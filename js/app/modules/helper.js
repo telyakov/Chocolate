@@ -181,65 +181,6 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
             }
 
         },
-        boolExpressionEval: function (expr, deferId, defaultValue) {
-            var prepareExpr = $.trim(expr.toLowerCase());
-            switch (true) {
-                case prepareExpr === 'true':
-                    deferredModule.pop(deferId).resolve({
-                        value: true
-                    });
-                    break;
-                case prepareExpr === 'false':
-                    deferredModule.pop(deferId).resolve({
-                        value: false
-                    });
-                    break;
-                case prepareExpr.indexOf('sql') === 0:
-                    var posEqualSign = prepareExpr.indexOf('=');
-                    if (posEqualSign === -1) {
-                        deferredModule.pop(deferId).resolve({
-                            value: false
-                        });
-                    } else {
-                        var posSql = posEqualSign + 1,
-                            sql = $.trim(prepareExpr.substr(posSql));
-
-                        var sqlDefer = bindModule.runAsyncTaskBindSql(sql);
-                        sqlDefer.done(function (data) {
-                            var sql = data.sql;
-                            mediator.publish(optionsModule.getChannel('socketRequest'), {
-                                query: sql,
-                                type: optionsModule.getRequestType('deferred'),
-                                id: deferId
-                            });
-                        });
-                    }
-                    break;
-                default:
-                    deferredModule.pop(deferId).resolve({
-                        value: defaultValue
-                    });
-
-            }
-            //    case strpos($prepareExpr, 'role') === 0:
-            //        //todo: реализовать поддержку кисовских ролей
-            //        return false;
-            //    default:
-
-        },
-        defaultExpressionEval: function (expr) {
-            var raw = $.trim(expr.toLowerCase());
-            switch (true) {
-                case raw === 'currentuserfio':
-                    return userModule.getName();
-                case raw === 'userid':
-                    return userModule.getID();
-                case raw === 'currentemployeeid':
-                    return userModule.getEmployeeID();
-                default:
-                    return expr;
-            }
-        },
         /**
          *
          * @param {String} dec

@@ -57,10 +57,10 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
                 return sql;
             },
             /**
-             * @returns {string|null}
+             * @returns {string}
              */
             getDefault: function () {
-                return helpersModule.defaultExpressionEval(this._getColumnProperties().getDefault());
+                return interpreterModule.parseDefaultExpression(this._getColumnProperties().getDefault());
             },
             /**
              * @method destroy
