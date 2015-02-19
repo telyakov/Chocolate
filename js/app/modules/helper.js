@@ -168,19 +168,6 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
 
             }
         },
-        intExpressionEval: function (expr, def) {
-
-            if (expr !== null && expr !== '' && expr !== undefined) {
-                if ($.isNumeric(expr)) {
-                    return parseInt(expr, 10);
-                } else {
-                    return expr;
-                }
-            } else {
-                return def;
-            }
-
-        },
         /**
          *
          * @param {String} dec

@@ -115,13 +115,13 @@ var interpreterModule = (function (optionsModule, userModule, deferredModule, bi
         },
         /**
          *
-         * @param {String} expr
+         * @param {String} expression
          * @param {Boolean} defaultValue
          * @returns {Deferred}
          */
-        runAsyncParseBooleanExpression: function (expr, defaultValue) {
+        runAsyncParseBooleanExpression: function (expression, defaultValue) {
             var task = deferredModule.create(),
-                prepareExpr = _private.prepareExpression(expr),
+                prepareExpr = _private.prepareExpression(expression),
                 posEqualSign;
             switch (true) {
                 case prepareExpr === 'true':
@@ -180,6 +180,18 @@ var interpreterModule = (function (optionsModule, userModule, deferredModule, bi
 
             }
             return task;
+        },
+        /**
+         *
+         * @param {String} expr
+         * @returns {Number|String}
+         */
+        parseIntExpression: function (expr) {
+                if ($.isNumeric(expr)) {
+                    return parseInt(expr, 10);
+                } else {
+                    return expr;
+                }
         }
     }
 })(optionsModule, userModule, deferredModule, bindModule);
