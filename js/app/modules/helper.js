@@ -18,6 +18,41 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         },
         /**
          *
+         * @param {Object} obj
+         * @param {Number} rowIndex
+         * @param {Number} colIndex
+         * @returns {*}
+         */
+        getItemByIndex: function (obj, rowIndex, colIndex) {
+            var i,
+                j,
+                hasOwn = Object.prototype.hasOwnProperty,
+                result,
+                row,
+                counter = 0;
+            for (i in obj) {
+                if (hasOwn.call(obj, i)) {
+                    if (counter === rowIndex) {
+                        row = obj[i];
+                        break;
+                    }
+                    counter += 1;
+                }
+            }
+            counter = 0;
+            for (j in row) {
+                if (hasOwn.call(row, j)) {
+                    if (counter === colIndex) {
+                        result = row[j];
+                        break;
+                    }
+                    counter += 1;
+                }
+            }
+            return result;
+        },
+        /**
+         *
          * @returns {string}
          */
         generateHtmlIframeAddSignButton: function () {
@@ -427,6 +462,14 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
                 'class': 'refreshing'
             });
             $content.html($div);
+        },
+        /**
+         *
+         * @param {Object} obj
+         * @returns {*}
+         */
+        getFirstValue: function (obj) {
+            return _private.getItemByIndex(obj, 0, 0);
         },
         init: function () {
             _private.createJqueryElements();

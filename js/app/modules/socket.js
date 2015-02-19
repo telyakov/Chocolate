@@ -2,7 +2,7 @@
  * Socket module. Based on socket.io library
  * https://github.com/Automattic/socket.io-client
  */
-var socketModule = (function (io, optionsModule, mediator) {
+var socketModule = (function (io, optionsModule) {
     'use strict';
     var connectUrl = optionsModule.getUrl('webSocketServer'),
         socket = io.connect(connectUrl, {reconnectionDelay: 3000}),
@@ -29,37 +29,11 @@ var socketModule = (function (io, optionsModule, mediator) {
                     optionsModule.getChannel('socketResponse'),
                     data
                 );
-            },
-            getItemByIndex: function (obj, rowIndex, colIndex) {
-                var i,
-                    j,
-                    hasOwn = Object.prototype.hasOwnProperty,
-                    result,
-                    row,
-                    counter = 0;
-                for (i in obj) {
-                    if (hasOwn.call(obj, i)) {
-                        if (counter === rowIndex) {
-                            row = obj[i];
-                            break;
-                        }
-                        counter++;
-                    }
-                }
-                counter = 0;
-                for (j in row) {
-                    if (hasOwn.call(row, j)) {
-                        if (counter === colIndex) {
-                            result = row[j];
-                            break;
-                        }
-                        counter++;
-                    }
-                }
-                return result;
             }
         };
+
     socket.io.on('connect_error', _private.connectErrorHandler);
+
     socket
         .on('connect', _private.connectHandler)
         .on('response', _private.responseHandler)
@@ -69,18 +43,21 @@ var socketModule = (function (io, optionsModule, mediator) {
                 data
             );
         })
-        .on('xmlResponse', function(data){
+        .on('xmlResponse', function (data) {
             mediator.publish(
                 optionsModule.getChannel('xmlResponse'),
                 data
-            );        });
+            );
+        });
+
     return {
+        /**
+         *
+         * @param {string} event
+         * @param {Object} data
+         */
         emit: function (event, data) {
             socket.emit(event, data);
-        },
-        getFirstValue: function (obj) {
-            return _private.getItemByIndex(obj, 0, 0);
         }
-
     };
-})(io, optionsModule, mediator);
+})(io, optionsModule);

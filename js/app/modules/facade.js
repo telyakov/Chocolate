@@ -163,7 +163,7 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                     storageModule.saveForms(resData);
                     break;
                 case optionsModule.getRequestType('jquery'):
-                    var value = socketModule.getFirstValue(resData);
+                    var value = helpersModule.getFirstValue(resData);
                     $('#' + data.id).html(value);
                     break;
                 case optionsModule.getRequestType('wizardServices'):
@@ -189,7 +189,7 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                     break;
                 case deferredType:
                     defer = deferredModule.pop(data.id);
-                    var isAllow = !!parseInt(socketModule.getFirstValue(resData), 10);
+                    var isAllow = !!parseInt(helpersModule.getFirstValue(resData), 10);
                     defer.resolve({
                         value: isAllow,
                         data: resData

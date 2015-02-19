@@ -303,7 +303,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                             });
                             asyncTask
                                 .done(function (res) {
-                                    var html = socketModule.getFirstValue(res.data);
+                                    var html = helpersModule.getFirstValue(res.data);
                                     $('#' + asyncId).html(html);
                                     mediator.publish(optionsModule.getChannel('reflowTab'), true);
                                 })
