@@ -3,17 +3,20 @@ var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math,
     var cache = [],
         _private = {
             /**
-             * @returns {Number}
+             *
+             * @param {jQuery} $context
+             * @returns {number} - correct tab height
              */
             setTabHeight: function ($context) {
                 var $tabs = helpersModule.getTabsObj(),
-                    windowsHgh = helpersModule.getWindowObj().height(),
-                    headerHgh = helpersModule.getHeaderObj().height(),
-                    pageHgh = windowsHgh - headerHgh -1;
-                $(helpersModule.getPageObj(), helpersModule.getContentObj(), $tabs).height(pageHgh);
-                var $tabItems = $tabs.children('ul').eq(0),
+                    pageHeight = helpersModule.getWindowObj().height() - helpersModule.getHeaderObj().height() - 1;
+
+                $(helpersModule.getPageObj(), helpersModule.getContentObj(), $tabs).height(pageHeight);
+
+                var menuHeight = $tabs.children('ul').outerHeight(true),
                     pagePaddingHgh = $context.outerHeight() - $context.height(),
-                    correctPageHgh = pageHgh - $tabItems.outerHeight(true) - pagePaddingHgh;
+                    correctPageHgh = pageHeight - menuHeight - pagePaddingHgh;
+                console.log(pageHeight, menuHeight, pagePaddingHgh)
                 $context.height(correctPageHgh);
                 return correctPageHgh;
             },

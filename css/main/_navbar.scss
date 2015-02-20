@@ -14,20 +14,8 @@ $ul-top-padding: 8px;
     border-style: solid;
     border-width: 0 0 1px;
     > div {
-        padding: 5px 10px !important;
-        height: 100%;
-        /*overflow: hidden;*/
+        padding: 0 10px;
     }
-}
-
-#fadingBarsG {
-    position: fixed;
-    display: none;
-    width: 100px;
-    top: 5px;
-    right: 10px;
-    z-index: 1031;
-    height: 12px;
 }
 
 .gn-menu-main {

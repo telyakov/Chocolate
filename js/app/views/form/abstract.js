@@ -505,7 +505,6 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                             }
                         });
                         cardView.setWindowActive();
-                        facade.getRepaintModule().reflowCard(cardView.$el);
                         cardView.initScripts();
                     }
                 }
