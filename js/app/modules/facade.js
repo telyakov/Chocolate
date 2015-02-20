@@ -191,13 +191,6 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
             } else {
                 var resData = JSON.parse(data.data);
                 switch (type) {
-                    case optionsModule.getRequestType('roles'):
-                        storageModule.saveRoles(resData);
-                        break;
-                    case optionsModule.getRequestType('forms'):
-                        menuModule.init(resData);
-                        storageModule.saveForms(resData);
-                        break;
                     case optionsModule.getRequestType('jquery'):
                         var value = helpersModule.getFirstValue(resData);
                         $('#' + data.id).html(value);
@@ -215,7 +208,6 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                             order: order,
                             data: resData
                         });
-                        //form.updateData(resData, order);
                         break;
                     case deferredType:
                         defer = deferredModule.pop(data.id);
@@ -241,25 +233,72 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
             function (id, employeeId, name) {
             setTimeout(function () {
                 storageModule.saveUser(id, employeeId, name);
+                var rolesError = 'An error occurred when trying to get a list of roles';
                 bindModule
                     .runAsyncTaskBindSql(optionsModule.getSql('getRoles'))
                     .done(
                     /** @param {SqlBindingResponse} data */
                         function (data) {
-                        var rolesSql = data.sql;
+                        var asyncTask = deferredModule.create();
+                        asyncTask
+                            .done(
+                            /**
+                             *
+                             * @param {DeferredResponse} response
+                             */
+                                function (response) {
+                                storageModule.saveRoles(response.data);
+                            })
+                            .fail(function (error) {
+                                logModule.error(error);
+                                logModule.showMessage(rolesError);
+                            });
                         mediator.publish(requestChannel, {
-                            query: rolesSql,
-                            type: optionsModule.getRequestType('roles')
+                            id: deferredModule.save(asyncTask),
+                            query: data.sql,
+                            type: optionsModule.getRequestType('deferred')
                         });
+
+                    })
+                    .fail(function (error) {
+                        logModule.error(error);
+                        logModule.showMessage(rolesError);
                     });
+
+                var formsError = 'An error occurred when trying to get a list of forms';
                 bindModule
                     .runAsyncTaskBindSql(optionsModule.getSql('getForms'))
-                    .done(function (data) {
-                        var formsSql = data.sql;
+                    .done(
+                    /** @param {SqlBindingResponse} data */
+                        function (data) {
+                        var asyncTask = deferredModule.create();
+                        asyncTask
+                            .done(
+                            /**
+                             *
+                             * @param {DeferredResponse} response
+                             */
+                                function (response) {
+                                var data = response.data;
+                                console.log(data)
+                                menuModule.init(data);
+                                storageModule.saveForms(data);
+                            })
+                            .fail(function (error) {
+                                logModule.error(error);
+                                logModule.showMessage(formsError);
+                            });
+
                         mediator.publish(requestChannel, {
-                            query: formsSql,
-                            type: optionsModule.getRequestType('forms')
+                            id: deferredModule.save(asyncTask),
+                            query: data.sql,
+                            type: optionsModule.getRequestType('deferred')
                         });
+
+                    })
+                    .fail(function (error) {
+                        logModule.error(error);
+                        logModule.showMessage(formsError);
                     });
             }, 300);
 

@@ -62,8 +62,6 @@ var optionsModule = (function () {
             getProcParams: 'dbo.uspGetProcParameters [name], [schema]',
             getExecutors: 'tasks.uspGetUsersListForTasksUsers',
             types: {
-                forms: 'forms',
-                roles: 'roles',
                 jquery: 'jquery',
                 chFormRefresh: 'ch_form_refresh',
                 deferred: 'deferred'
