@@ -180,19 +180,17 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                     'data-rows': card.getRows()
                 });
                 $panel.html($content);
-                if (card.hasSaveButtons() && this.getModel().isAllowWrite()) {
-                    $panel.append(this.buttonsTemplate())
-                }
                 return $content;
             },
             /**
-             *
+             * @param {CardRO} card
+             * @param {jQuery} $panel
              * @param {string} eventName
              * @param {jQuery} $content
              * @param {Number} elementsCount
              * @private
              */
-            _subscribeToRenderEvents: function (eventName, $content, elementsCount) {
+            _subscribeToRenderEvents: function (card, $panel, eventName, $content, elementsCount) {
                 var html = {},
                     completedTaskCount = 0,
                     callbacks = [],
@@ -217,19 +215,20 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                         }
                         completedTaskCount += 1;
                         if (completedTaskCount === elementsCount) {
-                            _this._renderEventsDone(eventName, html, callbacks, $content);
+                            _this._renderEventsDone(card, $panel, eventName, html, callbacks, $content);
                         }
                     });
             },
             /**
-             *
+             * @param {CardRO} card
+             * @param {jQuery} $panel
              * @param {String} eventName
              * @param {Object} data
              * @param {function[]} callbacks
              * @param {jQuery} $content
              * @private
              */
-            _renderEventsDone: function (eventName, data, callbacks, $content) {
+            _renderEventsDone: function (card, $panel, eventName, data, callbacks, $content) {
                 $.unsubscribe(eventName);
                 var html = '',
                     i,
@@ -248,7 +247,12 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 callbacks.forEach(function (fn) {
                     fn();
                 });
+
+                var _this = this;
                 setTimeout(function () {
+                    if (card.hasSaveButtons() && _this.getModel().isAllowWrite()) {
+                        $panel.append(_this.buttonsTemplate())
+                    }
                     mediator.publish(optionsModule.getChannel('reflowTab'));
                 }, 0);
             },
@@ -266,7 +270,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                     elementsCount = elements.length;
                 this._cardElements = elements;
                 var $content = _this._createContent(card, $panel);
-                _this._subscribeToRenderEvents(event, $content, elementsCount);
+                _this._subscribeToRenderEvents(card, $panel,event, $content, elementsCount);
                 var order = 0;
                 elements.forEach(
                     /**

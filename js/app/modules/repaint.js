@@ -3,7 +3,7 @@ var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math,
     var cache = [],
         _private = {
             /**
-             * @returns {int}
+             * @returns {Number}
              */
             setTabHeight: function ($context) {
                 var $tabs = helpersModule.getTabsObj(),
@@ -260,24 +260,33 @@ var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math,
             }
         };
     return {
-        reflowGrid: function ($cnt) {
-            _private.drawGrid($cnt);
+        /**
+         *
+         * @param {jQuery} $context
+         */
+        reflowGrid: function ($context) {
+            _private.drawGrid($context);
         },
-        reflowCard: function ($cnt) {
-            _private.drawCard($cnt);
+        /**
+         *
+         * @param {jQuery} $context
+         */
+        reflowCard: function ($context) {
+            _private.drawCard($context);
         },
-        reflowCardGrid: function ($cardCol) {
-            _private.drawCardGrid($cardCol);
-        },
-        reflowCardPanel: function ($panel, $cnt) {
-            _private.drawCardPanel($panel, $cnt);
-        },
+        /**
+         *
+         * @param {Boolean} [force=false]
+         */
         reflowActiveTab: function (force) {
             if (force === undefined) {
                 force = false;
             }
             _private.reflowActiveTab(force);
         },
+        /**
+         * @desc delete from cache al painting tabs
+         */
         clearCache: function () {
             _private.clearTabsCache();
         }
