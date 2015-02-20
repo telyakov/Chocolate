@@ -657,9 +657,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     model
                         .runAsyncTaskCreateEmptyDefaultValues()
                         .done(
-                        /** @param {DeferredResponse} res */
-                            function (res) {
-                            var data = res.data,
+                        /** @param {DeferredResponse} response */
+                            function (response) {
+                            var data = response.data,
                                 i,
                                 hasOwn = Object.prototype.hasOwnProperty,
                                 result;

@@ -84,7 +84,6 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                         break;
                     default :
                         asyncTask.reject('Unsupported FileDTO type');
-                        break;
                 }
             } else {
                 var error = 'property data in FileDTO not set';
@@ -177,48 +176,55 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
          * @param {DTO} data
          */
             function (data) {
-            var error = data.error,
-                deferredType = optionsModule.getRequestType('deferred'),
+            var deferredType = optionsModule.getRequestType('deferred'),
                 type = data.type,
-                defer;
-            if (error) {
-                logModule.error(error);
+                asyncTask,
+                isCorrectParamsForReject = (type === deferredType && data.id);
+            if (data.error) {
+                logModule.error(data.error);
 
-                if (type === deferredType) {
-                    defer = deferredModule.pop(data.id);
-                    defer.reject(error);
+                if (isCorrectParamsForReject) {
+                    asyncTask = deferredModule.pop(data.id);
+                    asyncTask.reject(data.error);
                 }
-            } else {
-                var resData = JSON.parse(data.data);
+            } else if(data.data){
+                var parsedData = JSON.parse(data.data);
                 switch (type) {
                     case optionsModule.getRequestType('jquery'):
-                        var value = helpersModule.getFirstValue(resData);
-                        $('#' + data.id).html(value);
+                        var html = helpersModule.getFirstValue(parsedData);
+                        $('#' + data.id).html(html);
                         break;
+
                     case optionsModule.getRequestType('chFormRefresh'):
-                        //todo: migrate ro defer
-                        var reg = /"(.*?)":\{.*?\}.?/gim,
+                        var ordersRegExp = /"(.*?)":\{.*?}.?/gim,
                             matches,
                             order = [];
-                        while ((matches = reg.exec(data.data)) !== null) {
+                        while ((matches = ordersRegExp.exec(data.data)) !== null) {
                             order.push(matches[1]);
                         }
-                        defer = deferredModule.pop(data.id);
-                        defer.resolve({
+                        asyncTask = deferredModule.pop(data.id);
+                        asyncTask.resolve({
                             order: order,
-                            data: resData
+                            data: parsedData
                         });
                         break;
+
                     case deferredType:
-                        defer = deferredModule.pop(data.id);
-                        var isAllow = !!parseInt(helpersModule.getFirstValue(resData), 10);
-                        defer.resolve({
-                            value: isAllow,
-                            data: resData
+                        asyncTask = deferredModule.pop(data.id);
+                        asyncTask.resolve({
+                            data: parsedData
                         });
                         break;
+
                     default:
-                        console.log(data);
+                        asyncTask.reject('Unsupported DTO type');
+                }
+            }else{
+                var error = 'property data in DTO not set';
+                logModule.error(error);
+                if (isCorrectParamsForReject) {
+                    asyncTask = deferredModule.pop(data.id);
+                    asyncTask.reject(error);
                 }
             }
         });
@@ -226,8 +232,8 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
     mediator.subscribe(optionsModule.getChannel('setIdentity'),
         /**
          *
-         * @param {Number} id
-         * @param {Number} employeeId
+         * @param {String} id
+         * @param {String} employeeId
          * @param {String} name
          */
             function (id, employeeId, name) {
@@ -280,7 +286,6 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                              */
                                 function (response) {
                                 var data = response.data;
-                                console.log(data)
                                 menuModule.init(data);
                                 storageModule.saveForms(data);
                             })
@@ -304,9 +309,14 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
 
         });
 
-    mediator.subscribe(optionsModule.getChannel('reflowTab'), function (force) {
-        repaintModule.reflowActiveTab(force);
-    });
+    mediator.subscribe(optionsModule.getChannel('reflowTab'),
+        /**
+         *
+         * @param {Boolean} force
+         */
+            function (force) {
+            repaintModule.reflowActiveTab(force);
+        });
 
     return {
         getUserModule: function () {

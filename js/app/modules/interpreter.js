@@ -143,16 +143,31 @@ var interpreterModule = (function (optionsModule, userModule, deferredModule, bi
                     } else {
                         var posSql = posEqualSign + 1,
                             sql = $.trim(prepareExpr.substr(posSql));
-
                         bindModule.runAsyncTaskBindSql(sql)
                             .done(
                             /** @param {SqlBindingResponse} data */
                                 function (data) {
+                                var booleanTask = deferredModule.create();
+                                booleanTask
+                                    .done(
+                                    /** @param {DeferredResponse} response */
+                                        function (response) {
+                                        var value = !!parseInt(helpersModule.getFirstValue(response.data), 10);
+                                        task.resolve({
+                                            value: value
+                                        });
+                                    })
+                                    .fail(function (error) {
+                                        task.resolve({
+                                            value: false
+                                        });
+                                        mediator.publish(optionsModule.getChannel('logError'), error);
+                                    });
                                 var sql = data.sql;
                                 mediator.publish(optionsModule.getChannel('socketRequest'), {
                                     query: sql,
                                     type: optionsModule.getRequestType('deferred'),
-                                    id: deferredModule.save(task)
+                                    id: deferredModule.save(booleanTask)
                                 });
                             })
                             .fail(function (error) {

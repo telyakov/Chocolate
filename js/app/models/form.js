@@ -222,17 +222,18 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              * @returns {Deferred}
              */
             runAsyncTaskCreateEmptyDefaultValues: function () {
-                var defer = deferredModule.create(),
-                    deferID = deferredModule.save(defer);
+                var asyncTask = deferredModule.create();
                 bindModule.runAsyncTaskBindSql(this.getCreateEmptyProc())
-                    .done(function (res) {
+                    .done(
+                    /** @param {SqlBindingResponse} res */
+                    function (res) {
                         mediator.publish(optionsModule.getChannel('socketRequest'), {
                             query: res.sql,
                             type: optionsModule.getRequestType('deferred'),
-                            id: deferID
+                            id: deferredModule.save(asyncTask)
                         });
                     });
-                return defer;
+                return asyncTask;
             },
             getCreateProc: function () {
                 return this.getDataFormProperties().getCreateProc();
