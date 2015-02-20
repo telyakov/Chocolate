@@ -115,12 +115,23 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
             socketModule.emit('exportToExcel', data);
         });
 
-    mediator.subscribe(optionsModule.getChannel('socketFileResponse'), function (data) {
-        if (data.error) {
-            logModule.error(data.error);
-        } else {
-            if (data.data) {
-                //https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
+    mediator.subscribe(optionsModule.getChannel('socketFileResponse'),
+        /**
+         *
+         * @param {FileDTO} data
+         */
+            function (data) {
+            if (data.error) {
+                logModule.error({
+                        error: data.error,
+                        dto: data
+                    }
+                );
+                logModule.showMessage(data.error);
+            } else if (data.data) {
+                /**
+                 * @see https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
+                 */
                 var byteCharacters = atob(helpersModule.arrayBufferToBase64(data.data)),
                     charactersLength = byteCharacters.length,
                     byteArrays = [],
@@ -134,82 +145,91 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                 for (offset = 0; offset < charactersLength; offset += sliceSize) {
                     slice = byteCharacters.slice(offset, offset + sliceSize);
                     sliceLength = slice.length;
-                    byteNumbers = new Array(sliceLength);
+                    byteNumbers = [];
                     for (i = 0; i < sliceLength; i += 1) {
                         byteNumbers[i] = slice.charCodeAt(i);
                     }
                     byteArrays.push(new Uint8Array(byteNumbers));
                 }
                 saveAs(new Blob(byteArrays, {}), data.name);
-            }
-        }
-    });
-
-    mediator.subscribe(optionsModule.getChannel('socketMultiplyExec'), function (data) {
-        data.key = optionsModule.getSetting('key');
-        socketModule.emit('execMultiply', data);
-    });
-    var responseChannel = optionsModule.getChannel('socketResponse');
-    mediator.subscribe(responseChannel, function (data) {
-        var error = data.error,
-            deferredType = optionsModule.getRequestType('deferred'),
-            type = data.type,
-            defer;
-        if (error) {
-            logModule.error(error);
-
-            if (type === deferredType) {
-                defer = deferredModule.pop(data.id);
-                defer.reject(error);
-            }
-        } else {
-            var resData = JSON.parse(data.data);
-            switch (type) {
-                case optionsModule.getRequestType('roles'):
-                    storageModule.saveRoles(resData);
-                    break;
-                case optionsModule.getRequestType('forms'):
-                    menuModule.init(resData);
-                    storageModule.saveForms(resData);
-                    break;
-                case optionsModule.getRequestType('jquery'):
-                    var value = helpersModule.getFirstValue(resData);
-                    $('#' + data.id).html(value);
-                    break;
-                case optionsModule.getRequestType('wizardServices'):
-                    taskWizard.onServiceCommand(resData, data.id);
-                    break;
-                case optionsModule.getRequestType('wizardExecutors'):
-                    taskWizard.onExecutorsCommand(resData, data.id);
-                    break;
-                case optionsModule.getRequestType('chFormRefresh'):
-                    //todo: migrate ro defer
-                    var reg = /"(.*?)":\{.*?\}.?/gim,
-                        matches,
-                        order = [];
-                    while ((matches = reg.exec(data.data)) !== null) {
-                        order.push(matches[1]);
+            } else {
+                logModule.error({
+                        error: 'FileDTO property data not set',
+                        dto: data
                     }
-                    defer = deferredModule.pop(data.id);
-                    defer.resolve({
-                        order: order,
-                        data: resData
-                    });
-                    //form.updateData(resData, order);
-                    break;
-                case deferredType:
-                    defer = deferredModule.pop(data.id);
-                    var isAllow = !!parseInt(helpersModule.getFirstValue(resData), 10);
-                    defer.resolve({
-                        value: isAllow,
-                        data: resData
-                    });
-                    break;
-                default:
-                    console.log(data);
+                );
             }
-        }
-    });
+        });
+
+    mediator.subscribe(optionsModule.getChannel('socketMultiplyExec'),
+        /**
+         *
+         * @param {MultiplyExecDTO} data
+         */
+            function (data) {
+            data.key = optionsModule.getSetting('key');
+            socketModule.emit('execMultiply', data);
+        });
+
+    mediator.subscribe(optionsModule.getChannel('socketResponse'),
+        /**
+         *
+         * @param {DTO} data
+         */
+            function (data) {
+            var error = data.error,
+                deferredType = optionsModule.getRequestType('deferred'),
+                type = data.type,
+                defer;
+            if (error) {
+                logModule.error(error);
+
+                if (type === deferredType) {
+                    defer = deferredModule.pop(data.id);
+                    defer.reject(error);
+                }
+            } else {
+                var resData = JSON.parse(data.data);
+                switch (type) {
+                    case optionsModule.getRequestType('roles'):
+                        storageModule.saveRoles(resData);
+                        break;
+                    case optionsModule.getRequestType('forms'):
+                        menuModule.init(resData);
+                        storageModule.saveForms(resData);
+                        break;
+                    case optionsModule.getRequestType('jquery'):
+                        var value = helpersModule.getFirstValue(resData);
+                        $('#' + data.id).html(value);
+                        break;
+                    case optionsModule.getRequestType('chFormRefresh'):
+                        //todo: migrate ro defer
+                        var reg = /"(.*?)":\{.*?\}.?/gim,
+                            matches,
+                            order = [];
+                        while ((matches = reg.exec(data.data)) !== null) {
+                            order.push(matches[1]);
+                        }
+                        defer = deferredModule.pop(data.id);
+                        defer.resolve({
+                            order: order,
+                            data: resData
+                        });
+                        //form.updateData(resData, order);
+                        break;
+                    case deferredType:
+                        defer = deferredModule.pop(data.id);
+                        var isAllow = !!parseInt(helpersModule.getFirstValue(resData), 10);
+                        defer.resolve({
+                            value: isAllow,
+                            data: resData
+                        });
+                        break;
+                    default:
+                        console.log(data);
+                }
+            }
+        });
 
     mediator.subscribe(optionsModule.getChannel('setIdentity'),
         /**

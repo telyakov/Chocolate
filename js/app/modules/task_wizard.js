@@ -114,7 +114,7 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
             var view = new WizardDynatreeView({
                 model: model
             });
-            var $newCont =  view.render(commandObj, $select, data);
+            var $newCont = view.render(commandObj, $select, data);
             //todo: вернуть значение
             _private.dialogOpen($newCont, $cnt, true, commandObj, function (commandObj, $content) {
                 commandObj.usersidlist = '';
@@ -192,7 +192,8 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                                 return false;
 
                             }
-                        }},
+                        }
+                    },
                     Cancel: {
                         text: 'Отмена',
                         'class': 'wizard-cancel-button',
@@ -224,7 +225,8 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                             $this.dialog('close');
                             $this.closest('.ui-dialog').remove();
                             $cnt.trigger('next.chWizard');
-                        }},
+                        }
+                    },
                     Cancel: {
                         text: 'Отмена',
                         'class': 'wizard-cancel-button',
@@ -244,22 +246,28 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
         onDoneFunc: function () {
             return _private.onDoneFn();
         },
-        onServiceCommand: function (data, id) {
-            _private.onServiceCommand(data, id);
-        },
         makeServiceCommand: function () {
             return function ($cnt) {
-                var channel = optionsModule.getChannel('socketRequest');
-                mediator.publish(channel, {
-                    type: optionsModule.getRequestType('wizardServices'),
+                var asyncTask = deferredModule.create();
+                asyncTask.done(
+                    /**
+                     *
+                     * @param {DeferredResponse} response
+                     */
+                        function (response) {
+                        _private.onServiceCommand(response.data, $cnt.attr('id'));
+                    })
+                    .fail(function (error) {
+                        mediator.publish(optionsModule.getChannel('showError'), error);
+                    });
+
+                mediator.publish(optionsModule.getChannel('socketRequest'), {
+                    type: optionsModule.getRequestType('deferred'),
                     query: optionsModule.getSql('getServices'),
-                    id: $cnt.attr('id'),
+                    id: deferredModule.save(asyncTask),
                     isCache: true
                 });
             };
-        },
-        onExecutorsCommand: function (data, id) {
-            _private.onExecutorsCommand(data, id);
         },
         makeExecutorsCommand: function () {
             return function ($cnt) {
@@ -267,11 +275,24 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                 if (optionsModule.getConstants('multiTaskService') === commandObj.serviceid) {
                     $cnt.trigger('next.chWizard');
                 } else {
-                    var channel = optionsModule.getChannel('socketRequest');
-                    mediator.publish(channel, {
-                        type: optionsModule.getRequestType('wizardExecutors'),
+
+                    var asyncTask = deferredModule.create();
+                    asyncTask.done(
+                        /**
+                         *
+                         * @param {DeferredResponse} response
+                         */
+                            function (response) {
+                            _private.onExecutorsCommand(response.data, $cnt.attr('id'));
+                        })
+                        .fail(function (error) {
+                            mediator.publish(optionsModule.getChannel('showError'), error);
+                        });
+
+                    mediator.publish(optionsModule.getChannel('socketRequest'), {
+                        type: optionsModule.getRequestType('deferred'),
                         query: optionsModule.getSql('getExecutors'),
-                        id: $cnt.attr('id'),
+                        id: deferredModule.save(asyncTask),
                         isCache: true
                     });
                 }

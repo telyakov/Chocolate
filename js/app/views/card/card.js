@@ -556,8 +556,8 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                                     /** @param {SqlBindingResponse} res */
                                         function (res) {
                                         var prepareSql = res.sql;
-                                        mediator.publish(facade.getOptionsModule().getChannel('socketRequest'), {
-                                            type: 'jquery',
+                                        mediator.publish(optionsModule.getChannel('socketRequest'), {
+                                            type: optionsModule.getRequestType('jquery'),
                                             query: prepareSql,
                                             id: idList[card.getKey()]
                                         });

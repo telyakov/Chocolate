@@ -336,14 +336,13 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
              * @returns {Deferred}
              */
             runAsyncTaskGetData: function (sql) {
-                var defer = deferredModule.create(),
-                    deferID = deferredModule.save(defer);
+                var asyncTask = deferredModule.create();
                 mediator.publish(optionsModule.getChannel('socketRequest'), {
                     query: sql,
                     type: optionsModule.getRequestType('chFormRefresh'),
-                    id: deferID
+                    id: deferredModule.save(asyncTask)
                 });
-                return defer;
+                return asyncTask;
             },
             /**
              *

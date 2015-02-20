@@ -24,6 +24,10 @@ var socketModule = (function (io, optionsModule) {
                     .off('connect_error')
                     .on('connect_error', _private.connectErrorHandler);
             },
+            /**
+             *
+             * @param {DTO} data
+             */
             responseHandler: function (data) {
                 mediator.publish(
                     optionsModule.getChannel('socketResponse'),
@@ -37,7 +41,12 @@ var socketModule = (function (io, optionsModule) {
     socket
         .on('connect', _private.connectHandler)
         .on('response', _private.responseHandler)
-        .on('fileResponse', function (data) {
+        .on('fileResponse',
+        /**
+         *
+         * @param {FileDTO} data
+         */
+        function (data) {
             mediator.publish(
                 optionsModule.getChannel('socketFileResponse'),
                 data
