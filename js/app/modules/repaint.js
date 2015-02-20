@@ -1,5 +1,9 @@
-var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math, helpersModule) {
+var repaintModule = (function (undefined, $, optionsModule, Math, helpersModule) {
     'use strict';
+    /**
+     *
+     * @type {String[]}
+     */
     var cache = [],
         _private = {
             /**
@@ -16,16 +20,21 @@ var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math,
                 var menuHeight = $tabs.children('ul').outerHeight(true),
                     pagePaddingHgh = $context.outerHeight() - $context.height(),
                     correctPageHgh = pageHeight - menuHeight - pagePaddingHgh;
-                console.log(pageHeight, menuHeight, pagePaddingHgh)
+
                 $context.height(correctPageHgh);
                 return correctPageHgh;
             },
             /**
+             *  @param {jQuery} $form
              * @returns {boolean}
              */
             isDiscussionForm: function ($form) {
                 return $form.hasClass(optionsModule.getClass('discussionForm'));
             },
+            /**
+             *
+             * @param {jQuery} $context
+             */
             layoutForm: function ($context) {
                 if (_private.isDiscussionForm($context.children('form'))) {
                     var $discussionForm = $context.children('form'),
@@ -35,77 +44,98 @@ var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math,
                     var $header = $context.find('.' + optionsModule.getClass('headerSection')),
                         $filters = $context.find('.' + optionsModule.getClass('filterSection')),
                         $container = $context.find('.' + optionsModule.getClass('gridSection')),
-                        formSectionHeight = $context.height() - $header.outerHeight(true) - $filters.outerHeight(true);
-                    $container.height(formSectionHeight);
+                        containerHeight = $context.height() - $header.outerHeight(true) - $filters.outerHeight(true);
+                    $container.height(containerHeight);
+
                     var $form = $container.children('form'),
                         $footer = $container.children('footer'),
-                        formHeight = formSectionHeight - $footer.outerHeight(true);
+                        formHeight = containerHeight - $footer.outerHeight(true);
                     $form.height(formHeight);
 
                     var $menu = $form.find('.menu'),
                         $formSection = $form.children('section'),
-                        formSectionHgt = formHeight - $menu.outerHeight(true);
-                    $formSection.height(formSectionHgt);
+                        formSectionHeight = formHeight - $menu.outerHeight(true);
+                    $formSection.height(formSectionHeight);
+
                     if ($formSection.attr('data-id') !== 'map') {
                         var $userGrid = $formSection.find('.grid-view');
-                        $userGrid.height(formSectionHgt);
+                        $userGrid.height(formSectionHeight);
                     }
                 }
             },
             /**
-             * @param force {boolean}
+             * @param {boolean} force
              */
             reflowActiveTab: function (force) {
-                return _private.reflowTab(facade.getTabsModule().getActiveChTab(), force);
+                _private.reflowTab(facade.getTabsModule().getActiveTab(), force);
             },
             /**
-             * @param tab {ChTab}
+             * @param {String} id
              * @returns {boolean}
              */
-            isNeedReflow: function (tab) {
-                return cache.indexOf(tab.getID()) === -1;
+            isNeedReflow: function (id) {
+                return cache.indexOf(id) === -1;
             },
-
+            /**
+             * @desc delete from cache al painting tabs
+             */
             clearTabsCache: function () {
                 cache = [];
-                return _private;
             },
             /**
-             * @param tab {ChTab}
+             * @param {String} id
              */
-            addTabToCache: function (tab) {
-                cache.push(tab.getID());
+            addTabToCache: function (id) {
+                cache.push(id);
+            },
+            getID: function ($tab) {
+                return $tab.attr('id');
+            },
+            getLi: function ($tab) {
+                return $tab.parent();
+            },
+            isCardTypePanel: function ($tab) {
+                return _private.getPanel($tab).hasClass(facade.getOptionsModule().getClass('card'));
+            },
+            getPanel: function ($tab) {
+                return $('#' + _private.getPanelID($tab));
+            },
+            getPanelID: function ($tab) {
+                return _private.getLi($tab).attr('aria-controls');
+            },
+            getCardContent: function ($tab) {
+                    return _private.getPanel($tab).find('.card-content');
             },
             /**
-             * @param tab {ChTab}
-             * @param force {boolean}
+             * @param {jQuery} $tab
+             * @param {boolean} force
              */
-            reflowTab: function (tab, force) {
+            reflowTab: function ($tab, force) {
                 var $cont;
-                if (tab.isCardTypePanel()) {
-                    $cont = tab.getPanel();
-                    if (force || _private.isNeedReflow(tab)) {
+                if (_private.isCardTypePanel($tab)) {
+                    $cont = _private.getPanel($tab);
+                    if (force || _private.isNeedReflow(_private.getID($tab))) {
                         _private
                             .drawCard($cont)
-                            .addTabToCache(tab);
+                            .addTabToCache(_private.getID($tab));
                     }
                     var activeTabClass = optionsModule.getClass('activeTab'),
-                        cardTab = factoryModule.makeChTab($cont.find('.' + activeTabClass).children('a'));
-                    if (force || _private.isNeedReflow(cardTab)) {
-                        var $panel = cardTab.getPanel();
+                        $cardTab = $cont.find('.' + activeTabClass).children('a');
+                    if (force || _private.isNeedReflow(_private.getID($cardTab))) {
+                        var $panel = _private.getPanel($cardTab);
                         _private
                             .drawCardPanel($panel, $cont)
-                            .drawCardControls(cardTab.getCardContent());
+                            .drawCardControls(_private.getCardContent($cardTab));
                         $panel.find('.card-grid').each(function () {
                             var $cardCol = $(this).parent();
                             _private.drawCardGrid($cardCol);
                             $cardCol.find('.grid-view').find('table').floatThead('reflow');
                         });
-                        _private.addTabToCache(cardTab);
+                        _private.addTabToCache(_private.getID($cardTab));
                     }
                 } else {
-                    if (force || _private.isNeedReflow(tab)) {
-                        $cont = tab.getPanel();
+                    if (force || _private.isNeedReflow(_private.getID($tab))) {
+                        $cont = _private.getPanel($tab);
                         _private.drawGrid($cont);
                         $cont.find('.grid-view').find('table').floatThead('reflow');
                         var $form = $cont.children('section').children('form');
@@ -113,7 +143,7 @@ var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math,
                             var $footer = $form.next('.discussion-footer');
                             $form.height($cont.height() - $footer.outerHeight(true));
                         }
-                        _private.addTabToCache(tab);
+                        _private.addTabToCache(_private.getID($tab));
                     }
                 }
                 return _private;
@@ -263,20 +293,7 @@ var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math,
             }
         };
     return {
-        /**
-         *
-         * @param {jQuery} $context
-         */
-        reflowGrid: function ($context) {
-            _private.drawGrid($context);
-        },
-        /**
-         *
-         * @param {jQuery} $context
-         */
-        reflowCard: function ($context) {
-            _private.drawCard($context);
-        },
+
         /**
          *
          * @param {Boolean} [force=false]
@@ -294,4 +311,4 @@ var repaintModule = (function (undefined, $, optionsModule, factoryModule, Math,
             _private.clearTabsCache();
         }
     };
-})(undefined, jQuery, optionsModule, factoryModule, Math, helpersModule);
+})(undefined, jQuery, optionsModule, Math, helpersModule);

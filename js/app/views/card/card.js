@@ -112,7 +112,7 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
             setWindowActive: function () {
                 var $a = this.$li.children('a');
                 helpersModule.getTabsObj().tabs({
-                    active: tabsModule.getIndex($a)
+                    active: this._getTabIndex($a)
                 });
             },
             /**
@@ -181,6 +181,16 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                 });
                 $panel.html($content);
                 return $content;
+            },
+            /**
+             *
+             * @param {jQuery} $a
+             * @returns {Number}
+             * @private
+             */
+            _getTabIndex: function($a){
+                //todo: refactoring
+                return $a.closest('ul').find('li').index($a.parent());
             },
             /**
              * @param {CardRO} card

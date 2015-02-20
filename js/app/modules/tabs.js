@@ -1,4 +1,4 @@
-var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, undefined) {
+var tabsModule = (function ($, helpersModule, optionsModule) {
     'use strict';
     var history = {
         tabs: [],
@@ -45,31 +45,25 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
         }
     };
     var _private = {
-        getActiveChTab: function () {
-            var $link = helpersModule.getTabsObj()
-                .children('.' + optionsModule.getClass('tabMenuClass'))
-                .children('.' + optionsModule.getClass('activeTab'))
-                .children('a');
-            return factoryModule.makeChTab($link);
-        },
         close: function ($a) {
-            var activeTab = factoryModule.makeChTab($a);
-            if (activeTab.isCardTypePanel()) {
-                //var card = factoryModule.makeChCard(activeTab.getPanel().children('[data-id=grid-tabs]'));
-                //todo: вернуть код
-                //card._undoChange();
-            } else {
-                //todo: вернуть код
-                //var form = factoryModule.makeChGridForm(activeTab.getPanel().find('.section-grid>form'));
-                //if (form.isHasChange !== undefined && form.$form.length && form.isHasChange() && !confirm(form.getExitMessage())) {
-                //    return;
-                //}
+            //var activeTab = factoryModule.makeChTab($a);
+            //if (activeTab.isCardTypePanel()) {
+            //    //var card = factoryModule.makeChCard(activeTab.getPanel().children('[data-id=grid-tabs]'));
+            //    //todo: вернуть код
+            //    //card._undoChange();
+            //} else {
+            //    //todo: вернуть код
+            //    //var form = factoryModule.makeChGridForm(activeTab.getPanel().find('.section-grid>form'));
+            //    //if (form.isHasChange !== undefined && form.$form.length && form.isHasChange() && !confirm(form.getExitMessage())) {
+            //    //    return;
+            //    //}
+            //
+            //    //.getExitMessage = function () {
+            //    //    return 'В форме "' + this.getTabCaption() + '" имеются несохраненные изменения. Закрыть без сохранения?';
+            //    //};
+            //}
 
-                //.getExitMessage = function () {
-                //    return 'В форме "' + this.getTabCaption() + '" имеются несохраненные изменения. Закрыть без сохранения?';
-                //};
-            }
-            var $tab = activeTab.getLi();
+            var $tab = $a.parent(); //ChTab.getLi
             var index = $tab.index();
             if ($tab.hasClass(optionsModule.getClass('activeTab'))) {
                 var nextIndex = history.pop();
@@ -81,7 +75,7 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
             $panel.off();
             helpersModule.getTabsObj().tabs('remove', index);
             helpersModule.getTabsObj().tabs('refresh');
-            factoryModule.garbageCollection();
+            //factoryModule.garbageCollection();
         }
     };
     return {
@@ -90,10 +84,6 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
         },
         pop: function () {
             return history.pop();
-        },
-        closeActiveTab: function () {
-            //todo: close card by escape
-            _private.close(_private.getActiveChTab().$a);
         },
         /**
          *
@@ -104,10 +94,13 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
            return  $tabLink.closest('ul').find('li').index($tabLink.parent());
         },
         /**
-         * @returns {ChTab}
+         * @returns {?jQuery}
          */
-        getActiveChTab: function () {
-            return _private.getActiveChTab();
+        getActiveTab: function(){
+           return helpersModule.getTabsObj()
+                .children('.' + optionsModule.getClass('tabMenuClass'))
+                .children('.' + optionsModule.getClass('activeTab'))
+                .children('a');
         },
         /**
          * @param $a {jQuery}
@@ -127,4 +120,4 @@ var tabsModule = (function ($, helpersModule, optionsModule, factoryModule, unde
             ].join('');
         }
     };
-})(jQuery, helpersModule, optionsModule, factoryModule, undefined);
+})(jQuery, helpersModule, optionsModule);
