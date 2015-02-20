@@ -254,91 +254,95 @@ var repaintModule = (function (undefined, $, optionsModule, Math, helpersModule)
                     dynamicRowHeight = parseInt(cardHeight / rowsCount, 10),
                     rowHeight = [],
                     minRowsHeight = [],
-                    $cols = $card.find('.card-col'),
-                    staticClass = optionsModule.getClass('staticCardElement');
+                    $cols = $card.children('.card-col'),
+                    staticClass = optionsModule.getClass('staticCardElement'),
+                    colsLength = $cols.length;
 
-                $cols.each(function (index, col) {
-                    var $col = $(col),
-                        startRow = parseInt($col.attr('data-y'), 10),
-                        colRowCount = parseInt($col.attr('data-rows'), 10),
-                        isStatic = $col.hasClass(staticClass),
-                        minHeight = parseInt($col.attr('data-min-height'), 10),
+                for (var iterator = 0; iterator < colsLength; iterator += 1) {
+                    var col = $cols[iterator],
+                        startRow = parseInt(col.getAttribute('data-y'), 10),
+                        colRowCount = parseInt(col.getAttribute('data-rows'), 10),
+                        isStatic = $(col).hasClass(staticClass),
+                        minHeight = parseInt(col.getAttribute('data-min-height'), 10),
                         i = 0;
                     while (i < colRowCount) {
                         var curRowIndex = startRow + i;
                         if (isStatic) {
-                            if ($.inArray(curRowIndex, staticRows) === -1) {
+                            if (staticRows.indexOf(curRowIndex) === -1) {
                                 staticRows.push(curRowIndex);
                                 rowHeight[curRowIndex] = minHeight + 5;
                                 minRowsHeight[curRowIndex] = rowHeight[curRowIndex];
                             }
+                        } else if (rowHeight[curRowIndex] === undefined) {
+
+                            rowHeight[curRowIndex] = dynamicRowHeight;
+                            minRowsHeight[curRowIndex] = minHeight / colRowCount;
                         } else {
-                            if (typeof rowHeight[curRowIndex] === 'undefined') {
-                                rowHeight[curRowIndex] = dynamicRowHeight;
-                                minRowsHeight[curRowIndex] = minHeight / colRowCount;
-                            } else {
-                                minRowsHeight[curRowIndex] = Math.max(minHeight / colRowCount, minRowsHeight[curRowIndex]);
-                            }
+
+                            minRowsHeight[curRowIndex] = Math.max(minHeight / colRowCount, minRowsHeight[curRowIndex]);
                         }
                         i += 1;
                     }
-                });
+                }
                 var actualHeight = [],
                     cardMinHeight = 0,
-                    i = 1;
-                while (i <= rowsCount) {
-                    var minH = parseInt(minRowsHeight[i], 10),
-                        realH = parseInt(rowHeight[i], 10);
-                    if (isNaN(minH)) {
+                    k = 1;
+                while (k <= rowsCount) {
+                    var minH = parseInt(minRowsHeight[k], 10),
+                        realH = parseInt(rowHeight[k], 10);
+                    if (minH) {
+                        cardMinHeight += minH;
+                    } else {
                         minH = 0;
                     }
-                    if (isNaN(realH)) {
+                    if (!realH) {
                         realH = 0;
                     }
-                    cardMinHeight += minH;
                     actualHeight.push(Math.max(minH, realH));
-                    i += 1;
+                    k += 1;
                 }
+                _private.applyCssToCardElements($cols, $card, actualHeight);
+            },
+            /**
+             *
+             * @param {jQuery} $cols
+             * @param {jQuery} $card
+             * @param {Array} actualHeights
+             */
+            applyCssToCardElements: function ($cols, $card, actualHeights) {
+                for (var iterator = 0, colsLength = $cols.length; iterator < colsLength; iterator += 1) {
+                    var column = $cols[iterator],
+                        $col = $(column),
+                        dataY = parseInt(column.getAttribute('data-y'), 10),
+                        countRow = parseInt(column.getAttribute('data-rows'), 10);
 
-                $cols.each(function (index, col) {
-                    var $col = $(col),
-                        dataY = parseInt($col.attr('data-y'), 10),
-                        countRow = parseInt($col.attr('data-rows'), 10);
+                    var preparePositionY = dataY - 1,
+                        heightArray = actualHeights.slice(preparePositionY, countRow + preparePositionY),
+                        height = 0;
 
-                    var height = actualHeight
-                        .filter(function (value, index) {
-                            return (index + 1) >= dataY && (index + 1) < (countRow + dataY);
-                        })
-                        .reduce(function (previousStr, currentItem) {
-                            return previousStr + currentItem;
-                        });
-                    $col.height(height - 6);
-                    var sum = actualHeight
-                        .filter(function (value, index) {
-                            return index + 1 < dataY;
-                        });
-                    if (sum.length > 0) {
-                        sum = sum.reduce(function (previousStr, currentItem) {
-                            return previousStr + currentItem;
-                        });
-                    } else {
-                        sum = 0;
+                    var i, n;
+                    for (i = 0, n = heightArray.length; i < n; i += 1) {
+                        height += heightArray[i];
                     }
+
+                    var sumArray = actualHeights.slice(0, preparePositionY),
+                        sum = 0;
+                    for (i = 0, n = sumArray.length; i < n; i += 1) {
+                        sum += sumArray[i];
+                    }
+
                     var $input = $col.children('.card-input');
-                    if ($input.hasClass('card-grid')) {
+                    if ($col.hasClass('card-static')) {
+                        $input.height(21);
+                    }
+                    else if ($input.hasClass('card-grid')) {
                         $input.height(height);
                     } else {
-                        if ($col.hasClass('card-static')) {
-                            $input.height(21);
-
-                        } else {
-                            $input.height(height - 26);
-
-                        }
+                        $input.height(height - 26);
                     }
-                    $col.css({top: sum});
-                });
-                $card.parent().css({'min-height': cardMinHeight + $card.siblings('header').height()} + $card.find('.action-button-panel').height());
+
+                    $col.css({top: sum, height: height - 6});
+                }
             }
         };
     return {
