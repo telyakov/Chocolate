@@ -70,10 +70,11 @@ var repaintModule = (function (undefined, $, optionsModule, Math, helpersModule)
                 _private.reflowTab(facade.getTabsModule().getActiveTab(), force);
             },
             /**
-             * @param {String} id
+             * @param {jQuery} $a
              * @returns {boolean}
              */
-            isNeedReflow: function (id) {
+            isNeedReflow: function ($a) {
+                var id = _private.getTabID($a);
                 return cache.indexOf(id) === -1;
             },
             /**
@@ -88,68 +89,98 @@ var repaintModule = (function (undefined, $, optionsModule, Math, helpersModule)
             addTabToCache: function (id) {
                 cache.push(id);
             },
-            getID: function ($tab) {
-                return $tab.attr('id');
-            },
-            getLi: function ($tab) {
-                return $tab.parent();
-            },
-            isCardTypePanel: function ($tab) {
-                return _private.getPanel($tab).hasClass(facade.getOptionsModule().getClass('card'));
-            },
-            getPanel: function ($tab) {
-                return $('#' + _private.getPanelID($tab));
-            },
-            getPanelID: function ($tab) {
-                return _private.getLi($tab).attr('aria-controls');
-            },
-            getCardContent: function ($tab) {
-                    return _private.getPanel($tab).find('.card-content');
+            /**
+             *
+             * @param {jQuery} $a
+             * @returns {string}
+             */
+            getTabID: function ($a) {
+                return $a.attr('id');
             },
             /**
+             *
+             * @param {jQuery} $a
+             * @returns {boolean}
+             */
+            isCardPanel: function ($a) {
+                return _private.getPanel($a).hasClass(optionsModule.getClass('card'));
+            },
+            /**
+             *
+             * @param {jQuery} $a
+             * @returns {jQuery}
+             */
+            getPanel: function ($a) {
+                return $('#' + _private.getPanelID($a));
+            },
+            /**
+             *
+             * @param {jQuery} $a
+             * @returns {String}
+             */
+            getPanelID: function ($a) {
+                return $a.parent().attr('aria-controls');
+            },
+            /**
+             *
              * @param {jQuery} $tab
+             * @returns {jQuery}
+             */
+            getCardContent: function ($tab) {
+                return _private.getPanel($tab).find('.card-content');
+            },
+            /**
+             * @param {jQuery} $a
              * @param {boolean} force
              */
-            reflowTab: function ($tab, force) {
-                var $cont;
-                if (_private.isCardTypePanel($tab)) {
-                    $cont = _private.getPanel($tab);
-                    if (force || _private.isNeedReflow(_private.getID($tab))) {
+            reflowTab: function ($a, force) {
+                var $context;
+                if (_private.isCardPanel($a)) {
+                    $context = _private.getPanel($a);
+                    if (force || _private.isNeedReflow($a)) {
                         _private
-                            .drawCard($cont)
-                            .addTabToCache(_private.getID($tab));
+                            .drawCard($context)
+                            .addTabToCache(_private.getTabID($a));
                     }
                     var activeTabClass = optionsModule.getClass('activeTab'),
-                        $cardTab = $cont.find('.' + activeTabClass).children('a');
-                    if (force || _private.isNeedReflow(_private.getID($cardTab))) {
-                        var $panel = _private.getPanel($cardTab);
+                        $cardA = $context.find('.' + activeTabClass).children('a');
+
+                    if (force || _private.isNeedReflow($cardA)) {
+                        var $panel = _private.getPanel($cardA);
                         _private
-                            .drawCardPanel($panel, $cont)
-                            .drawCardControls(_private.getCardContent($cardTab));
-                        $panel.find('.card-grid').each(function () {
-                            var $cardCol = $(this).parent();
-                            _private.drawCardGrid($cardCol);
-                            $cardCol.find('.grid-view').find('table').floatThead('reflow');
-                        });
-                        _private.addTabToCache(_private.getID($cardTab));
+                            .drawCardPanel($panel, $context)
+                            .drawCardControls(_private.getCardContent($cardA));
+
+                        $panel.find('.card-grid')
+                            .each(function () {
+                                var $cardCol = $(this).parent();
+                                _private.drawCardGrid($cardCol);
+                                $cardCol.find('.grid-view').find('table').floatThead('reflow');
+                            });
+                        _private.addTabToCache(_private.getTabID($cardA));
                     }
                 } else {
-                    if (force || _private.isNeedReflow(_private.getID($tab))) {
-                        $cont = _private.getPanel($tab);
-                        _private.drawGrid($cont);
-                        $cont.find('.grid-view').find('table').floatThead('reflow');
-                        var $form = $cont.children('section').children('form');
+                    if (force || _private.isNeedReflow($a)) {
+                        $context = _private.getPanel($a);
+                        _private.drawGrid($context);
+                        $context.find('.grid-view').find('table').floatThead('reflow');
+
+                        var $form = $context.children('section').children('form');
                         if (_private.isDiscussionForm($form)) {
                             var $footer = $form.next('.discussion-footer');
-                            $form.height($cont.height() - $footer.outerHeight(true));
+                            $form.height($context.height() - $footer.outerHeight(true));
                         }
-                        _private.addTabToCache(_private.getID($tab));
+                        _private.addTabToCache(_private.getTabID($a));
                     }
                 }
-                return _private;
             },
-            drawCardGrid: function ($cardCol) {
-                var $cardGrid = $cardCol.find('.card-grid'),
+
+            /**
+             *
+             * @param {jQuery} $cardColumn
+             */
+            drawCardGrid: function ($cardColumn) {
+                var $cardGrid = $cardColumn.find('.card-grid'),
                     cardGridHeight = $cardGrid.height(),
                     $section = $cardGrid.children('section');
                 $section.height(cardGridHeight);
@@ -157,7 +188,8 @@ var repaintModule = (function (undefined, $, optionsModule, Math, helpersModule)
             },
 
             /**
-             * Полностью рисует сетку, расположенную не в карточке. Можно использовать при ресайзинге.
+             * @param {jQuery} $context
+             * @desc Полностью рисует сетку, расположенную не в карточке. Можно использовать при ресайзинге.
              */
             drawGrid: function ($context) {
                 var $cardTabs = $context.parent();
@@ -166,14 +198,25 @@ var repaintModule = (function (undefined, $, optionsModule, Math, helpersModule)
                     _private.layoutForm($context);
                 }
             },
+            /**
+             *
+             * @param {jQuery} $context
+             * @returns {*}
+             */
             drawCard: function ($context) {
                 _private.setTabHeight($context);
                 var $header = $context.children('header'),
-                    $content = $context.children('div[data-id=grid-tabs]'),
+                    $content = $context.children('[data-id=grid-tabs]'),
                     contentHeight = $context.height() - $header.outerHeight(true);
                 $content.height(contentHeight);
                 return _private;
             },
+            /**
+             *
+             * @param {jQuery} $panel
+             * @param {jQuery} $context
+             * @returns {*}
+             */
             drawCardPanel: function ($panel, $context) {
                 var $gridTabs = $context.children('[data-id=grid-tabs]'),
                     $tabList = $gridTabs.children('ul'),
@@ -184,21 +227,27 @@ var repaintModule = (function (undefined, $, optionsModule, Math, helpersModule)
                 return _private;
             },
             /**
-             * Рисует контролы в карточке. Точнее отрисовывает контейнер в котором они лежат.
+             * @param {jQuery} $card
+             * @desc Рисует контролы в карточке. Точнее отрисовывает контейнер в котором они лежат.
              */
             drawCardControls: function ($card) {
-                _private.setDefaultControlsHeight($card);
-                _private.setCardControlsHeight($card);
+                _private.computeCardHeight($card);
+                _private.computeCardControlsHeight($card);
             },
-            setDefaultControlsHeight: function ($card) {
+            /**
+             * @param {jQuery} $card
+             */
+            computeCardHeight: function ($card) {
                 var $container = $card.parent(),
-                    buttonHeight = 25,
-                    cardHeight = $container.height() - buttonHeight - 10;
+                    $buttons = $container.children('.card-action-button'),
+                    cardHeight = $container.height() - $buttons.height() - 10;
+
                 $card.height(cardHeight);
-                var $buttons = $container.children('.card-action-button');
-                $buttons.height(buttonHeight);
             },
-            setCardControlsHeight: function ($card) {
+            /**
+             * @param {jQuery} $card
+             */
+            computeCardControlsHeight: function ($card) {
                 var staticRows = [],
                     rowsCount = parseInt($card.attr('data-rows'), 10),
                     cardHeight = $card.height(),
