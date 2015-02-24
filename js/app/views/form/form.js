@@ -233,9 +233,11 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         if (data && data.isFastClose) {
                             return false;
                         } else {
-                            _this.destroy();
-                            tabsModule.close($(this));
-                            return false;
+                            if (!_this.getView().hasChange() || confirm('Есть несохраненные данные. Вы уверены что хотите закрыть форму?')) {
+                                _this.destroy();
+                                tabsModule.close($(this));
+                                return false;
+                            }
                         }
 
                     })
@@ -506,7 +508,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         });
                         view.render()
                     })
-                    .fail(function(error){
+                    .fail(function (error) {
                         mediator.publish(optionsModule.getChannel('showError'), error);
                     });
 

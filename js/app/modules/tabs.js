@@ -46,58 +46,51 @@ var tabsModule = (function ($, helpersModule, optionsModule) {
     };
     var _private = {
         close: function ($a) {
-            //var activeTab = factoryModule.makeChTab($a);
-            //if (activeTab.isCardTypePanel()) {
-            //    //var card = factoryModule.makeChCard(activeTab.getPanel().children('[data-id=grid-tabs]'));
-            //    //todo: вернуть код
-            //    //card._undoChange();
-            //} else {
-            //    //todo: вернуть код
-            //    //var form = factoryModule.makeChGridForm(activeTab.getPanel().find('.section-grid>form'));
-            //    //if (form.isHasChange !== undefined && form.$form.length && form.isHasChange() && !confirm(form.getExitMessage())) {
-            //    //    return;
-            //    //}
-            //
-            //    //.getExitMessage = function () {
-            //    //    return 'В форме "' + this.getTabCaption() + '" имеются несохраненные изменения. Закрыть без сохранения?';
-            //    //};
-            //}
+            var $item = $a.parent(),
+                index = $item.index(),
+                $tabs = helpersModule.getTabsObj();
 
-            var $tab = $a.parent(); //ChTab.getLi
-            var index = $tab.index();
-            if ($tab.hasClass(optionsModule.getClass('activeTab'))) {
+            if ($item.hasClass(optionsModule.getClass('activeTab'))) {
                 var nextIndex = history.pop();
-                helpersModule.getTabsObj().tabs({ active: nextIndex });
+                $tabs.tabs({active: nextIndex});
                 mediator.publish(optionsModule.getChannel('reflowTab'));
             }
-            $tab.children('.ui-tabs-anchor').remove();
-            var $panel = $('#' + $tab.attr("aria-controls"));
+
+            $item.children('.ui-tabs-anchor').remove();
+            var $panel = $('#' + $item.attr("aria-controls"));
             $panel.off();
-            helpersModule.getTabsObj().tabs('remove', index);
-            helpersModule.getTabsObj().tabs('refresh');
-            //factoryModule.garbageCollection();
+            $tabs.tabs('remove', index);
+            $tabs.tabs('refresh');
         }
     };
     return {
+        /**
+         *
+         * @param {jQuery} $tab
+         */
         push: function ($tab) {
             history.push($tab);
         },
+        /**
+         *
+         * @returns {int|null}
+         */
         pop: function () {
             return history.pop();
         },
         /**
          *
-         * @param $tabLink {jQuery}
+         * @param $tab {jQuery}
          * @return {Number}
          */
-        getIndex: function($tabLink){
-           return  $tabLink.closest('ul').find('li').index($tabLink.parent());
+        getIndex: function ($tab) {
+            return $tab.closest('ul').find('li').index($tab.parent());
         },
         /**
          * @returns {?jQuery}
          */
-        getActiveTab: function(){
-           return helpersModule.getTabsObj()
+        getActiveTab: function () {
+            return helpersModule.getTabsObj()
                 .children('.' + optionsModule.getClass('tabMenuClass'))
                 .children('.' + optionsModule.getClass('activeTab'))
                 .children('a');
@@ -108,7 +101,13 @@ var tabsModule = (function ($, helpersModule, optionsModule) {
         close: function ($a) {
             _private.close($a);
         },
-        createTabLink: function(targetID, name){
+        /**
+         *
+         * @param {String} targetID
+         * @param {String} name
+         * @returns {string}
+         */
+        createTabLink: function (targetID, name) {
             return [
                 '<a id="',
                 helpersModule.uniqueID(),
