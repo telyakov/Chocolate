@@ -115,7 +115,7 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                 model: model
             });
             var $newCont = view.render(commandObj, $select, data);
-            //todo: вернуть значение
+            //todo: leak memory
             _private.dialogOpen($newCont, $cnt, true, commandObj, function (commandObj, $content) {
                 commandObj.usersidlist = '';
                 commandObj.usersTitle = '';
@@ -240,12 +240,25 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
         }
     };
     return {
+        /**
+         *
+         * @param {GridView} view
+         * @returns {Object}
+         */
         makeCommandObject: function (view) {
             return _private.makeCommandObj(view);
         },
+        /**
+         *
+         * @returns {Function}
+         */
         onDoneFunc: function () {
             return _private.onDoneFn();
         },
+        /**
+         *
+         * @returns {Function}
+         */
         makeServiceCommand: function () {
             return function ($cnt) {
                 var asyncTask = deferredModule.create();
@@ -269,6 +282,10 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                 });
             };
         },
+        /**
+         *
+         * @returns {Function}
+         */
         makeExecutorsCommand: function () {
             return function ($cnt) {
                 var commandObj = $cnt.data('chWizard').commandObj;
@@ -298,7 +315,12 @@ var taskWizard = (function ($, socketModule, undefined, mediator, optionsModule,
                 }
             };
         },
+        /**
+         *
+         * @returns {Function}
+         */
         makeDescriptionCommand: function () {
+            //todo: leak memory
             return function ($cnt) {
                 var commandObj = $cnt.data('chWizard').commandObj,
                     html = [
