@@ -79,7 +79,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             destroy: function () {
                 this._unbindCloseEventListener();
                 this.undelegateEvents();
-                this.$closeLink = null;
+
                 this.headerTemplate = null;
                 this.filterTemplate = null;
                 this.$card = null;
@@ -97,6 +97,8 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 delete this.$el; // Delete the jQuery wrapped object variable
                 delete this.el; // Delete the variable reference to this node
                 this.events = null;
+                facade.getTabsModule().close(this.$closeLink.prev('a'));
+                this.$closeLink = null;
             },
             /**
              * @returns {?AbstractView}
@@ -236,8 +238,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
              */
             _bindCloseEventListener: function ($closeLink) {
                 this._persistReferenceToCloseLink($closeLink);
-                var _this = this,
-                    tabsModule = facade.getTabsModule();
+                var _this = this;
                 this.$closeLink
                     .on('click', '.tab-closed', function (e, data) {
                         if (data && data.isFastClose) {
@@ -245,7 +246,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         } else {
                             if (!_this.getView().hasChange() || confirm('Есть несохраненные данные. Вы уверены что хотите закрыть форму?')) {
                                 _this.destroy();
-                                tabsModule.close($(this));
                                 return false;
                             }
                         }
@@ -253,7 +253,6 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     })
                     .on('touchmove', function () {
                         _this.destroy();
-                        tabsModule.close($(this));
                         return false;
                     });
             },

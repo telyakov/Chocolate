@@ -28,7 +28,7 @@ var FormModel = (function () {
             _preview: null,
             _requiredFields: null,
             _openedCards: [],
-            _openedForms: [],
+            _openedForms: {},
             /**
              * @public
              * @desc destroy
@@ -107,7 +107,7 @@ var FormModel = (function () {
                  * @type {FormModel|null}
                  */
                 var parentModel = this.get('parentModel');
-                if(parentModel){
+                if (parentModel) {
                     var formKey = this.get('columnName') + '_' + this.get('parentId');
                     parentModel.deleteOpenedForm(formKey);
                     this.set('parentModel', null);
@@ -115,20 +115,17 @@ var FormModel = (function () {
 
                 this.set('parentId', null);
                 this.set('columnName', null);
-
-                if (this._openedForms.length) {
-                    this._openedForms.forEach(function (model) {
-                        model.destroy();
-                    });
-                    delete this._openedForms;
+                for(var i in this._openedForms){
+                    if(this._openedForms.hasOwnProperty(i)){
+                        this._openedForms[i].destroy();
+                    }
                 }
+                delete this._openedForms;
 
-                if (this._openedCards.length) {
-                    this._openedCards.forEach(function (model) {
-                        model.destroy();
-                    });
-                    delete this._openedCards;
-                }
+                this._openedCards.forEach(function (model) {
+                    model.destroy();
+                });
+                delete this._openedCards;
                 storageModule.removeFromSession(this.cid);
             },
             /**
