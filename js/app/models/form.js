@@ -115,8 +115,8 @@ var FormModel = (function () {
 
                 this.set('parentId', null);
                 this.set('columnName', null);
-                for(var i in this._openedForms){
-                    if(this._openedForms.hasOwnProperty(i)){
+                for (var i in this._openedForms) {
+                    if (this._openedForms.hasOwnProperty(i)) {
                         this._openedForms[i].destroy();
                     }
                 }
@@ -140,7 +140,12 @@ var FormModel = (function () {
                 return this.get('write');
             },
 
-            getDynamicDefaultValues: function () {
+            /**
+             *
+             * @returns {*}
+             * @private
+             */
+            _getDynamicDefaultValues: function () {
                 return this._dynamicDefaultValues;
             },
             /**
@@ -151,65 +156,79 @@ var FormModel = (function () {
             setDynamicDefaultValue: function (key, val) {
                 this._dynamicDefaultValues[key] = val;
             },
-            getRequiredFields: function () {
+            /**
+             *
+             * @returns {ColumnsROCollection}
+             * @private
+             */
+            _getRequiredFields: function () {
                 if (this._requiredFields === null) {
-                    var required = [];
-                    this.getColumnsROCollection().each(function (column) {
-                        if (column.isRequired()) {
-                            required.push(column.get('key'));
-                        }
-                    });
-                    this._requiredFields = required;
+                    var requiredFields = [];
+                    this.getColumnsROCollection().each(
+                        /** @param {ColumnRO} model */
+                            function (model) {
+                            if (model.isRequired()) {
+                                requiredFields.push(model.get('key'));
+                            }
+                        });
+                    this._requiredFields = requiredFields;
                 }
                 return this._requiredFields;
             },
             /**
+             * @desc return columnROCollection without visible property
              * @returns {ColumnsROCollection}
              */
             _getAllColumnsROCollection: function () {
-                if (this._allColumnsRoCollection !== null) {
-                    return this._allColumnsRoCollection;
-                }
-                var columnsCollection = this.getColumnsCollection(),
-                    columnsROCollection = new ColumnsROCollection();
-                columnsCollection.each(function (item) {
-                    var columnRO = ColumnsRoFactory.make(item);
-                    columnsROCollection.push(columnRO);
-                });
-                this._allColumnsRoCollection = columnsROCollection;
-                if (this.isAttachmentSupport()) {
-                    columnsROCollection.push(new AttachmentColumnRO());
+                if (this._allColumnsRoCollection === null) {
+                    var columnsCollection = this.getColumnsCollection(),
+                        columnsROCollection = new ColumnsROCollection();
+
+                    columnsCollection.each(
+                        /** @param {ColumnProperties} model */
+                            function (model) {
+                            var columnRO = ColumnsRoFactory.make(model);
+                            columnsROCollection.push(columnRO);
+                        });
+                    this._allColumnsRoCollection = columnsROCollection;
+                    if (this.isAttachmentSupport()) {
+                        columnsROCollection.push(new AttachmentColumnRO());
+                    }
                 }
                 return this._allColumnsRoCollection;
             },
             /**
-             *
+             * @public
              * @returns {Object}
              */
             getColumnsDefaultValues: function () {
-                var defaults = {};
-                this._getAllColumnsROCollection().each(function (column) {
-                    var def = column.getDefault();
-                    if (def !== '' && def !== null) {
-                        defaults[column.getFromKey()] = def;
-                    }
-                });
-                return $.extend({}, defaults, this.getDynamicDefaultValues());
+                var staticDefaultValues = {};
+                this._getAllColumnsROCollection().each(
+                    /** @param {ColumnRO} model */
+                        function (model) {
+                        var defaultValue = model.getDefault();
+                        if (defaultValue) {
+                            staticDefaultValues[model.getFromKey()] = defaultValue;
+                        }
+                    });
+                return $.extend({}, staticDefaultValues, this._getDynamicDefaultValues());
             },
             /**
-             * @returns {String}
+             * @public
+             * @returns {Boolean}
              */
             hasCardHeader: function () {
                 return this.getCardHeaderText() || this.getCardHeaderImage();
             },
             /**
-             *
+             * @public
              * @returns {String}
              */
             getCardHeaderImage: function () {
                 return this.getCardCollection().getHeaderImage();
             },
             /**
+             * @public
              * @returns {String}
              */
             getCardHeaderText: function () {
@@ -217,32 +236,40 @@ var FormModel = (function () {
             },
             /**
              *
+             * @public
              * @returns {Array}
              */
             getPrintActions: function () {
-                if (this._printActions !== null) {
-                    return this._printActions;
-                }
+                if (this._printActions === null) {
 
-                var printActions = new PrintActions({
-                    printActionsXml: this.getDataFormProperties().getPrintActionsXml()
-                });
-                this._printActions = printActions.getActions();
+                    var _this = this,
+                        printActions = new PrintActions({
+                            printActionsXml: _this.getDataFormProperties().getPrintActionsXml()
+                        });
+                    this._printActions = printActions.getActions();
+                }
                 return this._printActions;
             },
             /**
+             * @public
              * @returns {boolean}
              */
             isAllowAudit: function () {
                 return interpreterModule.parseBooleanExpression(this.getDataFormProperties().getAllowAuditButton(), false);
             },
             /**
+             * @public
              * @returns {boolean}
              */
             isSearchColumnVisible: function () {
                 return this.getColumnsCollection().length > 10 && !this.isCanvasView() && !this.isMapView();
             },
-            getCreateEmptyProc: function () {
+            /**
+             *
+             * @returns {String}
+             * @private
+             */
+            _getCreateEmptyProc: function () {
                 return this.getDataFormProperties().getCreateEmptyProc();
             },
             /**
@@ -251,9 +278,9 @@ var FormModel = (function () {
              */
             runAsyncTaskCreateEmptyDefaultValues: function () {
                 var asyncTask = deferredModule.create();
-                bindModule.runAsyncTaskBindSql(this.getCreateEmptyProc())
+                bindModule.runAsyncTaskBindSql(this._getCreateEmptyProc())
                     .done(
-                    /** @param {} res */
+                    /** @param {SqlBindingResponse} res */
                         function (res) {
                         mediator.publish(optionsModule.getChannel('socketRequest'), {
                             query: res.sql,
@@ -263,13 +290,28 @@ var FormModel = (function () {
                     });
                 return asyncTask;
             },
-            getCreateProc: function () {
+            /**
+             *
+             * @returns {String}
+             * @private
+             */
+            _getCreateProc: function () {
                 return this.getDataFormProperties().getCreateProc();
             },
-            getDeleteProc: function () {
+            /**
+             *
+             * @returns {String}
+             * @private
+             */
+            _getDeleteProc: function () {
                 return this.getDataFormProperties().getDeleteProc();
             },
-            getUpdateProc: function () {
+            /**
+             *
+             * @returns {String}
+             * @private
+             */
+            _getUpdateProc: function () {
                 var sql = this.getDataFormProperties().getValidationProc();
                 if (!sql) {
                     sql = this.getDataFormProperties().getUpdateProc();
@@ -282,17 +324,17 @@ var FormModel = (function () {
              */
             runAsyncTaskBindInsProc: function (data) {
                 var extendedData = $.extend({}, this.getParamsForBind(), data),
-                    sql = this.getCreateProc();
+                    sql = this._getCreateProc();
                 return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
             },
             deferUpdateProc: function (data) {
                 var extendedData = $.extend({}, this.getParamsForBind(), data),
-                    sql = this.getUpdateProc();
+                    sql = this._getUpdateProc();
                 return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
             },
             deferDeleteProc: function (data) {
                 var extendedData = $.extend({}, this.getParamsForBind(), data),
-                    sql = this.getDeleteProc();
+                    sql = this._getDeleteProc();
                 return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
             },
             /**
@@ -378,7 +420,7 @@ var FormModel = (function () {
              * @returns {boolean}
              */
             isSupportCreateEmpty: function () {
-                return this.getCreateEmptyProc() ? true : false;
+                return this._getCreateEmptyProc() ? true : false;
             },
             /**
              * @returns {boolean}
@@ -1034,7 +1076,7 @@ var FormModel = (function () {
              * @returns {Array} Columns keys
              */
             validate: function (data) {
-                var requiredFields = this.getRequiredFields(),
+                var requiredFields = this._getRequiredFields(),
                     errors = [];
                 requiredFields.forEach(function (key) {
                     if (data[key] === undefined || !data[key]) {

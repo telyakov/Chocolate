@@ -97,8 +97,8 @@ var interpreterModule = (function (optionsModule, userModule, deferredModule, bi
         },
         /**
          *
-         * @param {String} expression
-         * @returns {String}
+         * @param {String|null} expression
+         * @returns {String|null}
          */
         parseDefaultExpression: function (expression) {
             var prepareExpression = $.trim(expression.toLowerCase());
