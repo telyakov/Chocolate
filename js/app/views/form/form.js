@@ -117,6 +117,16 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 return this.card;
             },
             /**
+             * @public
+             * @method setWindowActive
+             */
+            setWindowActive: function () {
+                var $a = this.$closeLink.prev('a');
+                helpersModule.getTabsObj().tabs({
+                    active: tabsModule.getIndex($a)
+                });
+            },
+            /**
              * @desc Render Form
              */
             render: function () {
@@ -480,6 +490,15 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     fromID = options.fromID,
                     fromName = options.fromName,
                     isSelect = '';
+
+                var model = this.getModel(),
+                    hashKey = options.name + '_' + parentID;
+
+                var form = model.getOpenedForm(hashKey);
+                if(form){
+                    form.setWindowActive();
+                    return false;
+                }
                 if (toID && toName && fromName && fromID) {
                     //todo: support select view
                     isSelect = 1;
@@ -501,11 +520,13 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         var model = new FormModel({
                             $xml: $xml,
                             parentModel: _this.getModel(),
-                            parentId: parentID
+                            parentId: parentID,
+                            columnName:  options.name
                         });
                         var view = new FormView({
                             model: model
                         });
+                        model.addOpenedForm(hashKey, view);
                         view.render()
                     })
                     .fail(function (error) {

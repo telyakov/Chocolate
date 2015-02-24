@@ -2,7 +2,7 @@
  * @class FormModel
  * @augments Backbone.Model
  */
-var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColumnRO, ColumnsROCollection, ColumnsRoFactory, Card, CardElementFactory, CardROCollection, CardRO, ActionProperties, AgileFilter, PrintActions, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory, deferredModule, optionsModule, bindModule, helpersModule, MapView, CanvasView, AttachmentView, DiscussionView, GridView) {
+var FormModel = (function () {
     'use strict';
     return Backbone.Model.extend(
         /** @lends FormModel */
@@ -11,49 +11,47 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 $xml: null,
                 write: false,
                 parentModel: null,
-                parentId: null
+                parentId: null,
+                columnName: null
             },
+            _columnsCollection: null,
+            _allColumnsRoCollection: null,
+            _dataFormProperties: null,
+            _agileFilters: null,
+            _actionProperties: null,
+            _cardCollection: null,
+            _filterRoCollection: null,
+            _printActions: null,
+            _columnsRoCollection: null,
+            _dynamicDefaultValues: {},
+            _columnsCardRoCollection: null,
+            _preview: null,
+            _requiredFields: null,
+            _openedCards: [],
+            _openedForms: [],
             /**
-             * @abstract
-             * @class FormModel
-             * @augments Backbone.Model
-             * @param {Object} opts
-             * @constructs
+             * @public
+             * @desc destroy
              */
-            initialize: function (opts) {
-                this._columnsCollection = null;
-                this._allColumnsRoCollection = null;
-                this._dataFormProperties = null;
-                this._agileFilters = null;
-                this._actionProperties = null;
-                this._cardCollection = null;
-                this._filterRoCollection = null;
-                this._printActions = null;
-                this._columnsRoCollection = null;
-                this._dynamicDefaultValues = {};
-                this._columnsCardRoCollection = null;
-                this._preview = null;
-                this._requiredFields = null;
-                this._openedCards = [];
-            },
-            /**
-             * @desc get access to write if form
-             * @returns {Boolean}
-             */
-            isAllowWrite: function () {
-                var parentModel = this.get('parentModel');
-                if (parentModel) {
-                    return parentModel.isAllowWrite();
-                }
-                return this.get('write');
-            },
             destroy: function () {
                 if (this._columnsCollection) {
-                    this._columnsCollection.each(function (object) {
-                        object.destroy();
-                    });
+                    this._columnsCollection.each(
+                        /** @param {ColumnProperties} object */
+                            function (object) {
+                            object.destroy();
+                        });
                     delete this._columnsCollection;
                 }
+
+                if (this._allColumnsRoCollection) {
+                    this._allColumnsRoCollection.each(
+                        /** @param {ColumnProperties} object */
+                            function (object) {
+                            object.destroy();
+                        });
+                    delete this._allColumnsRoCollection;
+                }
+
                 if (this._dataFormProperties) {
                     this._dataFormProperties.destroy();
                     delete this._dataFormProperties;
@@ -67,30 +65,30 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                     delete this._actionProperties;
                 }
                 if (this._filterRoCollection) {
-                    this._filterRoCollection.each(function (object) {
-                        object.destroy();
-                    });
+                    this._filterRoCollection.each(
+                        /** @param {FilterRO} object */
+                            function (object) {
+                            object.destroy();
+                        });
                     delete this._filterRoCollection;
                 }
                 delete this._printActions;
                 if (this._columnsRoCollection) {
-                    this._columnsRoCollection.each(function (object) {
-                        object.destroy();
-                    });
+                    this._columnsRoCollection.each(
+                        /** @param {ColumnRO} object */
+                            function (object) {
+                            object.destroy();
+                        });
                     delete this._columnsRoCollection;
                 }
                 delete this._dynamicDefaultValues;
                 if (this._columnsCardRoCollection) {
-                    this._columnsCardRoCollection.each(function (object) {
-                        object.destroy();
-                    });
+                    this._columnsCardRoCollection.each(
+                        /** @param {CardRO} object */
+                            function (object) {
+                            object.destroy();
+                        });
                     delete this._columnsCardRoCollection;
-                }
-                if (this._allColumnsRoCollection) {
-                    this._allColumnsRoCollection.each(function (object) {
-                        object.destroy();
-                    });
-                    delete this._allColumnsRoCollection;
                 }
 
                 if (this._cardCollection) {
@@ -102,16 +100,49 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 delete this._preview;
                 delete this._requiredFields;
                 this.set('$xml', null);
+
+                this.set('write', null);
+
+                /**
+                 * @type {FormModel|null}
+                 */
+                var parentModel = this.get('parentModel');
+                if(parentModel){
+                    var formKey = this.get('columnName') + '_' + this.get('parentId');
+                    parentModel.deleteOpenedForm(formKey);
+                    this.set('parentModel', null);
+                }
+
                 this.set('parentId', null);
-                //var parentModel = this.get('parentModel');
-                //if(parentModel){
-                //TODO: запретить вобще закрытие родительской сушности, пока открыты дочернии
-                //    parentModel.destroy();
-                //    this.set('parentModel', null);
-                //}
-                delete this._openedCards;
+                this.set('columnName', null);
+
+                if (this._openedForms.length) {
+                    this._openedForms.forEach(function (model) {
+                        model.destroy();
+                    });
+                    delete this._openedForms;
+                }
+
+                if (this._openedCards.length) {
+                    this._openedCards.forEach(function (model) {
+                        model.destroy();
+                    });
+                    delete this._openedCards;
+                }
                 storageModule.removeFromSession(this.cid);
             },
+            /**
+             * @desc get access to write if form
+             * @returns {Boolean}
+             */
+            isAllowWrite: function () {
+                var parentModel = this.get('parentModel');
+                if (parentModel) {
+                    return parentModel.isAllowWrite();
+                }
+                return this.get('write');
+            },
+
             getDynamicDefaultValues: function () {
                 return this._dynamicDefaultValues;
             },
@@ -225,8 +256,8 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 var asyncTask = deferredModule.create();
                 bindModule.runAsyncTaskBindSql(this.getCreateEmptyProc())
                     .done(
-                    /** @param {SqlBindingResponse} res */
-                    function (res) {
+                    /** @param {} res */
+                        function (res) {
                         mediator.publish(optionsModule.getChannel('socketRequest'), {
                             query: res.sql,
                             type: optionsModule.getRequestType('deferred'),
@@ -948,6 +979,30 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                     return false;
                 }
             },
+
+            /**
+             * @description Add opened FormView to cache
+             * @param {String} id
+             * @param {FormView} view
+             */
+            addOpenedForm: function (id, view) {
+                this._openedForms[id] = view;
+            },
+            /**
+             * @description Delete opened CardView from cache
+             * @param id {String}
+             */
+            deleteOpenedForm: function (id) {
+                delete this._openedForms[id];
+            },
+            /**
+             * @description Get opened FormView from cache
+             * @param id {string}
+             * @returns {FormView|undefined}
+             */
+            getOpenedForm: function (id) {
+                return this._openedForms[id];
+            },
             /**
              * @description Add opened CardView to cache
              * @param view {CardView}
@@ -998,4 +1053,4 @@ var FormModel = (function (storageModule, $, Backbone, mediator, AttachmentColum
                 return !$.isEmptyObject(this.getFormSettingsFromStorage());
             }
         });
-})(storageModule, jQuery, Backbone, mediator, AttachmentColumnRO, ColumnsROCollection, ColumnsRoFactory, Card, CardElementFactory, CardROCollection, CardRO, ActionProperties, AgileFilter, PrintActions, ActionsPropertiesCollection, CardCollections, AgileFiltersCollections, ColumnProperties, ColumnsPropertiesCollection, DataFormProperties, FiltersROCollection, FilterRoFactory, deferredModule, optionsModule, bindModule, helpersModule, MapView, CanvasView, AttachmentView, DiscussionView, GridView);
+})();

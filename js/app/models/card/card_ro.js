@@ -1,4 +1,4 @@
-var CardRO = (function (Backbone, helpersModule) {
+var CardRO = (function (Backbone) {
     'use strict';
     return Backbone.Model.extend(
         /** @lends CardRO */
@@ -50,4 +50,4 @@ var CardRO = (function (Backbone, helpersModule) {
                 return parseInt(this.get('card').getRows(), 10);
             }
         });
-})(Backbone, helpersModule);
+})(Backbone);

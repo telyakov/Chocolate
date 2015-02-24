@@ -44,7 +44,8 @@ var CardElement = (function ($, Backbone, _, helpersModule, optionsModule, media
             ),
 
             /**
-             * @method destroy
+             * @public
+             * @desc destroy
              */
             destroy: function () {
                 delete this._id;
@@ -301,9 +302,9 @@ var CardElement = (function ($, Backbone, _, helpersModule, optionsModule, media
                 }
             },
             /**
-             * @param card {CardRO}
-             * @param tabIndex {String}
-             * @param pk {String}
+             * @param {CardRO} card
+             * @param {Number} tabIndex
+             * @param {String} pk
              * @returns {string}
              * @private
              */

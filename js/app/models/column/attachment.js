@@ -12,13 +12,13 @@ var AttachmentColumnRO = (function () {
                 id: null,
                 key: null
             },
+            _$editableElements: null,
             /**
              * @constructs
              */
             initialize: function () {
                 this.set('key', this.getKey());
             },
-            _$editableElements: null,
             /**
              * @param $editableElements {jQuery|null}
              * @private
