@@ -8,6 +8,13 @@ var CardRO = (function (Backbone) {
                 key: null
             },
             /**
+             * @public
+             */
+            destroy: function(){
+                this.set('card', null);
+                this.set('key', null);
+            },
+            /**
              * @returns {Boolean}
              */
             isVisible: function () {
