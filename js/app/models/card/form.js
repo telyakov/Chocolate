@@ -24,11 +24,9 @@ var FormCardElement = (function ($, optionsModule, helpersModule, deferredModule
              */
             destroy: function () {
                 if (this._view) {
-                    this._view.destroy();
                     this._view = null;
                 }
                 if (this._model) {
-                    this._model.destroy();
                     this._model = null;
                 }
                 this.constructor.__super__.destroy.apply(this, arguments);
