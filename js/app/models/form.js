@@ -20,6 +20,7 @@ var FormModel = (function () {
             _agileFilters: null,
             _actionProperties: null,
             _cardCollection: null,
+            _cardROCollection: null,
             _filterRoCollection: null,
             _printActions: null,
             _columnsRoCollection: null,
@@ -51,6 +52,16 @@ var FormModel = (function () {
                         });
                     delete this._allColumnsRoCollection;
                 }
+
+                if (this._cardROCollection) {
+                    this._cardROCollection.each(
+                        /** @param {CardRO} model */
+                            function (model) {
+                            model.destroy();
+                        });
+                    delete this._cardROCollection;
+                }
+
 
                 if (this._dataFormProperties) {
                     this._dataFormProperties.destroy();
@@ -225,14 +236,14 @@ var FormModel = (function () {
              * @returns {String}
              */
             getCardHeaderImage: function () {
-                return this.getCardCollection().getHeaderImage();
+                return this._getCardCollection().getHeaderImage();
             },
             /**
              * @public
              * @returns {String}
              */
             getCardHeaderText: function () {
-                return this.getCardCollection().getHeader();
+                return this._getCardCollection().getHeader();
             },
             /**
              *
@@ -244,7 +255,7 @@ var FormModel = (function () {
 
                     var _this = this,
                         printActions = new PrintActions({
-                            printActionsXml: _this.getDataFormProperties().getPrintActionsXml()
+                            printActionsXml: _this._getDataFormProperties().getPrintActionsXml()
                         });
                     this._printActions = printActions.getActions();
                 }
@@ -255,7 +266,9 @@ var FormModel = (function () {
              * @returns {boolean}
              */
             isAllowAudit: function () {
-                return interpreterModule.parseBooleanExpression(this.getDataFormProperties().getAllowAuditButton(), false);
+                return interpreterModule.parseBooleanExpression(
+                    this._getDataFormProperties().getAllowAuditButton(), false
+                );
             },
             /**
              * @public
@@ -270,10 +283,10 @@ var FormModel = (function () {
              * @private
              */
             _getCreateEmptyProc: function () {
-                return this.getDataFormProperties().getCreateEmptyProc();
+                return this._getDataFormProperties().getCreateEmptyProc();
             },
             /**
-             *
+             * @public
              * @returns {Deferred}
              */
             runAsyncTaskCreateEmptyDefaultValues: function () {
@@ -296,7 +309,7 @@ var FormModel = (function () {
              * @private
              */
             _getCreateProc: function () {
-                return this.getDataFormProperties().getCreateProc();
+                return this._getDataFormProperties().getCreateProc();
             },
             /**
              *
@@ -304,7 +317,7 @@ var FormModel = (function () {
              * @private
              */
             _getDeleteProc: function () {
-                return this.getDataFormProperties().getDeleteProc();
+                return this._getDataFormProperties().getDeleteProc();
             },
             /**
              *
@@ -312,9 +325,9 @@ var FormModel = (function () {
              * @private
              */
             _getUpdateProc: function () {
-                var sql = this.getDataFormProperties().getValidationProc();
+                var sql = this._getDataFormProperties().getValidationProc();
                 if (!sql) {
-                    sql = this.getDataFormProperties().getUpdateProc();
+                    sql = this._getDataFormProperties().getUpdateProc();
                 }
                 return sql;
             },
@@ -458,7 +471,7 @@ var FormModel = (function () {
              */
             isAutoOpenCard: function () {
                 return interpreterModule.parseBooleanExpression(
-                    this.getCardCollection().getAutoOpen(), false
+                    this._getCardCollection().getAutoOpen(), false
                 );
             },
             /**
@@ -466,21 +479,21 @@ var FormModel = (function () {
              * @returns {boolean}
              */
             isAllowCreate: function () {
-                return this.isAllowWrite() && interpreterModule.parseBooleanExpression(this.getDataFormProperties().getAllowAddNew(), false);
+                return this.isAllowWrite() && interpreterModule.parseBooleanExpression(this._getDataFormProperties().getAllowAddNew(), false);
             },
             /**
              * @public
              * @returns {boolean}
              */
             isAllowSave: function () {
-                return this.isAllowWrite() && interpreterModule.parseBooleanExpression(this.getDataFormProperties().getSaveButtonVisible(), false);
+                return this.isAllowWrite() && interpreterModule.parseBooleanExpression(this._getDataFormProperties().getSaveButtonVisible(), false);
             },
             /**
              * @public
              * @returns {boolean}
              */
             isAllowRefresh: function () {
-                return interpreterModule.parseBooleanExpression(this.getDataFormProperties().getRefreshButtonVisible(), false);
+                return interpreterModule.parseBooleanExpression(this._getDataFormProperties().getRefreshButtonVisible(), false);
             },
             /**
              *
@@ -495,7 +508,7 @@ var FormModel = (function () {
              * @returns {String}
              */
             getKey: function () {
-                return this.getDataFormProperties().getKey();
+                return this._getDataFormProperties().getKey();
             },
             /**
              * @returns {string}
@@ -573,7 +586,7 @@ var FormModel = (function () {
             },
             /**
              *
-             * @returns {jQuery|null}
+             * @returns {?jQuery}
              * @private
              */
             _getXml: function () {
@@ -606,107 +619,132 @@ var FormModel = (function () {
                 }
                 return this._columnsCollection;
             },
-            getDataFormProperties: function () {
-                if (this._dataFormProperties) {
-                    return this._dataFormProperties;
+            /**
+             *
+             * @returns {DataFormProperties}
+             * @private
+             */
+            _getDataFormProperties: function () {
+                if (this._dataFormProperties === null) {
+                    var $xml = this._getXml();
+                    if ($xml) {
+                        this._dataFormProperties = new DataFormProperties({
+                            $obj: $xml.find('DataFormProperties')
+                        });
+                    }
                 }
 
-                var $xml = this.get('$xml');
-                if ($xml) {
-                    this._dataFormProperties = new DataFormProperties({
-                        $obj: $xml.find('DataFormProperties')
-                    });
-                }
+
                 return this._dataFormProperties;
             },
-            getFiltersCollections: function () {
-                if (this._agileFilters) {
-                    return this._agileFilters;
+            /**
+             *
+             * @returns {AgileFiltersCollections}
+             * @private
+             */
+            _getFiltersCollections: function () {
+                if (this._agileFilters === null) {
+                    var filters = [],
+                        $xml = this.get('$xml');
+                    if ($xml) {
+                        var $filtersPanel = $xml.find('FiltersPanelXml'),
+                            $filters = $($.parseXML($.trim($filtersPanel.text()))),
+                            $agileFilters = $filters.find('AgileFilters');
+
+                        $agileFilters.find('AgileFilter').each(function () {
+                            filters.push(new AgileFilter({
+                                    $obj: $(this)
+                                }
+                            ));
+                        });
+                        this._agileFilters = new AgileFiltersCollections(filters, {
+                            $obj: $agileFilters
+                        });
+                    }
                 }
-                var filters = [],
-                    $xml = this.get('$xml');
-                if ($xml) {
-                    var $filtersPanel = $xml.find('FiltersPanelXml'),
-                        $filters = $($.parseXML($.trim($filtersPanel.text()))),
-                        $agileFilters = $filters.find('AgileFilters');
-                    $agileFilters.find('AgileFilter').each(function () {
-                        filters.push(new AgileFilter({
-                                $obj: $(this)
-                            }
-                        ));
-                    });
-                    this._agileFilters = new AgileFiltersCollections(filters, {
-                        $obj: $agileFilters
-                    });
-                }
+
                 return this._agileFilters;
 
             },
             /**
+             * @public
              * @returns {ActionsPropertiesCollection}
              */
             getActionProperties: function () {
-                if (this._actionProperties) {
-                    return this._actionProperties;
+                if (this._actionProperties === null) {
+                    var actions = [],
+                        $xml = this.get('$xml');
+                    if ($xml) {
+                        var $actions = $xml.find('ActionsXml');
+                        $actions = $($.parseXML($.trim($actions.text())));
+
+                        $actions.find('MenuAction').each(function () {
+                            actions.push(new ActionProperties({
+                                    $obj: $(this)
+                                }
+                            ));
+                        });
+                        this._actionProperties = new ActionsPropertiesCollection(actions);
+                    }
                 }
-                var actions = [],
-                    $xml = this.get('$xml');
-                if ($xml) {
-                    var $actions = $xml.find('ActionsXml');
-                    $actions = $($.parseXML($.trim($actions.text())));
-                    $actions.find('MenuAction').each(function () {
-                        actions.push(new ActionProperties({
-                                $obj: $(this)
-                            }
-                        ));
-                    });
-                    this._actionProperties = new ActionsPropertiesCollection(actions);
-                }
+
                 return this._actionProperties;
             },
             /**
-             *
+             * @public
              * @returns {boolean}
              */
             hasCard: function () {
-                return this.getCardCollection().length > 0;
+                return this._getCardCollection().length > 0;
             },
-            getCardCollection: function () {
-                if (this._cardCollection) {
-                    return this._cardCollection;
+            /**
+             *
+             * @returns {CardCollections}
+             * @private
+             */
+            _getCardCollection: function () {
+                if (this._cardCollection === null) {
+                    var cards = [],
+                        $xml = this.get('$xml');
+                    if ($xml) {
+                        var $cards = $xml.find('Cards');
+                        $cards = $($.parseXML($.trim($cards.text())));
+
+                        $cards.find('Card').each(function () {
+                            cards.push(new Card({
+                                    $obj: $(this)
+                                }
+                            ));
+                        });
+                        this._cardCollection = new CardCollections(cards, {
+                            $obj: $cards.children('Cards').children('Style')
+                        });
+                    }
                 }
-                var cards = [],
-                    $xml = this.get('$xml');
-                if ($xml) {
-                    var $cards = $xml.find('Cards');
-                    $cards = $($.parseXML($.trim($cards.text())));
-                    $cards.find('Card').each(function () {
-                        cards.push(new Card({
-                                $obj: $(this)
-                            }
-                        ));
-                    });
-                    this._cardCollection = new CardCollections(cards, {
-                        $obj: $cards.children('Cards').children('Style')
-                    });
-                }
+
                 return this._cardCollection;
             },
             /**
+             * @public
              * @returns {CardROCollection}
              */
             getCardROCollection: function () {
-                var collection = new CardROCollection();
-                this.getCardCollection().each(function (card) {
-                    var cardRO = new CardRO({
-                        card: card,
-                        key: card.getKey()
+                if (this._cardROCollection === null) {
+                    var collection = new CardROCollection();
+
+                    this._getCardCollection().each(function (card) {
+                        var cardRO = new CardRO({
+                            card: card,
+                            key: card.getKey()
+                        });
+                        if (cardRO.isVisible()) {
+                            collection.push(cardRO);
+                        }
                     });
-                    if (cardRO.isVisible()) {
-                        collection.push(cardRO);
-                    }
-                });
-                return collection;
+                    this._cardROCollection = collection;
+                }
+
+                return this._cardROCollection;
             },
             /**
              *
@@ -715,122 +753,154 @@ var FormModel = (function () {
              * @returns {Array}
              */
             getCardElements: function (card, view) {
+                //todo: remove view dependencies
                 var key = card.getKey(),
                     cardElements = [],
-                    collection = this.getColumnsCardROCollection(),
+                    collection = this._getColumnsCardROCollection(),
                     _this = this;
-                collection.each(function (model) {
-                    if (model.getCardKey() === key) {
-                        var elem = CardElementFactory.make(model, collection, _this, view);
-                        cardElements.push(elem);
-                    }
-                });
+                collection.each(
+                    /** @param {ColumnRO} model */
+                        function (model) {
+                        if (model.getCardKey() === key) {
+                            var elem = CardElementFactory.make(model, collection, _this, view);
+                            cardElements.push(elem);
+                        }
+                    });
                 return cardElements;
             },
             /**
+             * @public
              * @returns {String}
              */
             getCardTabCaption: function () {
-                return this.getCardCollection().getCaption();
+                return this._getCardCollection().getCaption();
             },
             /**
-             *
+             * @public
              * @returns {String}
              */
             getCaption: function () {
-                return this.getDataFormProperties().getWindowCaption();
+                return this._getDataFormProperties().getWindowCaption();
             },
             /**
-             *
-             * @returns {boolean}
+             * @public
+             * @returns {Boolean}
              */
             hasHeader: function () {
-                var dataFormProperties = this.getDataFormProperties();
-                return dataFormProperties.getHeaderText() ||
-                dataFormProperties.getHeaderImage() ||
-                dataFormProperties.getStateProc();
+                var header = this.getHeaderText() || this.getImage() || this.getStateProc();
+                return header !== '';
             },
             /**
+             * @public
              * @returns {String}
              */
             getImage: function () {
-                return this.getDataFormProperties().getHeaderImage();
-            },
-            getHeaderText: function () {
-                return this.getDataFormProperties().getHeaderText();
-            },
-            getStateProc: function () {
-                return this.getDataFormProperties().getStateProc();
-            },
-            /**
-             * @returns {boolean}
-             */
-            hasFilters: function () {
-                return this.getFiltersCollections().length !== 0 && !this.isDiscussionView();
+                return this._getDataFormProperties().getHeaderImage();
             },
             /**
              *
+             * @public
+             * @returns {String}
+             */
+            getHeaderText: function () {
+                return this._getDataFormProperties().getHeaderText();
+            },
+            /**
+             *
+             * @public
+             * @returns {String}
+             */
+            getStateProc: function () {
+                return this._getDataFormProperties().getStateProc();
+            },
+            /**
+             * @public
+             * @returns {boolean}
+             */
+            hasFilters: function () {
+                return this._getFiltersCollections().length !== 0 && !this.isDiscussionView();
+            },
+            /**
+             * @public
              * @param {FormView} [view]
              * @param {jQuery} [$filterSection]
              * @returns {FiltersROCollection}
              */
             getFiltersROCollection: function (view, $filterSection) {
-                if (this._filterRoCollection !== null) {
-                    return this._filterRoCollection;
+                if (this._filterRoCollection === null) {
+                    var filtersCollection = this._getFiltersCollections(),
+                        filtersROCollection = new FiltersROCollection();
+
+                    filtersCollection.each(
+                        /** @param {FilterProperties} model */
+                            function (model) {
+                            filtersROCollection.push(FilterRoFactory.make(model, view, $filterSection));
+                        });
+                    this._filterRoCollection = filtersROCollection;
                 }
-                var filtersCollection = this.getFiltersCollections(),
-                    filtersROCollection = new FiltersROCollection();
-                filtersCollection.each(function (item) {
-                    filtersROCollection.push(FilterRoFactory.make(item, view, $filterSection));
-                });
-                this._filterRoCollection = filtersROCollection;
+
                 return this._filterRoCollection;
             },
             /**
+             * @public
              * @returns {ColumnsROCollection}
              */
             getColumnsROCollection: function () {
-                if (this._columnsRoCollection !== null) {
-                    return this._columnsRoCollection;
-                }
-                var columnsCollection = this._getColumnsCollection(),
-                    columnsROCollection = new ColumnsROCollection();
-                columnsCollection.each(function (item) {
-                    var columnRO = ColumnsRoFactory.make(item);
-                    if (columnRO.isVisible()) {
-                        columnsROCollection.push(columnRO);
+                if (this._columnsRoCollection === null) {
+                    var columnsCollection = this._getColumnsCollection(),
+                        columnsROCollection = new ColumnsROCollection();
+
+                    columnsCollection.each(
+                        /**
+                         *
+                         * @param {ColumnProperties} model
+                         */
+                            function (model) {
+                            var columnRO = ColumnsRoFactory.make(model);
+                            if (columnRO.isVisible()) {
+                                columnsROCollection.push(columnRO);
+                            }
+                        });
+                    if (this.isAttachmentSupport()) {
+                        columnsROCollection.push(new AttachmentColumnRO());
                     }
-                });
-                this._columnsRoCollection = columnsROCollection;
-                if (this.isAttachmentSupport()) {
-                    columnsROCollection.push(new AttachmentColumnRO());
+                    this._columnsRoCollection = columnsROCollection;
                 }
+
                 return this._columnsRoCollection;
             },
-            getColumnsCardROCollection: function () {
-                if (this._columnsCardRoCollection !== null) {
-                    return this._columnsCardRoCollection;
+            /**
+             *
+             * @returns {ColumnsROCollection}
+             * @private
+             */
+            _getColumnsCardROCollection: function () {
+                if (this._columnsCardRoCollection === null) {
+                    var columnsCollection = this._getColumnsCollection(),
+                        columnsROCollection = new ColumnsROCollection();
+
+                    columnsCollection.each(
+                        /** @param {ColumnProperties} model */
+                            function (model) {
+                            var columnRO = ColumnsRoFactory.make(model);
+                            if (columnRO.isVisibleInCard()) {
+                                columnsROCollection.push(columnRO);
+                            }
+                        });
+                    this._columnsCardRoCollection = columnsROCollection;
                 }
-                var columnsCollection = this._getColumnsCollection(),
-                    columnsROCollection = new ColumnsROCollection();
-                columnsCollection.each(function (item) {
-                    var columnRO = ColumnsRoFactory.make(item);
-                    if (columnRO.isVisibleInCard()) {
-                        columnsROCollection.push(columnRO);
-                    }
-                });
-                this._columnsCardRoCollection = columnsROCollection;
+
                 return this._columnsCardRoCollection;
             },
             isAttachmentSupport: function () {
-                return interpreterModule.parseBooleanExpression(this.getDataFormProperties().getAttachmentsSupport(), false);
+                return interpreterModule.parseBooleanExpression(this._getDataFormProperties().getAttachmentsSupport(), false);
             },
             /**
              *
              * @returns {String}
              */
             getEntityTypeID: function () {
-                return this.getDataFormProperties().getAttachmentsEntityType();
+                return this._getDataFormProperties().getAttachmentsEntityType();
             },
             getParentEntityTypeID: function () {
                 var parentModel = this.get('parentModel');
@@ -864,7 +934,7 @@ var FormModel = (function () {
                 if (mainSql) {
                     sql = mainSql;
                 } else {
-                    sql = this.getDataFormProperties().getReadProc();
+                    sql = this._getDataFormProperties().getReadProc();
                 }
                 return bindModule.runAsyncTaskBindSql(sql, data);
             },
