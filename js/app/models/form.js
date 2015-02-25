@@ -181,7 +181,7 @@ var FormModel = (function () {
              */
             _getAllColumnsROCollection: function () {
                 if (this._allColumnsRoCollection === null) {
-                    var columnsCollection = this.getColumnsCollection(),
+                    var columnsCollection = this._getColumnsCollection(),
                         columnsROCollection = new ColumnsROCollection();
 
                     columnsCollection.each(
@@ -262,7 +262,7 @@ var FormModel = (function () {
              * @returns {boolean}
              */
             isSearchColumnVisible: function () {
-                return this.getColumnsCollection().length > 10 && !this.isCanvasView() && !this.isMapView();
+                return this._getColumnsCollection().length > 10 && !this.isCanvasView() && !this.isMapView();
             },
             /**
              *
@@ -319,90 +319,120 @@ var FormModel = (function () {
                 return sql;
             },
             /**
+             *
+             * @param {Object} data
+             * @returns {Object}
+             * @private
+             */
+            _getDataToBind: function (data) {
+                return $.extend({}, this.getParamsForBind(), data);
+            },
+            /**
+             * @public
              * @param {Object} data
              * @returns {Deferred}
              */
             runAsyncTaskBindInsProc: function (data) {
-                var extendedData = $.extend({}, this.getParamsForBind(), data),
+                var extendedData = this._getDataToBind(data),
                     sql = this._getCreateProc();
-                return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
-            },
-            deferUpdateProc: function (data) {
-                var extendedData = $.extend({}, this.getParamsForBind(), data),
-                    sql = this._getUpdateProc();
-                return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
-            },
-            deferDeleteProc: function (data) {
-                var extendedData = $.extend({}, this.getParamsForBind(), data),
-                    sql = this._getDeleteProc();
                 return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
             },
             /**
              *
              * @param {Object} data
+             * @returns {Deferred}
+             * @private
+             */
+            _runAsyncTaskBindUpdateProc: function (data) {
+                var extendedData = this._getDataToBind(data),
+                    sql = this._getUpdateProc();
+                return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
+            },
+            /**
+             *
+             * @param {Object} data
+             * @returns {Deferred}
+             * @private
+             */
+            _runAsyncTaskDeleteProc: function (data) {
+                var extendedData = this._getDataToBind(data),
+                    sql = this._getDeleteProc();
+                return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
+            },
+            /**
+             * @public
+             * @param {Object} changedData
              * @param {Object} [deletedData]
              * @returns {Deferred}
              */
-            runAsyncTaskSave: function (data, deletedData) {
-                var deferredTasks = [],
-                    mainDefer = deferredModule.create(),
+            runAsyncTaskSave: function (changedData, deletedData) {
+                var asyncTasks = [],
+                    mainTask = deferredModule.create(),
                     i,
                     sqlList = [],
                     hasOwn = Object.prototype.hasOwnProperty,
-                    paramsForBind = this.getParamsForBind(),
-                    defer,
+                    task,
                     currentData,
                     extendedData;
-                if (data) {
-                    for (i in data) {
-                        if (hasOwn.call(data, i)) {
-                            var sql;
-                            currentData = data[i];
-                            extendedData = $.extend({}, paramsForBind, currentData);
+
+                if (changedData) {
+                    for (i in changedData) {
+                        if (hasOwn.call(changedData, i)) {
+                            currentData = changedData[i];
+                            extendedData = this._getDataToBind(currentData);
                             if (helpersModule.isNewRow(currentData.id)) {
-                                defer = this.runAsyncTaskBindInsProc(extendedData);
+                                task = this.runAsyncTaskBindInsProc(extendedData);
                             } else {
-                                defer = this.deferUpdateProc(extendedData);
+                                task = this._runAsyncTaskBindUpdateProc(extendedData);
                             }
-                            deferredTasks.push(defer);
-                            defer
-                                .done(function (res) {
+                            asyncTasks.push(task);
+                            task
+                                .done(
+                                /** @param {SqlBindingResponse} res */
+                                    function (res) {
                                     sqlList.push(res.sql);
+                                })
+                                .fail(function (error) {
+                                    mediator.publish(optionsModule.getChannel('logError'), error);
                                 });
                         }
                     }
                 }
+
                 if (deletedData) {
                     var deletedID;
                     for (deletedID in deletedData) {
                         if (hasOwn.call(deletedData, deletedID)) {
-                            currentData = {id: deletedID};
-                            extendedData = $.extend({}, paramsForBind, currentData);
-                            defer = this.deferDeleteProc(extendedData);
-                            deferredTasks.push(defer);
-                            defer
-                                .done(function (res) {
+                            extendedData = this._getDataToBind({id: deletedID});
+                            task = this._runAsyncTaskDeleteProc(extendedData);
+                            asyncTasks.push(task);
+                            task
+                                .done(
+                                /** @param {SqlBindingResponse} res */
+                                    function (res) {
                                     sqlList.push(res.sql);
+                                })
+                                .fail(function (error) {
+                                    mediator.publish(optionsModule.getChannel('logError'), error);
                                 });
                         }
                     }
                 }
-                var mainDeferID = deferredModule.save(mainDefer);
-                $.when.apply($, deferredTasks)
+                $.when.apply($, asyncTasks)
                     .done(function () {
                         mediator.publish(optionsModule.getChannel('socketMultiplyExec'), {
                             sqlList: sqlList,
                             type: optionsModule.getRequestType('deferred'),
-                            id: mainDeferID
+                            id: deferredModule.save(mainTask)
                         });
                     })
                     .fail(function (error) {
-                        mainDefer.reject(error);
+                        mainTask.reject(error);
                     });
-                return mainDefer;
+                return mainTask;
             },
             /**
-             *
+             * @public
              * @param {string} sql
              * @returns {Deferred}
              */
@@ -416,31 +446,37 @@ var FormModel = (function () {
                 return asyncTask;
             },
             /**
-             *
+             * @public
              * @returns {boolean}
              */
             isSupportCreateEmpty: function () {
                 return this._getCreateEmptyProc() ? true : false;
             },
             /**
+             * @public
              * @returns {boolean}
              */
             isAutoOpenCard: function () {
-                return interpreterModule.parseBooleanExpression(this.getCardCollection().getAutoOpen(), false);
+                return interpreterModule.parseBooleanExpression(
+                    this.getCardCollection().getAutoOpen(), false
+                );
             },
             /**
+             * @public
              * @returns {boolean}
              */
             isAllowCreate: function () {
                 return this.isAllowWrite() && interpreterModule.parseBooleanExpression(this.getDataFormProperties().getAllowAddNew(), false);
             },
             /**
+             * @public
              * @returns {boolean}
              */
             isAllowSave: function () {
                 return this.isAllowWrite() && interpreterModule.parseBooleanExpression(this.getDataFormProperties().getSaveButtonVisible(), false);
             },
             /**
+             * @public
              * @returns {boolean}
              */
             isAllowRefresh: function () {
@@ -448,11 +484,16 @@ var FormModel = (function () {
             },
             /**
              *
+             * @public
              * @returns {boolean}
              */
             isAllowPrintActions: function () {
                 return this.getPrintActions().length > 0;
             },
+            /**
+             * @public
+             * @returns {String}
+             */
             getKey: function () {
                 return this.getDataFormProperties().getKey();
             },
@@ -462,31 +503,36 @@ var FormModel = (function () {
             getView: function () {
                 return this.getKey() + '.xml';
             },
+            /**
+             * @public
+             * @returns {boolean}
+             */
             isCanvasView: function () {
                 return this.getKey() === 'sales\\flatsgramm';
             },
             /**
-             *
+             * @public
              * @returns {boolean}
              */
             isMapView: function () {
                 return this.getKey() === 'crm\\map';
             },
             /**
-             *
+             * @public
              * @returns {boolean}
              */
             isAttachmentView: function () {
                 return this.getKey() === 'attachmentstasks';
             },
             /**
-             *
+             * @public
              * @returns {boolean}
              */
             isDiscussionView: function () {
                 return this.getKey() === 'directory\\discussions';
             },
             /**
+             * @public
              * @returns {boolean}
              */
             parentModelIsNotSaved: function () {
@@ -511,6 +557,7 @@ var FormModel = (function () {
                 }
             },
             /**
+             * @public
              * @desc Create instance of AbstractView
              * @param {jQuery} $el
              * @param {FormView} view
@@ -527,30 +574,35 @@ var FormModel = (function () {
             /**
              *
              * @returns {jQuery|null}
+             * @private
              */
-            getXml: function () {
+            _getXml: function () {
                 return this.get('$xml')
             },
-            getColumnsCollection: function () {
-                if (this._columnsCollection) {
-                    return this._columnsCollection;
-                }
-                var columns = [],
-                    $xml = this.getXml();
-                if ($xml) {
-                    var $gridLayout = $xml.find('GridLayoutXml'),
-                        $columns = $($.parseXML($.trim($gridLayout.text()))),
-                        $gridProperties = $columns.find('GridProperties');
-                    $columns.find('Column').each(function () {
-                        columns.push(new ColumnProperties({
-                                $obj: $(this)
-                            }
-                        ));
-                    });
-                    this._columnsCollection = new ColumnsPropertiesCollection(columns, {
-                        $obj: $gridProperties
-                    });
+            /**
+             *
+             * @returns {ColumnsPropertiesCollection}
+             * @private
+             */
+            _getColumnsCollection: function () {
+                if (this._columnsCollection === null) {
+                    var columns = [],
+                        $xml = this._getXml();
+                    if ($xml) {
+                        var $gridLayout = $xml.find('GridLayoutXml'),
+                            $columns = $($.parseXML($.trim($gridLayout.text()))),
+                            $gridProperties = $columns.find('GridProperties');
+                        $columns.find('Column').each(function () {
+                            columns.push(new ColumnProperties({
+                                    $obj: $(this)
+                                }
+                            ));
+                        });
+                        this._columnsCollection = new ColumnsPropertiesCollection(columns, {
+                            $obj: $gridProperties
+                        });
 
+                    }
                 }
                 return this._columnsCollection;
             },
@@ -741,7 +793,7 @@ var FormModel = (function () {
                 if (this._columnsRoCollection !== null) {
                     return this._columnsRoCollection;
                 }
-                var columnsCollection = this.getColumnsCollection(),
+                var columnsCollection = this._getColumnsCollection(),
                     columnsROCollection = new ColumnsROCollection();
                 columnsCollection.each(function (item) {
                     var columnRO = ColumnsRoFactory.make(item);
@@ -759,7 +811,7 @@ var FormModel = (function () {
                 if (this._columnsCardRoCollection !== null) {
                     return this._columnsCardRoCollection;
                 }
-                var columnsCollection = this.getColumnsCollection(),
+                var columnsCollection = this._getColumnsCollection(),
                     columnsROCollection = new ColumnsROCollection();
                 columnsCollection.each(function (item) {
                     var columnRO = ColumnsRoFactory.make(item);
@@ -823,7 +875,7 @@ var FormModel = (function () {
             getPreview: function () {
                 if (this._preview === null) {
                     var preview = {};
-                    this.getColumnsCollection().each(function (column) {
+                    this._getColumnsCollection().each(function (column) {
                         if (interpreterModule.parseBooleanExpression(column.getShowInRowDisplay())) {
                             preview[column.getKey()] = {
                                 caption: column.getCaption(),
@@ -843,14 +895,14 @@ var FormModel = (function () {
              * @returns {String}
              */
             getKeyColorColumnName: function () {
-                return this.getColumnsCollection().getRowColorColumnName();
+                return this._getColumnsCollection().getRowColorColumnName();
             },
             /**
              *
              * @returns {String}
              */
             getColorColumnName: function () {
-                return this.getColumnsCollection().getRowColorColumnNameAlternate();
+                return this._getColumnsCollection().getRowColorColumnNameAlternate();
             },
             /**
              * @returns {Object}
