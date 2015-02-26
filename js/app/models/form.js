@@ -493,7 +493,7 @@ var FormModel = (function () {
              * @returns {boolean}
              */
             isAllowRefresh: function () {
-                return interpreterModule.parseBooleanExpression(this._getDataFormProperties().getRefreshButtonVisible(), false);
+                return interpreterModule.parseBooleanExpression(this._getDataFormProperties().getRefreshButtonVisible(), false) && this.isAllowInitRefresh();
             },
             /**
              *
@@ -543,6 +543,14 @@ var FormModel = (function () {
              */
             isDiscussionView: function () {
                 return this.getKey() === 'directory\\discussions';
+            },
+            /**
+             * @public
+             * @returns {boolean}
+             */
+            isAllowInitRefresh: function(){
+                var parentID = this.get('parentId');
+                return!parentID || !helpersModule.isNewRow(parentID);
             },
             /**
              * @public

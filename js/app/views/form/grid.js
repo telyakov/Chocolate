@@ -822,9 +822,10 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     tableID: helpersModule.uniqueID()
                 }));
 
-                this
-                    ._initTableScripts()
-                    ._runAsyncRefreshFormTask(true);
+                this._initTableScripts();
+                if(model.isAllowInitRefresh()){
+                    this._runAsyncRefreshFormTask(true);
+                }
             },
             /**
              * @desc Destroy Context Menu Widget for table headers

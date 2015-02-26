@@ -434,83 +434,90 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                     card = view.getCard(),
                     _this = this,
                     columnSql;
-                helpersModule.waitLoading(this.getJqueryTbody());
-                this.clearSelectedArea();
+
                 if (card) {
                     columnSql = card.getColumn().getSql();
                 }
-                model
-                    .runAsyncTaskBindingReadProc(view.getFilterData(), columnSql)
-                    .done(
-                    /** @param {SqlBindingResponse} data */
-                        function (data) {
-                        var sql = data.sql,
-                            refreshAsyncTask = deferredModule.create();
 
-                        mediator.publish(optionsModule.getChannel('socketRequest'), {
-                            query: sql,
-                            type: optionsModule.getRequestType('chFormRefresh'),
-                            id: deferredModule.save(refreshAsyncTask)
-                        });
+                if (isApplyJs) {
+                    _this._initTableScripts();
+                }
 
-                        if (isApplyJs) {
-                            _this._initTableScripts();
-                        }
+                if(model.isAllowInitRefresh()){
+                    helpersModule.waitLoading(this.getJqueryTbody());
+                    this.clearSelectedArea();
+                    model
+                        .runAsyncTaskBindingReadProc(view.getFilterData(), columnSql)
+                        .done(
+                        /** @param {SqlBindingResponse} data */
+                            function (data) {
+                            var sql = data.sql,
+                                refreshAsyncTask = deferredModule.create();
 
-                        refreshAsyncTask
-                            .done(
-                            /** @param {RecordsetDTO} data */
-                                function (data) {
-                                var recordset = data.data,
-                                    order = data.order;
-                                model.persistData(recordset, order);
-                                var files = [];
-                                order.forEach(function (key) {
-                                    files.push(recordset[key]);
-                                });
-                                var content = window
-                                    .tmpl('template-download', {files: files});
-                                _this.getJqueryTbody()
-                                    .html(content)
-                                    .trigger('update');
-                                _this
-                                    .setRowCount(Object.keys(recordset).length)
-                                    .markAsNoChanged();
-                                if (opts && opts.afterSave) {
-                                    _this.showMessage({
-                                        id: 1,
-                                        msg: optionsModule.getMessage('successSave')
-                                    });
-                                } else if (!isApplyJs) {
-                                    _this.showMessage({
-                                        id: 1,
-                                        msg: optionsModule.getMessage('successRefresh')
-                                    });
-                                }
-                                if (previousActiveID) {
-                                    var $row = _this.getJqueryRow(previousActiveID);
-                                    if ($row.length) {
-                                        _this.selectRow($row, false, false);
-                                    }
-                                }
-                            })
-                            .fail(
-                            /** @param {string} error */
-                                function (error) {
-                                _this.showMessage({
-                                    id: 3,
-                                    msg: error
-                                });
+                            mediator.publish(optionsModule.getChannel('socketRequest'), {
+                                query: sql,
+                                type: optionsModule.getRequestType('chFormRefresh'),
+                                id: deferredModule.save(refreshAsyncTask)
                             });
-                    })
-                    .fail(
-                    /** @param {string} error */
-                        function (error) {
-                        _this.showMessage({
-                            id: 3,
-                            msg: error
+
+
+
+                            refreshAsyncTask
+                                .done(
+                                /** @param {RecordsetDTO} data */
+                                    function (data) {
+                                    var recordset = data.data,
+                                        order = data.order;
+                                    model.persistData(recordset, order);
+                                    var files = [];
+                                    order.forEach(function (key) {
+                                        files.push(recordset[key]);
+                                    });
+                                    var content = window
+                                        .tmpl('template-download', {files: files});
+                                    _this.getJqueryTbody()
+                                        .html(content)
+                                        .trigger('update');
+                                    _this
+                                        .setRowCount(Object.keys(recordset).length)
+                                        .markAsNoChanged();
+                                    if (opts && opts.afterSave) {
+                                        _this.showMessage({
+                                            id: 1,
+                                            msg: optionsModule.getMessage('successSave')
+                                        });
+                                    } else if (!isApplyJs) {
+                                        _this.showMessage({
+                                            id: 1,
+                                            msg: optionsModule.getMessage('successRefresh')
+                                        });
+                                    }
+                                    if (previousActiveID) {
+                                        var $row = _this.getJqueryRow(previousActiveID);
+                                        if ($row.length) {
+                                            _this.selectRow($row, false, false);
+                                        }
+                                    }
+                                })
+                                .fail(
+                                /** @param {string} error */
+                                    function (error) {
+                                    _this.showMessage({
+                                        id: 3,
+                                        msg: error
+                                    });
+                                });
+                        })
+                        .fail(
+                        /** @param {string} error */
+                            function (error) {
+                            _this.showMessage({
+                                id: 3,
+                                msg: error
+                            });
                         });
-                    });
+                }
+
             },
             /**
              * @desc Initialize all attachments table scripts
