@@ -1222,7 +1222,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         '<td class="grid-menu"><span class="card-button" data-id="card-button" title="Открыть карточку"></span>'
                     ],
                     key,
-                    thList = this.getTh();
+                    thList = this.getJqueryFloatHeadTable().children('thead').children('tr').eq(0).find('th');
                 columns.forEach(
                     /** @param {ColumnRO} item */
                         function (item) {
