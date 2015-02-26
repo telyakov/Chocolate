@@ -994,14 +994,14 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
              * @private
              */
             _runAsyncRefreshFormTask: function (isFirstInit, afterSave) {
-                this.clearSelectedArea();
-                helpersModule.waitLoading(this.getJqueryTbody());
                 var previousActiveID = this.getActiveRowID(),
                     _this = this,
                     model = this.getModel(),
                     view = this.view,
                     card = view.getCard(),
                     cardSql;
+                this.clearSelectedArea();
+                helpersModule.waitLoading(this.getJqueryTbody());
                 if (card) {
                     cardSql = card.get('column').getSql();
                 }

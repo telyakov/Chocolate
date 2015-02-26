@@ -427,14 +427,15 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
              * @private
              */
             _makeRefresh: function (isApplyJs, opts) {
-                this.clearSelectedArea();
-                helpersModule.waitLoading(this.getJqueryTbody());
+
                 var previousActiveID = this.getActiveRowID(),
                     model = this.getModel(),
                     view = this.getView(),
                     card = view.getCard(),
                     _this = this,
                     columnSql;
+                helpersModule.waitLoading(this.getJqueryTbody());
+                this.clearSelectedArea();
                 if (card) {
                     columnSql = card.getColumn().getSql();
                 }
