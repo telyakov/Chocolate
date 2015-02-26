@@ -28,7 +28,7 @@ var FormModel = (function () {
             _columnsCardRoCollection: null,
             _preview: null,
             _requiredFields: null,
-            _openedCards: [],
+            _openedCards: {},
             _openedForms: {},
             /**
              * @public
@@ -133,9 +133,13 @@ var FormModel = (function () {
                 }
                 delete this._openedForms;
 
-                this._openedCards.forEach(function (model) {
-                    model.destroy();
-                });
+
+
+                for (var k in this._openedCards) {
+                    if (this._openedCards.hasOwnProperty(k)) {
+                        this._openedCards[k].destroy();
+                    }
+                }
                 delete this._openedCards;
                 storageModule.removeFromSession(this.cid);
             },

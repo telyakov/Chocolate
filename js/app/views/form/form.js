@@ -97,7 +97,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 delete this.$el; // Delete the jQuery wrapped object variable
                 delete this.el; // Delete the variable reference to this node
                 this.events = null;
-                facade.getTabsModule().close(this.$closeLink.prev('a'));
+                facade.getTabsModule().close(this.$closeLink.children('a'));
                 this.$closeLink = null;
             },
             /**
@@ -123,9 +123,9 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
              * @method setWindowActive
              */
             setWindowActive: function () {
-                var $a = this.$closeLink.prev('a');
+                var _this = this;
                 helpersModule.getTabsObj().tabs({
-                    active: tabsModule.getIndex($a)
+                    active: tabsModule.getIndex(_this.$closeLink)
                 });
             },
             /**
