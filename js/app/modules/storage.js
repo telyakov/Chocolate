@@ -145,6 +145,9 @@ var storageModule = (function (undefined, optionsModule) {
                 return data[attr];
             },
             persistSetting: function (key, attr, val) {
+                if(_private.getSettings()[key] === undefined){
+                    _private.getSettings()[key] = {};
+                }
                 _private.getSettings()[key][attr] = val;
             },
             getApplicationSettings: function () {

@@ -1058,7 +1058,7 @@ var FormModel = (function () {
              */
             isSystemColumnsMode: function () {
                 var key = this.getView();
-                if (storageModule.hasSetting(key, 'globalStyle')) {
+                if (storageModule.hasSetting(key, 'systemVisibleMode')) {
                     return storageModule.getSettingByKey(key, 'systemVisibleMode');
                 } else {
                     return false;
