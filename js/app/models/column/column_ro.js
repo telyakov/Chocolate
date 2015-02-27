@@ -205,7 +205,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @returns {boolean}
              */
             isAllowEdit: function (view, pk) {
-                var data = view.model.getDBDataFromStorage(pk),
+                var data = view.model.getActualDataFromStorage(pk),
                     isAllowEdit = false,
                     allowEditLC = this.getRawAllowEdit().toLowerCase();
                 if (allowEditLC.indexOf('|') !== -1 || allowEditLC.indexOf('editable') !== -1 || allowEditLC.indexOf('role') !== -1) {
