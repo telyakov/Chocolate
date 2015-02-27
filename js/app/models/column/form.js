@@ -58,7 +58,7 @@ var FormColumnRO = (function () {
                             disabled: true,
                             type: 'text',
                             title: _this.getVisibleCaption(),
-                            view: _this.getView(),
+                            view: helpersModule.getCorrectXmlName(_this.getView()),
                             fromID: _this.getFromId(),
                             fromName: _this.getFromName(),
                             toName: _this.getToName(),
