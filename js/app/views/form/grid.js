@@ -290,17 +290,22 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                                 cardView.destroy();
 
                                 var changedCard = [];
-                                model.getAllOpenedCard().forEach(
-                                    /**
-                                     * @param {CardView} view
-                                     */
-                                        function (view) {
+                                var allOpenedCard = model.getAllOpenedCard();
+                                for(var i in allOpenedCard){
+                                    if(allOpenedCard.hasOwnProperty(i)){
+                                        /**
+                                         *
+                                         * @type {CardView}
+                                         */
+                                        var view = allOpenedCard[i];
                                         if (view.isChanged()) {
                                             changedCard.push(view);
                                         } else {
                                             view.destroy();
                                         }
-                                    });
+                                    }
+                                }
+
                                 if (changedCard.length) {
                                     changedCard.shift().setWindowActive();
                                 } else {

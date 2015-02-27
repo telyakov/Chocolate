@@ -29,37 +29,37 @@ var DataFormProperties = (function (Backbone) {
              * @returns {String}
              */
             getReadProc: function () {
-                return this._getJqueryObj().children('readProc').text();
+                return $.trim(this._getJqueryObj().children('readProc').text());
             },
             /**
              * @returns {String}
              */
             getDeleteProc: function () {
-                return this._getJqueryObj().children('deleteProc').text();
+                return $.trim(this._getJqueryObj().children('deleteProc').text());
             },
             /**
              * @returns {String}
              */
             getUpdateProc: function () {
-                return this._getJqueryObj().children('updateProc').text();
+                return $.trim(this._getJqueryObj().children('updateProc').text());
             },
             /**
              * @returns {String}
              */
             getCreateProc: function () {
-                return this._getJqueryObj().children('createProc').text();
+                return $.trim(this._getJqueryObj().children('createProc').text());
             },
             /**
              * @returns {String}
              */
             getCreateEmptyProc: function () {
-                return this._getJqueryObj().children('createEmptyProc').text();
+                return $.trim(this._getJqueryObj().children('createEmptyProc').text());
             },
             /**
              * @returns {String}
              */
             getValidationProc: function () {
-                return this._getJqueryObj().children('validationProc').text();
+                return $.trim(this._getJqueryObj().children('validationProc').text());
             },
             /**
              * @returns {String}
