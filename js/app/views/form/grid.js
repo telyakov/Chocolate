@@ -303,7 +303,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                                     });
                                 if (changedCard.length) {
                                     changedCard.shift().setWindowActive();
-                                }else{
+                                } else {
                                     _this.refresh();
                                 }
                             })
@@ -814,8 +814,9 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 newColumns.forEach(function (item) {
                     rows.push(item);
                 });
-                model.persistColumnsSettings(setting);
-
+                if (!hasSetting) {
+                    model.persistColumnsSettings(setting);
+                }
                 this.getJqueryForm().append(this.gridTemplate({
                     userGridID: userGridID,
                     rows: rows,
@@ -823,7 +824,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 }));
 
                 this._initTableScripts();
-                if(model.isAllowInitRefresh()){
+                if (model.isAllowInitRefresh()) {
                     this._runAsyncRefreshFormTask(true);
                 }
             },

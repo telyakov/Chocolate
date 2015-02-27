@@ -252,13 +252,6 @@ var storageModule = (function (undefined, optionsModule) {
         },
         /**
          *
-         * @returns {Object}
-         */
-        getLocal: function () {
-            return _private.getLocal();
-        },
-        /**
-         *
          * @returns {ObjectStorage}
          */
         getStorage: function () {

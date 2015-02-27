@@ -567,7 +567,6 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                     model = this.getModel(),
                     settings = [],
                     defaultWidth = optionsModule.getSetting('defaultColumnsWidth');
-
                 if (model.hasSettings()) {
                     var $tr = this.getThead().children('tr'),
                         $trSorted = $('<tr></tr>'),
