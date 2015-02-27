@@ -61,6 +61,7 @@ var CheckBoxColumnRO = (function (helpersModule) {
                 return function ($cnt, view, defer) {
                     _this._persistLinkToContext($cnt);
                     var selector = '.' + _this._getUniqueClass();
+                    $cnt.off('click', selector);
                     $cnt.on('click', selector, function checkBoxClick() {
                         var $this = $(this),
                             pk = $this.attr('data-pk');
