@@ -351,6 +351,7 @@ var FormModel = (function () {
             runAsyncTaskBindInsProc: function (data) {
                 var extendedData = this._getDataToBind(data),
                     sql = this._getCreateProc();
+                delete extendedData.id;
                 return bindModule.runAsyncTaskBindSql(sql, extendedData, true);
             },
             /**
