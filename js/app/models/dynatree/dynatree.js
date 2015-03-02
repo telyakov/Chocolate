@@ -497,6 +497,7 @@ var DynatreeModel = (function (Backbone, undefined, helpersModule) {
                         node.select(true);
                         node.activate();
                         node.focus();
+                        $search.focus();
                         var parent = node,
                             $li = $(node.li);
                         do {
