@@ -51,7 +51,7 @@ var SelectCardElement = (function ($, helpersModule, CardElement) {
                 var _this = this,
                     column = _this.get('column');
                 return function () {
-                    column.startAsyncTaskGetData()
+                    column.startAsyncTaskGetData({id: pk})
                         .done(function (res) {
                             var data = helpersModule.prepareSelectSource(res.data),
                                 $el = $('#' + controlID),
