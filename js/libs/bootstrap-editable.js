@@ -4833,7 +4833,7 @@
 
 //                inside = /in/.test(placement);
 
-                this.tip().css({top: '', left: ''}).draggable();
+                this.tip().css({top: '', left: ''});
                 //  .detach()
                 //vitalets: remove any placement class because otherwise they dont influence on re-positioning of visible popover
 //                    .removeClass('top right bottom left')

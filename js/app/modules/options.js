@@ -91,7 +91,7 @@ var optionsModule = (function () {
         urls = {
             bp: 'bp.78stroy.ru',
             openFromEmail: '/grid/searchbyid',
-            webSocketServer: 'http://crm.78stroy.ru',
+            webSocketServer: location.origin,
             imagesUrls: '/majestic/images',
             bpOneTask: 'http://bp.78stroy.ru/grid/searchByID?view=tasks%5Ctasksfortops.xml&id='
         },
