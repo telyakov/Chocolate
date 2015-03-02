@@ -8,8 +8,8 @@ var CardView = (function (Backbone, $, helpersModule, optionsModule, imageAdapte
                     'keydown .card-input a': '_moveToNextElement',
                     'click .tab-menu-link': '_openMenu',
                     'click .card-cancel': '_cancel',
-                    'click .card-menu-save': $.debounce(1500, true, this.save),
-                    'click .card-save': $.debounce(1500, true, this.save)
+                    'click .card-menu-save': $.debounce(4000, true, this.save),
+                    'click .card-save': $.debounce(4000, true, this.save)
                 };
             },
             buttonsTemplate: _.template([
