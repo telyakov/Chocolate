@@ -27,8 +27,6 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
             refresh: function (collection) {
                 var _this = this,
                     $filter = $('#' + _this.getViewId());
-                helpersModule.waitLoading($filter);
-
                 var event = 'event' + helpersModule.uniqueID();
                 this.render(event, 0, collection);
                 $.subscribe(event, function (e, data) {
