@@ -399,11 +399,7 @@ var CanvasView = (function (undefined, helpersModule, deferredModule, optionsMod
              */
             _refreshDone: function (data) {
                 this
-                    ._layout(this._prepareData(data))
-                    .showMessage({
-                        id: 1,
-                        msg: optionsModule.getMessage('successRefresh')
-                    });
+                    ._layout(this._prepareData(data));
             }
         });
 })(undefined, helpersModule, deferredModule, optionsModule, Math);

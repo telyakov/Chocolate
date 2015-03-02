@@ -486,11 +486,6 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                             id: 1,
                                             msg: optionsModule.getMessage('successSave')
                                         });
-                                    } else if (!isApplyJs) {
-                                        _this.showMessage({
-                                            id: 1,
-                                            msg: optionsModule.getMessage('successRefresh')
-                                        });
                                     }
                                     if (previousActiveID) {
                                         var $row = _this.getJqueryRow(previousActiveID);

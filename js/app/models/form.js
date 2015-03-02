@@ -134,7 +134,6 @@ var FormModel = (function () {
                 delete this._openedForms;
 
 
-
                 for (var k in this._openedCards) {
                     if (this._openedCards.hasOwnProperty(k)) {
                         this._openedCards[k].destroy();
@@ -552,9 +551,9 @@ var FormModel = (function () {
              * @public
              * @returns {boolean}
              */
-            isAllowInitRefresh: function(){
+            isAllowInitRefresh: function () {
                 var parentID = this.get('parentId');
-                return!parentID || !helpersModule.isNewRow(parentID);
+                return !parentID || !helpersModule.isNewRow(parentID);
             },
             /**
              * @public
@@ -744,15 +743,17 @@ var FormModel = (function () {
                 if (this._cardROCollection === null) {
                     var collection = new CardROCollection();
 
-                    this._getCardCollection().each(function (card) {
-                        var cardRO = new CardRO({
-                            card: card,
-                            key: card.getKey()
+                    this._getCardCollection().each(
+                        /** @param {Card} model */
+                            function (model) {
+                            var cardRO = new CardRO({
+                                card: model,
+                                key: model.getKey()
+                            });
+                            if (cardRO.isVisible()) {
+                                collection.push(cardRO);
+                            }
                         });
-                        if (cardRO.isVisible()) {
-                            collection.push(cardRO);
-                        }
-                    });
                     this._cardROCollection = collection;
                 }
 

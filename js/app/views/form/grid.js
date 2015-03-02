@@ -1147,16 +1147,13 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                             }
                         }
                         if (!isFirstInit) {
-                            var msg;
                             if (afterSave) {
-                                msg = optionsModule.getMessage('successSave');
-                            } else {
-                                msg = optionsModule.getMessage('successRefresh');
+                                _this.showMessage({
+                                    id: 1,
+                                    msg: optionsModule.getMessage('successSave')
+                                });
                             }
-                            _this.showMessage({
-                                id: 1,
-                                msg: msg
-                            });
+
                         }
                     })
                     .fail(

@@ -103,7 +103,6 @@ var optionsModule = (function () {
                 refreshForm: 'Сохранить изменения?',
                 Yes: 'Да',
                 successSave: 'Данные сохранены.',
-                successRefresh: 'Данные обновлены.',
                 No: 'Нет',
                 Cancel: 'Отмена',
                 Delete: 'Удалить',
