@@ -142,13 +142,21 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @returns {Number|String}
              */
             getCardWidth: function () {
-                return interpreterModule.parseIntExpression(this._getColumnProperties().getCardWidth());
+                var width = interpreterModule.parseIntExpression(this._getColumnProperties().getCardWidth());
+                if(width === ''){
+                    return 1;
+                }
+                return  width;
             },
             /**
              * @returns {Number|String}
              */
             getCardHeight: function () {
-                return interpreterModule.parseIntExpression(this._getColumnProperties().getCardHeight());
+                var height = interpreterModule.parseIntExpression(this._getColumnProperties().getCardHeight());
+                if(height === ''){
+                    return 1;
+                }
+                return height;
             },
             /**
              * @returns {String}
