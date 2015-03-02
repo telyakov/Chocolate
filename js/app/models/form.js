@@ -925,6 +925,11 @@ var FormModel = (function () {
                     return null;
                 }
             },
+            /**
+             *
+             * @param {String} [pk]
+             * @returns {Object}
+             */
             getParamsForBind: function (pk) {
                 return {
                     entityid: pk ? pk : this.get('parentId'),

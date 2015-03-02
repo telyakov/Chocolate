@@ -37,8 +37,8 @@ var SelectColumnRO = (function (Backbone, helpersModule) {
 
                 return function ($cnt, view, defer) {
                     //todo: fix leak memory - destroy view
-
-                    _this.startAsyncTaskGetData()
+                    var dataModel = view.model;
+                    _this.startAsyncTaskGetData(dataModel.getParamsForBind())
                         .done(function (res) {
                             var data = helpersModule.prepareSelectSource(res.data);
                             var $editableElements = $cnt.find('.' + _this._getUniqueClass());

@@ -48,7 +48,9 @@ var TreeColumnRO = (function (helpersModule, undefined) {
             getJsFn: function () {
                 var _this = this;
                 return function ($cnt, viewProperty, defer) {
-                    _this.startAsyncTaskGetData()
+
+                    var dataModel = viewProperty.model;
+                    _this.startAsyncTaskGetData(dataModel.getParamsForBind())
                         .done(function (res) {
                             _this._persistLinkToContext($cnt);
                             var data = helpersModule.prepareTreeSource(res.data),
@@ -66,7 +68,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                         }),
                                         view = new FormDynatreeView({
                                             model: model,
-                                            dataModel: viewProperty.model
+                                            dataModel: dataModel
                                         });
                                     view.render(_this.isSingle(), _this.getModalTitle(pk), _this.get('key'), pk);
                                 }
@@ -80,7 +82,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                 $this
                                     .on('init', function treeInit() {
                                         var dataKey = _this.getFromKey(),
-                                            dbData = viewProperty.model.getDBDataFromStorage(pk);
+                                            dbData = dataModel.getDBDataFromStorage(pk);
                                         if (dbData !== undefined) {
                                             $this.html(dbData[dataKey]);
                                         }
