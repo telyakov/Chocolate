@@ -344,7 +344,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @returns {Boolean}
              */
             isVisible: function () {
-                return this._isVisibleInAllField() || interpreterModule.parseBooleanExpression(this._getColumnProperties().getVisible(), false);
+                return this._isVisibleInAllField() || interpreterModule.parseBooleanExpression(this._getColumnProperties().getVisible(), true);
             },
             /**
              * @returns {Boolean}
