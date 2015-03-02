@@ -101,6 +101,9 @@ var DynatreeModel = (function (Backbone, undefined, helpersModule) {
                     };
 
                 }
+                options.onDblClick = function(node, event){
+                    node.select(!node.isSelected());
+                };
                 $tree.dynatree(options);
                 if (this._isExpandNodes()) {
                     $tree.dynatree("getRoot").visit(function (node) {
