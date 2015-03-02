@@ -102,7 +102,7 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @returns {Deferred}
              */
             runAsyncTaskIsNextRow: function () {
-                return interpreterModule.runAsyncParseBooleanExpression(this.get('filter').getToNextRow(), true);
+                return interpreterModule.runAsyncParseBooleanExpression(this.get('filter').getToNextRow(), false);
             },
             /**
              *
