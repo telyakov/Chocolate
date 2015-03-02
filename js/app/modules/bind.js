@@ -106,10 +106,13 @@ var bindModule = (function (userModule, undefined, deferredModule, optionsModule
             },
             /**
              *
-             * @param {String} str
+             * @param {String|Number} str
              * @returns {String}
              */
             escapeQuotes: function (str) {
+                if(typeof str === 'number'){
+                    return str;
+                }
                 return  str.replace(/'/g, '\'\'');
             },
             /**
