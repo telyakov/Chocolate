@@ -306,18 +306,27 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                         }));
                         var stateProcedure = model.getStateProc();
                         if (stateProcedure) {
-                            var asyncTask = deferredModule.create();
-                            mediator.publish(optionsModule.getChannel('socketRequest'), {
-                                query: stateProcedure,
-                                type: optionsModule.getRequestType('deferred'),
-                                id: deferredModule.save(asyncTask)
-                            });
-                            asyncTask
-                                .done(function (res) {
-                                    var html = helpersModule.getFirstValue(res.data);
-                                    $('#' + asyncId).html(html);
-                                    mediator.publish(optionsModule.getChannel('reflowTab'), true);
+                            model.runAsyncTaskStateProcBind()
+                                .done(
+                                /** @param {SqlBindingResponse} res */
+                                function(res){
+                                    var asyncTask = deferredModule.create();
+                                    mediator.publish(optionsModule.getChannel('socketRequest'), {
+                                        query: res.sql,
+                                        type: optionsModule.getRequestType('deferred'),
+                                        id: deferredModule.save(asyncTask)
+                                    });
+                                    asyncTask
+                                        .done(function (res) {
+                                            var html = helpersModule.getFirstValue(res.data);
+                                            $('#' + asyncId).html(html);
+                                            mediator.publish(optionsModule.getChannel('reflowTab'), true);
+                                        })
                                 })
+                                .fail(function(error){
+                                    mediator.publish(optionsModule.getChannel('logError'), error);
+                                });
+
                         }
                     }
                 }

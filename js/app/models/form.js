@@ -934,6 +934,14 @@ var FormModel = (function () {
                 };
             },
             /**
+             *
+             * @returns {Deferred}
+             */
+            runAsyncTaskStateProcBind: function(){
+                var data = this.getParamsForBind();
+                return bindModule.runAsyncTaskBindSql(this.getStateProc(), data);
+            },
+            /**
              * @param {Object} [filterData]
              * @param {string} [mainSql]
              * @returns {Deferred}
