@@ -68,7 +68,7 @@ var TreeColumnRO = (function (helpersModule, undefined) {
                                             model: model,
                                             dataModel: viewProperty.model
                                         });
-                                    view.render(_this.isSingle(), _this.getModalTitle(pk), pk, _this.get('key'));
+                                    view.render(_this.isSingle(), _this.getModalTitle(pk), _this.get('key'), pk);
                                 }
                             });
                             var $editableElements = $cnt.find(selector);
