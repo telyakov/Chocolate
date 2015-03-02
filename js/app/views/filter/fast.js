@@ -142,15 +142,36 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
              * @private
              */
             _changeHandler: function (e, isMultiSelect) {
-                var currentValue = $(e.target).val(),
+                var $target = $(e.target),
+                    currentValue = $target.val(),
                     model = this.getModel(),
-                    newVal = currentValue;
+                    newVal = currentValue,
+                    isChecked = $target.is(':checked');
+
                 if (isMultiSelect) {
                     var prevValue = model.get('value');
                     if (prevValue === null) {
                         prevValue = '';
                     }
-                    newVal = prevValue + currentValue + '|';
+                    if(isChecked){
+                        newVal = prevValue + currentValue + '|';
+                    }else{
+                        var prevValuesArray = prevValue.split('|');
+                        var newValuesArray = [];
+                        prevValuesArray.forEach(function(item){
+                            if(item !== newVal && item !== ''){
+                                newValuesArray.push(item);
+                            }
+                        });
+
+                        if(newValuesArray.length){
+                            newVal = newValuesArray.join('|') + '|';
+                        }else{
+                            newVal = '';
+                        }
+                    }
+                }else if(!isChecked){
+                    newVal = '';
                 }
                 model.set('value', newVal);
                 var eventChange = model.getEventChange();
