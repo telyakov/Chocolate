@@ -98,9 +98,10 @@ var interpreterModule = (function (optionsModule, userModule, deferredModule, bi
         /**
          *
          * @param {String|null} expression
+         * @param {FormModel} model
          * @returns {String|null}
          */
-        parseDefaultExpression: function (expression) {
+        parseDefaultExpression: function (expression, model) {
             var prepareExpression = $.trim(expression.toLowerCase());
             switch (true) {
                 case prepareExpression === 'currentuserfio':
@@ -109,6 +110,8 @@ var interpreterModule = (function (optionsModule, userModule, deferredModule, bi
                     return userModule.getID();
                 case prepareExpression === 'currentemployeeid':
                     return userModule.getEmployeeID();
+                case prepareExpression === 'parentid':
+                    return model.get('parentId');
                 default:
                     return expression;
             }

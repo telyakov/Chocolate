@@ -216,11 +216,12 @@ var FormModel = (function () {
              * @returns {Object}
              */
             getColumnsDefaultValues: function () {
-                var staticDefaultValues = {};
+                var staticDefaultValues = {},
+                    formModel = this;
                 this._getAllColumnsROCollection().each(
                     /** @param {ColumnRO} model */
                         function (model) {
-                        var defaultValue = model.getDefault();
+                        var defaultValue = model.getDefault(formModel);
                         if (defaultValue) {
                             staticDefaultValues[model.getFromKey()] = defaultValue;
                         }
@@ -328,9 +329,9 @@ var FormModel = (function () {
              * @private
              */
             _getUpdateProc: function () {
-                var sql = this._getDataFormProperties().getValidationProc();
+                var sql = this._getDataFormProperties().getUpdateProc();
                 if (!sql) {
-                    sql = this._getDataFormProperties().getUpdateProc();
+                    sql = this._getDataFormProperties().getValidationProc();
                 }
                 return sql;
             },
