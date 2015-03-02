@@ -439,7 +439,11 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                                     for (k in data[i]) {
                                         if (hasOwn.call(data[i], k) && extraData.hasOwnProperty(k)) {
                                             var oldVal = data[i][k];
-                                            data[i][k] = extraData[k][oldVal].name;
+                                            if(extraData[k][oldVal] === undefined){
+                                                data[i][k] = oldVal;
+                                            }else{
+                                                data[i][k] = extraData[k][oldVal].name;
+                                            }
                                         }
                                     }
                                 }
