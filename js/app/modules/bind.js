@@ -78,17 +78,15 @@ var bindModule = (function (userModule, undefined, deferredModule, optionsModule
                 for (i in sqlParams) {
                     if (sqlParams.hasOwnProperty(i)) {
                         param = sqlParams[i];
-                        if (param.parameter_mode === 'IN') {
-                            paramName = param.parameter_name.substring(1).toLowerCase();
-                            if (paramName === keys.userID) {
-                                newParams.push(_private.createSqlForParameter(paramName, userModule.getID()));
-                            } else {
-                                if (data && data[paramName]) {
-                                    var correctVal = _private.escapeQuotes(data[paramName]);
-                                    newParams.push(_private.createSqlForParameter(paramName, "'" + correctVal + "'"));
-                                } else if (isBindAllParams) {
-                                    newParams.push(_private.createSqlForParameter(paramName, 'NULL'));
-                                }
+                        paramName = param.parameter_name.substring(1).toLowerCase();
+                        if (paramName === keys.userID) {
+                            newParams.push(_private.createSqlForParameter(paramName, userModule.getID()));
+                        } else {
+                            if (data && data[paramName]) {
+                                var correctVal = _private.escapeQuotes(data[paramName]);
+                                newParams.push(_private.createSqlForParameter(paramName, "'" + correctVal + "'"));
+                            } else if (isBindAllParams) {
+                                newParams.push(_private.createSqlForParameter(paramName, 'NULL'));
                             }
                         }
                     }
@@ -110,10 +108,10 @@ var bindModule = (function (userModule, undefined, deferredModule, optionsModule
              * @returns {String}
              */
             escapeQuotes: function (str) {
-                if(typeof str === 'number'){
+                if (typeof str === 'number') {
                     return str;
                 }
-                return  str.replace(/'/g, '\'\'');
+                return str.replace(/'/g, '\'\'');
             },
             /**
              *
