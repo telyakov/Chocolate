@@ -168,7 +168,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             getFilterData: function () {
                 var model = this.getModel(),
                     result = {};
-                if (model.hasFilters()) {
+                if (this._hasFilters()) {
                     var rawData = this.$el.find('.filter-form').serializeArray(),
                         value,
                         name;
@@ -202,6 +202,20 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     )
                 }
                 return result;
+            },
+            /**
+             *
+             * @returns {boolean}
+             * @private
+             */
+            _hasFilters: function(){
+                var model = this.getModel(),
+                    cardElement = this.getCard(),
+                    cardSql;
+                if(cardElement){
+                    cardSql = cardElement.getSql();
+                }
+                return model.hasFilters() && !cardSql;
             },
             /**
              * @param {String} id
@@ -342,7 +356,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
             _layoutFilters: function ($panel, asyncTask) {
                 var _this = this,
                     model = _this.getModel();
-                if (model.hasFilters()) {
+                if (this._hasFilters()) {
                     var $filterSection = $('<section>', {
                         'data-id': 'filters'
                     });

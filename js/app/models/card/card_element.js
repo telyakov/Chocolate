@@ -60,6 +60,13 @@ var CardElement = (function ($, Backbone, _, helpersModule, optionsModule, media
                 this.set('view', null);
             },
             /**
+             *
+             * @returns {String}
+             */
+            getSql: function(){
+                return this.get('column').getSql();
+            },
+            /**
              * @desc indicates, that control has error after validation
              * @abstract
              */

@@ -1011,7 +1011,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                 var $tbody = this.getJqueryTbody();
                 helpersModule.waitLoading($tbody);
                 if (card) {
-                    cardSql = card.get('column').getSql();
+                    cardSql = card.getSql();
                 }
                 model
                     .runAsyncTaskBindingReadProc(view.getFilterData(), cardSql)

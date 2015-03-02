@@ -948,14 +948,15 @@ var FormModel = (function () {
              * @returns {Deferred}
              */
             runAsyncTaskBindingReadProc: function (filterData, mainSql) {
-                var data = this.getParamsForBind();
-                if (filterData) {
-                    data = $.extend(data, filterData);
-                }
-                var sql;
+                var sql, data;
                 if (mainSql) {
+                    data = {id: this.get('parentId')};
                     sql = mainSql;
                 } else {
+                    data = this.getParamsForBind();
+                    if (filterData) {
+                        data = $.extend(data, filterData);
+                    }
                     sql = this._getDataFormProperties().getReadProc();
                 }
                 return bindModule.runAsyncTaskBindSql(sql, data);
