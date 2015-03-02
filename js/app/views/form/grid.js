@@ -1008,7 +1008,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     card = view.getCard(),
                     cardSql;
                 this.clearSelectedArea();
-                helpersModule.waitLoading(this.getJqueryTbody());
+                var $tbody = this.getJqueryTbody();
+                helpersModule.waitLoading($tbody);
                 if (card) {
                     cardSql = card.get('column').getSql();
                 }
@@ -1030,6 +1031,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                                     id: 3,
                                     msg: error
                                 });
+                                helpersModule.stopWaitLoading($tbody);
                             });
                     })
                     .fail(
@@ -1039,6 +1041,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                             id: 3,
                             msg: error
                         });
+                        helpersModule.stopWaitLoading($tbody);
                     });
             },
             /**

@@ -444,7 +444,8 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                 }
 
                 if(model.isAllowInitRefresh()){
-                    helpersModule.waitLoading(this.getJqueryTbody());
+                    var $tbody = this.getJqueryTbody();
+                    helpersModule.waitLoading($tbody);
                     this.clearSelectedArea();
                     model
                         .runAsyncTaskBindingReadProc(view.getFilterData(), columnSql)
@@ -459,8 +460,6 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                 type: optionsModule.getRequestType('chFormRefresh'),
                                 id: deferredModule.save(refreshAsyncTask)
                             });
-
-
 
                             refreshAsyncTask
                                 .done(
@@ -501,6 +500,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                         id: 3,
                                         msg: error
                                     });
+                                    helpersModule.stopWaitLoading($tbody);
                                 });
                         })
                         .fail(
@@ -510,6 +510,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                 id: 3,
                                 msg: error
                             });
+                            helpersModule.stopWaitLoading($tbody);
                         });
                 }
 

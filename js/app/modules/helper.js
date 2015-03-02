@@ -465,6 +465,13 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         },
         /**
          *
+         * @param {jQuery} $content
+         */
+        stopWaitLoading: function($content){
+            $content.children('.refreshing').remove();
+        },
+        /**
+         *
          * @param {Object} obj
          * @returns {*}
          */

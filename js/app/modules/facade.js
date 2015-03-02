@@ -177,9 +177,10 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
          */
             function (data) {
             var deferredType = optionsModule.getRequestType('deferred'),
+                refreshType = optionsModule.getRequestType('chFormRefresh'),
                 type = data.type,
                 asyncTask,
-                isCorrectParamsForReject = (type === deferredType && data.id);
+                isCorrectParamsForReject = ([refreshType, deferredType].indexOf(type) !== -1 && data.id);
             if (data.error) {
                 logModule.error(data.error);
 
@@ -195,7 +196,7 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                         $('#' + data.id).html(html);
                         break;
 
-                    case optionsModule.getRequestType('chFormRefresh'):
+                    case refreshType:
                         var ordersRegExp = /"(.*?)":\{.*?}.?/gim,
                             matches,
                             order = [];
