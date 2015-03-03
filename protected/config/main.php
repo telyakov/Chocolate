@@ -70,7 +70,10 @@ return CMap::mergeArray(
                     'bootstrap-yii.css' => false,
                     'bootstrap-editable.css' => false,
                     'bootstrap.min.css' => false,
-//                    'jquery-ui-bootstrap.css' => false, //Пока не удаляется
+                    'jquery-ui-bootstrap.css' => false,
+                    'bootstrap-noconflict.js' => false,
+                    'bootbox.min.js' => false,
+                    'notify.min.js' => false,
                     'bootstrap-toggle-buttons.css' => false,
                     'jquery.fileupload-ui.css' => false,
                     'datetimepicker.css' => false,
