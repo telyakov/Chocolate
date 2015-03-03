@@ -385,6 +385,9 @@ var DynatreeModel = (function (Backbone, undefined, helpersModule) {
                     return [];
                 } else {
                     var values = options.defaultValues.apply(this.get('$el'));
+                    if(typeof values === 'number'){
+                        values = values.toString();
+                    }
                     return values.split(this.getSeparator());
                 }
             },

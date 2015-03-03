@@ -190,7 +190,10 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                                      * @type FilterRO
                                      */
                                     var filterModel = filters.findWhere({'key': name}),
+                                        format;
+                                    if(filterModel){
                                         format = filterModel.getValueFormat();
+                                    }
                                     if (format === 'idlist') {
                                         result[name] = helpersModule.filterValueFormatToIDList(value);
                                     } else {

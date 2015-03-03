@@ -563,6 +563,25 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                 }
             },
             /**
+             * @public
+             * @param {String} key
+             * @returns {Object}
+             */
+            getColumnSetting: function(key){
+                var settings = this.getModel().getFormSettingsFromStorage(),
+                    i,
+                    hasOwn = Object.prototype.hasOwnProperty,
+                    obj;
+                for (i in settings) {
+                    if (hasOwn.call(settings, i)) {
+                        obj = settings[i];
+                        if (obj.key === key) {
+                            return obj;
+                        }
+                    }
+                }
+            },
+            /**
              * @desc Initialize form settings
              * @returns {*}
              */

@@ -291,8 +291,8 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
 
                                 var changedCard = [];
                                 var allOpenedCard = model.getAllOpenedCard();
-                                for(var i in allOpenedCard){
-                                    if(allOpenedCard.hasOwnProperty(i)){
+                                for (var i in allOpenedCard) {
+                                    if (allOpenedCard.hasOwnProperty(i)) {
                                         /**
                                          *
                                          * @type {CardView}
@@ -785,43 +785,71 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                     setting = [],
                     iterator = 1;
 
-                if (!hasSetting) {
-                    setting[0] = {
-                        key: 'chocolate-control-column',
-                        weight: 0,
-                        width: '28'
-                    };
-                }
+                //if (!hasSetting) {
+                setting[0] = {
+                    key: 'chocolate-control-column',
+                    weight: 0,
+                    width: '28'
+                };
+                //}
 
                 var newColumns = [];
-                roCollection.each(function (column) {
-                    if (!hasSetting) {
-                        setting[iterator] = {
-                            key: column.get('key'),
-                            weight: iterator,
-                            width: optionsModule.getSetting('defaultColumnsWidth')
+                roCollection.each(
+                    /** @param {ColumnRO} column */
+                        function (column) {
+                        var config = {
+                            options: column.getHeaderOptions(),
+                            header: _this.columnHeaderTemplate({
+                                'class': column.getHeaderCLass(),
+                                caption: column.getCaption()
+                            })
                         };
-                        iterator += 1;
-                    }
-                    var index = hasSetting ? _this.getPositionColumn(column.get('key')) : iterator - 1;
-                    var config = {
-                        options: column.getHeaderOptions(),
-                        header: _this.columnHeaderTemplate({
-                            'class': column.getHeaderCLass(),
-                            caption: column.getCaption()
+
+                        if (!hasSetting) {
+                            setting[iterator] = {
+                                key: column.get('key'),
+                                weight: iterator,
+                                width: optionsModule.getSetting('defaultColumnsWidth')
+                            };
+                            rows[iterator] = config;
+                            iterator += 1;
+                        } else {
+                            var columnSetting = _this.getColumnSetting(column.get('key'));
+                            if (columnSetting) {
+                                var index = columnSetting.weight;
+                                setting[index] = columnSetting;
+                                rows[index] = config;
+                            } else {
+                                newColumns.push(column);
+
+                            }
+                        }
+                    });
+                var startLength = setting.length;
+                newColumns.forEach(
+                    /** @param  {ColumnRO} column */
+                        function (column) {
+                        startLength += 1;
+                        rows.push({
+                            options: column.getHeaderOptions(),
+                            header: _this.columnHeaderTemplate({
+                                'class': column.getHeaderCLass(),
+                                caption: column.getCaption()
+                            })
+                        });
+                        setting.push({
+                            key: column.get('key'),
+                            weight: startLength,
+                            width: optionsModule.getSetting('defaultColumnsWidth')
                         })
-                    };
-                    if (index === undefined) {
-                        newColumns.push(config);
-                    }
-                    rows[index] = config;
+                    });
+                setting = setting.filter(function(){
+                   return true;
                 });
-                newColumns.forEach(function (item) {
-                    rows.push(item);
+                rows = rows.filter(function(){
+                    return true;
                 });
-                if (!hasSetting) {
-                    model.persistColumnsSettings(setting);
-                }
+                model.persistColumnsSettings(setting);
                 this.getJqueryForm().append(this.gridTemplate({
                     userGridID: userGridID,
                     rows: rows,
