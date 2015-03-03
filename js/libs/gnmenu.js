@@ -38,13 +38,6 @@
 		},
 		_initEvents : function() {
 			var self = this;
-
-			if( !mobilecheck() ) {
-				this.trigger.addEventListener( 'mouseover', function(ev) {
-                    self._openMenu();
-                    document.addEventListener( self.eventtype, self.bodyClickFn );
-                } );
-			}
 			this.trigger.addEventListener( this.eventtype, function( ev ) {
 				ev.stopPropagation();
 				ev.preventDefault();
