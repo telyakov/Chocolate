@@ -489,7 +489,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                                     if (previousActiveID) {
                                         var $row = _this.getJqueryRow(previousActiveID);
                                         if ($row.length) {
-                                            _this.selectRow($row, false, false);
+                                            _this.setActiveRowAndSetFocusToIt($row);
                                         }
                                     }
                                 })

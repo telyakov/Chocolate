@@ -227,6 +227,21 @@ var AbstractGridView = (function (undefined, Math, $, _, AbstractView, optionsMo
                 return this.getThead().children('tr').first().children('th');
             },
             /**
+             *
+             * @param {jQuery} $row
+             */
+            setActiveRowAndSetFocusToIt: function($row){
+                var $gridView =this.getJqueryGridView(),
+                    gridViewScroll = $gridView.scrollTop(),
+                    gridViewTopOffset = $gridView.offset().top,
+                    rowTopOffset = $row.offset().top,
+                    tableHeight = this.getJqueryFloatHeadTable().height(),
+                    newScrollHeight = gridViewScroll +rowTopOffset - gridViewTopOffset - tableHeight;
+
+                $gridView.scrollTop(newScrollHeight);
+                this.selectRow($row, false, false);
+            },
+            /**
              * @returns {jQuery}
              */
             getThead: function () {

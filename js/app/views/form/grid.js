@@ -1146,7 +1146,7 @@ var GridView = (function (AbstractGridView, $, _, deferredModule, optionsModule,
                         if (previousActiveID) {
                             var $row = _this.getJqueryRow(previousActiveID);
                             if ($row.length) {
-                                _this.selectRow($row, false, false);
+                                _this.setActiveRowAndSetFocusToIt($row);
                             }
                         }
                         if (!isFirstInit) {
