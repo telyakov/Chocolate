@@ -35,7 +35,7 @@ var MenuView = (function (Backbone, $, _, window, helpersModule, optionsModule) 
                 '<button class="active menu-button menu-button-settings small-button" title="Настройки" type="button">',
                 '<span class="fa-wrench"></span>',
                 '</button>',
-                '<% if (isAllowPrintActions) { %>',
+                '<% if (isAllowAudit) { %>',
                 '<button class="active menu-button menu-button-toggle small-button" title="Показать системные поля" type="button" id="<%= auditID %>">',
                 '<span class="fa-user"></span>',
                 '</button>',
