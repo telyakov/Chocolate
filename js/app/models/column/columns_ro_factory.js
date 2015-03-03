@@ -8,6 +8,7 @@ var ColumnsRoFactory = (function () {
         make: function (column) {
             var type = column.getEditType(),
                 options = {columnProperties: column};
+
             switch(type){
                 case 'texdialog':
                     return new TextColumnRO(options);
@@ -18,6 +19,8 @@ var ColumnsRoFactory = (function () {
                 case 'valuelistwithoutblank':
                     return new SelectColumnRO(options);
                 case 'valuelist':
+                    return new SelectColumnRO(options);
+                case 'valuelistallownew':
                     return new SelectColumnRO(options);
                 case 'selectitems':
                     return new TreeColumnRO(options);

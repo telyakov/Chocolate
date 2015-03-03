@@ -180,7 +180,7 @@ module.exports = function (grunt) {
                     authKey: 'key1'
                 },
                 src: '../js',
-                exclusions: ['../js/libs', '../js/main', '../js/tests'],
+                exclusions: ['../js/libs', '../js/app', '../js/tests'],
                 dest: '/vagrant/js',
                 serverSep: '/',
                 concurrency: 4,
