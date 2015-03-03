@@ -4,8 +4,6 @@
  * @var $model LoginForm
  */
 $this->pageTitle = Yii::app()->name;
-
-Yii::import('bootstrap.widgets.input.*');
 ?>
 <header>
     <div>
@@ -16,42 +14,41 @@ Yii::import('bootstrap.widgets.input.*');
 </header>
 <div class="form">
 
-        <?php
-        /**
-         * @var $form TbActiveForm
-         */
-        ?>
-        <?php
-        $form = $this->beginWidget('Chocolate.Widgets.ChActiveForm', array(
-            'id' => 'login-form',
-            'type' => 'horizontal',
-            'enableClientValidation' => false,
-            'htmlOptions' => array(),
-            'clientOptions' => array(),
-        )); ?>
+    <?php
+    /**
+     * @see http://yiibooster.clevertech.biz/widgets/forms/view/activeform.html
+     * @var $form TbActiveForm
+     */
+    $form = $this->beginWidget('booster.widgets.TbActiveForm', [
+        'id' => 'login-form',
+        'type' => 'horizontal',
+        'enableClientValidation' => false,
+        'htmlOptions' => [],
+        'clientOptions' => [],
+    ]); ?>
 
-        <div class="title">Войти</div>
-        <?php if ($model->hasErrors()): ?>
+    <div class="title">Войти</div>
+    <?php if ($model->hasErrors()): ?>
         <div class='error-banner'><i class="icon-warning-sign"></i>
             <?php echo $form->error($model, 'error', array('class' => 'error')); ?>
         </div>
     <?php endif ?>
-        <div class="separator"></div>
-        <?php echo $form->textFieldRow($model, 'username', array('class' => 'span3')); ?>
-        <?php echo $form->passwordFieldRow($model, 'password', array('class' => 'span3')); ?>
+    <div class="separator"></div>
+    <?php echo $form->textFieldGroup($model, 'username'); ?>
+    <?php echo $form->passwordFieldGroup($model, 'password', array('class' => 'span3')); ?>
 
-        <?php echo CHtml::openTag('a', array(
+    <?php echo CHtml::openTag('a', array(
             'href' => Yii::app()->createUrl('site/forgotPassword'),
             'title' => 'Забыли пароль?',
             'data-id' => 'forgot-password'
         )
     );
-        echo 'Забыли пароль?';
-        echo CHtml::closeTag('a')?>
+    echo 'Забыли пароль?';
+    echo CHtml::closeTag('a')?>
 
-        <div class="form-actions">
-            <?php echo CHtml::submitButton('Войти') ?>
-        </div>
+    <div class="form-actions">
+        <?php echo CHtml::submitButton('Войти') ?>
+    </div>
 
-        <?php $this->endWidget(); ?>
+    <?php $this->endWidget(); ?>
 </div><!-- form -->

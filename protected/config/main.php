@@ -22,14 +22,13 @@ return CMap::mergeArray(
         // preloading 'log' component
         'preload' => array(
             'log',
-            'bootstrap'
+            'booster'
         ),
 
         // autoloading model and component classes
         'import' => array(
             'application.models.*',
             'application.components.*',
-            'application.components.Chocolate.Widgets.*',
         ),
 
         'theme' => 'bootstrap', // requires you to copy the theme under your themes directory
@@ -39,11 +38,8 @@ return CMap::mergeArray(
                 // enable cookie-based authentication
                 'allowAutoLogin' => true,
             ),
-            'bootstrap' => array(
-                'class' => 'ext.bootstrap.components.ChBootstrap',
-                'responsiveCss' => false,
-                'enableBootboxJS' => false,
-                'enableNotifierJS' => false,
+            'booster' => array(
+                'class' => 'application.vendor.clevertech.yii-booster.src.components.Booster',
             ),
             'erp' => array(
                 'class' => '\FrameWork\DataBase\DataBaseAccessor',
