@@ -1191,7 +1191,7 @@
 /*.ui-menu .ui-menu-icon { position: static; float: right; }*/
 
 .ui-menu {
-    /*width: 200px;*/
+    min-width: 200px;
     margin-bottom: 2em;
 }
 
