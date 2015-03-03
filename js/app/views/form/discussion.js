@@ -106,7 +106,7 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
              * @returns {String}
              * @private
              */
-            _createErrorMessageHtml: function(error){
+            _createErrorMessageHtml: function (error) {
                 var msgClass = 'bubble-left bubble-error',
                     user = '<li class="bubble-name">' + optionsModule.getMessage('projectName') + '</li>';
                 return this.messageTemplate({
@@ -197,7 +197,7 @@ var DiscussionView = (function ($, _, moment, optionsModule, helpersModule) {
              */
             _scrollToBottom: function () {
                 var $form = this.getJqueryForm();
-                $form.scrollTop($form.height());
+                $form.scrollTop($form.get(0).scrollHeight);
                 return this;
             },
             /**
