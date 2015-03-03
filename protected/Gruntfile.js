@@ -1,6 +1,6 @@
-/*
-    Grunt settings
-    http://gruntjs.com/sample-gruntfile
+/**
+ * @desc Grunt settings
+ * @see http://gruntjs.com/sample-gruntfile
 */
 module.exports = function (grunt) {
     grunt.initConfig({
@@ -40,14 +40,15 @@ module.exports = function (grunt) {
                     '../js/libs/moment/moment.js',
                     '../js/libs/FileSaver/FileSaver.js',
                     '../js/libs/Blob/index.js',
-                    '../js/libs/backbone/backbone.js'
+                    '../js/libs/backbone/backbone.js',
+                    '../js/app/modules/options.js'
 
                 ],
                 dest: '../js/erp.js'
             },
             main: {
                 src: [
-                    '../js/app/modules/options.js',
+
                     '../js/app/modules/mediator.js',
                     '../js/app/modules/table.js',
                     '../js/app/modules/deferred.js',
@@ -96,12 +97,19 @@ module.exports = function (grunt) {
                     '../js/app/views/card/*.js',
                     '../js/app/settings.js',
                     '../js/app/modules/facade.js' //latest loading module
-
                 ],
                 dest: '../js/main.js'
             }
         },
         uglify: {
+            options: {
+                compress: {
+                    drop_console: true,
+                    global_defs: {
+                        PRODUCTION: true
+                    }
+                }
+            },
             main: {
                 files: {
                     '../js/erp.min.js': ['../js/erp.js']
@@ -141,14 +149,6 @@ module.exports = function (grunt) {
                         'http://localhost/js/tests/unit.html'
                     ]
                 }
-//                ,
-//                connect:{
-//                    server:{
-//                        options:{
-//                            port: 80
-//                        }
-//                    }
-//                }
             }
         },
         mochaTest: {
@@ -157,7 +157,6 @@ module.exports = function (grunt) {
                 options: {
                     timeout: 5000
 //                    clearRequireCache: true
-
 //                    'reporter': 'xunit',
 //                    'output': 'result.xml',
 //                    log: true,
@@ -208,6 +207,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-mocha-test');
@@ -216,7 +216,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-selenium-webdriver');
     grunt.loadNpmTasks('grunt-exec');
-    grunt.registerTask('default', ['concat', 'uglify','sass', 'cssmin']); //production version withou tests
+    grunt.registerTask('default', ['exec', 'concat', 'uglify','sass', 'cssmin']); //production version withou tests
     grunt.registerTask('debug', ['exec', 'concat','sass', 'cssmin', 'mochaTest', 'qunit']); // build test && all tests
     grunt.registerTask('build', ['exec', 'concat', 'sass', 'cssmin']); //build test version
     grunt.registerTask('allTest', ['mochaTest', 'qunit']);

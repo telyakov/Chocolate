@@ -1,5 +1,14 @@
-var optionsModule = (function () {
+var optionsModule = (function (undefined) {
     'use strict';
+    var socketKey = 'test6543210';
+
+    /**
+     * @global PRODUCTION
+     * @see http://lisperator.net/uglifyjs/compress#global-defs
+     */
+    if (typeof PRODUCTION !== 'undefined') {
+        socketKey = '6543210';
+    }
     var keys = {
             ENTER: 13,
             BACKSPACE: 8,
@@ -37,7 +46,7 @@ var optionsModule = (function () {
         },
         settings = {
             locale: 'ru',
-            key: 'test6543210',
+            key: socketKey,
             defaultColumnsWidth: '150',
             defaultAutoUpdateMS: 100000,
             formatDate: 'YYYY.MM.DD HH:mm:ss',
@@ -209,4 +218,4 @@ var optionsModule = (function () {
             return keys[key.toUpperCase()];
         }
     };
-}());
+}(undefined));
