@@ -207,7 +207,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-mocha-test');
@@ -216,7 +215,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-selenium-webdriver');
     grunt.loadNpmTasks('grunt-exec');
-    grunt.registerTask('default', ['exec', 'concat', 'uglify','sass', 'cssmin']); //production version withou tests
+    grunt.registerTask('default', ['exec', 'concat', 'uglify','sass', 'cssmin']); //production version without tests
     grunt.registerTask('debug', ['exec', 'concat','sass', 'cssmin', 'mochaTest', 'qunit']); // build test && all tests
     grunt.registerTask('build', ['exec', 'concat', 'sass', 'cssmin']); //build test version
     grunt.registerTask('allTest', ['mochaTest', 'qunit']);
