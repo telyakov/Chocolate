@@ -20,13 +20,16 @@ var logModule = (function (log4javascript, $) {
          * @param {string} msg
          */
         showMessage: function (msg) {
-            $('<div class="notice"></div>')
+            var $message = $('<div class="notice"></div>')
                 .append('<div class="skin"></div>')
                 .append($('<div class="content"></div>').html(msg))
                 .append('<span class="fa fa-times message-close"></span>')
                 .hide()
                 .appendTo('#message')
                 .fadeIn(1000);
+            setTimeout(function () {
+                $message.fadeOut(1000);
+            }, 20000)
         }
     };
     return {
