@@ -120,40 +120,36 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
          * @param {FileDTO} data
          */
             function (data) {
+            console.log(data);
             if (data.error) {
                 logModule.error({
                         error: data.error,
                         dto: data
                     }
                 );
-                logModule.showMessage(data.error);
-            } else if (data.data) {
-                /**
-                 * @see https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
-                 */
-                var byteCharacters = atob(helpersModule.arrayBufferToBase64(data.data)),
-                    charactersLength = byteCharacters.length,
-                    byteArrays = [],
-                    sliceSize = 512,
-                    offset,
-                    slice,
-                    sliceLength,
-                    byteNumbers,
-                    i;
-
-                for (offset = 0; offset < charactersLength; offset += sliceSize) {
-                    slice = byteCharacters.slice(offset, offset + sliceSize);
-                    sliceLength = slice.length;
-                    byteNumbers = [];
-                    for (i = 0; i < sliceLength; i += 1) {
-                        byteNumbers[i] = slice.charCodeAt(i);
-                    }
-                    byteArrays.push(new Uint8Array(byteNumbers));
+                if(data.id){
+                    deferredModule.pop(data.id).reject(error);
                 }
-                saveAs(new Blob(byteArrays, {}), data.name);
+            } else if (data.data) {
+                switch(data.type){
+                    case optionsModule.getRequestType('deferred'):
+                        deferredModule.pop(data.id).resolve(data);
+                        break;
+                    default:
+                        logModule.error({
+                                error: 'Unsupported requestType',
+                                dto: data
+                            }
+                        );
+                }
             } else {
+                var errorMessage = 'FileDTO property data not set';
+                if(data.id){
+                    deferredModule.pop(data.id).reject(errorMessage);
+                }
+
                 logModule.error({
-                        error: 'FileDTO property data not set',
+                        error: errorMessage,
                         dto: data
                     }
                 );

@@ -17,6 +17,7 @@
         "jquery-file-upload": "7.2.1",
         "FileSaver": "latest",
         "Blob": "https://raw.githubusercontent.com/eligrey/Blob.js/master/Blob.js",
-        "backbone": "1.1.2"
+        "backbone": "1.1.2",
+        "async": "0.9.2"
     }
 }

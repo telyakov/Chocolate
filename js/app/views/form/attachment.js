@@ -106,7 +106,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
              */
             hasChange: function () {
                 return this._hasUnsavedFiles()
-                || !$.isEmptyObject(this.getModel().getDeletedDataFromStorage());
+                    || !$.isEmptyObject(this.getModel().getDeletedDataFromStorage());
             },
             /**
              * @desc Save data in attachment form
@@ -242,8 +242,47 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
              * @private
              */
             _downloadFileHandler: function (e) {
-                var id = $(e.target).attr('data-id');
-                mediator.publish(optionsModule.getChannel('socketFileRequest'), {id: id});
+                var fileID = $(e.target).attr('data-id'),
+                    asyncTask = deferredModule.create(),
+                    _this = this;
+                mediator.publish(optionsModule.getChannel('socketFileRequest'), {
+                    id: deferredModule.save(asyncTask),
+                    fileID: fileID,
+                    type: optionsModule.getRequestType('deferred')
+                });
+                asyncTask
+                    .done(
+                    /** @param {FileDTO} data */
+                        function (data) {
+                        /**
+                         * @see https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
+                         */
+                        var byteCharacters = atob(helpersModule.arrayBufferToBase64(data.data)),
+                            charactersLength = byteCharacters.length,
+                            byteArrays = [],
+                            sliceSize = 512,
+                            offset,
+                            slice,
+                            sliceLength,
+                            byteNumbers,
+                            i;
+
+                        for (offset = 0; offset < charactersLength; offset += sliceSize) {
+                            slice = byteCharacters.slice(offset, offset + sliceSize);
+                            sliceLength = slice.length;
+                            byteNumbers = [];
+                            for (i = 0; i < sliceLength; i += 1) {
+                                byteNumbers[i] = slice.charCodeAt(i);
+                            }
+                            byteArrays.push(new Uint8Array(byteNumbers));
+                        }
+                        saveAs(new Blob(byteArrays, {}), data.name);
+                    }).fail(function (error) {
+                        _this.showMessage({
+                            id: 3,
+                            msg: error
+                        });
+                    })
             },
             /**
              * @param {boolean} [afterSave]
@@ -443,7 +482,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                     _this._initTableScripts();
                 }
 
-                if(model.isAllowInitRefresh()){
+                if (model.isAllowInitRefresh()) {
                     var $tbody = this.getJqueryTbody();
                     helpersModule.waitLoading($tbody);
                     this.clearSelectedArea();

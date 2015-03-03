@@ -63,19 +63,52 @@ var MultimediaCardElement = (function (bindModule, optionsModule, CardElement, h
                     var sql = column.getSql();
                     bindModule.runAsyncTaskBindSql(sql, model.getParamsForBind(pk))
                         .done(function (res) {
-                            $.get(optionsModule.getUrl('imagesUrls'), {sql: res.sql})
-                                .done(function (response) {
-                                    var data = JSON.parse(response);
-                                    if (data.length) {
+                            var asyncTask = deferredModule.create();
+                            mediator.publish(optionsModule.getChannel('socketRequest'), {
+                                query: res.sql,
+                                type: optionsModule.getRequestType('deferred'),
+                                id: deferredModule.save(asyncTask),
+                                isCache: true
+                            });
+                            var result = [];
+                            asyncTask
+                                .done(
+                                /** @param {RecordsetDTO} res */
+                                    function (res) {
+                                    var idList = Object.keys(res.data);
+
+
+                                    async.each(idList, function (fileID, callback) {
+                                        var asyncTask = deferredModule.create();
+                                        mediator.publish(optionsModule.getChannel('socketFileRequest'), {
+                                            id: deferredModule.save(asyncTask),
+                                            fileID: fileID,
+                                            type: optionsModule.getRequestType('deferred')
+                                        });
+                                        asyncTask
+                                            .done(
+                                            /** @param {FileDTO} res */
+                                                function (res) {
+                                                result.push(helpersModule.arrayBufferToBase64(res.data));
+                                                callback();
+                                            })
+                                            .fail(function (error) {
+                                                mediator.publish(optionsModule.getChannel('logError'), error);
+                                                callback();
+                                            });
+
+
+                                    }, function () {
+                                        if (result.length) {
                                         var $context = $('#' + controlID),
                                             html = [],
                                             isFirst = true;
-                                        data.forEach(function (url) {
+                                            result.forEach(function (blobData) {
                                             if (isFirst) {
-                                                html.push('<a class="fancybox multimedia-main-image" rel="gallery"><img src="' + url + '"></img></a>');
+                                                html.push('<a class="fancybox multimedia-main-image" rel="gallery"><img src="data:image/jpg;base64,' + blobData + '"></img></a>');
                                                 isFirst = false;
                                             } else {
-                                                html.push('<a class="fancybox multimedia-image" rel="gallery" style="display:none"><img src="' + url + '"></img></a>');
+                                                html.push('<a class="fancybox multimedia-image" rel="gallery" style="display:none"><img src="data:image/jpg;base64,' + blobData + '"></img></a>');
                                             }
                                         });
                                         $context.append(html.join(''));
@@ -90,17 +123,13 @@ var MultimediaCardElement = (function (bindModule, optionsModule, CardElement, h
                                                 closeEffect: 'none'
                                             });
                                     }
+                                    });
+
+
                                 })
-                                .fail(function (jqXHR, textStatus, errorThrown) {
-                                    mediator.publish(
-                                        optionsModule.getChannel('logError'),
-                                        {
-                                            jqXHR: jqXHR,
-                                            textStatus: textStatus,
-                                            errorThrown: errorThrown
-                                        }
-                                    );
-                                });
+                                .fail(function (error) {
+                                    mediator.publish(optionsModule.getChannel('logError'), error);
+                                })
                         });
                 };
             }

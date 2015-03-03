@@ -242,7 +242,8 @@
 
 /**
  * @typedef {Object} FileDTO
- * @property {Number} id
+ * @property {String} id
+ * @property {String} fileID
  * @property {ArrayBuffer} data
  * @property {string} sql
  * @property {string} error

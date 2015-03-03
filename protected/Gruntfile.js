@@ -41,6 +41,7 @@ module.exports = function (grunt) {
                     '../js/libs/FileSaver/FileSaver.js',
                     '../js/libs/Blob/index.js',
                     '../js/libs/backbone/backbone.js',
+                    '../js/libs/async/async.js',
                     '../js/app/modules/options.js'
 
                 ],
