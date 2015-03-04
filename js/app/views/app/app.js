@@ -398,7 +398,7 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                     }
                     params[name] = value;
                 });
-                var view = params.view,
+                var view = helpersModule.getCorrectXmlName(decodeURIComponent(params.view)),
                     idList = params.id,
                     _this =  this;
                 setTimeout(function () {
@@ -422,6 +422,7 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                         if (filterModel) {
                             filterModel.set('value', idList);
                         }
+                        view.setDisposableFilterData({'idlist': idList});
 
                         view.render();
                     })

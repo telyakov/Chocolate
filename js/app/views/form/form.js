@@ -65,6 +65,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 this._$settings = null;
                 this.model = options.model;
                 this.view = null;
+                this._disposableFilterData = {};
                 this.$closeLink = null;
                 if (options.card) {
                     this.card = options.card;
@@ -99,6 +100,14 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                 this.events = null;
                 facade.getTabsModule().close(this.$closeLink.children('a'));
                 this.$closeLink = null;
+                this._disposableFilterData = null;
+            },
+            /**
+             * @publuc
+             * @param {Object} data
+             */
+            setDisposableFilterData: function(data){
+                this._disposableFilterData = data;
             },
             /**
              * @returns {?AbstractView}
@@ -166,6 +175,11 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
              * @returns {Object}
              */
             getFilterData: function () {
+                var disposableData = this._getDisposableFilterDataAndRemove();
+                if(!$.isEmptyObject(disposableData)){
+                    console.log(disposableData)
+                    return disposableData;
+                }
                 var model = this.getModel(),
                     result = {};
                 if (this._hasFilters()) {
@@ -205,6 +219,16 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     )
                 }
                 return result;
+            },
+            /**
+             *
+             * @returns {Object}
+             * @private
+             */
+            _getDisposableFilterDataAndRemove: function(){
+                var data = this._disposableFilterData;
+                this._disposableFilterData = null;
+                return data;
             },
             /**
              *
