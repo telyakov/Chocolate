@@ -34,3 +34,4 @@ protected/config/main_production.php
 protected/.ftppass
 
 protected/review.txt
+js/libs/async

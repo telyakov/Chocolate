@@ -402,6 +402,35 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                 });
                 this._publishExportToExcelEvent(asyncTasks, prepareSettings);
             },
+
+            /**
+             * @param {FileDTO} data
+             */
+            fileDownloadResponseHandler: function (data) {
+                /**
+                 * @see https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
+                 */
+                var byteCharacters = atob(helpersModule.arrayBufferToBase64(data.data)),
+                    charactersLength = byteCharacters.length,
+                    byteArrays = [],
+                    sliceSize = 512,
+                    offset,
+                    slice,
+                    sliceLength,
+                    byteNumbers,
+                    i;
+
+                for (offset = 0; offset < charactersLength; offset += sliceSize) {
+                    slice = byteCharacters.slice(offset, offset + sliceSize);
+                    sliceLength = slice.length;
+                    byteNumbers = [];
+                    for (i = 0; i < sliceLength; i += 1) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+                    byteArrays.push(new Uint8Array(byteNumbers));
+                }
+                saveAs(new Blob(byteArrays, {}), data.name);
+            },
             /**
              * @description Get Jquery object, where shows form messages
              * @returns {jQuery}
@@ -439,9 +468,9 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                                     for (k in data[i]) {
                                         if (hasOwn.call(data[i], k) && extraData.hasOwnProperty(k)) {
                                             var oldVal = data[i][k];
-                                            if(extraData[k][oldVal] === undefined){
+                                            if (extraData[k][oldVal] === undefined) {
                                                 data[i][k] = oldVal;
-                                            }else{
+                                            } else {
                                                 data[i][k] = extraData[k][oldVal].name;
                                             }
                                         }
@@ -449,12 +478,22 @@ var AbstractView = (function (undefined, Backbone, $, _, storageModule, helpersM
                                 }
                             }
                         }
+                        var asyncTask = deferredModule.create();
                         mediator.publish(optionsModule.getChannel('socketExportToExcel'), {
                             name: model.getCaption() + '.xls',
                             settings: JSON.stringify(settings),
                             data: JSON.stringify(data),
-                            id: 1
+                            type: optionsModule.getRequestType('deferred'),
+                            id: deferredModule.save(asyncTask)
                         });
+                        asyncTask
+                            .done(_this.fileDownloadResponseHandler)
+                            .fail(function (error) {
+                                _this.showMessage({
+                                    id: 3,
+                                    msg: error
+                                });
+                            });
                     })
                     .fail(
                     /** @param {string} error */

@@ -120,7 +120,6 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
          * @param {FileDTO} data
          */
             function (data) {
-            console.log(data);
             if (data.error) {
                 logModule.error({
                         error: data.error,

@@ -251,33 +251,7 @@ var AttachmentView = (function (window, $, _, FileReader, AbstractGridView, defe
                     type: optionsModule.getRequestType('deferred')
                 });
                 asyncTask
-                    .done(
-                    /** @param {FileDTO} data */
-                        function (data) {
-                        /**
-                         * @see https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript/16245768#16245768?newreg=b55ed913d6004b79b3a7729fc72a9aad
-                         */
-                        var byteCharacters = atob(helpersModule.arrayBufferToBase64(data.data)),
-                            charactersLength = byteCharacters.length,
-                            byteArrays = [],
-                            sliceSize = 512,
-                            offset,
-                            slice,
-                            sliceLength,
-                            byteNumbers,
-                            i;
-
-                        for (offset = 0; offset < charactersLength; offset += sliceSize) {
-                            slice = byteCharacters.slice(offset, offset + sliceSize);
-                            sliceLength = slice.length;
-                            byteNumbers = [];
-                            for (i = 0; i < sliceLength; i += 1) {
-                                byteNumbers[i] = slice.charCodeAt(i);
-                            }
-                            byteArrays.push(new Uint8Array(byteNumbers));
-                        }
-                        saveAs(new Blob(byteArrays, {}), data.name);
-                    }).fail(function (error) {
+                    .done(_this.fileDownloadResponseHandler).fail(function (error) {
                         _this.showMessage({
                             id: 3,
                             msg: error
