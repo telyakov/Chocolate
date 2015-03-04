@@ -25,7 +25,7 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                         delete buttons[index];
                     });
                 }
-                delete this._modalButtons
+                delete this._modalButtons;
                 this.constructor.__super__.destroy.apply(this, arguments);
             },
             /**
@@ -65,9 +65,6 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                         options.mode = 'modal';
                         options.showbuttons = true;
                         options.wysihtml5 = {
-                            toolbar: {
-                                assSigh: helpersModule.generateHtmlIframeAddSignButton()
-                            },
                             'font-styles': true,
                             emphasis: true,
                             lists: true,
@@ -106,8 +103,17 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                                         data: data
                                     });
                                 });
+                            if (isMarkupSupport) {
+                                options.wysihtml5.toolbar = {
+                                    assSigh: helpersModule.generateHtmlIframeAddSignButton()
+                                };
+                            }
                         } else {
-                            options.disabled = true;
+                            if (!isMarkupSupport) {
+                                options.disabled = true;
+                            } else {
+                                options.tpl = '<textarea disabled></textarea>'
+                            }
                         }
                         $this
                             .on('init', function textInit() {

@@ -87,22 +87,25 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
                             //mode: 'inline',
                             //showbuttons: false,
                             emptytext: '',
-                            disabled: !isAllowEdit,
                             onblur: 'submit',
                             inputclass: 'chocolate-textarea',
                             validate: function (value) {
                                 _this.validate($(this), value);
                             }
                         };
+                    if(!isAllowEdit){
+                        if (!isMarkupSupport) {
+                            options.disabled = true;
+                        } else {
+                            options.tpl = '<textarea disabled></textarea>'
+                        }
+                    }
                     _this._persistLinkToEditableElements($el);
                     if (isMarkupSupport) {
                         options.type = 'wysihtml5';
                         options.showbuttons = true;
                         options.mode = 'modal';
                         options.wysihtml5 = {
-                            toolbar: {
-                                assSigh: helpersModule.generateHtmlIframeAddSignButton()
-                            },
                             'font-styles': true,
                             emphasis: true,
                             lists: true,
@@ -111,6 +114,11 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
                             image: false,
                             color: false
                         };
+                        if(isAllowEdit){
+                            options.wysihtml5.toolbar = {
+                                assSigh: helpersModule.generateHtmlIframeAddSignButton()
+                            };
+                        }
                     } else {
                         options.mode = 'inline';
                         options.showbuttons = false;
