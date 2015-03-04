@@ -38,6 +38,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     'keydown input.filter': function (e) {
                         if (e.keyCode === optionsModule.getKeyCode('enter')) {
                             this.getModel().trigger('refresh:form', {});
+                            e.preventDefault();
                         }
                     },
                     'click .fm-email-send': function (e) {

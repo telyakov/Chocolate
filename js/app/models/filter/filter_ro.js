@@ -62,7 +62,7 @@ var FilterRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
              * @returns {String}
              */
             getValueFormat: function () {
-                return this.get('filter').getValueFormat();
+                return this.get('filter').getValueFormat().toLowerCase();
             },
             /**
              *
