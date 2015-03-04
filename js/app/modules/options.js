@@ -70,6 +70,7 @@ var optionsModule = (function (undefined) {
             makeCall: 'crm.makeCall [userid], [phoneto]',
             getProcParams: 'dbo.uspGetProcParameters [name], [schema]',
             getExecutors: 'tasks.uspGetUsersListForTasksUsers',
+            doLogin: 'WebAgency.DoLogin [userid]',
             types: {
                 jquery: 'jquery',
                 chFormRefresh: 'ch_form_refresh',

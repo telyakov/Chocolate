@@ -387,7 +387,7 @@ var FormModel = (function () {
                 var asyncTasks = [],
                     mainTask = deferredModule.create(),
                     i,
-                    sqlList = [],
+                    sqlList = [ optionsModule.getSql('doLogin').replace('[userid]', storageModule.getUserID())],
                     hasOwn = Object.prototype.hasOwnProperty,
                     task,
                     currentData,
