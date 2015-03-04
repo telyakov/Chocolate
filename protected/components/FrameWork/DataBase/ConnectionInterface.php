@@ -18,11 +18,6 @@ interface ConnectionInterface {
      */
     function getUserIdentity($username, $password);
 
-    /**
-     * @param $id Int
-     * @return mixed
-     */
-    function fileGet($id);
 
     /**
      * @param $sql string

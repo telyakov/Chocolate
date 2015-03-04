@@ -76,31 +76,4 @@ class DataBaseAccessor extends \CApplicationComponent
         }
     }
 
-    /**
-     * @param $fileID
-     * @throws DataBaseException
-     * @return Recordset
-     */
-    public function fileMetaDataGet($fileID){
-        try{
-            $sql = 'Attachments.MetaDataGet @FileID=\'' . $fileID . '\'';
-            return $this->exec($sql);
-        }catch (\Exception $e){
-            throw new DataBaseException($e->getMessage(), 500, $e);
-        }
-    }
-
-    /**
-     * @param $id
-     * @throws DataBaseException
-     * @return mixed
-     */
-    public function fileGet($id)
-    {
-        try {
-            return $this->conn->fileGet($id);
-        } catch (\Exception $e) {
-            self::handleException('Не удалось получить содержимое файла.', 0, $e);
-        }
-    }
 }

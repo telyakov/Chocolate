@@ -101,16 +101,4 @@ class WebService extends \SoapClient implements ConnectionInterface
 
         return $recordset;
     }
-
-    function fileGet($id)
-    {
-        $funcName = 'FileGet';
-        $response = $this->soapClient->{$funcName}(array(
-                'securityKey' => \Yii::app()->params['soapSecurityKey'],
-                'id' => $id,
-            )
-        );
-        $fileData = $response->{$funcName . 'Result'}->FileModel->FileData;
-        return $fileData;
-    }
 }

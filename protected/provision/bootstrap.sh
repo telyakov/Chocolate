@@ -115,9 +115,9 @@ sudo chkconfig memcached on
 sudo /etc/init.d/php-fpm restart
 sudo service nginx restart
 
-==============================================================================
-DEVELOPMENT TOOLS INSTALL
-==============================================================================
+#==============================================================================
+#DEVELOPMENT TOOLS INSTALL
+#==============================================================================
 
 #Install development tools(nodejs, npm)
 sudo yum install -y nodejs npm
@@ -144,7 +144,6 @@ sudo npm install -g grunt-cli bower
 sudo chmod -R 777 /vagrant/files
 sudo chmod -R 777 /vagrant/assets
 sudo chmod -R 777 /vagrant/protected/runtime
-sudo chmod -R 777 /vagrant/protected/migrations
 #Initialize project
 cd /vagrant/protected
 sudo npm install
@@ -152,26 +151,6 @@ cd /vagrant/protected
 sudo grunt bower
 grunt --force
 
-#postgresSql install
-#rpm -iUvh http://yum.postgresql.org/9.3/redhat/rhel-7-x86_64/pgdg-centos93-9.3-1.noarch.rpm
-#sudo yum -y install postgresql93 postgresql93-server postgresql93-contrib postgresql93-libs --enablerepo=pgdg93
-#systemctl enable postgresql-9.3
-#/usr/pgsql-9.3/bin/postgresql93-setup initdb
-#systemctl start postgresql-9.3
-#sudo service postgresql-9.3 restart
-#sudo passwd postgres
-#chocolate
-#chocolate
-# su - postgres
-# chocolate
-#psql
-#sudo cp  /vagrant/protected/provision/postgresql.conf /var/lib/pgsql/9.3/data/postgresql.conf
-#sudo cp  /vagrant/protected/provision/pg_hba.conf /var/lib/pgsql/9.3/data/pg_hba.conf
-##ALTER USER postgres WITH PASSWORD 'chocolate';
-#/opt/php-5.6.0/bin/php /vagrant/protected/yiic migrate -y
-#\q
-#exit
-#sudo service postgresql-9.3 restart
 
 #==============================================================================
 # WebSocket Server Settings
