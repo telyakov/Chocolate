@@ -65,7 +65,7 @@ var storageModule = (function (undefined, optionsModule) {
              *
              * @returns {String}
              */
-            gtIdentity: function(){
+            getIdentity: function(){
                 var identity = this.getLocal().user.identity;
                 if(identity === undefined){
                     return '';

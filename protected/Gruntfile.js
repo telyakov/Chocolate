@@ -50,7 +50,7 @@ module.exports = function (grunt) {
             },
             main: {
                 src: [
-
+                    '../js/app/routers/*.js',
                     '../js/app/modules/mediator.js',
                     '../js/app/modules/table.js',
                     '../js/app/modules/deferred.js',
@@ -90,11 +90,12 @@ module.exports = function (grunt) {
                     '../js/app/views/filter/*.js',
                     '../js/app/views/column/*.js',
                     '../js/app/models/app.js',
+                    '../js/app/models/login.js',
                     '../js/app/models/dynatree/dynatree.js',
                     '../js/app/views/form/*.js',
                     '../js/app/models/form.js',
                     '../js/app/router.js',
-                    '../js/app/views/app/app.js',
+                    '../js/app/views/app/*.js',
                     '../js/app/views/dynatree/*.js',
                     '../js/app/views/card/*.js',
                     '../js/app/settings.js',
