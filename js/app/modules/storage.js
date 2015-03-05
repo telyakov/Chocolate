@@ -50,6 +50,27 @@ var storageModule = (function (undefined, optionsModule) {
                 if (storage.local.appSettings === undefined) {
                     storage.local.appSettings = {};
                 }
+                if (storage.local.user === undefined) {
+                    storage.local.user = {};
+                }
+            },
+            /**
+             *
+             * @param {String} identity
+             */
+            persistIdentity: function(identity){
+              this.getLocal().user.identity = identity;
+            },
+            /**
+             *
+             * @returns {String}
+             */
+            gtIdentity: function(){
+                var identity = this.getLocal().user.identity;
+                if(identity === undefined){
+                    return '';
+                }
+                return identity;
             },
             getSession: function () {
                 return storage.session;
@@ -341,6 +362,19 @@ var storageModule = (function (undefined, optionsModule) {
          */
         persistApplicationSetting: function (key, value) {
             _private.persistApplicationSetting(key, value);
+        },
+        /**
+         *
+         * @param {String} identity
+         */
+        persistIdentity: function(identity){
+            _private.persistIdentity(identity);
+        },
+        /**
+         * @returns {string}
+         */
+        getIdentity: function(){
+            return _private.getIdentity();
         }
     };
 })(undefined, optionsModule);

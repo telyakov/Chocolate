@@ -42,6 +42,7 @@ module.exports = function (grunt) {
                     '../js/libs/Blob/index.js',
                     '../js/libs/backbone/backbone.js',
                     '../js/libs/async/async.js',
+                    '../js/libs/jssha/sha.js',
                     '../js/app/modules/options.js'
 
                 ],

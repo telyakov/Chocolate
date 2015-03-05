@@ -4,20 +4,55 @@
  */
 var socketModule = (function (io, optionsModule) {
     'use strict';
+
+
+
+
     var connectUrl = optionsModule.getUrl('webSocketServer'),
-        socket = io.connect(connectUrl, {reconnectionDelay: 3000}),
+        socket = io.connect(connectUrl, {reconnectionDelay: 3000, query: 'name=something'}),
         _private = {
             connectErrorHandler: function () {
                 mediator.publish(
                     optionsModule.getChannel('showError'),
                     optionsModule.getMessage('noConnectWebsocket')
                 );
-                socket.io.off('connect_error');
-                socket
+                socket.emit('authorization', {
+
+                });
+                socket.io
+                    .off('connect_error')
                     .off('connect')
                     .on('connect', _private.connectHandler);
             },
             connectHandler: function () {
+                var token = socket.io.engine.id,
+                    //login = storageModule.getUserID(),
+                    login = '1180',
+                    password = 'четверг';
+
+                    var identity = [login, password]. join('&'),
+                        shaIdentityObj = new jsSHA(identity, "TEXT"),
+                        hexIdentity = shaIdentityObj.getHash("SHA-256", "HEX");
+
+
+                var fullIdentity =  [hexIdentity, token].join('&');
+                var shaFullIdentityObj = new jsSHA(fullIdentity, "TEXT"),
+                    hashIdentity = shaFullIdentityObj.getHash("SHA-256", "HEX");
+
+                socket.emit('login', {
+                    login: login,
+                    identity: hashIdentity
+                });
+
+                socket.on('loginResponse', function(success){
+                    console.log(success);
+                    if(success){
+                        storageModule.persistIdentity(hexIdentity);
+                    }else{
+                        storageModule.persistIdentity('');
+                    }
+                });
+
                 $('#no-internet').remove();
                 socket.off('connect');
                 socket.io
