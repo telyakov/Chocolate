@@ -117,18 +117,18 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
              * @param {Boolean} isVisible
              * @param {Boolean} isMultiSelect
              * @param {Boolean} isNextRow
-             * @param {Object} rawData
+             * @param {DeferredResponse} response
              * @returns {string}
              * @private
              */
-            _getFilterHtml: function (isVisible, isMultiSelect, isNextRow, rawData) {
+            _getFilterHtml: function (isVisible, isMultiSelect, isNextRow, response) {
                 if (isVisible) {
                     var model = this.getModel();
                     return this.template({
                         attribute: model.getAttribute(),
                         isNextRow: isNextRow,
                         isMultiSelect: isMultiSelect,
-                        data: this._prepareData(rawData),
+                        data: this._prepareData(response),
                         containerID: this.id
                     });
                 }
@@ -217,7 +217,7 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
                         .done(
                         /** @param {DeferredResponse} res */
                             function (res) {
-                            var html = _this._getFilterHtml(true, isMultiSelect, isNextRow, res.data);
+                            var html = _this._getFilterHtml(true, isMultiSelect, isNextRow, res);
                             $elem.replaceWith(html);
                         })
                         .fail(function (error) {
@@ -242,9 +242,8 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             _renderDone: function (isVisibleResponse, isNextRowResponse, isMultiSelectResponse, dataResponse, event, i, collection) {
                 var isVisible = isVisibleResponse.value,
                     isNextRow = isNextRowResponse.value,
-                    data = dataResponse.data,
                     isMultiSelect = isMultiSelectResponse.value,
-                    text = this._getFilterHtml(isVisible, isMultiSelect, isNextRow, data),
+                    text = this._getFilterHtml(isVisible, isMultiSelect, isNextRow, dataResponse),
                     _this = this,
                     model = this.getModel();
                 if (isVisible) {
@@ -274,23 +273,20 @@ var FastFilterView = (function (Backbone, $, helpersModule, FilterView, deferred
             },
             /**
              *
-             * @param {Object} rawData
+             * @param {DeferredResponse} response
              * @returns {Array}
              * @private
              */
-            _prepareData: function (rawData) {
-                var result = [],
-                    j,
-                    hasOwnProperty = Object.prototype.hasOwnProperty;
-                for (j in rawData) {
-                    if (hasOwnProperty.call(rawData, j)) {
-                        result.push({
-                            id: helpersModule.uniqueID(),
-                            val: rawData[j].id,
-                            name: rawData[j].name
-                        });
-                    }
-                }
+            _prepareData: function (response) {
+                var result = [];
+                response.order.forEach(function(key){
+                    var currentObj =response.data[key];
+                    result.push({
+                        id: helpersModule.uniqueID(),
+                        val: currentObj.id,
+                        name: currentObj.name
+                    });
+                });
                 return result;
             }
         });
