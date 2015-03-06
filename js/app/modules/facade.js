@@ -185,6 +185,9 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                 }
             } else if(data.data){
                 var parsedData = JSON.parse(data.data);
+                var ordersRegExp = /"(.*?)":\{.*?}.?/gim,
+                    matches,
+                    order = [];
                 switch (type) {
                     case optionsModule.getRequestType('jquery'):
                         var html = helpersModule.getFirstValue(parsedData);
@@ -192,9 +195,6 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                         break;
 
                     case refreshType:
-                        var ordersRegExp = /"(.*?)":\{.*?}.?/gim,
-                            matches,
-                            order = [];
                         while ((matches = ordersRegExp.exec(data.data)) !== null) {
                             order.push(matches[1]);
                         }
@@ -206,8 +206,12 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                         break;
 
                     case deferredType:
+                        while ((matches = ordersRegExp.exec(data.data)) !== null) {
+                            order.push(matches[1]);
+                        }
                         asyncTask = deferredModule.pop(data.id);
                         asyncTask.resolve({
+                            order: order,
                             data: parsedData
                         });
                         break;
