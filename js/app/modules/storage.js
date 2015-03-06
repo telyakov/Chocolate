@@ -375,6 +375,12 @@ var storageModule = (function (undefined, optionsModule) {
          */
         getIdentity: function(){
             return _private.getIdentity();
+        },
+        /**
+         * @returns {string}
+         */
+        getLogin: function(){
+            return 'Целищев';
         }
     };
 })(undefined, optionsModule);
