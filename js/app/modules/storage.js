@@ -1,5 +1,7 @@
 /**
  * Storage Module
+ * Обетрка над локальным хранилищем, и сессионными.
+ * Сохраняются настройки колонок, id пользователя, ...
  */
 var storageModule = (function (undefined, optionsModule) {
     'use strict';

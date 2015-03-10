@@ -1,5 +1,6 @@
 /**
  * Main menu module. Dependencies gnmenu.js, jQuery
+ * Отображает главное меню приложения.
  */
 var menuModule = (function (GnMenu, $) {
     'use strict';

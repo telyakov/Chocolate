@@ -1,5 +1,6 @@
 /**
- * Pattern Mediator. Documentation: http://largescalejs.ru/the-mediator-pattern/
+ * Pattern Mediator. Documentation: http://largescalejs.ru/the-mediator-pattern
+ * Маршрутизирует события.
  */
 var mediator = (function() {
     'use strict';

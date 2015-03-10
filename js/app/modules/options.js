@@ -26,7 +26,8 @@ var optionsModule = (function (undefined) {
             userSettingsXml: 'usersettings.xml',
             standardDesignType: '1',
             mobileDesignType: '2',
-            topsIdList: [1472, 87, 1473, 1705, 1471, 1330, 1130, 1, 50, 326, 1087, 33, 186, 13, 1292, 1390, 337, 1470, 1474]
+            topsIdList: [1472, 87, 1473, 1705, 1471, 1330, 1130, 1, 50, 326, 1087, 33, 186, 13, 1292, 1390, 337, 1470, 1474],
+            developerDashboard: 'tools/developerdcashboard.xml'
 
         },
         channels = {
@@ -52,6 +53,7 @@ var optionsModule = (function (undefined) {
             formatDate: 'YYYY.MM.DD HH:mm:ss',
             signatureFormat: 'DD.MM.YYYY HH:mm',
             userDateFormat: 'MM.DD.YYYY HH:mm:ss',
+            sqlDateFormat: 'YYYYDDMM',
             ddmmyyyyFormat: 'dd.mm.yyyy',
             emailCol: 'emails',
             titleRowHeight: 26,

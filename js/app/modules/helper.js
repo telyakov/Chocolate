@@ -444,6 +444,22 @@ var helpersModule = (function ($, deferredModule, optionsModule, bindModule, doc
         },
         /**
          *
+         * @param {String} name
+         * @returns {boolean}
+         */
+        isDateFilter: function (name) {
+            return name.toLowerCase() === 'datebetween';
+        },
+        /**
+         * @desc Convert "03.01.2015 to 20150103"
+         * @param {String} value
+         * @returns {string}
+         */
+        filterValueFormatToSqlDate: function (value) {
+            return value.split('.')[2] + value.split('.')[1]  + value.split('.')[0];
+        },
+        /**
+         *
          * @param {string} name
          * @returns {string}
          */

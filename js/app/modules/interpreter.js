@@ -1,3 +1,5 @@
+///Инерпритатор корки и скриптов, дефолтных значений CurrentDay, currentuserfio.
+
 var interpreterModule = (function (optionsModule, userModule, deferredModule, bindModule) {
     'use strict';
     var methods = {

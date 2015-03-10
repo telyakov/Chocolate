@@ -1,5 +1,7 @@
 /**
  * Bind module.
+ * Асинхронно биндит в sql необходимые параметры.
+ * dbo.GetData [UserID],[entityid] - > select 169,20.
  */
 var bindModule = (function (userModule, undefined, deferredModule, optionsModule) {
     'use strict';

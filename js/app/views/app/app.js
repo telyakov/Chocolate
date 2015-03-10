@@ -39,13 +39,25 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                  * @type {AppModel}
                  */
                 var model = this.model;
+                var asyncTask = deferredModule.create();
+                //Загружаются асинхронно роли и формы.
                 mediator.publish(
                     optionsModule.getChannel('setIdentity'),
                     model.get('userId'),
                     model.get('employeeId'),
-                    model.get('userName')
+                    model.get('userName'),
+                    asyncTask
                 );
+                var _this = this;
+                asyncTask
+                    .done(function () {
+                        _this._renderProfile();
+                    })
+                    .fail(this._showError);
+
+
                 this._renderStartPage();
+                //Костыль для вложений, посокольку вложения загружаются js библиотекой.
                 var $downloadAttachmentTmpl = $('<script>', {
                         type: 'text/x-tmpl',
                         id: 'template-download',
@@ -111,6 +123,7 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                             '{% } %}'
                         ].join('')
                     });
+
                 this.$el
                     .append($downloadAttachmentTmpl)
                     .append($uploadAttachmentTmpl);
@@ -380,7 +393,6 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                 } else {
                     this._startDefaultForm();
                 }
-                this._renderProfile();
             },
             /**
              *
@@ -400,7 +412,7 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                 });
                 var view = helpersModule.getCorrectXmlName(decodeURIComponent(params.view)),
                     idList = params.id,
-                    _this =  this;
+                    _this = this;
                 setTimeout(function () {
                     var defer = deferredModule.create(),
                         deferId = deferredModule.save(defer);
@@ -468,25 +480,38 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                 $profile.on('click', function () {
                     $profile.contextmenu('open', $profile)
                 });
+                var menuData = [
+                    {
+                        title: 'Поручения',
+                        cmd: 'showTasks'
+                    },
+                    {
+                        title: 'Профиль',
+                        cmd: 'profile'
+                    },
+                    {
+                        title: 'Настройки',
+                        cmd: 'settings'
+                    },
+                    {
+                        title: 'Выйти',
+                        cmd: 'exit'
+                    }
+                ];
+                if (userModule.hasRole('программист')) {
+                    menuData.unshift({
+                        title: 'Панель разработчика',
+                        cmd: 'showDeveloperDashboard'
+                    });
+                }
                 $profile.contextmenu({
                     show: {effect: 'blind', duration: 0},
-                    menu: [
-                        {
-                            title: 'Профиль',
-                            cmd: 'profile'
-                        },
-                        {
-                            title: 'Настройки',
-                            cmd: 'settings'
-                        },
-                        {
-                            title: 'Выйти',
-                            cmd: 'exit'
-                        }
-
-                    ],
+                    menu: menuData,
                     select: function (e, ui) {
                         switch (ui.cmd) {
+                            case 'showTasks':
+                                _this._openForm(optionsModule.getConstants('tasksXml'));
+                                break;
                             case 'profile':
                                 _this._openForm(optionsModule.getConstants('userSettingsXml'));
                                 break;
@@ -495,6 +520,9 @@ var AppView = (function (location, window, Backbone, $, optionsModule, mediator,
                                 break;
                             case 'exit':
                                 window.location = '/site/logout';
+                                break;
+                            case 'showDeveloperDashboard':
+                                _this._openForm(optionsModule.getConstants('developerDashboard'));
                                 break;
                             default :
                                 break;

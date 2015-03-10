@@ -103,6 +103,7 @@ var TextCardElement = (function ($, _, helpersModule, undefined, optionsModule, 
                     _this._persistLinkToEditableElements($el);
                     if (isMarkupSupport) {
                         options.type = 'wysihtml5';
+                        options.onblur = 'nothing';
                         options.showbuttons = true;
                         options.mode = 'modal';
                         options.wysihtml5 = {

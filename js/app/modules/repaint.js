@@ -1,3 +1,4 @@
+//Главный модуль отображения, рисует какладки с видами, карточки, и вообще все.
 var repaintModule = (function (undefined, $, optionsModule, Math, helpersModule) {
     'use strict';
     /**

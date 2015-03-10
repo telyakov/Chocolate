@@ -1,5 +1,6 @@
 /**
  * Pattern Facade. Documentation: http://largescalejs.ru/the-facade-pattern/
+ * Обработчики различных глобальных событий в приложении, любая часть кода может сгенерировать событие и это событие может быть отловлено данным модулем.
  */
 var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, saveAs, logModule, mediator, optionsModule, socketModule, storageModule, userModule, menuModule, bindModule, taskWizard, helpersModule, tableModule, tabsModule, repaintModule, phoneModule) {
     'use strict';
@@ -235,8 +236,9 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
          * @param {String} id
          * @param {String} employeeId
          * @param {String} name
+         * @param {Deferred} profileAsyncTask
          */
-            function (id, employeeId, name) {
+            function (id, employeeId, name, profileAsyncTask) {
             setTimeout(function () {
                 storageModule.saveUser(id, employeeId, name);
                 var rolesError = 'An error occurred when trying to get a list of roles';
@@ -253,10 +255,13 @@ var facade = (function (deferredModule, imageAdapter, AppModel, AppView, Blob, s
                              * @param {DeferredResponse} response
                              */
                                 function (response) {
+
                                 storageModule.saveRoles(response.data);
+                                profileAsyncTask.resolve();
                             })
                             .fail(function (error) {
                                 logModule.error(error);
+                                profileAsyncTask.reject(error);
                                 logModule.showMessage(rolesError);
                             });
                         mediator.publish(requestChannel, {

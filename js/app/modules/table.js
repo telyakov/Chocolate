@@ -1,3 +1,4 @@
+///Можуль работает с стандартной HTML таблицей, например может удалить первую колонку.
 var tableModule = (function (undefined) {
     'use strict';
     var _private = {

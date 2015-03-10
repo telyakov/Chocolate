@@ -1,11 +1,12 @@
 /**
  * Socket module. Based on socket.io library
  * https://github.com/Automattic/socket.io-client
+ * Все взаимодействие с MilkyWay(Базой данных) происходит здесь.
  */
 var socketModule = (function (io, optionsModule) {
     'use strict';
     var connectUrl = optionsModule.getUrl('webSocketServer'),
-        socket = io.connect(connectUrl, {reconnectionDelay: 3000}),
+        socket = io.connect(connectUrl, {reconnectionDelay: 3000, timeout: 15000}),
         _private = {
             connectErrorHandler: function () {
                 mediator.publish(

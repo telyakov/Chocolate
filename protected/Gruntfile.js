@@ -181,8 +181,8 @@ module.exports = function (grunt) {
                     authKey: 'key1'
                 },
                 src: '../js',
-                exclusions: ['../js/libs', '../js/app', '../js/tests'],
-                dest: '/vagrant/js',
+                exclusions: ['../js/libs', '../js/app', '../js/tests', '../js/.idea'],
+                dest: '/chocolate1.0/js',
                 serverSep: '/',
                 concurrency: 4,
                 progress: true

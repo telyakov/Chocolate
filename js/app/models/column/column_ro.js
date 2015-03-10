@@ -338,7 +338,7 @@ var ColumnRO = (function (Backbone, helpersModule, FilterProperties, bindModule,
                 if (this.isRequired()) {
                     return 'fa-asterisk';
                 }
-                return '';
+                return imageAdapter.imageToCssClass(this._getColumnProperties().getHeaderImage());
             },
             /**
              * @returns {Boolean}

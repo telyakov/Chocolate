@@ -107,7 +107,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
              * @publuc
              * @param {Object} data
              */
-            setDisposableFilterData: function(data){
+            setDisposableFilterData: function (data) {
                 this._disposableFilterData = data;
             },
             /**
@@ -177,48 +177,67 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
              */
             getFilterData: function () {
                 var disposableData = this._getDisposableFilterDataAndRemove();
-                if(!$.isEmptyObject(disposableData)){
-                    console.log(disposableData)
+                if (!$.isEmptyObject(disposableData)) {
                     return disposableData;
                 }
-                var model = this.getModel(),
-                    result = {};
+                var result = {};
+
                 if (this._hasFilters()) {
-                    var rawData = this.$el.find('.filter-form').serializeArray(),
+                    var rawResult = {},
                         value,
                         name;
-                    var filters = model.getFiltersROCollection();
-                    rawData.forEach(function (item) {
+
+                    this.$el.find('.filter-form')
+                        .serializeArray()
+                        .forEach(function (item) {
                             value = item.value;
                             name = item.name;
                             if (value) {
                                 if (helpersModule.isMultiSelectFilter(name)) {
                                     name = name.slice(0, name.length - 2);
                                     var separator = '|';
-                                    if (result.hasOwnProperty(name)) {
-                                        result[name] += value + separator;
+                                    if (rawResult.hasOwnProperty(name)) {
+                                        rawResult[name] += value + separator;
                                     } else {
-                                        result[name] = value + separator;
+                                        rawResult[name] = value + separator;
                                     }
                                 } else {
-                                    /**
-                                     * @type FilterRO
-                                     */
-                                    var filterModel = filters.findWhere({'key': name}),
-                                        format;
-                                    if(filterModel){
-                                        format = filterModel.getValueFormat();
-                                    }
-                                    if (format === 'idlist') {
-                                        result[name] = helpersModule.filterValueFormatToIDList(value);
-                                    } else {
-                                        result[name] = value;
-                                    }
+                                    rawResult[name] = value;
                                 }
                             }
                         }
-                    )
+                    );
+
+                    this.getModel().getFiltersROCollection()
+                        .each(
+                        /**
+                         *
+                         * @param {FilterRO} model
+                         */
+                            function (model) {
+                            var key = model.get('key');
+                            var isHasProperty = rawResult.hasOwnProperty(key);
+                            if (helpersModule.isDateFilter(model.get('filter').getFilterType())) {
+                                var keyFrom = model.getAttributeFrom(),
+                                    keyTo = model.getAttributeTo(keyFrom),
+                                    convertDate = helpersModule.filterValueFormatToSqlDate;
+                                if (isHasProperty) {
+                                    result[keyFrom] = convertDate(rawResult[keyFrom]);
+                                }
+                                if (rawResult.hasOwnProperty(keyTo)) {
+                                    result[keyTo] = convertDate(rawResult[keyTo]);
+                                }
+
+                            } else if (model.getValueFormat() === 'idlist' && isHasProperty) {
+                                result[name] = helpersModule.filterValueFormatToIDList(rawResult[key]);
+                            } else if (isHasProperty) {
+                                result[key] = rawResult[key];
+                            }
+
+                        }
+                    );
                 }
+
                 return result;
             },
             /**
@@ -226,7 +245,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
              * @returns {Object}
              * @private
              */
-            _getDisposableFilterDataAndRemove: function(){
+            _getDisposableFilterDataAndRemove: function () {
                 var data = this._disposableFilterData;
                 this._disposableFilterData = null;
                 return data;
@@ -236,11 +255,11 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
              * @returns {boolean}
              * @private
              */
-            _hasFilters: function(){
+            _hasFilters: function () {
                 var model = this.getModel(),
                     cardElement = this.getCard(),
                     cardSql;
-                if(cardElement){
+                if (cardElement) {
                     cardSql = cardElement.getSql();
                 }
                 return model.hasFilters() && !cardSql;
@@ -351,7 +370,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                             model.runAsyncTaskStateProcBind()
                                 .done(
                                 /** @param {SqlBindingResponse} res */
-                                function(res){
+                                    function (res) {
                                     var asyncTask = deferredModule.create();
                                     mediator.publish(optionsModule.getChannel('socketRequest'), {
                                         query: res.sql,
@@ -365,7 +384,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                                             mediator.publish(optionsModule.getChannel('reflowTab'), true);
                                         })
                                 })
-                                .fail(function(error){
+                                .fail(function (error) {
                                     mediator.publish(optionsModule.getChannel('logError'), error);
                                 });
 
@@ -545,7 +564,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                     hashKey = options.name + '_' + parentID;
 
                 var form = model.getOpenedForm(hashKey);
-                if(form){
+                if (form) {
                     form.setWindowActive();
                     return false;
                 }
@@ -571,7 +590,7 @@ var FormView = (function (Backbone, $, optionsModule, mediator, helpersModule) {
                             $xml: $xml,
                             parentModel: _this.getModel(),
                             parentId: parentID,
-                            columnName:  options.name
+                            columnName: options.name
                         });
                         var view = new FormView({
                             model: model

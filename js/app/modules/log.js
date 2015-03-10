@@ -1,5 +1,5 @@
 /**
- * Log module
+ * Log module логирование ошибок, и отображение ошибок showMessage('alo') - покажет всплывающее сообщение.
  * Dependencies jQuery, log4javascript
  */
 var logModule = (function (log4javascript, $) {
@@ -41,7 +41,7 @@ var logModule = (function (log4javascript, $) {
             _private.error(args);
         },
         /**
-         *
+         * Внизу всплавают сообщения.
          * @param {string} msg
          */
         showMessage: function (msg) {

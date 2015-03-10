@@ -1,3 +1,4 @@
+//Некая логика для работы с закладками(улучшение юзабилити).
 var tabsModule = (function ($, helpersModule, optionsModule) {
     'use strict';
     var history = {

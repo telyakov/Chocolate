@@ -63,6 +63,7 @@ var TextColumnRO = (function (undefined, helpersModule, optionsModule) {
                     if (isMarkupSupport) {
                         options.type = 'wysihtml5';
                         options.mode = 'modal';
+                        options.onblur = 'nothing';
                         options.showbuttons = true;
                         options.wysihtml5 = {
                             'font-styles': true,

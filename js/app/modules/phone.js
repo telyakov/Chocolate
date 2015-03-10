@@ -1,3 +1,4 @@
+///Позвонить из КИС.
 var phoneModule = (function (optionsModule, userModule, bindModule) {
     'use strict';
     var _private = {

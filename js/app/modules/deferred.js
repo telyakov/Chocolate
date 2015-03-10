@@ -1,3 +1,5 @@
+//Вспомогательный модуль, для запуска асинхронных задач, требует уникального id
+
 var deferredModule = (function($){
     'use strict';
     var heap = [],

@@ -1,3 +1,4 @@
+///Преобразовывает jpg из КИС в CSS
 var imageAdapter = (function () {
     'use strict';
     var _private = {
@@ -26,6 +27,12 @@ var imageAdapter = (function () {
             switch (imageHref) {
                 case 'TaskBig.jpg':
                     return 'fa-tasks';
+                case 'fa-check':
+                    return 'fa-check';
+                case 'fa-question':
+                    return 'fa-question';
+                case 'fa-exclamation':
+                    return 'fa-exclamation';
                 default :
                     return '';
             }
@@ -39,6 +46,14 @@ var imageAdapter = (function () {
          */
         convert: function (imageHref) {
             return _private.convert(imageHref);
+        },
+        /**
+         *
+         * @param {String} imageHref
+         * @returns {string}
+         */
+        imageToCssClass: function (imageHref) {
+            return _private.imageToCssClass(imageHref);
         }
     };
 })();
